@@ -123,11 +123,11 @@ export const fixedIncomeMacro: Member[] = make("Fixed Income & Macro", [
   ["Sienna Walsh", "Analyst — Credit", "Sophomore · Finance"],
 ]);
 
-export const portfolioManagers: Member[] = make("Portfolio Management", [
+export const portfolioManagers: Member[] = make("Portfolio + Risk Management", [
   ["Logan Pierce", "Lead Portfolio Manager", "Senior · Finance"],
   ["Isabel Moreno", "Portfolio Manager", "Senior · Quantitative Finance"],
   ["Connor Bishop", "Portfolio Manager — Risk", "Senior · Industrial Engineering"],
   ["Priscilla Adeyemi", "Portfolio Manager — Performance", "Junior · Finance"],
   ["Nathan Cole", "Portfolio Manager — Trading", "Junior · Economics"],
-  ["Mira Saleh", "Portfolio Manager — ESG", "Junior · Finance"],
+  ["Mira Saleh", "Risk Analyst", "Junior · Finance"],
 ]);
