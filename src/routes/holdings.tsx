@@ -324,9 +324,13 @@ function HoldingsPage() {
         </div>
 
         <p className="mt-8 text-xs text-muted-foreground max-w-3xl">
-          Holdings shown are illustrative and reflect the most recent reporting snapshot.
-          Prices and returns may not reflect intraday changes.
+          {isFetching && !quoteData
+            ? "Fetching live prices…"
+            : quoteData?.cachedAt
+              ? `Live prices via Alpha Vantage. Last updated ${new Date(quoteData.cachedAt).toLocaleString()}. Cached for 12 hours.`
+              : "Live price data unavailable — showing last reported snapshot."}
         </p>
+
       </section>
     </>
   );
