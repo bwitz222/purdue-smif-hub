@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TeamRouteImport } from './routes/team'
 import { Route as SectorsRouteImport } from './routes/sectors'
+import { Route as PublicationsRouteImport } from './routes/publications'
 import { Route as PerformanceRouteImport } from './routes/performance'
 import { Route as HoldingsRouteImport } from './routes/holdings'
 import { Route as ContactRouteImport } from './routes/contact'
@@ -25,6 +26,11 @@ const TeamRoute = TeamRouteImport.update({
 const SectorsRoute = SectorsRouteImport.update({
   id: '/sectors',
   path: '/sectors',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PublicationsRoute = PublicationsRouteImport.update({
+  id: '/publications',
+  path: '/publications',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PerformanceRoute = PerformanceRouteImport.update({
@@ -59,6 +65,7 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/holdings': typeof HoldingsRoute
   '/performance': typeof PerformanceRoute
+  '/publications': typeof PublicationsRoute
   '/sectors': typeof SectorsRoute
   '/team': typeof TeamRoute
 }
@@ -68,6 +75,7 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/holdings': typeof HoldingsRoute
   '/performance': typeof PerformanceRoute
+  '/publications': typeof PublicationsRoute
   '/sectors': typeof SectorsRoute
   '/team': typeof TeamRoute
 }
@@ -78,6 +86,7 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/holdings': typeof HoldingsRoute
   '/performance': typeof PerformanceRoute
+  '/publications': typeof PublicationsRoute
   '/sectors': typeof SectorsRoute
   '/team': typeof TeamRoute
 }
@@ -89,6 +98,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/holdings'
     | '/performance'
+    | '/publications'
     | '/sectors'
     | '/team'
   fileRoutesByTo: FileRoutesByTo
@@ -98,6 +108,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/holdings'
     | '/performance'
+    | '/publications'
     | '/sectors'
     | '/team'
   id:
@@ -107,6 +118,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/holdings'
     | '/performance'
+    | '/publications'
     | '/sectors'
     | '/team'
   fileRoutesById: FileRoutesById
@@ -117,6 +129,7 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   HoldingsRoute: typeof HoldingsRoute
   PerformanceRoute: typeof PerformanceRoute
+  PublicationsRoute: typeof PublicationsRoute
   SectorsRoute: typeof SectorsRoute
   TeamRoute: typeof TeamRoute
 }
@@ -135,6 +148,13 @@ declare module '@tanstack/react-router' {
       path: '/sectors'
       fullPath: '/sectors'
       preLoaderRoute: typeof SectorsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/publications': {
+      id: '/publications'
+      path: '/publications'
+      fullPath: '/publications'
+      preLoaderRoute: typeof PublicationsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/performance': {
@@ -181,9 +201,20 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   HoldingsRoute: HoldingsRoute,
   PerformanceRoute: PerformanceRoute,
+  PublicationsRoute: PublicationsRoute,
   SectorsRoute: SectorsRoute,
   TeamRoute: TeamRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
