@@ -113,7 +113,7 @@ function Index() {
           </div>
           <div className="mt-16 grid gap-px bg-background/10 md:grid-cols-3">
             {[
-              { Icon: BarChart3, t: "Investment Research", d: "Bottom-up fundamental analysis across 11 GICS sectors. Pitches defended before the full investment committee." },
+              { Icon: BarChart3, t: "Investment Research", d: "Bottom-up fundamental analysis across our equity sector teams. Pitches defended before the full investment committee." },
               { Icon: Users, t: "Mentorship & Recruiting", d: "Direct access to alumni at top investment banks, hedge funds, and asset managers — and the prep to land those seats." },
               { Icon: Award, t: "Real Portfolio", d: "Students vote on every position. Performance is benchmarked against the S&P 500 and reported quarterly." },
             ].map(({ Icon, t, d }) => (
