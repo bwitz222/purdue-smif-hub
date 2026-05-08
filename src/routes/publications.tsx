@@ -1,9 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { FileText, Upload, Download, Trash2, Loader2 } from "lucide-react";
+import { FileText, Upload, Download, Trash2, Loader2, ExternalLink, Rss } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+
+const SUBSTACK_URL = "https://purduesmif.substack.com";
 
 export const Route = createFileRoute("/publications")({
   component: Publications,
