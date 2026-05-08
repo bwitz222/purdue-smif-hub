@@ -1,7 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
-import { holdings, portfolioSummary, type Holding } from "@/data/holdings";
+import { holdings as baseHoldings, portfolioSummary as baseSummary, type Holding } from "@/data/holdings";
+import { getLiveQuotes } from "@/lib/quotes.functions";
 
 export const Route = createFileRoute("/holdings")({
   component: HoldingsPage,
