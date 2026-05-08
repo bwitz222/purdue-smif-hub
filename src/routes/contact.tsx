@@ -104,7 +104,14 @@ function Contact() {
               <Linkedin className="h-6 w-6 text-gold-deep flex-shrink-0 mt-1" />
               <div>
                 <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">LinkedIn</div>
-                <div className="mt-1 font-display text-lg font-semibold">Purdue SMIF</div>
+                <a
+                  href="https://www.linkedin.com/company/purdue-smif/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-1 block font-display text-lg font-semibold hover:text-gold-deep"
+                >
+                  Purdue SMIF
+                </a>
               </div>
             </div>
           </div>
