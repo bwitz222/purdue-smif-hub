@@ -76,7 +76,7 @@ function Team() {
           <SectionHeader
             kicker="Equity Research"
             title="Sector Teams"
-            blurb="Eight teams cover the full GICS-aligned equity universe. Each team is led by a Sector Head with senior analysts and rotating junior analysts."
+            blurb="Eight teams cover the equity universe. Each team is led by a Sector Head with senior analysts and rotating junior analysts."
           />
           <div className="space-y-16">
             {sectorTeams.map((team) => (
