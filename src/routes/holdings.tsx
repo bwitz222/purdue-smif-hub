@@ -1,7 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
-import { holdings, portfolioSummary, type Holding } from "@/data/holdings";
+import { holdings as baseHoldings, portfolioSummary as baseSummary, type Holding } from "@/data/holdings";
+import { getLiveQuotes } from "@/lib/quotes.functions";
 
 export const Route = createFileRoute("/holdings")({
   component: HoldingsPage,
@@ -29,7 +32,64 @@ function HoldingsPage() {
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const [sector, setSector] = useState<string>("All");
 
-  const sectors = useMemo(() => ["All", ...Array.from(new Set(holdings.map((h) => h.industry)))], []);
+  const fetchQuotes = useServerFn(getLiveQuotes);
+  const symbols = useMemo(() => baseHoldings.map((h) => h.symbol), []);
+  const { data: quoteData, isFetching } = useQuery({
+    queryKey: ["live-quotes", symbols],
+    queryFn: () => fetchQuotes({ data: { symbols } }),
+    staleTime: 12 * 60 * 60 * 1000,
+    refetchOnWindowFocus: false,
+  });
+
+  // Recompute holdings with live prices when available, recompute allocation
+  // off the new total value so weights still sum to ~100% (excl. cash).
+  const { holdings, portfolioSummary } = useMemo(() => {
+    const quotes = quoteData?.quotes ?? {};
+    const updated: Holding[] = baseHoldings.map((h) => {
+      const q = quotes[h.symbol];
+      if (!q) return h;
+      const price = q.price;
+      const value = price * h.shares;
+      const totalReturn = value - h.costBasis;
+      const returnPct = h.costBasis > 0 ? (totalReturn / h.costBasis) * 100 : 0;
+      const dayChange = q.changePct;
+      const dayGain = (dayChange / 100) * value;
+      return { ...h, price, value, totalReturn, returnPct, dayChange, dayGain };
+    });
+    const investedValue = updated.reduce((s, r) => s + r.value, 0);
+    const totalDayGain = updated.reduce((s, r) => s + r.dayGain, 0);
+    const portfolioValue = investedValue + baseSummary.cashHoldings;
+    const investedCapital = updated.reduce((s, r) => s + r.costBasis, 0);
+    const totalReturn = investedValue - investedCapital;
+    const totalReturnPct = investedCapital > 0 ? (totalReturn / investedCapital) * 100 : 0;
+    const totalDayChange = investedValue > 0 ? (totalDayGain / investedValue) * 100 : 0;
+    const weightedBeta =
+      investedValue > 0
+        ? updated.reduce((s, r) => s + r.beta * r.value, 0) / investedValue
+        : baseSummary.weightedBeta;
+    const withAlloc = updated.map((r) => ({
+      ...r,
+      allocation: portfolioValue > 0 ? (r.value / portfolioValue) * 100 : r.allocation,
+    }));
+    return {
+      holdings: withAlloc,
+      portfolioSummary: {
+        investedCapital,
+        cashHoldings: baseSummary.cashHoldings,
+        portfolioValue,
+        totalDayGain,
+        totalDayChange,
+        totalReturn,
+        totalReturnPct,
+        weightedBeta,
+      },
+    };
+  }, [quoteData]);
+
+  const sectors = useMemo<string[]>(
+    () => ["All", ...Array.from(new Set(holdings.map((h) => h.industry)))],
+    [holdings],
+  );
 
   const rows = useMemo(() => {
     const filtered = sector === "All" ? holdings : holdings.filter((h) => h.industry === sector);
@@ -43,7 +103,7 @@ function HoldingsPage() {
         ? String(av).localeCompare(String(bv))
         : String(bv).localeCompare(String(av));
     });
-  }, [sortKey, sortDir, sector]);
+  }, [sortKey, sortDir, sector, holdings]);
 
   const toggleSort = (k: SortKey) => {
     if (k === sortKey) setSortDir(sortDir === "asc" ? "desc" : "asc");
@@ -80,7 +140,7 @@ function HoldingsPage() {
     const map = new Map<string, number>();
     holdings.forEach((h) => map.set(h.industry, (map.get(h.industry) || 0) + h.allocation));
     return Array.from(map.entries()).sort((a, b) => b[1] - a[1]);
-  }, []);
+  }, [holdings]);
 
   return (
     <>
@@ -264,9 +324,13 @@ function HoldingsPage() {
         </div>
 
         <p className="mt-8 text-xs text-muted-foreground max-w-3xl">
-          Holdings shown are illustrative and reflect the most recent reporting snapshot.
-          Prices and returns may not reflect intraday changes.
+          {isFetching && !quoteData
+            ? "Fetching live prices…"
+            : quoteData?.cachedAt
+              ? `Live prices via Alpha Vantage. Last updated ${new Date(quoteData.cachedAt).toLocaleString()}. Cached for 12 hours.`
+              : "Live price data unavailable — showing last reported snapshot."}
         </p>
+
       </section>
     </>
   );
