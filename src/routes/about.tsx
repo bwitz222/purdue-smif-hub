@@ -67,6 +67,38 @@ function About() {
           ))}
         </div>
       </section>
+
+      <section className="bg-secondary/40 border-t border-border py-24">
+        <div className="container-prose grid gap-16 md:grid-cols-3">
+          <div className="md:col-span-1">
+            <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">Governance</span>
+            <h2 className="mt-3 font-display text-2xl font-bold">Investment Policy Statement</h2>
+          </div>
+          <div className="md:col-span-2 space-y-6 text-lg text-muted-foreground">
+            <p>
+              The Investment Policy Statement (IPS) is the governing document of the Purdue SMIF. It defines the fund's objectives, eligible investments, risk parameters, and the responsibilities of members, officers, and faculty advisors.
+            </p>
+            <div className="grid gap-6 sm:grid-cols-2 pt-4">
+              {[
+                { t: "Objective", d: "Long-term capital appreciation benchmarked against the S&P 500, while providing an authentic asset-management learning experience." },
+                { t: "Eligible Universe", d: "Primarily U.S.-listed equities and fixed income; ADRs permitted. No options, futures, leverage, or short positions." },
+                { t: "Diversification", d: "Position sizes capped per name and per sector. Maintain meaningful exposure across all covered sectors." },
+                { t: "Risk Controls", d: "Ongoing monitoring of factor exposures, drawdowns, and concentration. Quarterly reviews with the faculty advisor." },
+                { t: "Decision Process", d: "Every trade requires a written thesis, valuation, and a majority vote of the investment committee." },
+                { t: "Reporting", d: "Performance and attribution reported each semester to the Daniels School and university stakeholders." },
+              ].map((b) => (
+                <div key={b.t} className="border-l-2 border-gold pl-4">
+                  <h3 className="font-display text-base font-bold">{b.t}</h3>
+                  <p className="mt-1 text-sm">{b.d}</p>
+                </div>
+              ))}
+            </div>
+            <p className="text-sm">
+              The full IPS is reviewed annually and is available on request from the executive board.
+            </p>
+          </div>
+        </div>
+      </section>
     </>
   );
 }
