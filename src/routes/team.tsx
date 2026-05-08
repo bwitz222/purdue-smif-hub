@@ -115,8 +115,8 @@ function Team() {
       <section className="border-t border-border bg-secondary/30 py-24">
         <div className="container-prose">
           <SectionHeader
-            kicker="Portfolio Management"
-            title="Portfolio Managers"
+            kicker="Portfolio + Risk Management"
+            title="Portfolio + Risk Management"
             blurb="Implement allocation decisions, monitor portfolio risk, manage trading and rebalancing, and own performance attribution."
           />
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
