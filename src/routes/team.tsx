@@ -47,7 +47,7 @@ function Team() {
               ["7", "Executive Board"],
               ["8", "Sector Teams"],
               ["1", "Fixed Income & Macro"],
-              ["1", "Portfolio Mgmt."],
+              ["1", "Portfolio + Risk Mgmt."],
             ].map(([n, l]) => (
               <div key={l} className="border-l-2 border-gold pl-4">
                 <div className="font-display text-3xl font-bold">{n}</div>
