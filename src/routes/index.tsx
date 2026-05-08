@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import heroImg from "@/assets/hero-campus.jpg";
-import tradingImg from "@/assets/trading.jpg";
+import tradingImg from "@/assets/nyc-skyline.jpg";
 import { ArrowRight, TrendingUp, Users, Award, BarChart3 } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -59,9 +59,9 @@ function Index() {
       <section className="border-y border-border bg-secondary/40">
         <div className="container-prose grid grid-cols-2 gap-8 py-16 md:grid-cols-4">
           {[
-            { v: "$3.2M+", l: "Assets Under Management" },
-            { v: "60+", l: "Active Analysts" },
-            { v: "15", l: "Years of Performance" },
+            { v: "$600K", l: "Assets Under Management" },
+            { v: "55+", l: "Active Analysts" },
+            { v: "20+", l: "Years of Performance" },
             { v: "11", l: "Sector Coverage Teams" },
           ].map((s) => (
             <div key={s.l} className="text-center md:text-left">
@@ -90,14 +90,14 @@ function Index() {
           <div className="relative">
             <img
               src={tradingImg}
-              alt="Trading floor"
+              alt="New York City skyline"
               loading="lazy"
               width={1600}
-              height={1024}
+              height={1216}
               className="aspect-[4/3] w-full object-cover shadow-elegant"
             />
             <div className="absolute -bottom-6 -left-6 hidden bg-gold p-6 shadow-gold md:block">
-              <div className="font-display text-3xl font-bold text-ink">15Y</div>
+              <div className="font-display text-3xl font-bold text-ink">20Y+</div>
               <div className="text-xs uppercase tracking-wider text-ink/70">Track record</div>
             </div>
           </div>
@@ -134,12 +134,14 @@ function Index() {
         <p className="mx-auto mt-6 max-w-xl text-lg text-muted-foreground">
           Applications open each fall and spring semester. We're looking for curious, rigorous students from every college at Purdue.
         </p>
-        <Link
-          to="/contact"
+        <a
+          href="https://purdue.ca1.qualtrics.com/jfe/form/SV_1G5FfwJUc1cGJ2m"
+          target="_blank"
+          rel="noopener noreferrer"
           className="mt-10 inline-flex items-center gap-2 bg-ink px-8 py-4 text-sm font-semibold text-background transition hover:bg-ink/90"
         >
           Apply to Join <ArrowRight className="h-4 w-4" />
-        </Link>
+        </a>
       </section>
     </>
   );
