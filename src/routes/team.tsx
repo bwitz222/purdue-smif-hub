@@ -60,7 +60,7 @@ function Team() {
         <SectionHeader
           kicker="Leadership"
           title="Executive Board"
-          blurb="Seven senior students elected each spring to lead the fund's strategy, research, risk, recruiting, education, and operations."
+          blurb="Seven senior students elected each spring to lead the fund's strategy, research, risk, recruiting, education, and operations. Board members also serve as sector leads or senior analysts on the teams below."
         />
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {board.map((m) => <MemberCard key={m.name} m={m} />)}
