@@ -1,9 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { FileText, Upload, Download, Trash2, Loader2 } from "lucide-react";
+import { FileText, Upload, Download, Trash2, Loader2, ExternalLink, Rss } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+
+const SUBSTACK_URL = "https://purduesmif.substack.com";
 
 export const Route = createFileRoute("/publications")({
   component: Publications,
@@ -68,6 +70,15 @@ function Publications() {
           <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
             Browse equity research, semester performance reviews, and annual reports authored by SMIF members.
           </p>
+          <a
+            href={SUBSTACK_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="mt-8 inline-flex items-center gap-2 border border-ink bg-ink px-5 py-2.5 text-sm font-semibold text-background transition hover:bg-ink/90"
+          >
+            <Rss className="h-4 w-4" /> Read us on Substack
+            <ExternalLink className="h-3.5 w-3.5 opacity-70" />
+          </a>
         </div>
       </section>
 
