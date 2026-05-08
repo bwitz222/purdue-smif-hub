@@ -23,11 +23,7 @@ function SectionHeader({ kicker, title, blurb }: { kicker: string; title: string
 }
 
 function Team() {
-  const totalMembers =
-    board.length +
-    sectorTeams.reduce((acc, t) => acc + t.members.length, 0) +
-    fixedIncomeMacro.length +
-    portfolioManagers.length;
+  const totalMembers = 52;
 
   return (
     <>
@@ -38,9 +34,10 @@ function Team() {
             The people behind the portfolio.
           </h1>
           <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
-            {totalMembers} students. One executive board, eight sector teams, a dedicated
-            Fixed Income & Macro group, and a Portfolio Management team — all working
-            together to manage real capital for Purdue.
+            {totalMembers} students. Executive board members also serve as sector leads
+            or senior analysts across the eight sector teams, the Fixed Income & Macro
+            group, and the Portfolio + Risk Management team — all working together to
+            manage real capital for Purdue.
           </p>
           <div className="mt-10 grid grid-cols-2 gap-6 md:grid-cols-4 max-w-3xl">
             {[
