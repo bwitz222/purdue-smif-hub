@@ -12,7 +12,7 @@ import {
   ReferenceLine,
 } from "recharts";
 
-export const Route = createFileRoute("/performance")({
+export const Route = createFileRoute("/holdings/performance")({
   component: Performance,
   head: () => ({
     meta: [
