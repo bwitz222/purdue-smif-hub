@@ -25,10 +25,10 @@ const make = (
 
 export const sectorTeams = [
   {
-    name: "Technology",
+    name: "Information Technology",
     description: "Software, semiconductors, hardware, and IT services across mega-caps and emerging growth.",
-    members: make("Technology", [
-      ["Daniel Park", "Sector Head — Technology", "Senior · Computer Science"],
+    members: make("Information Technology", [
+      ["Daniel Park", "Sector Head — IT", "Senior · Computer Science"],
       ["Ria Krishnan", "Senior Analyst", "Junior · Finance"],
       ["Sam O'Connor", "Analyst", "Sophomore · Economics"],
       ["Maya Thompson", "Analyst", "Sophomore · Finance"],
@@ -36,10 +36,10 @@ export const sectorTeams = [
     ]),
   },
   {
-    name: "Health Care",
-    description: "Pharma, biotech, med-tech, and managed care — anchored in scientific and regulatory rigor.",
-    members: make("Health Care", [
-      ["Olivia Bennett", "Sector Head — Health Care", "Senior · Biology & Finance"],
+    name: "Healthcare & Utilities",
+    description: "Pharma, biotech, med-tech, managed care, and regulated utilities.",
+    members: make("Healthcare & Utilities", [
+      ["Olivia Bennett", "Sector Head — Healthcare & Utilities", "Senior · Biology & Finance"],
       ["Nikhil Rao", "Senior Analyst", "Junior · Finance"],
       ["Hannah Wu", "Analyst", "Sophomore · Pharmacy"],
       ["Caleb Foster", "Analyst", "Junior · Economics"],
@@ -58,14 +58,25 @@ export const sectorTeams = [
     ]),
   },
   {
-    name: "Consumer",
-    description: "Combined coverage of Consumer Discretionary and Consumer Staples names.",
-    members: make("Consumer", [
-      ["Isabella Ross", "Sector Head — Consumer", "Senior · Marketing & Finance"],
+    name: "Consumer Discretionary",
+    description: "Retail, autos, leisure, apparel, and other cyclical consumer names.",
+    members: make("Consumer Discretionary", [
+      ["Isabella Ross", "Sector Head — Consumer Discretionary", "Senior · Marketing & Finance"],
       ["Aiden Sharma", "Senior Analyst", "Junior · Finance"],
       ["Zoë Carter", "Analyst", "Sophomore · Economics"],
       ["Mateo Alvarez", "Analyst", "Sophomore · Finance"],
       ["Chloe Davies", "Analyst", "Junior · Supply Chain"],
+    ]),
+  },
+  {
+    name: "Consumer Staples",
+    description: "Food, beverage, household products, and other defensive consumer names.",
+    members: make("Consumer Staples", [
+      ["Madison Clarke", "Sector Head — Consumer Staples", "Senior · Finance"],
+      ["Ravi Iyer", "Senior Analyst", "Junior · Economics"],
+      ["Ella Berg", "Analyst", "Sophomore · Finance"],
+      ["Tomás Rivera", "Analyst", "Sophomore · Supply Chain"],
+      ["Hana Suzuki", "Analyst", "Junior · Marketing"],
     ]),
   },
   {
@@ -80,25 +91,14 @@ export const sectorTeams = [
     ]),
   },
   {
-    name: "Energy & Utilities",
-    description: "Integrated energy, E&P, midstream, refiners, regulated utilities, and renewables.",
-    members: make("Energy & Utilities", [
-      ["Henry Whitfield", "Sector Head — Energy & Utilities", "Senior · Chemical Engineering"],
+    name: "Energy & Real Estate",
+    description: "Integrated energy, E&P, midstream, refiners, and listed real estate (REITs).",
+    members: make("Energy & Real Estate", [
+      ["Henry Whitfield", "Sector Head — Energy & Real Estate", "Senior · Chemical Engineering"],
       ["Amara Okafor", "Senior Analyst", "Junior · Economics"],
       ["Liam Garrett", "Analyst", "Sophomore · Finance"],
       ["Yara Haddad", "Analyst", "Junior · Industrial Engineering"],
-      ["Theo Larsen", "Analyst", "Sophomore · Finance"],
-    ]),
-  },
-  {
-    name: "Materials & Real Estate",
-    description: "Chemicals, metals & mining, construction materials, and listed real estate (REITs).",
-    members: make("Materials & Real Estate", [
-      ["Charlotte Hayes", "Sector Head — Materials & RE", "Senior · Finance"],
-      ["Rohan Mehta", "Senior Analyst", "Junior · Civil Engineering"],
-      ["Emma Sinclair", "Analyst", "Sophomore · Finance"],
-      ["Jaylen Carter", "Analyst", "Junior · Real Estate"],
-      ["Aria Petrov", "Analyst", "Sophomore · Economics"],
+      ["Theo Larsen", "Analyst", "Sophomore · Real Estate"],
     ]),
   },
   {
@@ -123,11 +123,11 @@ export const fixedIncomeMacro: Member[] = make("Fixed Income & Macro", [
   ["Sienna Walsh", "Analyst — Credit", "Sophomore · Finance"],
 ]);
 
-export const portfolioManagers: Member[] = make("Portfolio Management", [
+export const portfolioManagers: Member[] = make("Portfolio + Risk Management", [
   ["Logan Pierce", "Lead Portfolio Manager", "Senior · Finance"],
   ["Isabel Moreno", "Portfolio Manager", "Senior · Quantitative Finance"],
   ["Connor Bishop", "Portfolio Manager — Risk", "Senior · Industrial Engineering"],
   ["Priscilla Adeyemi", "Portfolio Manager — Performance", "Junior · Finance"],
   ["Nathan Cole", "Portfolio Manager — Trading", "Junior · Economics"],
-  ["Mira Saleh", "Portfolio Manager — ESG", "Junior · Finance"],
+  ["Mira Saleh", "Risk Analyst", "Junior · Finance"],
 ]);

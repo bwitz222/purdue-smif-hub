@@ -47,7 +47,7 @@ function Team() {
               ["7", "Executive Board"],
               ["8", "Sector Teams"],
               ["1", "Fixed Income & Macro"],
-              ["1", "Portfolio Mgmt."],
+              ["1", "Portfolio + Risk Mgmt."],
             ].map(([n, l]) => (
               <div key={l} className="border-l-2 border-gold pl-4">
                 <div className="font-display text-3xl font-bold">{n}</div>
@@ -76,7 +76,7 @@ function Team() {
           <SectionHeader
             kicker="Equity Research"
             title="Sector Teams"
-            blurb="Eight teams cover the full GICS-aligned equity universe. Each team is led by a Sector Head with senior analysts and rotating junior analysts."
+            blurb="Eight teams cover the equity universe. Each team is led by a Sector Head with senior analysts and rotating junior analysts."
           />
           <div className="space-y-16">
             {sectorTeams.map((team) => (
@@ -115,8 +115,8 @@ function Team() {
       <section className="border-t border-border bg-secondary/30 py-24">
         <div className="container-prose">
           <SectionHeader
-            kicker="Portfolio Management"
-            title="Portfolio Managers"
+            kicker="Portfolio + Risk Management"
+            title="Portfolio + Risk Management"
             blurb="Implement allocation decisions, monitor portfolio risk, manage trading and rebalancing, and own performance attribution."
           />
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
