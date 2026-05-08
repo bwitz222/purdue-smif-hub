@@ -29,7 +29,7 @@ function About() {
             Founded at the Daniels School of Business, the Purdue Student Managed Investment Fund began as a small group of finance students with a single conviction: that the best way to learn investing is to invest. From an initial capital allocation, the fund has grown to manage millions in real assets on behalf of the university.
           </p>
           <p>
-            Today, SMIF stands as one of the most selective and respected student organizations on campus, with alumni at firms including Goldman Sachs, Morgan Stanley, BlackRock, Citadel, and Point72.
+            Today, SMIF stands as one of the most selective and respected student organizations on campus, with members placing at firms like Morgan Stanley, Barclays, BMO Capital Markets, Wells Fargo, and Big 4 accounting firms.
           </p>
         </div>
       </section>
