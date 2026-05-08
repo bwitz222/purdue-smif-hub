@@ -60,9 +60,9 @@ function Index() {
         <div className="container-prose grid grid-cols-2 gap-8 py-16 md:grid-cols-4">
           {[
             { v: "$600K", l: "Assets Under Management" },
-            { v: "55+", l: "Active Analysts" },
+            { v: "50+", l: "Active Members" },
             { v: "20+", l: "Years of Performance" },
-            { v: "11", l: "Sector Coverage Teams" },
+            { v: "10", l: "Coverage Teams" },
           ].map((s) => (
             <div key={s.l} className="text-center md:text-left">
               <div className="font-display text-4xl font-bold text-ink md:text-5xl">{s.v}</div>
