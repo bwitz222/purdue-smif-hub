@@ -60,9 +60,9 @@ function Index() {
         <div className="container-prose grid grid-cols-2 gap-8 py-16 md:grid-cols-4">
           {[
             { v: "$600K", l: "Assets Under Management" },
-            { v: "55+", l: "Active Analysts" },
+            { v: "50+", l: "Active Members" },
             { v: "20+", l: "Years of Performance" },
-            { v: "11", l: "Sector Coverage Teams" },
+            { v: "10", l: "Coverage Teams" },
           ].map((s) => (
             <div key={s.l} className="text-center md:text-left">
               <div className="font-display text-4xl font-bold text-ink md:text-5xl">{s.v}</div>
@@ -113,7 +113,7 @@ function Index() {
           </div>
           <div className="mt-16 grid gap-px bg-background/10 md:grid-cols-3">
             {[
-              { Icon: BarChart3, t: "Investment Research", d: "Bottom-up fundamental analysis across 11 GICS sectors. Pitches defended before the full investment committee." },
+              { Icon: BarChart3, t: "Investment Research", d: "Bottom-up fundamental analysis across our equity sector teams. Pitches defended before the full investment committee." },
               { Icon: Users, t: "Mentorship & Recruiting", d: "Direct access to alumni at top investment banks, hedge funds, and asset managers — and the prep to land those seats." },
               { Icon: Award, t: "Real Portfolio", d: "Students vote on every position. Performance is benchmarked against the S&P 500 and reported quarterly." },
             ].map(({ Icon, t, d }) => (
