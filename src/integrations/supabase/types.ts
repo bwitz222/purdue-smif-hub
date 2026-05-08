@@ -47,6 +47,42 @@ export type Database = {
         }
         Relationships: []
       }
+      publications: {
+        Row: {
+          category: Database["public"]["Enums"]["publication_category"]
+          created_at: string
+          description: string | null
+          file_name: string
+          file_path: string
+          file_size: number | null
+          id: string
+          mime_type: string | null
+          title: string
+        }
+        Insert: {
+          category: Database["public"]["Enums"]["publication_category"]
+          created_at?: string
+          description?: string | null
+          file_name: string
+          file_path: string
+          file_size?: number | null
+          id?: string
+          mime_type?: string | null
+          title: string
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["publication_category"]
+          created_at?: string
+          description?: string | null
+          file_name?: string
+          file_path?: string
+          file_size?: number | null
+          id?: string
+          mime_type?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -55,7 +91,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      publication_category: "equity_research" | "semester" | "annual"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -182,6 +218,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      publication_category: ["equity_research", "semester", "annual"],
+    },
   },
 } as const
