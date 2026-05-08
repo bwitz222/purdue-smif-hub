@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { Mail, Linkedin } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 export interface Member {
   name: string;
@@ -10,15 +12,45 @@ export interface Member {
   photo?: string;
 }
 
+export const memberSlug = (name: string) =>
+  name
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+
 export function MemberCard({ m }: { m: Member }) {
   const initials = m.name.split(" ").map((p) => p[0]).slice(0, 2).join("");
   const email = m.email ?? `${m.name.toLowerCase().replace(/[^a-z]+/g, "")}@purdue.edu`;
+
+  // Auto-resolve a headshot from the public storage bucket by slug.
+  // Tries .jpg first; on error, falls back to .png, then to initials.
+  const slug = memberSlug(m.name);
+  const jpg = supabase.storage.from("team-headshots").getPublicUrl(`${slug}.jpg`).data.publicUrl;
+  const png = supabase.storage.from("team-headshots").getPublicUrl(`${slug}.png`).data.publicUrl;
+  const initialSrc = m.photo ?? jpg;
+  const [src, setSrc] = useState<string | null>(initialSrc);
+  const [triedPng, setTriedPng] = useState(false);
+
   return (
     <div className="group flex flex-col border border-border bg-card p-6 transition hover:border-gold hover:shadow-elegant">
       <div className="flex items-start gap-4">
         <div className="grid h-16 w-16 flex-shrink-0 place-items-center overflow-hidden bg-gradient-gold">
-          {m.photo ? (
-            <img src={m.photo} alt={`${m.name} headshot`} className="h-full w-full object-cover" />
+          {src ? (
+            <img
+              src={src}
+              alt={`${m.name} headshot`}
+              className="h-full w-full object-cover"
+              onError={() => {
+                if (!m.photo && !triedPng) {
+                  setTriedPng(true);
+                  setSrc(png);
+                } else {
+                  setSrc(null);
+                }
+              }}
+            />
           ) : (
             <span className="font-display text-xl font-bold text-ink/40">{initials}</span>
           )}
