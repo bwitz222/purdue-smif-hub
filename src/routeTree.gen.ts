@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TeamRouteImport } from './routes/team'
 import { Route as SectorsRouteImport } from './routes/sectors'
 import { Route as PerformanceRouteImport } from './routes/performance'
+import { Route as HoldingsRouteImport } from './routes/holdings'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
@@ -29,6 +30,11 @@ const SectorsRoute = SectorsRouteImport.update({
 const PerformanceRoute = PerformanceRouteImport.update({
   id: '/performance',
   path: '/performance',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HoldingsRoute = HoldingsRouteImport.update({
+  id: '/holdings',
+  path: '/holdings',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -51,6 +57,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
+  '/holdings': typeof HoldingsRoute
   '/performance': typeof PerformanceRoute
   '/sectors': typeof SectorsRoute
   '/team': typeof TeamRoute
@@ -59,6 +66,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
+  '/holdings': typeof HoldingsRoute
   '/performance': typeof PerformanceRoute
   '/sectors': typeof SectorsRoute
   '/team': typeof TeamRoute
@@ -68,20 +76,36 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
+  '/holdings': typeof HoldingsRoute
   '/performance': typeof PerformanceRoute
   '/sectors': typeof SectorsRoute
   '/team': typeof TeamRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/contact' | '/performance' | '/sectors' | '/team'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/contact'
+    | '/holdings'
+    | '/performance'
+    | '/sectors'
+    | '/team'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/contact' | '/performance' | '/sectors' | '/team'
+  to:
+    | '/'
+    | '/about'
+    | '/contact'
+    | '/holdings'
+    | '/performance'
+    | '/sectors'
+    | '/team'
   id:
     | '__root__'
     | '/'
     | '/about'
     | '/contact'
+    | '/holdings'
     | '/performance'
     | '/sectors'
     | '/team'
@@ -91,6 +115,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   ContactRoute: typeof ContactRoute
+  HoldingsRoute: typeof HoldingsRoute
   PerformanceRoute: typeof PerformanceRoute
   SectorsRoute: typeof SectorsRoute
   TeamRoute: typeof TeamRoute
@@ -117,6 +142,13 @@ declare module '@tanstack/react-router' {
       path: '/performance'
       fullPath: '/performance'
       preLoaderRoute: typeof PerformanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/holdings': {
+      id: '/holdings'
+      path: '/holdings'
+      fullPath: '/holdings'
+      preLoaderRoute: typeof HoldingsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -147,6 +179,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   ContactRoute: ContactRoute,
+  HoldingsRoute: HoldingsRoute,
   PerformanceRoute: PerformanceRoute,
   SectorsRoute: SectorsRoute,
   TeamRoute: TeamRoute,
