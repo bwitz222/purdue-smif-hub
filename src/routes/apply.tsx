@@ -1,5 +1,52 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { CheckCircle2, ArrowRight } from "lucide-react";
+import { useEffect, useState } from "react";
+
+const DEADLINE = new Date("2026-09-04T23:59:00-04:00").getTime();
+
+function useCountdown() {
+  const [now, setNow] = useState<number | null>(null);
+  useEffect(() => {
+    setNow(Date.now());
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, []);
+  if (now === null) return null;
+  const diff = Math.max(0, DEADLINE - now);
+  const days = Math.floor(diff / 86_400_000);
+  const hours = Math.floor((diff % 86_400_000) / 3_600_000);
+  const minutes = Math.floor((diff % 3_600_000) / 60_000);
+  const seconds = Math.floor((diff % 60_000) / 1000);
+  return { days, hours, minutes, seconds, expired: diff === 0 };
+}
+
+function CountdownUnit({ value, label }: { value: number | string; label: string }) {
+  return (
+    <div className="flex flex-col items-center border border-gold/30 bg-ink/40 px-4 py-3 min-w-[72px]">
+      <span className="font-display text-3xl font-bold text-gold tabular-nums md:text-4xl">{value}</span>
+      <span className="mt-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-background/60">{label}</span>
+    </div>
+  );
+}
+
+function Countdown() {
+  const c = useCountdown();
+  const pad = (n: number) => n.toString().padStart(2, "0");
+  return (
+    <div className="mt-10 border border-gold/30 bg-ink p-6 text-background md:p-8">
+      <div className="text-xs font-semibold uppercase tracking-[0.3em] text-gold">
+        {c?.expired ? "Applications Closed" : "Deadline Countdown"}
+      </div>
+      <div className="mt-1 text-sm text-background/60">September 4th, 2026 · 11:59pm EST</div>
+      <div className="mt-5 flex flex-wrap gap-3">
+        <CountdownUnit value={c ? c.days : "—"} label="Days" />
+        <CountdownUnit value={c ? pad(c.hours) : "—"} label="Hours" />
+        <CountdownUnit value={c ? pad(c.minutes) : "—"} label="Minutes" />
+        <CountdownUnit value={c ? pad(c.seconds) : "—"} label="Seconds" />
+      </div>
+    </div>
+  );
+}
 
 const APPLICATION_URL = "https://purdue.ca1.qualtrics.com/jfe/form/SV_1G5FfwJUc1cGJ2m";
 
@@ -49,6 +96,8 @@ function Apply() {
             Apply Now <ArrowRight className="h-4 w-4" />
           </a>
         </div>
+
+        <Countdown />
 
         <div className="mt-10 border-t border-border pt-10 text-muted-foreground max-w-3xl">
           We want to get to know you and give you the opportunity to get to know us.
