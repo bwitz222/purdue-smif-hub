@@ -28,17 +28,7 @@ function Index() {
         <div className="absolute inset-0 bg-gradient-hero" />
         <div className="relative container-prose flex min-h-[88vh] flex-col justify-center py-24 text-background">
           <div className="max-w-3xl">
-            <a
-              href="https://purdue.ca1.qualtrics.com/jfe/form/SV_1G5FfwJUc1cGJ2m"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 border border-gold/60 bg-gold/15 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-gold backdrop-blur-sm transition hover:bg-gold/25"
-            >
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-gold" />
-              Our application is open · Deadline 9/4/26
-              <ArrowRight className="h-3.5 w-3.5" />
-            </a>
-            <span className="mt-6 block text-xs font-semibold uppercase tracking-[0.3em] text-gold">
+            <span className="inline-block text-xs font-semibold uppercase tracking-[0.3em] text-gold">
               Daniels School of Business · Est. 2009
             </span>
             <h1 className="mt-6 font-display text-5xl font-bold leading-[1.05] md:text-7xl">
