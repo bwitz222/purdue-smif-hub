@@ -170,10 +170,9 @@ function HoldingsPage() {
       </section>
 
       <section className="container-prose py-16">
-        <div className="grid gap-6 md:grid-cols-4 mb-12">
+        <div className="grid gap-6 md:grid-cols-3 mb-12">
           {[
             { l: "Portfolio Value", v: fmtUSD(portfolioSummary.portfolioValue, { maximumFractionDigits: 0 }) },
-            { l: "Invested Capital", v: fmtUSD(portfolioSummary.investedCapital, { maximumFractionDigits: 0 }) },
             { l: "Cash Holdings", v: fmtUSD(portfolioSummary.cashHoldings, { maximumFractionDigits: 0 }) },
             { l: "Total Return", v: fmtPct(portfolioSummary.totalReturnPct) },
           ].map((k) => (
