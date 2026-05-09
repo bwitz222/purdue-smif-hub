@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, ArrowRight } from "lucide-react";
+
+const APPLICATION_URL = "https://purdue.ca1.qualtrics.com/jfe/form/SV_1G5FfwJUc1cGJ2m";
 
 export const Route = createFileRoute("/apply")({
   component: Apply,
@@ -30,12 +32,22 @@ function Apply() {
 
       {/* Status banner */}
       <section className="container-prose py-16">
-        <div className="flex items-start gap-4 border border-gold/40 bg-gold/10 p-6">
-          <CheckCircle2 className="h-6 w-6 flex-shrink-0 text-gold-deep mt-0.5" />
-          <div>
-            <div className="font-display text-xl font-bold">Our application is open!</div>
-            <div className="mt-1 text-muted-foreground">Deadline: 9/4/26</div>
+        <div className="flex flex-wrap items-center justify-between gap-4 border border-gold/40 bg-gold/10 p-6">
+          <div className="flex items-start gap-4">
+            <CheckCircle2 className="h-6 w-6 flex-shrink-0 text-gold-deep mt-0.5" />
+            <div>
+              <div className="font-display text-xl font-bold">Our application is open!</div>
+              <div className="mt-1 text-muted-foreground">Deadline: 9/4/26</div>
+            </div>
           </div>
+          <a
+            href={APPLICATION_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-ink px-6 py-3 text-sm font-semibold text-background transition hover:bg-ink/90"
+          >
+            Apply Now <ArrowRight className="h-4 w-4" />
+          </a>
         </div>
 
         <div className="mt-10 border-t border-border pt-10 text-muted-foreground max-w-3xl">
