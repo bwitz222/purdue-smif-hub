@@ -72,7 +72,7 @@ function Apply() {
           <h2 className="font-display text-2xl font-bold">Recruiting Timeline</h2>
           <ul className="mt-4 space-y-2 text-muted-foreground">
             <li>
-              <span className="font-semibold text-foreground">Application Opens:</span> January 7th at 5:00pm EST
+              <span className="font-semibold text-foreground">Application Opened:</span> May 20th at 5:00pm EST
             </li>
             <li>
               <span className="font-semibold text-foreground">Application Closes:</span> September 4th, 2026 at 11:59pm EST
