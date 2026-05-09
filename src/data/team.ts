@@ -1,13 +1,13 @@
 import type { Member } from "@/components/MemberCard";
 
 export const board: Member[] = [
-  { name: "Aaron Mitchell", role: "President", year: "Senior · Finance", bio: "Leads the fund's strategic direction and oversees executive operations. Previously interned in equity research at a bulge-bracket bank." },
-  { name: "Priya Shah", role: "Chief Investment Officer", year: "Senior · Quantitative Finance", bio: "Drives portfolio strategy and final investment decisions across all sectors. Focused on factor-based and quantitative approaches." },
-  { name: "Marcus Chen", role: "VP, Research", year: "Junior · Economics", bio: "Coordinates fundamental research processes and pitch quality across the eight sector teams." },
-  { name: "Elena Rodríguez", role: "VP, Risk Management", year: "Senior · Industrial Engineering", bio: "Owns portfolio risk monitoring, factor exposure analysis, and the fund's drawdown framework." },
-  { name: "Tyler Brooks", role: "VP, Recruiting", year: "Junior · Finance", bio: "Manages the analyst recruitment pipeline, interviews, and onboarding for new members each semester." },
-  { name: "Anjali Patel", role: "Treasurer", year: "Junior · Accounting", bio: "Oversees fund accounting, cash management, and reporting to the Daniels School and university stakeholders." },
-  { name: "Jordan Williams", role: "VP, Education", year: "Senior · Finance & Computer Science", bio: "Designs the analyst training curriculum, including modeling bootcamps and weekly research workshops." },
+  { name: "Andrew Lacambra", role: "Co-President", year: "Class of 2027", email: "alacambr@purdue.edu", bio: "Co-leads the fund's strategic direction and executive operations alongside the other Co-President." },
+  { name: "Ian Teh", role: "Co-President", year: "Class of 2027", email: "iteh@purdue.edu", bio: "Co-leads the fund's strategic direction and executive operations alongside the other Co-President." },
+  { name: "Hunter Specht", role: "Co-CIO", year: "Class of 2027", email: "hspecht@purdue.edu", bio: "Drives portfolio strategy and final investment decisions across all sectors." },
+  { name: "Sandhya Gopinath", role: "Co-CIO", year: "Class of 2028", email: "gopinas@purdue.edu", bio: "Drives portfolio strategy and final investment decisions across all sectors." },
+  { name: "Keren Wadhwani", role: "Treasurer and Director of Fundraising", year: "Class of 2028", email: "kwadhwan@purdue.edu", bio: "Oversees fund accounting, cash management, and leads fundraising efforts for the organization." },
+  { name: "Chris Andreou", role: "Director of Talent and Operations", year: "Class of 2028", email: "andreou@purdue.edu", bio: "Manages recruiting, onboarding, and day-to-day operations across the fund." },
+  { name: "Shaheera Ali", role: "Director of Marketing and Outreach", year: "Class of 2028", email: "ali251@purdue.edu", bio: "Leads marketing, branding, and external outreach for the fund." },
 ];
 
 type Entry = [name: string, role: string, email?: string, gradYear?: string];
