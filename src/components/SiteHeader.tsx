@@ -4,13 +4,16 @@ import { Menu, X, ChevronDown } from "lucide-react";
 import smifLogo from "@/assets/smif-logo.png";
 
 type NavLink = {
-  to: "/" | "/about" | "/team" | "/sectors" | "/holdings" | "/performance" | "/publications" | "/contact";
+  to: "/" | "/about" | "/apply" | "/team" | "/sectors" | "/holdings" | "/performance" | "/publications" | "/contact";
   label: string;
 };
 
 const links: { primary: NavLink; children?: NavLink[] }[] = [
   { primary: { to: "/", label: "Home" } },
-  { primary: { to: "/about", label: "About" } },
+  {
+    primary: { to: "/about", label: "About" },
+    children: [{ to: "/apply", label: "Apply" }],
+  },
   { primary: { to: "/team", label: "Team" } },
   { primary: { to: "/sectors", label: "Sectors" } },
   {
