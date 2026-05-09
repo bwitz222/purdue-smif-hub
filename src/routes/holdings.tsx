@@ -137,10 +137,19 @@ function HoldingsPage() {
   ];
 
   const sectorBreakdown = useMemo(() => {
+    const investedValue = holdings.reduce((s, h) => s + h.value, 0);
     const map = new Map<string, number>();
-    holdings.forEach((h) => map.set(h.industry, (map.get(h.industry) || 0) + h.allocation));
-    return Array.from(map.entries()).sort((a, b) => b[1] - a[1]);
+    holdings.forEach((h) => map.set(h.industry, (map.get(h.industry) || 0) + h.value));
+    const entries = Array.from(map.entries()).map(
+      ([s, v]) => [s, investedValue > 0 ? (v / investedValue) * 100 : 0] as [string, number],
+    );
+    return entries.sort((a, b) => b[1] - a[1]);
   }, [holdings]);
+
+  const maxSectorPct = useMemo(
+    () => sectorBreakdown.reduce((m, [, p]) => Math.max(m, p), 0),
+    [sectorBreakdown],
+  );
 
   return (
     <>
@@ -188,7 +197,7 @@ function HoldingsPage() {
                   <div className="flex-1 h-2 bg-secondary">
                     <div
                       className="h-full bg-gradient-gold"
-                      style={{ width: `${Math.min(100, (pct / 50) * 100)}%` }}
+                      style={{ width: `${maxSectorPct > 0 ? (pct / maxSectorPct) * 100 : 0}%` }}
                     />
                   </div>
                   <span className="w-14 text-right font-mono text-xs text-muted-foreground">
