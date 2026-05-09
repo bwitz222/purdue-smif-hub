@@ -15,6 +15,7 @@ import { Route as PublicationsRouteImport } from './routes/publications'
 import { Route as PerformanceRouteImport } from './routes/performance'
 import { Route as HoldingsRouteImport } from './routes/holdings'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as ApplyRouteImport } from './routes/apply'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 
@@ -48,6 +49,11 @@ const ContactRoute = ContactRouteImport.update({
   path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApplyRoute = ApplyRouteImport.update({
+  id: '/apply',
+  path: '/apply',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
@@ -62,6 +68,7 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/apply': typeof ApplyRoute
   '/contact': typeof ContactRoute
   '/holdings': typeof HoldingsRoute
   '/performance': typeof PerformanceRoute
@@ -72,6 +79,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/apply': typeof ApplyRoute
   '/contact': typeof ContactRoute
   '/holdings': typeof HoldingsRoute
   '/performance': typeof PerformanceRoute
@@ -83,6 +91,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/apply': typeof ApplyRoute
   '/contact': typeof ContactRoute
   '/holdings': typeof HoldingsRoute
   '/performance': typeof PerformanceRoute
@@ -95,6 +104,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/apply'
     | '/contact'
     | '/holdings'
     | '/performance'
@@ -105,6 +115,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/apply'
     | '/contact'
     | '/holdings'
     | '/performance'
@@ -115,6 +126,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/about'
+    | '/apply'
     | '/contact'
     | '/holdings'
     | '/performance'
@@ -126,6 +138,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  ApplyRoute: typeof ApplyRoute
   ContactRoute: typeof ContactRoute
   HoldingsRoute: typeof HoldingsRoute
   PerformanceRoute: typeof PerformanceRoute
@@ -178,6 +191,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/apply': {
+      id: '/apply'
+      path: '/apply'
+      fullPath: '/apply'
+      preLoaderRoute: typeof ApplyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/about': {
       id: '/about'
       path: '/about'
@@ -198,6 +218,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  ApplyRoute: ApplyRoute,
   ContactRoute: ContactRoute,
   HoldingsRoute: HoldingsRoute,
   PerformanceRoute: PerformanceRoute,
