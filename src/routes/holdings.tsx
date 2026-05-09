@@ -59,9 +59,10 @@ function HoldingsPage() {
     const investedValue = updated.reduce((s, r) => s + r.value, 0);
     const totalDayGain = updated.reduce((s, r) => s + r.dayGain, 0);
     const portfolioValue = investedValue + baseSummary.cashHoldings;
-    const investedCapital = updated.reduce((s, r) => s + r.costBasis, 0);
-    const totalReturn = investedValue - investedCapital;
-    const totalReturnPct = investedCapital > 0 ? (totalReturn / investedCapital) * 100 : 0;
+    const costBasisTotal = updated.reduce((s, r) => s + r.costBasis, 0);
+    const investedCapital = portfolioValue - baseSummary.cashHoldings;
+    const totalReturn = investedValue - costBasisTotal;
+    const totalReturnPct = costBasisTotal > 0 ? (totalReturn / costBasisTotal) * 100 : 0;
     const totalDayChange = investedValue > 0 ? (totalDayGain / investedValue) * 100 : 0;
     const weightedBeta =
       investedValue > 0
