@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Menu, X, ChevronDown } from "lucide-react";
+import smifLogo from "@/assets/smif-logo.png";
 
 type NavLink = {
   to: "/" | "/about" | "/team" | "/sectors" | "/holdings" | "/performance" | "/publications" | "/contact";
@@ -26,7 +27,7 @@ export function SiteHeader() {
     <header className="sticky top-0 z-50 border-b border-border/60 bg-background/85 backdrop-blur">
       <div className="container-prose flex h-20 items-center justify-between">
         <Link to="/" className="flex items-center gap-3">
-          <span className="grid h-10 w-10 place-items-center bg-ink text-gold font-display text-lg font-bold">P</span>
+          <img src={smifLogo} alt="Purdue SMIF logo" className="h-10 w-10 object-contain" />
           <span className="leading-tight">
             <span className="block font-display text-base font-bold tracking-tight">Purdue SMIF</span>
             <span className="block text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Student Managed Investment Fund</span>
