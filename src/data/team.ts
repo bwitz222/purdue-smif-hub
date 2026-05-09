@@ -33,6 +33,7 @@ export const sectorTeams = [
       ["Parth Dama", "Senior Analyst", ""],
       ["Shaheera Ali", "Analyst", ""],
       ["Landon Haffner", "Analyst", ""],
+      ["", "Analyst", ""],
     ]),
   },
   {
@@ -42,6 +43,8 @@ export const sectorTeams = [
       ["Ayden Wong", "Sector Lead", ""],
       ["Riley Collins", "Senior Analyst", ""],
       ["Karanvir Singh", "Senior Analyst", ""],
+      ["", "Analyst", ""],
+      ["", "Analyst", ""],
     ]),
   },
   {
@@ -50,6 +53,9 @@ export const sectorTeams = [
     members: make("Financials", [
       ["Alex Belanger", "Sector Lead", ""],
       ["Daniel Friedman", "Senior Analyst", ""],
+      ["", "Analyst", ""],
+      ["", "Analyst", ""],
+      ["", "Analyst", ""],
     ]),
   },
   {
@@ -59,6 +65,8 @@ export const sectorTeams = [
       ["Evan Wright", "Sector Lead", ""],
       ["Logan Friedman", "Senior Analyst", ""],
       ["Mikhail Bilokin", "Analyst", ""],
+      ["", "Analyst", ""],
+      ["", "Analyst", ""],
     ]),
   },
   {
@@ -69,22 +77,29 @@ export const sectorTeams = [
       ["Dallas White", "Senior Analyst", ""],
       ["Cooper Weiss", "Senior Analyst", ""],
       ["Augustus Matushek", "Senior Analyst", ""],
+      ["", "Analyst", ""],
     ]),
   },
   {
     name: "Healthcare & Utilities",
     description: "Pharma, biotech, med-tech, managed care, and regulated utilities.",
     members: make("Healthcare & Utilities", [
+      ["", "Sector Lead", ""],
       ["Gautham Santhanam", "Senior Analyst", ""],
       ["Brock Heller", "Senior Analyst", ""],
       ["Sid Voona", "Senior Analyst", ""],
+      ["", "Analyst", ""],
     ]),
   },
   {
     name: "Communications",
     description: "Telecom, media, interactive entertainment, and select platform names.",
     members: make("Communications", [
+      ["", "Sector Lead", ""],
       ["Gabriel Fridman", "Senior Analyst", ""],
+      ["", "Analyst", ""],
+      ["", "Analyst", ""],
+      ["", "Analyst", ""],
     ]),
   },
   {
@@ -95,21 +110,23 @@ export const sectorTeams = [
       ["Alejandro Cabrales", "Senior Analyst", ""],
       ["Arav Ginde", "Senior Analyst", ""],
       ["Veer Sanyal", "Senior Analyst", ""],
+      ["", "Analyst", ""],
     ]),
   },
 ];
 
 export const fixedIncomeMacro: Member[] = make("Fixed Income & Macro", [
-  ["Andrew Lacambra", "Sector Lead", ""],
-  ["Keren Wadhwani", "Senior Analyst", ""],
-  ["Aditya Balaji", "Analyst", ""],
-  ["Balthazar Schmit", "Analyst", ""],
+  ["Andrew Lacambra", "Head — Fixed Income & Macro", ""],
+  ["Keren Wadhwani", "Senior Analyst — Rates", ""],
+  ["Aditya Balaji", "Analyst — Credit", ""],
+  ["Balthazar Schmit", "Analyst — FX & Macro", ""],
 ]);
 
 export const portfolioManagers: Member[] = make("Portfolio + Risk Management", [
-  ["Hunter Specht", "Co-Sector Lead", ""],
-  ["Sandhya Gopinath", "Co-Sector Lead", ""],
-  ["Yashita Pujari", "Senior Analyst", ""],
-  ["Anushka Patel", "Senior Analyst", ""],
-  ["Abhipsa Prajapati", "Analyst", ""],
+  ["Hunter Specht", "Lead Portfolio Manager", ""],
+  ["Sandhya Gopinath", "Portfolio Manager", ""],
+  ["Yashita Pujari", "Portfolio Manager — Risk", ""],
+  ["Anushka Patel", "Portfolio Manager — Performance", ""],
+  ["Abhipsa Prajapati", "Portfolio Manager — Trading", ""],
+  ["", "Risk Analyst", ""],
 ]);
