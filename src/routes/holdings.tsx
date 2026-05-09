@@ -137,10 +137,40 @@ function HoldingsPage() {
     { k: "allocation", label: "Weight", align: "right" },
   ];
 
+  // Underlying sector weights for ETF holdings, used to "look through" the
+  // ETF and attribute its value to the sectors it actually represents.
+  // Source: SPDR S&P 500 ETF (SPY) sector exposures, normalized to 100%.
+  const etfSectorWeights: Record<string, Record<string, number>> = {
+    SPY: {
+      Technology: 33.5,
+      Financials: 13.5,
+      "Consumer Cyclical": 10.5,
+      Healthcare: 10.0,
+      "Communication Services": 9.5,
+      Industrials: 8.5,
+      "Consumer Defensive": 5.5,
+      Energy: 3.0,
+      Utilities: 2.5,
+      "Real Estate": 2.0,
+      Materials: 1.5,
+    },
+  };
+
   const sectorBreakdown = useMemo(() => {
     const investedValue = holdings.reduce((s, h) => s + h.value, 0);
     const map = new Map<string, number>();
-    holdings.forEach((h) => map.set(h.industry, (map.get(h.industry) || 0) + h.value));
+    holdings.forEach((h) => {
+      const weights = etfSectorWeights[h.symbol];
+      if (weights) {
+        const totalWeight = Object.values(weights).reduce((s, w) => s + w, 0);
+        Object.entries(weights).forEach(([sec, w]) => {
+          const attributed = h.value * (w / totalWeight);
+          map.set(sec, (map.get(sec) || 0) + attributed);
+        });
+      } else {
+        map.set(h.industry, (map.get(h.industry) || 0) + h.value);
+      }
+    });
     const entries = Array.from(map.entries()).map(
       ([s, v]) => [s, investedValue > 0 ? (v / investedValue) * 100 : 0] as [string, number],
     );
