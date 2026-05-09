@@ -43,7 +43,7 @@ export const sectorTeams = [
       ["Ayden Wong", "Sector Lead", "wong482@purdue.edu", "2028"],
       ["Riley Collins", "Senior Analyst", "colli571@purdue.edu", "2028"],
       ["Karanvir Singh", "Senior Analyst", "sing2553@purdue.edu", "2028"],
-      ["", "Analyst"],
+      ["Fabian Segura Vargas", "Senior Analyst", "fsegurav@purdue.edu", "2028"],
       ["", "Analyst"],
     ]),
   },
@@ -77,7 +77,7 @@ export const sectorTeams = [
       ["Dallas White", "Senior Analyst", "whit1259@purdue.edu", "2029"],
       ["Cooper Weiss", "Senior Analyst", "weiss109@purdue.edu", "2028"],
       ["Augustus Matushek", "Senior Analyst", "amatush@purdue.edu", "2029"],
-      ["Fabian Segura Vargas", "Analyst", "fsegurav@purdue.edu", "2028"],
+      ["", "Analyst"],
     ]),
   },
   {
@@ -124,7 +124,7 @@ export const fixedIncomeMacro: Member[] = make("Fixed Income & Macro", [
 
 export const portfolioManagers: Member[] = make("Portfolio + Risk Management", [
   ["Hunter Specht", "Lead Portfolio Manager", "hspecht@purdue.edu", "2027"],
-  ["Sandhya Gopinath", "Portfolio Manager", "sgopinat@purdue.edu", "2028"],
+  ["Sandhya Gopinath", "Portfolio Manager", "gopinas@purdue.edu", "2028"],
   ["Yashita Pujari", "Portfolio Manager — Risk", "ypujari@purdue.edu", "2028"],
   ["Anushka Patel", "Portfolio Manager — Performance", "pate3115@purdue.edu", "2029"],
   ["Abhipsa Prajapati", "Portfolio Manager — Trading", "aprajap@purdue.edu", "2029"],
