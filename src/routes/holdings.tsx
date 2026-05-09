@@ -197,7 +197,7 @@ function HoldingsPage() {
                   <div className="flex-1 h-2 bg-secondary">
                     <div
                       className="h-full bg-gradient-gold"
-                      style={{ width: `${Math.min(100, (pct / 50) * 100)}%` }}
+                      style={{ width: `${maxSectorPct > 0 ? (pct / maxSectorPct) * 100 : 0}%` }}
                     />
                   </div>
                   <span className="w-14 text-right font-mono text-xs text-muted-foreground">
