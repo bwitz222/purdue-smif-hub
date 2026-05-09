@@ -15,9 +15,10 @@ const make = (
   members: Array<[string, string, string]>,
 ): Member[] =>
   members.map(([name, role, year], i) => ({
-    name,
+    name: name || "Open Position",
     role,
     year,
+    placeholder: !name,
     bio: i === 0
       ? `Leads the ${team} team, driving sector strategy, idea generation, and final pitch review.`
       : `Covers names within the ${team} mandate. Builds full operating models, valuation, and pitches new ideas to the investment committee.`,
