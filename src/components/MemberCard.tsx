@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Mail, Linkedin } from "lucide-react";
+import { Mail, Linkedin, UserPlus } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 
 export interface Member {
@@ -10,6 +11,7 @@ export interface Member {
   email?: string;
   linkedin?: string;
   photo?: string;
+  placeholder?: boolean;
 }
 
 export const memberSlug = (name: string) =>
