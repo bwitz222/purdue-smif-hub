@@ -159,8 +159,103 @@ function Apply() {
             />
           </div>
         </div>
+
+        {/* Interview Prep */}
+        <div className="mt-16 border-t border-border pt-12">
+          <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">For Applicants</span>
+          <h2 className="mt-3 font-display text-3xl font-bold md:text-4xl">Interview Prep & Helpful Tips</h2>
+          <p className="mt-3 max-w-3xl text-muted-foreground">
+            New to investing or to SMIF? Don't worry — we recruit for curiosity and work ethic first. Use the resources below to walk into your interview prepared and confident.
+          </p>
+
+          <div className="mt-10 grid gap-6 md:grid-cols-2">
+            <PrepCard
+              title="Know SMIF"
+              items={[
+                "Understand our mission: a student-managed equity fund within the Daniels School of Business.",
+                "Be familiar with our sector coverage and recent publications on the site.",
+                "Have a thoughtful answer for: 'Why SMIF?' and 'Why this sector?'",
+              ]}
+            />
+            <PrepCard
+              title="Know the Markets"
+              items={[
+                "Be able to discuss a recent market headline and its implications.",
+                "Know where major indices (S&P 500, Nasdaq, 10Y Treasury) are trading directionally.",
+                "Daily reads: WSJ, Bloomberg, FT, or Axios Markets.",
+              ]}
+            />
+            <PrepCard
+              title="Pitch a Stock"
+              items={[
+                "Prepare one long idea: thesis, catalysts, valuation, and key risks in 2–3 minutes.",
+                "Pick a name you genuinely understand — not the most complex one you can find.",
+                "Be ready for pushback. We want to see how you think, not that you're 'right.'",
+              ]}
+            />
+            <PrepCard
+              title="Technical Foundations"
+              items={[
+                "Review the three financial statements and how they link together.",
+                "Understand basic valuation: DCF intuition, P/E, EV/EBITDA — when each is useful.",
+                "No finance background? Lean into your analytical strengths and willingness to learn.",
+              ]}
+            />
+            <PrepCard
+              title="Behavioral Prep"
+              items={[
+                "Prepare 2–3 stories using the STAR framework (leadership, teamwork, failure).",
+                "Tie your 'why finance' and 'why investing' to specific experiences, not buzzwords.",
+                "Have thoughtful questions ready for your interviewers.",
+              ]}
+            />
+            <PrepCard
+              title="Day-Of Tips"
+              items={[
+                "Business professional dress. Arrive 10 minutes early.",
+                "Bring a printed resume and a notepad.",
+                "Be yourself — we evaluate fit as much as skill.",
+              ]}
+            />
+          </div>
+
+          <div className="mt-10 border border-gold/30 bg-gold/5 p-6">
+            <h3 className="font-display text-lg font-bold">Recommended Reading</h3>
+            <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
+              <li>• <span className="font-medium text-foreground">The Intelligent Investor</span> — Benjamin Graham (foundational value investing)</li>
+              <li>• <span className="font-medium text-foreground">One Up On Wall Street</span> — Peter Lynch (intuitive intro to stock picking)</li>
+              <li>• <span className="font-medium text-foreground">Investment Banking</span> — Rosenbaum & Pearl (valuation reference)</li>
+              <li>• <span className="font-medium text-foreground">Damodaran Online</span> — free valuation resources from NYU Stern</li>
+              <li>• <span className="font-medium text-foreground">Matt Levine's Money Stuff</span> — daily Bloomberg newsletter, sharp and accessible</li>
+            </ul>
+          </div>
+
+          <p className="mt-8 text-sm text-muted-foreground">
+            Have questions? Reach out at{" "}
+            <a href="mailto:smif26@purdue.edu" className="text-gold-deep underline underline-offset-4 hover:text-gold">
+              smif26@purdue.edu
+            </a>
+            .
+          </p>
+        </div>
       </section>
     </>
+  );
+}
+
+function PrepCard({ title, items }: { title: string; items: string[] }) {
+  return (
+    <div className="border border-border bg-card p-6 transition hover:border-gold/40">
+      <h3 className="font-display text-lg font-bold">{title}</h3>
+      <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
+        {items.map((item) => (
+          <li key={item} className="flex gap-2">
+            <span className="mt-2 h-1 w-1 flex-shrink-0 rounded-full bg-gold-deep" />
+            <span>{item}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 
