@@ -97,7 +97,7 @@ function Performance() {
         <div className="container-prose py-28">
           <div className="flex items-center gap-3 mb-8">
             <span className="rule-gold" />
-            <span className="text-[11px] font-semibold uppercase tracking-[0.32em] text-gold/70">
+            <span className="text-xs font-semibold uppercase tracking-[0.32em] text-gold/70">
               Performance
             </span>
           </div>
@@ -123,7 +123,7 @@ function Performance() {
         <div className="grid gap-px bg-border md:grid-cols-3">
           {KPI_STATS.map(({ l, v, pos }) => (
             <div key={l} className="bg-card p-8 flex flex-col gap-1 border border-border">
-              <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">{l}</div>
+              <div className="text-xs uppercase tracking-[0.22em] text-muted-foreground">{l}</div>
               <div className={`font-display text-4xl font-bold mt-1 ${pos ? "text-emerald-600" : "text-destructive"}`}>
                 {v}
               </div>
@@ -135,7 +135,7 @@ function Performance() {
         <div className="border border-border bg-card p-6 md:p-10">
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between mb-8">
             <div>
-              <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground mb-2">Interactive</div>
+              <div className="text-xs uppercase tracking-[0.22em] text-muted-foreground mb-2">Interactive</div>
               <h2 className="font-display text-2xl font-bold text-ink md:text-3xl">
                 {mode === "cumulative" ? "Growth of $1 since 2018" : "Annual returns"}
               </h2>
@@ -147,7 +147,7 @@ function Performance() {
                   <button
                     key={b.k}
                     onClick={() => setMode(b.k)}
-                    className={`px-4 py-2 text-[10px] font-semibold uppercase tracking-wider transition-colors duration-150 cursor-pointer ${
+                    className={`px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-colors duration-150 cursor-pointer ${
                       mode === b.k ? "bg-ink text-background" : "bg-background text-ink hover:bg-secondary"
                     }`}
                   >
@@ -161,7 +161,7 @@ function Performance() {
                   <button
                     key={b.k}
                     onClick={() => setSeries(b.k)}
-                    className={`px-4 py-2 text-[10px] font-semibold uppercase tracking-wider transition-colors duration-150 cursor-pointer ${
+                    className={`px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-colors duration-150 cursor-pointer ${
                       series === b.k ? "bg-gold-deep text-background" : "bg-background text-ink hover:bg-secondary"
                     }`}
                   >
@@ -234,10 +234,10 @@ function Performance() {
           <table className="w-full text-left">
             <thead className="bg-ink text-background">
               <tr>
-                <th className="px-6 py-4 text-[10px] font-semibold uppercase tracking-wider">Year</th>
-                <th className="px-6 py-4 text-[10px] font-semibold uppercase tracking-wider text-right">SMIF</th>
-                <th className="px-6 py-4 text-[10px] font-semibold uppercase tracking-wider text-right">S&P 500 TR</th>
-                <th className="px-6 py-4 text-[10px] font-semibold uppercase tracking-wider text-right">Spread</th>
+                <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider">Year</th>
+                <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-right">SMIF</th>
+                <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-right">S&P 500 TR</th>
+                <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-right">Spread</th>
               </tr>
             </thead>
             <tbody>
