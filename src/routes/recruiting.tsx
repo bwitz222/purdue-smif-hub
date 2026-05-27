@@ -25,6 +25,43 @@ const CALENDAR: Event[] = [
   { iso: "2026-09-09", date: "Tue, Sep 9",  name: "SMIF Interviews – B",       time: "TBD",              location: "Young Hall 223, 217, 219, 213" },
 ];
 
+function toGoogleCalendarLink(event: Event): string {
+  if (event.time === "TBD") return "";
+
+  const date = event.iso.replace(/-/g, "");
+  const parts = event.time.split("–").map((s) => s.trim());
+  if (parts.length !== 2) return "";
+
+  const parseTime = (t: string) => {
+    const match = t.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+    if (!match) return null;
+    let [, hh, mm, mer] = match;
+    let h = parseInt(hh, 10);
+    const m = parseInt(mm, 10);
+    if (mer.toUpperCase() === "PM" && h !== 12) h += 12;
+    if (mer.toUpperCase() === "AM" && h === 12) h = 0;
+    return { h, m };
+  };
+
+  const start = parseTime(parts[0]);
+  const end = parseTime(parts[1]);
+  if (!start || !end) return "";
+
+  const pad = (n: number) => String(n).padStart(2, "0");
+  const startStr = `${date}T${pad(start.h)}${pad(start.m)}00`;
+  const endStr = `${date}T${pad(end.h)}${pad(end.m)}00`;
+
+  const params = new URLSearchParams({
+    action: "TEMPLATE",
+    text: event.name,
+    dates: `${startStr}/${endStr}`,
+    location: event.location,
+    details: `Purdue SMIF recruiting event. See purduesmif.com for more details.`,
+  });
+
+  return `https://calendar.google.com/calendar/render?${params.toString()}`;
+}
+
 export const Route = createFileRoute("/recruiting")({
   component: Recruiting,
   head: () => ({
