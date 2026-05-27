@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowRight, Calendar, MapPin, Clock } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
 
 const APPLICATION_URL = "https://purdue.ca1.qualtrics.com/jfe/form/SV_1G5FfwJUc1cGJ2m";
 
