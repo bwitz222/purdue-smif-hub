@@ -7,6 +7,30 @@ export const Route = createFileRoute("/contact")({
     meta: [
       { title: "Contact — Purdue SMIF" },
       { name: "description", content: "Get in touch with the Purdue Student Managed Investment Fund." },
+      { property: "og:title", content: "Contact Purdue SMIF" },
+      { property: "og:description", content: "Reach the Purdue Student Managed Investment Fund — for prospective members, alumni, sponsors, and recruiters." },
+      { property: "og:url", content: "/contact" },
+    ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: "Purdue Student Managed Investment Fund",
+          email: "smif26@purdue.edu",
+          url: "https://purduesmif.lovable.app/contact",
+          address: {
+            "@type": "PostalAddress",
+            streetAddress: "403 W State Street",
+            addressLocality: "West Lafayette",
+            addressRegion: "IN",
+            postalCode: "47907",
+            addressCountry: "US",
+          },
+          sameAs: ["https://www.linkedin.com/company/purdue-smif/"],
+        }),
+      },
     ],
   }),
 });

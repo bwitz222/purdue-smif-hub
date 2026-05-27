@@ -11,6 +11,9 @@ export const Route = createFileRoute("/performance")({
     meta: [
       { title: "Performance — Purdue SMIF" },
       { name: "description", content: "Track record and historical performance of the Purdue Student Managed Investment Fund vs. the S&P 500." },
+      { property: "og:title", content: "Performance & Track Record — Purdue SMIF" },
+      { property: "og:description", content: "Annual and cumulative returns of the Purdue SMIF benchmarked against the S&P 500." },
+      { property: "og:url", content: "/performance" },
     ],
   }),
 });
