@@ -2,12 +2,45 @@ import { createFileRoute } from "@tanstack/react-router";
 import { MemberCard } from "@/components/MemberCard";
 import { board, sectorTeams, fixedIncomeMacro, portfolioManagers } from "@/data/team";
 
+const allMembers = [
+  ...board,
+  ...sectorTeams.flatMap((t) => t.members),
+  ...fixedIncomeMacro,
+  ...portfolioManagers,
+].filter((m) => !m.placeholder);
+
 export const Route = createFileRoute("/team")({
   component: Team,
   head: () => ({
     meta: [
       { title: "Team — Purdue SMIF" },
       { name: "description", content: "Meet the executive board, sector teams, fixed income & macro team, and portfolio managers of the Purdue Student Managed Investment Fund." },
+      { property: "og:title", content: "Meet the Team — Purdue SMIF" },
+      { property: "og:description", content: "The 52 students behind Purdue SMIF — executive board, sector analysts, fixed income & macro, and portfolio managers." },
+      { property: "og:url", content: "/team" },
+    ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          itemListElement: allMembers.map((m, i) => ({
+            "@type": "ListItem",
+            position: i + 1,
+            item: {
+              "@type": "Person",
+              name: m.name,
+              jobTitle: m.role,
+              ...(m.email ? { email: m.email } : {}),
+              affiliation: {
+                "@type": "Organization",
+                name: "Purdue Student Managed Investment Fund",
+              },
+            },
+          })),
+        }),
+      },
     ],
   }),
 });
