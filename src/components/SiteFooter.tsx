@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { Instagram, Linkedin, Newspaper } from "lucide-react";
 
 export function SiteFooter() {
   return (
