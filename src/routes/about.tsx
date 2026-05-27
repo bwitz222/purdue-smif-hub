@@ -7,6 +7,9 @@ export const Route = createFileRoute("/about")({
     meta: [
       { title: "About — Purdue SMIF" },
       { name: "description", content: "Learn about the Purdue Student Managed Investment Fund's history, philosophy, and approach to investing." },
+      { property: "og:title", content: "About Purdue SMIF — History, Philosophy & Process" },
+      { property: "og:description", content: "How the Purdue Student Managed Investment Fund researches, debates, and votes on every real-money position." },
+      { property: "og:url", content: "/about" },
     ],
   }),
 });

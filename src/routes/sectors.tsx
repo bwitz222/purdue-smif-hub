@@ -7,6 +7,9 @@ export const Route = createFileRoute("/sectors")({
     meta: [
       { title: "Teams — Purdue SMIF" },
       { name: "description", content: "SMIF coverage spans equity sector teams, Fixed Income & Macro, and Portfolio + Risk Management." },
+      { property: "og:title", content: "Coverage Teams — Purdue SMIF" },
+      { property: "og:description", content: "Eight equity sector teams plus Fixed Income & Macro and Portfolio + Risk Management cover the SMIF investment universe." },
+      { property: "og:url", content: "/sectors" },
     ],
   }),
 });
