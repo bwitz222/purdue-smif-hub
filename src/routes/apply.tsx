@@ -24,7 +24,7 @@ function CountdownUnit({ value, label }: { value: number | string; label: string
   return (
     <div className="flex flex-col items-center border border-gold/30 bg-ink/40 px-4 py-3 min-w-[72px]">
       <span className="font-display text-3xl font-bold text-gold tabular-nums md:text-4xl">{value}</span>
-      <span className="mt-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-background/60">{label}</span>
+      <span className="mt-1 text-xs font-semibold uppercase tracking-[0.18em] text-background/60">{label}</span>
     </div>
   );
 }

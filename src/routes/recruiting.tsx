@@ -176,7 +176,7 @@ function Recruiting() {
           <div className="mt-14">
             <div className="flex items-center gap-3">
               <span className="h-px w-10 bg-gold" />
-              <span className="font-mono text-[11px] uppercase tracking-[0.3em] text-gold-deep">Round 1</span>
+              <span className="font-mono text-xs uppercase tracking-[0.3em] text-gold-deep">Round 1</span>
             </div>
             <h3 className="mt-3 font-display text-2xl font-bold md:text-3xl">Behavioral Interview</h3>
             <p className="mt-3 max-w-3xl text-muted-foreground">
@@ -223,7 +223,7 @@ function Recruiting() {
           <div className="mt-16">
             <div className="flex items-center gap-3">
               <span className="h-px w-10 bg-gold" />
-              <span className="font-mono text-[11px] uppercase tracking-[0.3em] text-gold-deep">Round 2</span>
+              <span className="font-mono text-xs uppercase tracking-[0.3em] text-gold-deep">Round 2</span>
             </div>
             <h3 className="mt-3 font-display text-2xl font-bold md:text-3xl">Technical Interview</h3>
             <p className="mt-3 max-w-3xl text-muted-foreground">

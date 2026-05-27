@@ -38,7 +38,7 @@ function About() {
         <div className="container-prose py-28">
           <div className="flex items-center gap-3 mb-8">
             <span className="rule-gold" />
-            <span className="text-[11px] font-semibold uppercase tracking-[0.32em] text-gold/70">
+            <span className="text-xs font-semibold uppercase tracking-[0.32em] text-gold/70">
               About
             </span>
           </div>
@@ -108,7 +108,7 @@ function About() {
       <section className="container-prose py-24">
         <div className="mb-16">
           <span className="rule-gold block mb-5" />
-          <span className="text-[11px] font-semibold uppercase tracking-[0.32em] text-gold-deep block mb-4">
+          <span className="text-xs font-semibold uppercase tracking-[0.32em] text-gold-deep block mb-4">
             How We Work
           </span>
           <h2
@@ -137,7 +137,7 @@ function About() {
         <div className="container-prose grid gap-16 md:grid-cols-3">
           <div className="md:col-span-1">
             <span className="rule-gold block mb-5" />
-            <span className="text-[11px] font-semibold uppercase tracking-[0.32em] text-gold-deep block mb-4">
+            <span className="text-xs font-semibold uppercase tracking-[0.32em] text-gold-deep block mb-4">
               Governance
             </span>
             <h2 className="font-display text-2xl font-bold">Investment Policy Statement</h2>
@@ -166,7 +166,7 @@ function About() {
       <section className="bg-ink text-background py-20">
         <div className="container-prose flex flex-col md:flex-row items-center justify-between gap-8">
           <div>
-            <span className="text-[11px] font-semibold uppercase tracking-[0.32em] text-gold/70 block mb-3">
+            <span className="text-xs font-semibold uppercase tracking-[0.32em] text-gold/70 block mb-3">
               Join Us
             </span>
             <h2 className="font-display text-3xl font-bold text-background">

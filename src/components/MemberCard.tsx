@@ -43,7 +43,7 @@ export function MemberCard({ m }: { m: Member }) {
             <UserPlus className="h-6 w-6 text-gold-deep" />
           </div>
           <div className="min-w-0">
-            <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-gold-deep">
+            <div className="text-xs font-semibold uppercase tracking-[0.18em] text-gold-deep">
               {m.role}
             </div>
             <div className="mt-1 font-display text-lg font-bold leading-tight">Open Position</div>
@@ -94,7 +94,7 @@ export function MemberCard({ m }: { m: Member }) {
           )}
         </div>
         <div className="min-w-0">
-          <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-gold-deep">
+          <div className="text-xs font-semibold uppercase tracking-[0.18em] text-gold-deep">
             {m.role}
           </div>
           <div className="mt-1 font-display text-lg font-bold leading-tight">{m.name}</div>
