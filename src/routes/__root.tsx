@@ -22,9 +22,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "Purdue SMIF — Student Managed Investment Fund" },
       { name: "description", content: "The Purdue Student Managed Investment Fund — a premier student-run investment fund at the Daniels School of Business." },
       { name: "author", content: "Purdue SMIF" },
+      { property: "og:site_name", content: "Purdue SMIF" },
       { property: "og:title", content: "Purdue Student Managed Investment Fund" },
       { property: "og:description", content: "Premier student-run investment fund at Purdue University." },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "/" },
       { name: "twitter:card", content: "summary" },
     ],
     links: [
@@ -32,6 +34,44 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" },
+    ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "Organization",
+              "@id": "https://purduesmif.lovable.app/#organization",
+              name: "Purdue Student Managed Investment Fund",
+              alternateName: "Purdue SMIF",
+              url: "https://purduesmif.lovable.app",
+              email: "smif26@purdue.edu",
+              parentOrganization: {
+                "@type": "CollegeOrUniversity",
+                name: "Daniels School of Business, Purdue University",
+              },
+              address: {
+                "@type": "PostalAddress",
+                streetAddress: "403 W State Street",
+                addressLocality: "West Lafayette",
+                addressRegion: "IN",
+                postalCode: "47907",
+                addressCountry: "US",
+              },
+              sameAs: ["https://www.linkedin.com/company/purdue-smif/"],
+            },
+            {
+              "@type": "WebSite",
+              "@id": "https://purduesmif.lovable.app/#website",
+              url: "https://purduesmif.lovable.app",
+              name: "Purdue SMIF",
+              publisher: { "@id": "https://purduesmif.lovable.app/#organization" },
+            },
+          ],
+        }),
+      },
     ],
   }),
   shellComponent: RootShell,
