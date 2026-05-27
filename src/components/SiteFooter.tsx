@@ -4,7 +4,7 @@ import { Instagram, Linkedin, Newspaper } from "lucide-react";
 export function SiteFooter() {
   return (
     <footer className="mt-32 border-t border-border bg-ink text-background">
-      <div className="container-prose grid gap-12 py-16 md:grid-cols-4">
+      <div className="container-prose grid gap-12 py-16 md:grid-cols-5">
         <div className="md:col-span-2">
           <div className="flex items-center gap-3">
             <span className="grid h-10 w-10 place-items-center bg-gold text-ink font-display text-lg font-bold">P</span>
@@ -33,6 +33,29 @@ export function SiteFooter() {
             <li>403 W State Street</li>
             <li>West Lafayette, IN 47907</li>
             <li><Link to="/contact" className="hover:text-gold">Get in touch →</Link></li>
+          </ul>
+        </div>
+        <div>
+          <h4 className="text-sm font-semibold text-gold mb-4 uppercase tracking-wider">Social</h4>
+          <ul className="space-y-2 text-sm text-background/70">
+            <li>
+              <a href="https://www.instagram.com/smif_purdue/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 hover:text-gold transition-colors duration-200">
+                <Instagram className="h-4 w-4" />
+                Instagram
+              </a>
+            </li>
+            <li>
+              <a href="https://www.linkedin.com/company/purdue-smif/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 hover:text-gold transition-colors duration-200">
+                <Linkedin className="h-4 w-4" />
+                LinkedIn
+              </a>
+            </li>
+            <li>
+              <a href="https://purduesmif.substack.com/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 hover:text-gold transition-colors duration-200">
+                <Newspaper className="h-4 w-4" />
+                Substack
+              </a>
+            </li>
           </ul>
         </div>
       </div>
