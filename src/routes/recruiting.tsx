@@ -121,7 +121,22 @@ function Recruiting() {
           {CALENDAR.map((e) => (
             <div key={e.iso + e.name} className="grid grid-cols-12 gap-4 py-5 transition hover:bg-secondary/40 px-2 -mx-2">
               <div className="col-span-12 md:col-span-2 flex items-center gap-2 text-sm font-semibold text-foreground">
-                <Calendar className="h-3.5 w-3.5 text-gold-deep" />
+                {(() => {
+                  const link = toGoogleCalendarLink(e);
+                  return link ? (
+                    <a
+                      href={link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center rounded-sm p-1 transition hover:bg-gold/20"
+                      title="Add to Google Calendar"
+                    >
+                      <Calendar className="h-3.5 w-3.5 text-gold-deep" />
+                    </a>
+                  ) : (
+                    <Calendar className="h-3.5 w-3.5 text-gold-deep opacity-50" />
+                  );
+                })()}
                 {e.date}
               </div>
               <div className="col-span-12 md:col-span-5 font-display text-lg font-bold">
