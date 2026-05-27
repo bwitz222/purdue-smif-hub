@@ -240,11 +240,11 @@ function Recruiting() {
                 ]}
               />
               <PrepCard
-                title="Valuation"
+                title="Valuation Basics"
                 items={[
-                  "DCF intuition: FCF projection, WACC, terminal value (Gordon vs. exit multiple).",
-                  "Comparable multiples: P/E, EV/EBITDA, EV/Sales — when each is appropriate.",
-                  "Why use EV/EBITDA over P/E? (capital structure neutral, pre-tax, etc.)",
+                  "Understand the big picture: a company is worth the present value of its future cash flows.",
+                  "Learn the three main approaches: DCF (intrinsic), comparables (relative), and precedent transactions.",
+                  "Start with P/E and EV/EBITDA — know what they measure and when each is useful.",
                 ]}
               />
               <PrepCard
