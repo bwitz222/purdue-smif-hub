@@ -34,8 +34,8 @@ export function SiteHeader() {
       >
         <div className="container-prose flex h-14 items-center justify-between">
           <Link to="/" className="group flex items-center gap-3 shrink-0">
-            <span className="flex h-7 w-7 items-center justify-center bg-gold text-ink font-display text-sm font-bold leading-none select-none">
-              P
+            <span className="flex h-8 w-8 items-center justify-center bg-background p-1 select-none">
+              <img src={smifLogo} alt="Purdue SMIF" className="h-full w-full object-contain" />
             </span>
             <span className="font-mono text-xs uppercase tracking-[0.28em] text-background/60 group-hover:text-background transition-colors duration-200">
               SMIF
