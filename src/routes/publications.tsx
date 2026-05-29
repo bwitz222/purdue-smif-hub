@@ -15,8 +15,9 @@ export const Route = createFileRoute("/publications")({
       { name: "description", content: "Equity research reports, semester reports, and annual reports from the Purdue Student Managed Investment Fund." },
       { property: "og:title", content: "Equity Research & Reports — Purdue SMIF" },
       { property: "og:description", content: "Read SMIF's equity research pitches, semester performance reviews, and annual reports." },
-      { property: "og:url", content: "/publications" },
+      { property: "og:url", content: "https://purduesmif.org/publications" },
     ],
+    links: [{ rel: "canonical", href: "https://purduesmif.org/publications" }],
   }),
 });
 

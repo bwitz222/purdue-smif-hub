@@ -13,8 +13,9 @@ export const Route = createFileRoute("/performance")({
       { name: "description", content: "Track record and historical performance of the Purdue Student Managed Investment Fund vs. the S&P 500." },
       { property: "og:title", content: "Performance & Track Record — Purdue SMIF" },
       { property: "og:description", content: "Annual and cumulative returns of the Purdue SMIF benchmarked against the S&P 500." },
-      { property: "og:url", content: "/performance" },
+      { property: "og:url", content: "https://purduesmif.org/performance" },
     ],
+    links: [{ rel: "canonical", href: "https://purduesmif.org/performance" }],
   }),
 });
 

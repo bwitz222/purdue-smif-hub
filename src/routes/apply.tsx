@@ -58,8 +58,9 @@ export const Route = createFileRoute("/apply")({
       { name: "description", content: "Application timeline, recruiting events, and how to join the Purdue Student Managed Investment Fund." },
       { property: "og:title", content: "Apply to Join Purdue SMIF" },
       { property: "og:description", content: "Deadline, recruiting events, and the application process for joining the Purdue Student Managed Investment Fund." },
-      { property: "og:url", content: "/apply" },
+      { property: "og:url", content: "https://purduesmif.org/apply" },
     ],
+    links: [{ rel: "canonical", href: "https://purduesmif.org/apply" }],
   }),
 });
 

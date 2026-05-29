@@ -6,7 +6,19 @@ import { ArrowUpDown, ArrowUp, ArrowDown, RefreshCw } from "lucide-react";
 import { holdings as baseHoldings, portfolioSummary as baseSummary, type Holding } from "@/data/holdings";
 import { getLiveQuotes } from "@/lib/quotes.functions";
 
-export const Route = createFileRoute("/holdings")({ component: HoldingsPage, head: () => ({ meta: [{ title: "Holdings — Purdue SMIF" },{ name: "description", content: "Current portfolio holdings of the Purdue Student Managed Investment Fund, including positions, allocations, and returns." },{ property: "og:title", content: "Portfolio Holdings — Purdue SMIF" },{ property: "og:description", content: "Live view of SMIF's positions, sector allocations, and returns across the real-money portfolio." },{ property: "og:url", content: "/holdings" }] }) });
+export const Route = createFileRoute("/holdings")({
+  component: HoldingsPage,
+  head: () => ({
+    meta: [
+      { title: "Portfolio Holdings — Purdue SMIF" },
+      { name: "description", content: "Current portfolio holdings of the Purdue Student Managed Investment Fund, including positions, allocations, and returns." },
+      { property: "og:title", content: "Portfolio Holdings — Purdue SMIF" },
+      { property: "og:description", content: "Live view of SMIF's positions, sector allocations, and returns across the real-money portfolio." },
+      { property: "og:url", content: "https://purduesmif.org/holdings" },
+    ],
+    links: [{ rel: "canonical", href: "https://purduesmif.org/holdings" }],
+  }),
+});
 
 const fmtUSD = (n: number, opts: Intl.NumberFormatOptions = {}) => n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 2, ...opts });
 const fmtPct = (n: number) => `${n > 0 ? "+" : ""}${n.toFixed(2)}%`;

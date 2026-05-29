@@ -9,8 +9,9 @@ export const Route = createFileRoute("/sectors")({
       { name: "description", content: "SMIF coverage spans equity sector teams, Fixed Income & Macro, and Portfolio + Risk Management." },
       { property: "og:title", content: "Coverage Teams — Purdue SMIF" },
       { property: "og:description", content: "Eight equity sector teams plus Fixed Income & Macro and Portfolio + Risk Management cover the SMIF investment universe." },
-      { property: "og:url", content: "/sectors" },
+      { property: "og:url", content: "https://purduesmif.org/sectors" },
     ],
+    links: [{ rel: "canonical", href: "https://purduesmif.org/sectors" }],
   }),
 });
 

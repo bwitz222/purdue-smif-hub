@@ -3,7 +3,22 @@ import heroImg from "@/assets/hero-campus.jpg";
 import tradingImg from "@/assets/nyc-skyline.jpg";
 import { ArrowRight, TrendingUp, Users, Award, BarChart3, ChevronRight } from "lucide-react";
 
-export const Route = createFileRoute("/")({ component: Index, head: () => ({ meta: [{ title: "Purdue SMIF — Student Managed Investment Fund" },{ name: "description", content: "Founded to develop the next generation of investors. The Purdue Student Managed Investment Fund manages real capital across global markets." }], links: [{ rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" }] }) });
+export const Route = createFileRoute("/")({
+  component: Index,
+  head: () => ({
+    meta: [
+      { title: "Purdue SMIF — Student Managed Investment Fund" },
+      { name: "description", content: "Founded to develop the next generation of investors. The Purdue Student Managed Investment Fund manages real capital across global markets." },
+      { property: "og:title", content: "Purdue SMIF — Student Managed Investment Fund" },
+      { property: "og:description", content: "Founded to develop the next generation of investors. The Purdue Student Managed Investment Fund manages real capital across global markets." },
+      { property: "og:url", content: "https://purduesmif.org/" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://purduesmif.org/" },
+      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" },
+    ],
+  }),
+});
 
 const TICKER_ITEMS = [
   { symbol: "SPY",   val: "+0.82%" },
