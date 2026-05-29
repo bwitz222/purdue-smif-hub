@@ -2,11 +2,9 @@ import { createServerFn } from "@tanstack/react-start";
 
 type Quote = { symbol: string; price: number; changePct: number };
 
-// In-memory cache (per server instance). 1-minute TTL so the client can poll
-// continuously without hammering the upstream provider. Note: Alpha Vantage's
-// free tier (25 req/day) will rate-limit quickly at this cadence — when the
-// upstream returns empty, we keep serving the last good cache.
-const CACHE_TTL_MS = 60 * 1000;
+// In-memory cache (per server instance). 12-hour TTL — data is refreshed daily
+// at market close, so the cache serves the same snapshot across sessions.
+const CACHE_TTL_MS = 12 * 60 * 60 * 1000;
 let cache: { at: number; quotes: Record<string, Quote> } | null = null;
 let inflight: Promise<Record<string, Quote>> | null = null;
 
