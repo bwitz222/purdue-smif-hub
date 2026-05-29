@@ -71,91 +71,56 @@ export function MemberCard({ m, variant = "default" }: { m: Member; variant?: "d
     );
   }
 
-  // Board variant: large standardized portrait on top, info below.
-  if (variant === "board") {
-    const boardSrc = m.photo ?? null;
-    return (
-      <div className="group flex flex-col border border-border bg-card transition hover:border-gold hover:shadow-elegant">
-        <div className="aspect-square w-full overflow-hidden bg-ink">
-          {boardSrc ? (
-            <img
-              src={boardSrc}
-              alt={`${m.name} headshot`}
-              className="h-full w-full object-cover"
-              loading="lazy"
-            />
-          ) : null}
-        </div>
-        <div className="flex flex-1 flex-col p-6">
-          <div className="text-xs font-semibold uppercase tracking-[0.18em] text-gold-deep">
-            {m.role}
-          </div>
-          <div className="mt-1 font-display text-lg font-bold leading-tight">{m.name}</div>
-          <div className="text-xs text-muted-foreground">{m.year}</div>
-          <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{m.bio}</p>
-          <div className="mt-5 flex items-center gap-4 border-t border-border pt-4 text-xs">
-            <a
-              href={`mailto:${email}`}
-              className="inline-flex items-center gap-1.5 text-muted-foreground transition hover:text-gold-deep"
-            >
-              <Mail className="h-3.5 w-3.5" /> Email
-            </a>
-            <a
-              href={m.linkedin ?? "#"}
-              className="inline-flex items-center gap-1.5 text-muted-foreground transition hover:text-gold-deep"
-            >
-              <Linkedin className="h-3.5 w-3.5" /> LinkedIn
-            </a>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
+  // Unified card: standardized square portrait on top, info below.
+  // Board members typically pass m.photo directly; others auto-resolve from
+  // the team-headshots storage bucket (jpg → png → initials fallback).
   return (
-    <div className="group flex flex-col border border-border bg-card p-6 transition hover:border-gold hover:shadow-elegant">
-      <div className="flex items-start gap-4">
-        <div className="grid h-16 w-16 flex-shrink-0 place-items-center overflow-hidden bg-gradient-gold">
-          {src ? (
-            <img
-              src={src}
-              alt={`${m.name} headshot`}
-              className="h-full w-full object-cover"
-              onError={() => {
-                if (!m.photo && !triedPng) {
-                  setTriedPng(true);
-                  setSrc(png);
-                } else {
-                  setSrc(null);
-                }
-              }}
-            />
-          ) : (
-            <span className="font-display text-xl font-bold text-ink/40">{initials}</span>
-          )}
-        </div>
-        <div className="min-w-0">
-          <div className="text-xs font-semibold uppercase tracking-[0.18em] text-gold-deep">
-            {m.role}
+    <div className="group flex flex-col border border-border bg-card transition hover:border-gold hover:shadow-elegant">
+      <div className="aspect-square w-full overflow-hidden bg-gradient-gold">
+        {src ? (
+          <img
+            src={src}
+            alt={`${m.name} headshot`}
+            className="h-full w-full object-cover"
+            loading="lazy"
+            onError={() => {
+              if (!m.photo && !triedPng) {
+                setTriedPng(true);
+                setSrc(png);
+              } else {
+                setSrc(null);
+              }
+            }}
+          />
+        ) : (
+          <div className="grid h-full w-full place-items-center">
+            <span className="font-display text-5xl font-bold text-ink/40">{initials}</span>
           </div>
-          <div className="mt-1 font-display text-lg font-bold leading-tight">{m.name}</div>
-          <div className="text-xs text-muted-foreground">{m.year}</div>
-        </div>
+        )}
       </div>
-      <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{m.bio}</p>
-      <div className="mt-5 flex items-center gap-4 border-t border-border pt-4 text-xs">
-        <a
-          href={`mailto:${email}`}
-          className="inline-flex items-center gap-1.5 text-muted-foreground transition hover:text-gold-deep"
-        >
-          <Mail className="h-3.5 w-3.5" /> Email
-        </a>
-        <a
-          href={m.linkedin ?? "#"}
-          className="inline-flex items-center gap-1.5 text-muted-foreground transition hover:text-gold-deep"
-        >
-          <Linkedin className="h-3.5 w-3.5" /> LinkedIn
-        </a>
+      <div className="flex flex-1 flex-col p-6">
+        <div className="text-xs font-semibold uppercase tracking-[0.18em] text-gold-deep">
+          {m.role}
+        </div>
+        <div className="mt-1 font-display text-lg font-bold leading-tight">{m.name}</div>
+        <div className="text-xs text-muted-foreground">{m.year}</div>
+        {m.bio && (
+          <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{m.bio}</p>
+        )}
+        <div className="mt-auto flex items-center gap-4 border-t border-border pt-4 text-xs" style={{ marginTop: m.bio ? undefined : "1.25rem" }}>
+          <a
+            href={`mailto:${email}`}
+            className="inline-flex items-center gap-1.5 text-muted-foreground transition hover:text-gold-deep"
+          >
+            <Mail className="h-3.5 w-3.5" /> Email
+          </a>
+          <a
+            href={m.linkedin ?? "#"}
+            className="inline-flex items-center gap-1.5 text-muted-foreground transition hover:text-gold-deep"
+          >
+            <Linkedin className="h-3.5 w-3.5" /> LinkedIn
+          </a>
+        </div>
       </div>
     </div>
   );
