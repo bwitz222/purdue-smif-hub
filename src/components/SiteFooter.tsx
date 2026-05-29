@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Instagram, Linkedin, Newspaper } from "lucide-react";
+import smifLogo from "@/assets/smif-logo-mark.png";
 
 export function SiteFooter() {
   return (
@@ -7,7 +8,7 @@ export function SiteFooter() {
       <div className="container-prose grid gap-12 py-16 md:grid-cols-5">
         <div className="md:col-span-2">
           <div className="flex items-center gap-3">
-            <span className="grid h-10 w-10 place-items-center bg-gold text-ink font-display text-lg font-bold">P</span>
+            <span className="grid h-11 w-11 place-items-center bg-background p-1.5"><img src={smifLogo} alt="Purdue SMIF" className="h-full w-full object-contain" /></span>
             <div>
               <div className="font-display text-lg font-bold">Purdue SMIF</div>
               <div className="text-xs uppercase tracking-[0.18em] text-background/60">Student Managed Investment Fund</div>
