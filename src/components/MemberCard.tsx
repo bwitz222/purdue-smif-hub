@@ -22,7 +22,7 @@ export const memberSlug = (name: string) =>
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
 
-export function MemberCard({ m }: { m: Member }) {
+export function MemberCard({ m, variant = "default" }: { m: Member; variant?: "default" | "board" }) {
   const initials = m.name.split(" ").map((p) => p[0]).slice(0, 2).join("");
   const email = m.email ?? `${m.name.toLowerCase().replace(/[^a-z]+/g, "")}@purdue.edu`;
 
@@ -66,6 +66,47 @@ export function MemberCard({ m }: { m: Member }) {
           >
             <Mail className="h-3.5 w-3.5" /> Contact
           </a>
+        </div>
+      </div>
+    );
+  }
+
+  // Board variant: large standardized portrait on top, info below.
+  if (variant === "board") {
+    const boardSrc = m.photo ?? null;
+    return (
+      <div className="group flex flex-col border border-border bg-card transition hover:border-gold hover:shadow-elegant">
+        <div className="aspect-square w-full overflow-hidden bg-ink">
+          {boardSrc ? (
+            <img
+              src={boardSrc}
+              alt={`${m.name} headshot`}
+              className="h-full w-full object-cover"
+              loading="lazy"
+            />
+          ) : null}
+        </div>
+        <div className="flex flex-1 flex-col p-6">
+          <div className="text-xs font-semibold uppercase tracking-[0.18em] text-gold-deep">
+            {m.role}
+          </div>
+          <div className="mt-1 font-display text-lg font-bold leading-tight">{m.name}</div>
+          <div className="text-xs text-muted-foreground">{m.year}</div>
+          <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{m.bio}</p>
+          <div className="mt-5 flex items-center gap-4 border-t border-border pt-4 text-xs">
+            <a
+              href={`mailto:${email}`}
+              className="inline-flex items-center gap-1.5 text-muted-foreground transition hover:text-gold-deep"
+            >
+              <Mail className="h-3.5 w-3.5" /> Email
+            </a>
+            <a
+              href={m.linkedin ?? "#"}
+              className="inline-flex items-center gap-1.5 text-muted-foreground transition hover:text-gold-deep"
+            >
+              <Linkedin className="h-3.5 w-3.5" /> LinkedIn
+            </a>
+          </div>
         </div>
       </div>
     );
