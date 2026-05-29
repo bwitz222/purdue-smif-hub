@@ -134,9 +134,9 @@ function HoldingsPage() {
             {isFetching ? (
               <><RefreshCw className="h-3 w-3 animate-spin text-gold" />Refreshing prices…</>
             ) : quoteData?.cachedAt ? (
-              <><span className="inline-block h-1.5 w-1.5 rounded-full bg-gold-deep/70" />Daily snapshot · Prices updated at market close ({new Date(quoteData.cachedAt).toLocaleDateString()})</>
+              <>Daily snapshot — updated at market close ({new Date(quoteData.cachedAt).toLocaleDateString()})</>
             ) : (
-              <><span className="inline-block h-1.5 w-1.5 rounded-full bg-muted-foreground/40" />Showing last reported snapshot</>
+              <>Showing last reported snapshot</>
             )}
           </div>
         </div>
