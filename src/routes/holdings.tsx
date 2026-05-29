@@ -172,26 +172,26 @@ function HoldingsPage() {
 
         <Reveal className="grid gap-px bg-border md:grid-cols-3">
           <div className="md:col-span-2 bg-card border border-border p-6">
-            <div className="flex items-baseline justify-between mb-5">
+            <div className="flex items-baseline justify-between mb-5 gap-3">
               <div className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Sector Allocation</div>
-              <div className="text-[10px] font-mono uppercase tracking-[0.18em] text-muted-foreground/70">% of invested capital · scale 0–40%</div>
+              <div className="text-[10px] font-mono uppercase tracking-[0.18em] text-muted-foreground/70">% of invested capital</div>
             </div>
             <div className="space-y-2.5">
               {sectorBreakdown.map(([s, pct], i) => (
                 <div key={s} className="flex items-center gap-3 text-sm">
-                  <span className="w-44 flex-shrink-0 truncate text-xs text-foreground/80">{s}</span>
+                  <span className="w-32 md:w-44 flex-shrink-0 truncate text-xs text-foreground/80" title={s}>{s}</span>
                   <div className="flex-1 h-1.5 bg-muted relative">
-                    {/* True-scale: width is pct/40, capped at 100%, so 40% fills the bar. */}
+                    {/* True 0–100 scale: bar width = pct so visual length matches the actual weight. */}
                     <motion.div
                       className="h-full bg-gradient-gold origin-left"
                       initial={{ scaleX: 0 }}
                       whileInView={{ scaleX: 1 }}
                       viewport={{ once: true, amount: 0.4 }}
                       transition={{ duration: 0.9, delay: 0.04 * i, ease: [0.22, 1, 0.36, 1] }}
-                      style={{ width: `${Math.min(100, (pct / 40) * 100)}%` }}
+                      style={{ width: `${Math.min(100, pct)}%` }}
                     />
                   </div>
-                  <span className="w-12 text-right font-mono text-xs text-muted-foreground">{pct.toFixed(1)}%</span>
+                  <span className="w-12 text-right font-mono text-xs text-muted-foreground tabular-nums">{pct.toFixed(1)}%</span>
                 </div>
               ))}
             </div>
@@ -215,11 +215,56 @@ function HoldingsPage() {
 
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-xs uppercase tracking-[0.22em] text-muted-foreground mr-1">Sector</span>
-          {sectors.map((s) => (
-            <button key={s} onClick={() => setSector(s)} className={`px-3 py-1.5 text-xs font-semibold uppercase tracking-wider border transition-colors duration-150 cursor-pointer ${sector === s ? "bg-ink text-background border-ink" : "bg-background text-foreground border-border hover:border-ink hover:bg-secondary"}`}>{s}</button>
+          {sectors.map((s) => {
+            const active = sector === s;
+            return (
+              <button
+                key={s}
+                onClick={() => setSector(s)}
+                aria-pressed={active}
+                className={`min-h-11 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider border transition-colors duration-150 cursor-pointer ${active ? "bg-ink text-background border-ink" : "bg-background text-foreground border-border hover:border-ink hover:bg-secondary"}`}
+              >
+                {s}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Mobile: stacked cards */}
+        <div className="md:hidden space-y-3">
+          {rows.map((h) => (
+            <div key={h.symbol} className="border border-border bg-card p-4">
+              <div className="flex items-baseline justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="font-mono text-sm font-bold text-gold-deep tracking-wider">{h.symbol}</div>
+                  <div className="text-sm font-medium truncate">{h.company}</div>
+                  <div className="text-[11px] text-muted-foreground mt-0.5">{h.industry}</div>
+                </div>
+                <div className="text-right shrink-0">
+                  <div className="font-mono text-sm">{fmtUSD(h.price)}</div>
+                  <div className={`font-mono text-xs ${h.dayChange >= 0 ? "text-emerald-600" : "text-destructive"}`}>{fmtPct(h.dayChange)}</div>
+                </div>
+              </div>
+              <div className="mt-3 grid grid-cols-3 gap-3 border-t border-border pt-3 text-xs">
+                <div>
+                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Value</div>
+                  <div className="font-mono mt-0.5">{fmtUSD(h.value, { maximumFractionDigits: 0 })}</div>
+                </div>
+                <div>
+                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Return</div>
+                  <div className={`font-mono font-semibold mt-0.5 ${h.returnPct >= 0 ? "text-emerald-600" : "text-destructive"}`}>{fmtPct(h.returnPct)}</div>
+                </div>
+                <div className="text-right">
+                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Weight</div>
+                  <div className="font-mono mt-0.5 text-muted-foreground">{h.allocation.toFixed(2)}%</div>
+                </div>
+              </div>
+            </div>
           ))}
         </div>
-        <div className="overflow-x-auto border border-border"><table className="w-full text-left text-sm"><thead className="bg-ink text-background"><tr>{cols.map((c) => (<th key={c.k} className={`px-4 py-3 text-xs font-semibold uppercase tracking-wider whitespace-nowrap ${c.align === "right" ? "text-right" : ""}`}><button onClick={() => toggleSort(c.k)} className={`inline-flex items-center gap-1.5 hover:text-gold transition-colors duration-150 cursor-pointer ${c.align === "right" ? "ml-auto" : ""}`}>{c.label}<SortIcon active={sortKey === c.k} dir={sortDir} /></button></th>))}</tr></thead><tbody>{rows.map((h, idx) => (<tr key={h.symbol} className={`border-t border-border hover:bg-secondary/50 transition-colors duration-150 ${idx % 2 === 0 ? "" : "bg-secondary/20"}`}><td className="px-4 py-3 font-medium whitespace-nowrap">{h.company}</td><td className="px-4 py-3 font-mono font-bold text-gold-deep tracking-wider">{h.symbol}</td><td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">{h.industry}</td><td className="px-4 py-3 text-right font-mono">{fmtUSD(h.price)}</td><td className="px-4 py-3 text-right font-mono text-muted-foreground">{fmtNum(h.beta)}</td><td className="px-4 py-3 text-right font-mono">{h.shares.toLocaleString()}</td><td className="px-4 py-3 text-right font-mono">{fmtUSD(h.value, { maximumFractionDigits: 0 })}</td><td className={`px-4 py-3 text-right font-mono font-medium ${h.dayChange >= 0 ? "text-emerald-600" : "text-destructive"}`}>{fmtPct(h.dayChange)}</td><td className={`px-4 py-3 text-right font-mono ${h.totalReturn >= 0 ? "text-emerald-600" : "text-destructive"}`}>{fmtUSD(h.totalReturn, { maximumFractionDigits: 0 })}</td><td className={`px-4 py-3 text-right font-mono font-semibold ${h.returnPct >= 0 ? "text-emerald-600" : "text-destructive"}`}>{fmtPct(h.returnPct)}</td><td className="px-4 py-3 text-right font-mono text-muted-foreground">{h.allocation.toFixed(2)}%</td></tr>))}</tbody><tfoot className="bg-secondary/60 border-t-2 border-ink font-semibold"><tr><td className="px-4 py-4" colSpan={6}>Total · {rows.length} position{rows.length !== 1 ? "s" : ""}</td><td className="px-4 py-4 text-right font-mono">{fmtUSD(rows.reduce((s, r) => s + r.value, 0), { maximumFractionDigits: 0 })}</td><td className="px-4 py-4 text-right font-mono text-muted-foreground">—</td><td className={`px-4 py-4 text-right font-mono ${rows.reduce((s, r) => s + r.totalReturn, 0) >= 0 ? "text-emerald-600" : "text-destructive"}`}>{fmtUSD(rows.reduce((s, r) => s + r.totalReturn, 0), { maximumFractionDigits: 0 })}</td><td className="px-4 py-4" /><td className="px-4 py-4 text-right font-mono">{rows.reduce((s, r) => s + r.allocation, 0).toFixed(2)}%</td></tr></tfoot></table></div>
+
+        {/* Desktop: full table */}
+        <div className="hidden md:block overflow-x-auto border border-border"><table className="w-full text-left text-sm"><thead className="bg-ink text-background"><tr>{cols.map((c) => { const ariaSort: "ascending" | "descending" | "none" = sortKey === c.k ? (sortDir === "asc" ? "ascending" : "descending") : "none"; return (<th key={c.k} aria-sort={ariaSort} className={`px-4 py-3 text-xs font-semibold uppercase tracking-wider whitespace-nowrap ${c.align === "right" ? "text-right" : ""}`}><button onClick={() => toggleSort(c.k)} className={`inline-flex items-center gap-1.5 hover:text-gold transition-colors duration-150 cursor-pointer ${c.align === "right" ? "ml-auto" : ""}`}>{c.label}<SortIcon active={sortKey === c.k} dir={sortDir} /></button></th>); })}</tr></thead><tbody>{rows.map((h, idx) => (<tr key={h.symbol} className={`border-t border-border hover:bg-secondary/50 transition-colors duration-150 ${idx % 2 === 0 ? "" : "bg-secondary/20"}`}><td className="px-4 py-3 font-medium whitespace-nowrap">{h.company}</td><td className="px-4 py-3 font-mono font-bold text-gold-deep tracking-wider">{h.symbol}</td><td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">{h.industry}</td><td className="px-4 py-3 text-right font-mono">{fmtUSD(h.price)}</td><td className="px-4 py-3 text-right font-mono text-muted-foreground">{fmtNum(h.beta)}</td><td className="px-4 py-3 text-right font-mono">{h.shares.toLocaleString()}</td><td className="px-4 py-3 text-right font-mono">{fmtUSD(h.value, { maximumFractionDigits: 0 })}</td><td className={`px-4 py-3 text-right font-mono font-medium ${h.dayChange >= 0 ? "text-emerald-600" : "text-destructive"}`}>{fmtPct(h.dayChange)}</td><td className={`px-4 py-3 text-right font-mono ${h.totalReturn >= 0 ? "text-emerald-600" : "text-destructive"}`}>{fmtUSD(h.totalReturn, { maximumFractionDigits: 0 })}</td><td className={`px-4 py-3 text-right font-mono font-semibold ${h.returnPct >= 0 ? "text-emerald-600" : "text-destructive"}`}>{fmtPct(h.returnPct)}</td><td className="px-4 py-3 text-right font-mono text-muted-foreground">{h.allocation.toFixed(2)}%</td></tr>))}</tbody><tfoot className="bg-secondary/60 border-t-2 border-ink font-semibold"><tr><td className="px-4 py-4" colSpan={6}>Total · {rows.length} position{rows.length !== 1 ? "s" : ""}</td><td className="px-4 py-4 text-right font-mono">{fmtUSD(rows.reduce((s, r) => s + r.value, 0), { maximumFractionDigits: 0 })}</td><td className="px-4 py-4 text-right font-mono text-muted-foreground">—</td><td className={`px-4 py-4 text-right font-mono ${rows.reduce((s, r) => s + r.totalReturn, 0) >= 0 ? "text-emerald-600" : "text-destructive"}`}>{fmtUSD(rows.reduce((s, r) => s + r.totalReturn, 0), { maximumFractionDigits: 0 })}</td><td className="px-4 py-4" /><td className="px-4 py-4 text-right font-mono">{rows.reduce((s, r) => s + r.allocation, 0).toFixed(2)}%</td></tr></tfoot></table></div>
       </section>
     </>
   );

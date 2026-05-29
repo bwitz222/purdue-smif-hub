@@ -71,19 +71,23 @@ function MemberDetail({ m }: { m: Member }) {
             <p className="text-sm leading-relaxed text-foreground/80">{m.bio}</p>
           </div>
         )}
-        <div className="border-t border-border pt-5 space-y-3">
-          <div className="text-[10px] font-semibold uppercase tracking-[0.28em] text-gold-deep">Contact</div>
-          <a href={`mailto:${email}`} className="flex items-center gap-3 text-sm text-foreground hover:text-gold-deep transition-colors">
-            <Mail className="h-4 w-4" />
-            <span className="font-mono">{email}</span>
-          </a>
-          {m.linkedin && (
-            <a href={m.linkedin} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm text-foreground hover:text-gold-deep transition-colors">
-              <Linkedin className="h-4 w-4" />
-              <span className="font-mono truncate">LinkedIn profile</span>
-            </a>
-          )}
-        </div>
+        {(email || m.linkedin) && (
+          <div className="border-t border-border pt-5 space-y-3">
+            <div className="text-[10px] font-semibold uppercase tracking-[0.28em] text-gold-deep">Contact</div>
+            {email && (
+              <a href={`mailto:${email}`} className="flex items-center gap-3 text-sm text-foreground hover:text-gold-deep transition-colors">
+                <Mail className="h-4 w-4" />
+                <span className="font-mono">{email}</span>
+              </a>
+            )}
+            {m.linkedin && (
+              <a href={m.linkedin} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm text-foreground hover:text-gold-deep transition-colors">
+                <Linkedin className="h-4 w-4" />
+                <span className="font-mono truncate">LinkedIn profile</span>
+              </a>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -22,8 +22,7 @@ export const memberSlug = (name: string) =>
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
 
-export const memberEmail = (m: Member) =>
-  m.email ?? `${m.name.toLowerCase().replace(/[^a-z]+/g, "")}@purdue.edu`;
+export const memberEmail = (m: Member) => m.email;
 
 export const memberPhotoCandidates = (m: Member) => {
   const slug = memberSlug(m.name);
@@ -130,12 +129,16 @@ export function MemberCard({
           className="mt-auto flex items-center gap-4 border-t border-border pt-4 text-xs"
           style={{ marginTop: m.bio ? undefined : "1.25rem" }}
         >
-          <a href={`mailto:${email}`} onClick={stop} className="inline-flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-gold-deep">
-            <Mail className="h-3.5 w-3.5" /> Email
-          </a>
-          <a href={m.linkedin ?? "#"} onClick={stop} target={m.linkedin ? "_blank" : undefined} rel={m.linkedin ? "noopener noreferrer" : undefined} className="inline-flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-gold-deep">
-            <Linkedin className="h-3.5 w-3.5" /> LinkedIn
-          </a>
+          {email && (
+            <a href={`mailto:${email}`} onClick={stop} className="inline-flex items-center gap-1.5 min-h-11 text-muted-foreground transition-colors hover:text-gold-deep">
+              <Mail className="h-3.5 w-3.5" /> Email
+            </a>
+          )}
+          {m.linkedin && (
+            <a href={m.linkedin} onClick={stop} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 min-h-11 text-muted-foreground transition-colors hover:text-gold-deep">
+              <Linkedin className="h-3.5 w-3.5" /> LinkedIn
+            </a>
+          )}
         </div>
       </div>
     </div>
