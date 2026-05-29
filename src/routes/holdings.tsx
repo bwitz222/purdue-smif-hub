@@ -50,7 +50,7 @@ function HoldingsPage() {
   const [sector, setSector] = useState<string>("All");
   const fetchQuotes = useServerFn(getLiveQuotes);
   const symbols = useMemo(() => baseHoldings.map((h) => h.symbol), []);
-  const { data: quoteData, isFetching } = useQuery({ queryKey: ["live-quotes", symbols], queryFn: () => fetchQuotes({ data: { symbols } }), staleTime: 60 * 1000, refetchInterval: 60 * 1000, refetchIntervalInBackground: false, refetchOnWindowFocus: true });
+  const { data: quoteData, isFetching } = useQuery({ queryKey: ["live-quotes", symbols], queryFn: () => fetchQuotes({ data: { symbols } }), staleTime: 12 * 60 * 60 * 1000 });
 
   const { holdings, portfolioSummary } = useMemo(() => {
     const quotes = quoteData?.quotes ?? {};
