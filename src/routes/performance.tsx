@@ -115,7 +115,7 @@ function Performance() {
             Returns shown are illustrative.
           </p>
         </div>
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-white/8" />
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-white/10" />
       </section>
 
       {/* ── Work in progress notice ─────────────────────────────── */}
