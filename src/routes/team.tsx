@@ -71,6 +71,8 @@ const GROUPS: { id: Group; label: string }[] = [
   { id: "pm", label: "Portfolio + Risk" },
 ];
 
+const SECTOR_NAMES = sectorTeams.map((t) => t.name);
+
 const matches = (m: Member, q: string) => {
   if (!q) return true;
   const s = q.toLowerCase();
@@ -86,6 +88,7 @@ function Team() {
   const totalMembers = 52;
   const [query, setQuery] = useState("");
   const [group, setGroup] = useState<Group>("all");
+  const [sectorFilter, setSectorFilter] = useState<string>("all");
   const [selected, setSelected] = useState<Member | null>(null);
 
   const showBoard = group === "all" || group === "board";
@@ -94,10 +97,13 @@ function Team() {
   const showPm = group === "all" || group === "pm";
 
   const filteredBoard = useMemo(() => board.filter((m) => matches(m, query)), [query]);
-  const filteredSectors = useMemo(
-    () => sectorTeams.map((t) => ({ ...t, members: t.members.filter((m) => matches(m, query)) })).filter((t) => t.members.length > 0),
-    [query],
-  );
+  const filteredSectors = useMemo(() => {
+    const teams = sectorTeams
+      .filter((t) => sectorFilter === "all" || t.name === sectorFilter)
+      .map((t) => ({ ...t, members: t.members.filter((m) => matches(m, query)) }))
+      .filter((t) => t.members.length > 0);
+    return teams;
+  }, [query, sectorFilter]);
   const filteredFim = useMemo(() => fixedIncomeMacro.filter((m) => matches(m, query)), [query]);
   const filteredPm = useMemo(() => portfolioManagers.filter((m) => matches(m, query)), [query]);
 
@@ -107,7 +113,12 @@ function Team() {
     (showFim ? filteredFim.length : 0) +
     (showPm ? filteredPm.length : 0);
 
-  const hasFilter = query.length > 0 || group !== "all";
+  const hasFilter = query.length > 0 || group !== "all" || sectorFilter !== "all";
+
+  const handleGroupChange = (g: Group) => {
+    setGroup(g);
+    setSectorFilter("all");
+  };
 
   return (
     <>
