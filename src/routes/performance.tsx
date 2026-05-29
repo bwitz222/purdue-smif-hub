@@ -117,7 +117,20 @@ function Performance() {
         <div className="absolute bottom-0 left-0 right-0 h-px bg-white/8" />
       </section>
 
-      <section className="container-prose py-16 space-y-12">
+      {/* ── Work in progress notice ─────────────────────────────── */}
+      <section className="container-prose pt-10">
+        <div className="border border-destructive/20 bg-destructive/[0.06] px-6 py-5 md:px-8 md:py-6">
+          <div className="flex items-start gap-3">
+            <div className="mt-0.5 h-2 w-2 flex-shrink-0 bg-destructive" />
+            <p className="text-sm leading-relaxed text-destructive">
+              <span className="font-semibold">Work in progress.</span>{" "}
+              This page is currently being updated. Please check back at a later date.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="container-prose py-10 space-y-12">
 
         {/* ── KPI cards ─────────────────────────────────────────── */}
         <div className="grid gap-px bg-border md:grid-cols-3">
