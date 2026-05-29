@@ -4,6 +4,13 @@ import { Search, X } from "lucide-react";
 import { MemberCard, type Member } from "@/components/MemberCard";
 import { MemberDetailSheet } from "@/components/MemberDetailSheet";
 import { board, sectorTeams, fixedIncomeMacro, portfolioManagers } from "@/data/team";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const allMembers = [
   ...board,
