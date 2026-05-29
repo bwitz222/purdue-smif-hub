@@ -174,7 +174,7 @@ function Team() {
             {GROUPS.map((g) => (
               <button
                 key={g.id}
-                onClick={() => setGroup(g.id)}
+                onClick={() => handleGroupChange(g.id)}
                 className={`px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] border transition-colors ${
                   group === g.id
                     ? "bg-ink text-background border-ink"
