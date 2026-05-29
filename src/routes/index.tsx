@@ -1,7 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import heroImg from "@/assets/hero-campus.jpg";
 import tradingImg from "@/assets/nyc-skyline.jpg";
 import { ArrowRight, TrendingUp, Users, Award, BarChart3, ChevronRight } from "lucide-react";
+import { HeroChart } from "@/components/HeroChart";
+import { CountUp } from "@/components/CountUp";
+import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 
 export const Route = createFileRoute("/")({
   component: Index,
