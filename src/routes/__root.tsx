@@ -54,7 +54,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
               },
               address: {
                 "@type": "PostalAddress",
-                streetAddress: "403 W State Street",
+                streetAddress: "403 Mitch Daniels Blvd",
                 addressLocality: "West Lafayette",
                 addressRegion: "IN",
                 postalCode: "47907",

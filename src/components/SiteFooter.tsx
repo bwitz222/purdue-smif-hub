@@ -30,7 +30,7 @@ export function SiteFooter() {
           <h4 className="text-sm font-semibold text-gold mb-4 uppercase tracking-wider">Contact</h4>
           <ul className="space-y-2 text-sm text-background/70">
             <li>Daniels School of Business</li>
-            <li>403 W State Street</li>
+            <li>403 Mitch Daniels Blvd</li>
             <li>West Lafayette, IN 47907</li>
             <li><Link to="/contact" className="hover:text-gold">Get in touch →</Link></li>
           </ul>
