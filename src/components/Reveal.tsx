@@ -1,5 +1,5 @@
 import { motion, useReducedMotion, type Variants } from "framer-motion";
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 interface RevealProps {
   children: ReactNode;
@@ -11,13 +11,23 @@ interface RevealProps {
 
 /**
  * Scroll-triggered fade-up wrapper. Animates once when 15% in view.
- * Honors prefers-reduced-motion by rendering statically.
+ *
+ * Renders content visible by default for SSR/no-JS/crawlers — only switches
+ * to the framer-motion variant after hydration. This prevents shipping
+ * `opacity:0` HTML to anyone whose JS hasn't booted yet.
  */
+function useHasMounted() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  return mounted;
+}
+
 export function Reveal({ children, delay = 0, y = 24, className, as = "div" }: RevealProps) {
   const reduce = useReducedMotion();
+  const mounted = useHasMounted();
   const Tag = motion[as] as typeof motion.div;
 
-  if (reduce) {
+  if (reduce || !mounted) {
     return <div className={className}>{children}</div>;
   }
 
@@ -54,7 +64,8 @@ export function RevealGroup({
   className?: string;
 }) {
   const reduce = useReducedMotion();
-  if (reduce) return <div className={className}>{children}</div>;
+  const mounted = useHasMounted();
+  if (reduce || !mounted) return <div className={className}>{children}</div>;
   return (
     <motion.div
       initial="hidden"
@@ -81,7 +92,8 @@ export function RevealItem({
   className?: string;
 }) {
   const reduce = useReducedMotion();
-  if (reduce) return <div className={className}>{children}</div>;
+  const mounted = useHasMounted();
+  if (reduce || !mounted) return <div className={className}>{children}</div>;
   return (
     <motion.div
       variants={{

@@ -16,24 +16,14 @@ export const Route = createFileRoute("/")({
     ],
     links: [
       { rel: "canonical", href: "https://purduesmif.org/" },
-      { rel: "preload", as: "image", href: tradingImg, fetchpriority: "high" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" },
+      { rel: "preload", as: "image", href: tradingImg, fetchPriority: "high" },
     ],
+
   }),
 });
 
-const TICKER_ITEMS = [
-  { symbol: "SPY",   val: "+0.82%" },
-  { symbol: "AAPL",  val: "+1.14%" },
-  { symbol: "MSFT",  val: "+0.67%" },
-  { symbol: "GOOGL", val: "-0.21%" },
-  { symbol: "BRK.B", val: "+0.43%" },
-  { symbol: "JPM",   val: "+1.32%" },
-  { symbol: "XOM",   val: "-0.55%" },
-  { symbol: "UNH",   val: "+0.91%" },
-  { symbol: "NVDA",  val: "+2.18%" },
-  { symbol: "V",     val: "+0.76%" },
-];
+
+
 
 const STATS = [
   { display: "$600K", label: "Assets Under Management", sub: "actively deployed" },
@@ -48,19 +38,9 @@ const PILLARS = [
   { Icon: Award, title: "Real Portfolio", body: "Students vote on every position. Performance is benchmarked against the S&P 500 and reported quarterly. No simulations — real capital, real accountability." },
 ];
 
-function TickerItem({ symbol, val }: { symbol: string; val: string }) {
-  const positive = val.startsWith("+");
-  return (
-    <span className="inline-flex items-center gap-2 px-6 border-r border-white/10 text-xs font-mono">
-      <span className="font-semibold text-gold tracking-wider">{symbol}</span>
-      <span className={positive ? "text-emerald-400" : "text-red-400"}>{val}</span>
-    </span>
-  );
-}
-
 function Index() {
-  const doubled = [...TICKER_ITEMS, ...TICKER_ITEMS];
   return (
+
     <>
       <section className="relative isolate overflow-hidden bg-ink min-h-screen flex flex-col">
         <div aria-hidden="true" className="absolute inset-0">
@@ -100,12 +80,6 @@ function Index() {
               </RevealItem>
             ))}
           </RevealGroup>
-        </div>
-        <div className="relative border-t border-white/10 bg-ink/70 backdrop-blur-sm py-3 ticker-wrap">
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 z-10 hidden sm:inline-flex items-center font-mono text-[10px] uppercase tracking-[0.2em] text-background/55 bg-ink/80 px-2 py-1 border border-white/10">Demo</span>
-          <div className="ticker-inner">{doubled.map((item, i) => (<TickerItem key={i} symbol={item.symbol} val={item.val} />))}</div>
-          <div className="absolute left-0 inset-y-0 w-10 bg-gradient-to-r from-ink/70 to-transparent pointer-events-none" />
-          <div className="absolute right-0 inset-y-0 w-10 bg-gradient-to-l from-ink/70 to-transparent pointer-events-none" />
         </div>
       </section>
 
