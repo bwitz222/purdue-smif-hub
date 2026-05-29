@@ -48,7 +48,7 @@ function Index() {
       <section className="relative isolate overflow-hidden bg-ink min-h-screen flex flex-col">
         <img src={heroImg} alt="" aria-hidden="true" width={1920} height={1080} className="absolute inset-0 h-full w-full object-cover opacity-30" />
         <div className="absolute inset-0 bg-gradient-hero" />
-        <div aria-hidden="true" className="absolute left-[52%] top-0 bottom-0 w-px hidden lg:block pointer-events-none" style={{ background: "linear-gradient(to bottom, transparent 0%, rgba(207,185,145,0.3) 20%, rgba(207,185,145,0.3) 80%, transparent 100%)" }} />
+        
         <div className="relative flex-1 container-prose grid lg:grid-cols-2 gap-12 items-center py-28 text-background">
           <div>
             <div className="animate-fade-in flex items-center gap-3 mb-8">
