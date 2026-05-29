@@ -9,7 +9,6 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select";
 
 const allMembers = [
@@ -156,66 +155,69 @@ function Team() {
 
       {/* Sticky filter bar */}
       <div className="sticky top-14 z-30 border-b border-border bg-background/95 backdrop-blur-md">
-        <div className="container-prose py-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-          <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <input
-              type="search"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search by name, role, year…"
-              className="w-full border border-border bg-background pl-10 pr-9 py-2 text-sm font-mono placeholder:text-muted-foreground/60 focus:outline-none focus:border-ink transition-colors"
-              aria-label="Search team members"
-            />
-            {query && (
-              <button
-                onClick={() => setQuery("")}
-                className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-ink transition-colors"
-                aria-label="Clear search"
-              >
-                <X className="h-3.5 w-3.5" />
-              </button>
+        <div className="container-prose py-3 md:py-4 space-y-3">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-4">
+            <div className="relative flex-1 md:max-w-md">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <input
+                type="search"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search by name, role, year…"
+                className="w-full border border-border bg-background pl-10 pr-9 py-2 text-sm font-mono placeholder:text-muted-foreground/60 focus:outline-none focus:border-ink transition-colors"
+                aria-label="Search team members"
+              />
+              {query && (
+                <button
+                  onClick={() => setQuery("")}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-ink transition-colors"
+                  aria-label="Clear search"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </div>
+            {(group === "all" || group === "sectors") && (
+              <Select value={sectorFilter} onValueChange={setSectorFilter}>
+                <SelectTrigger className="h-9 w-full md:w-56 rounded-none border-border bg-background text-[11px] font-semibold uppercase tracking-[0.14em] focus:ring-0 focus:ring-offset-0 focus:border-ink">
+                  <span className="truncate text-left">
+                    {sectorFilter === "all" ? "All Sectors" : sectorFilter}
+                  </span>
+                </SelectTrigger>
+                <SelectContent className="rounded-none border-border bg-background">
+                  <SelectItem value="all" className="text-[11px] font-semibold uppercase tracking-[0.14em] focus:bg-secondary focus:text-foreground">
+                    All Sectors
+                  </SelectItem>
+                  {SECTOR_NAMES.map((name) => (
+                    <SelectItem
+                      key={name}
+                      value={name}
+                      className="text-[11px] font-semibold uppercase tracking-[0.14em] focus:bg-secondary focus:text-foreground"
+                    >
+                      {name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             )}
           </div>
-          <div className="flex flex-wrap items-center gap-1.5">
-            {GROUPS.map((g) => (
-              <button
-                key={g.id}
-                onClick={() => handleGroupChange(g.id)}
-                className={`px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] border transition-colors ${
-                  group === g.id
-                    ? "bg-ink text-background border-ink"
-                    : "bg-background text-foreground border-border hover:border-ink"
-                }`}
-              >
-                {g.label}
-              </button>
-            ))}
+          <div className="-mx-4 md:mx-0 px-4 md:px-0 overflow-x-auto scrollbar-none">
+            <div className="flex items-center gap-1.5 w-max md:w-auto md:flex-wrap">
+              {GROUPS.map((g) => (
+                <button
+                  key={g.id}
+                  onClick={() => handleGroupChange(g.id)}
+                  className={`shrink-0 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] border transition-colors whitespace-nowrap ${
+                    group === g.id
+                      ? "bg-ink text-background border-ink"
+                      : "bg-background text-foreground border-border hover:border-ink"
+                  }`}
+                >
+                  {g.label}
+                </button>
+              ))}
+            </div>
           </div>
-          {(group === "all" || group === "sectors") && (
-            <Select
-              value={sectorFilter}
-              onValueChange={setSectorFilter}
-            >
-              <SelectTrigger className="h-8 w-56 rounded-none border-border bg-background text-[11px] font-semibold uppercase tracking-[0.14em] focus:ring-0 focus:ring-offset-0 focus:border-ink">
-                <SelectValue placeholder="Filter by sector" />
-              </SelectTrigger>
-              <SelectContent className="rounded-none border-border bg-background">
-                <SelectItem value="all" className="text-[11px] font-semibold uppercase tracking-[0.14em] focus:bg-secondary focus:text-foreground">
-                  All Sectors
-                </SelectItem>
-                {SECTOR_NAMES.map((name) => (
-                  <SelectItem
-                    key={name}
-                    value={name}
-                    className="text-[11px] font-semibold uppercase tracking-[0.14em] focus:bg-secondary focus:text-foreground"
-                  >
-                    {name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
         </div>
         {hasFilter && (
           <div className="container-prose pb-3 text-[11px] font-mono uppercase tracking-[0.2em] text-muted-foreground">
