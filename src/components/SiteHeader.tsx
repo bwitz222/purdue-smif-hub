@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
+import smifLogo from "@/assets/smif-logo-mark.png";
 
 const NAV = [
   { to: "/about",        label: "About"      },
