@@ -215,7 +215,7 @@ function Team() {
         <section className="container-prose py-24 text-center">
           <p className="font-display text-2xl text-muted-foreground">No members match your search.</p>
           <button
-            onClick={() => { setQuery(""); setGroup("all"); }}
+            onClick={() => { setQuery(""); setGroup("all"); setSectorFilter("all"); }}
             className="mt-6 inline-flex items-center px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] border border-ink hover:bg-ink hover:text-background transition-colors"
           >
             Reset filters
