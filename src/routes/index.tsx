@@ -16,9 +16,9 @@ export const Route = createFileRoute("/")({
     ],
     links: [
       { rel: "canonical", href: "https://purduesmif.org/" },
-      { rel: "preload", as: "image", href: tradingImg, fetchpriority: "high" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" },
+      { rel: "preload", as: "image", href: tradingImg, fetchPriority: "high" },
     ],
+
   }),
 });
 
