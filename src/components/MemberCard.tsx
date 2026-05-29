@@ -67,7 +67,7 @@ export function MemberCard({
             <Link to="/contact" className="inline-flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-gold-deep">
               <UserPlus className="h-3.5 w-3.5" /> Apply
             </Link>
-            <a href="mailto:smif@purdue.edu" className="inline-flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-gold-deep">
+            <a href="mailto:smif26@purdue.edu" className="inline-flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-gold-deep">
               <Mail className="h-3.5 w-3.5" /> Contact
             </a>
           </div>
