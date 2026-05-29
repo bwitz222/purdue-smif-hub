@@ -17,8 +17,9 @@ export const Route = createFileRoute("/team")({
       { name: "description", content: "Meet the executive board, sector teams, fixed income & macro team, and portfolio managers of the Purdue Student Managed Investment Fund." },
       { property: "og:title", content: "Meet the Team — Purdue SMIF" },
       { property: "og:description", content: "The 52 students behind Purdue SMIF — executive board, sector analysts, fixed income & macro, and portfolio managers." },
-      { property: "og:url", content: "/team" },
+      { property: "og:url", content: "https://purduesmif.org/team" },
     ],
+    links: [{ rel: "canonical", href: "https://purduesmif.org/team" }],
     scripts: [
       {
         type: "application/ld+json",
