@@ -185,6 +185,23 @@ function Team() {
               </button>
             ))}
           </div>
+          {(group === "all" || group === "sectors") && (
+            <div className="flex flex-wrap items-center gap-1.5">
+              {["All", ...SECTOR_NAMES].map((name) => (
+                <button
+                  key={name}
+                  onClick={() => setSectorFilter(name === "All" ? "all" : name)}
+                  className={`px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] border transition-colors ${
+                    (name === "All" ? sectorFilter === "all" : sectorFilter === name)
+                      ? "bg-ink text-background border-ink"
+                      : "bg-background text-foreground border-border hover:border-ink"
+                  }`}
+                >
+                  {name}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
         {hasFilter && (
           <div className="container-prose pb-3 text-[11px] font-mono uppercase tracking-[0.2em] text-muted-foreground">
