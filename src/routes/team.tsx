@@ -4,6 +4,13 @@ import { Search, X } from "lucide-react";
 import { MemberCard, type Member } from "@/components/MemberCard";
 import { MemberDetailSheet } from "@/components/MemberDetailSheet";
 import { board, sectorTeams, fixedIncomeMacro, portfolioManagers } from "@/data/team";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const allMembers = [
   ...board,
@@ -186,21 +193,28 @@ function Team() {
             ))}
           </div>
           {(group === "all" || group === "sectors") && (
-            <div className="flex flex-wrap items-center gap-1.5">
-              {["All", ...SECTOR_NAMES].map((name) => (
-                <button
-                  key={name}
-                  onClick={() => setSectorFilter(name === "All" ? "all" : name)}
-                  className={`px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] border transition-colors ${
-                    (name === "All" ? sectorFilter === "all" : sectorFilter === name)
-                      ? "bg-ink text-background border-ink"
-                      : "bg-background text-foreground border-border hover:border-ink"
-                  }`}
-                >
-                  {name}
-                </button>
-              ))}
-            </div>
+            <Select
+              value={sectorFilter}
+              onValueChange={setSectorFilter}
+            >
+              <SelectTrigger className="h-8 w-56 rounded-none border-border bg-background text-[11px] font-semibold uppercase tracking-[0.14em] focus:ring-0 focus:ring-offset-0 focus:border-ink">
+                <SelectValue placeholder="Filter by sector" />
+              </SelectTrigger>
+              <SelectContent className="rounded-none border-border bg-background">
+                <SelectItem value="all" className="text-[11px] font-semibold uppercase tracking-[0.14em] focus:bg-secondary focus:text-foreground">
+                  All Sectors
+                </SelectItem>
+                {SECTOR_NAMES.map((name) => (
+                  <SelectItem
+                    key={name}
+                    value={name}
+                    className="text-[11px] font-semibold uppercase tracking-[0.14em] focus:bg-secondary focus:text-foreground"
+                  >
+                    {name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           )}
         </div>
         {hasFilter && (
