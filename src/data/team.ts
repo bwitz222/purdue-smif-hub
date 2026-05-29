@@ -133,3 +133,50 @@ export const portfolioManagers: Member[] = make("Portfolio + Risk Management", [
   ["Abhipsa Prajapati", "Portfolio Manager — Trading", "aprajap@purdue.edu", "2029"],
   ["", "Risk Analyst"],
 ]);
+
+// LinkedIn profiles — keyed by name, applied across board, sector teams, FIM, and PM groups.
+const LINKEDIN_BY_NAME: Record<string, string> = {
+  "Gabriel Fridman": "https://www.linkedin.com/in/gabriel-fridman-a5732b242",
+  "Fabian Segura Vargas": "https://www.linkedin.com/in/fabianseguravargas",
+  "Ayden Wong": "https://www.linkedin.com/in/aydenwongzhifeng",
+  "Karanvir Singh": "https://www.linkedin.com/in/karansingh70",
+  "Riley Collins": "https://www.linkedin.com/in/riley-collins7",
+  "Mikhail Bilokin": "https://www.linkedin.com/in/michael-bilokin",
+  "Evan Wright": "https://www.linkedin.com/in/evan-wright-purdue",
+  "Logan Friedman": "https://www.linkedin.com/in/loganfriedman",
+  "Alex Belanger": "https://www.linkedin.com/in/belangeralexander",
+  "Daniel Friedman": "https://www.linkedin.com/in/daniel-friedman-7072aa292",
+  "Aditya Balaji": "https://www.linkedin.com/in/aditya-balaji-a5452b22a",
+  "Balthazar Schmit": "https://www.linkedin.com/in/balthazarschmitt",
+  "Andrew Lacambra": "https://www.linkedin.com/in/andrew-lacambra-241a96314",
+  "Keren Wadhwani": "https://www.linkedin.com/in/keren-wadhwani",
+  "Brock Heller": "https://www.linkedin.com/in/brock-heller",
+  "Gautham Santhanam": "https://www.linkedin.com/in/gautham-santhanam",
+  "Sid Voona": "https://www.linkedin.com/in/siddharth-voona-2b4b86344",
+  "Ian Teh": "https://www.linkedin.com/in/ianteh2027",
+  "Augustus Matushek": "https://www.linkedin.com/in/augustus-matushek",
+  "Cooper Weiss": "https://www.linkedin.com/in/cooper-weiss-1a87a1350",
+  "Dallas White": "https://www.linkedin.com/in/dallas-white-97037a378",
+  "Shaheera Ali": "https://www.linkedin.com/in/shaheeraali",
+  "Landon Haffner": "https://www.linkedin.com/in/landonhaffner",
+  "Chris Andreou": "https://www.linkedin.com/in/c-andreou",
+  "Parth Dama": "https://www.linkedin.com/in/parthdama",
+  "Abhipsa Prajapati": "https://www.linkedin.com/in/abhipsa-prajapati-942755360",
+  "Hunter Specht": "https://www.linkedin.com/in/hunterspecht",
+  "Sandhya Gopinath": "https://www.linkedin.com/in/sandhya--gopinath",
+  "Anushka Patel": "https://www.linkedin.com/in/anushka-patel-01a252277",
+  "Yashita Pujari": "https://www.linkedin.com/in/yashitarpujari",
+  "Jacob George": "https://www.linkedin.com/in/jacobmigeorge",
+  "Alejandro Cabrales": "https://www.linkedin.com/in/alejandro-cabrales",
+  "Arav Ginde": "https://www.linkedin.com/in/aravginde",
+  "Veer Sanyal": "https://www.linkedin.com/in/veersanyal",
+};
+
+const attachLinkedIn = <T extends Member>(m: T): T =>
+  LINKEDIN_BY_NAME[m.name] && !m.linkedin ? { ...m, linkedin: LINKEDIN_BY_NAME[m.name] } : m;
+
+// Inject linkedin URLs into the exported collections so every group renders them.
+board.forEach((m, i) => { board[i] = attachLinkedIn(m); });
+fixedIncomeMacro.forEach((m, i) => { fixedIncomeMacro[i] = attachLinkedIn(m); });
+portfolioManagers.forEach((m, i) => { portfolioManagers[i] = attachLinkedIn(m); });
+sectorTeams.forEach((t) => { t.members.forEach((m, i) => { t.members[i] = attachLinkedIn(m); }); });
