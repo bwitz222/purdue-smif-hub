@@ -122,7 +122,7 @@ export const fixedIncomeMacro: Member[] = make("Fixed Income & Macro", [
   ["Keren Wadhwani", "Senior Analyst — Rates", "kwadhwan@purdue.edu", "2028"],
   ["Aditya Balaji", "Analyst — Credit", "balaji57@purdue.edu", "2028"],
   ["Balthazar Schmit", "Analyst — FX & Macro", "bschm@purdue.edu", "2028"],
-]);
+]).map((m) => (m.name === "Andrew Lacambra" ? { ...m, photo: andrewLacambraPhoto } : m));
 
 export const portfolioManagers: Member[] = make("Portfolio + Risk Management", [
   ["Hunter Specht", "Lead Portfolio Manager", "hspecht@purdue.edu", "2027"],
