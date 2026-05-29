@@ -2,8 +2,6 @@
 @source "../src";
 @import "tw-animate-css";
 
-@custom-variant dark (&:is(.dark *));
-
 @theme inline {
   --font-display: "Cormorant Garamond", "Georgia", serif;
   --font-body:    "IBM Plex Sans", system-ui, sans-serif;
@@ -67,17 +65,6 @@
   --shadow-gold:    0 10px 40px -10px rgba(142,111,62,0.35);
 }
 
-.dark {
-  --background:         #0A0A0A;
-  --foreground:         #FAFAF6;
-  --card:               #141412;
-  --card-foreground:    #FAFAF6;
-  --primary:            #CFB991;
-  --primary-foreground: #0A0A0A;
-  --muted:              #1E1E1B;
-  --muted-foreground:   #8A8880;
-  --border:             rgba(255,255,255,0.08);
-}
 
 @layer base {
   * { border-color: var(--color-border); }
