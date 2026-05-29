@@ -79,6 +79,33 @@ function About() {
             Stanley, Barclays, BMO Capital Markets, Wells Fargo, and Big 4
             accounting firms.
           </p>
+
+          <div className="pt-6">
+            <span className="text-xs font-semibold uppercase tracking-[0.32em] text-gold-deep block mb-6">
+              Where Our Members Go
+            </span>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-border border border-border">
+              {[
+                "Morgan Stanley",
+                "Barclays",
+                "BMO Capital",
+                "Wells Fargo",
+                "Deloitte",
+                "PwC",
+                "EY",
+                "KPMG",
+              ].map((firm) => (
+                <div
+                  key={firm}
+                  className="bg-background flex items-center justify-center px-4 py-8 text-center hover:bg-secondary/50 transition-colors duration-200"
+                >
+                  <span className="font-display text-sm font-semibold text-ink/75 tracking-tight">
+                    {firm}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
