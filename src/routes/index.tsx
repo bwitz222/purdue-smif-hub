@@ -78,10 +78,11 @@ function Index() {
             </div>
           </div>
           <div className="hidden lg:grid grid-cols-2 gap-px border border-white/10 bg-white/10">
-            {STATS.map((s, i) => (<div key={s.label} className="animate-fade-up bg-ink/50 backdrop-blur-sm p-8 hover:bg-white/5 transition-colors duration-300 cursor-default" style={{ animationDelay: `${380 + i * 80}ms` }}><div className="font-display text-5xl font-bold text-gold leading-none">{s.value}</div><div className="mt-3 text-xs uppercase tracking-[0.22em] text-background/55">{s.label}</div><div className="mt-1 text-xs text-background/35 font-mono">{s.sub}</div></div>))}
+            {STATS.map((s, i) => (<div key={s.label} className="animate-fade-up bg-ink/50 backdrop-blur-sm p-8 hover:bg-white/5 transition-colors duration-300 cursor-default" style={{ animationDelay: `${380 + i * 80}ms` }}><div className="font-display text-5xl font-bold text-gold leading-none">{s.value}</div><div className="mt-3 text-xs uppercase tracking-[0.22em] text-background/70">{s.label}</div><div className="mt-1 text-xs text-background/55 font-mono">{s.sub}</div></div>))}
           </div>
         </div>
         <div className="relative border-t border-white/10 bg-ink/70 backdrop-blur-sm py-3 ticker-wrap">
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 z-10 hidden sm:inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-background/55 bg-ink/80 px-2 py-1 border border-white/10"><span className="h-1.5 w-1.5 rounded-full bg-gold/80 animate-pulse" />Demo</span>
           <div className="ticker-inner">{doubled.map((item, i) => (<TickerItem key={i} symbol={item.symbol} val={item.val} />))}</div>
           <div className="absolute left-0 inset-y-0 w-10 bg-gradient-to-r from-ink/70 to-transparent pointer-events-none" />
           <div className="absolute right-0 inset-y-0 w-10 bg-gradient-to-l from-ink/70 to-transparent pointer-events-none" />
