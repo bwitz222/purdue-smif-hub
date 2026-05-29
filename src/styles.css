@@ -158,6 +158,8 @@
   .delay-500 { animation-delay: 500ms; }
   .delay-600 { animation-delay: 600ms; }
   .delay-700 { animation-delay: 700ms; }
+  .scrollbar-none { scrollbar-width: none; -ms-overflow-style: none; }
+  .scrollbar-none::-webkit-scrollbar { display: none; }
   @media (prefers-reduced-motion: reduce) {
     .animate-fade-up,
     .animate-fade-in,
