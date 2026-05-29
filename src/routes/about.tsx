@@ -49,7 +49,7 @@ function About() {
           >
             A legacy of<br />
             disciplined<br />
-            <em className="not-italic text-gold/80">investing.</em>
+            <span className="text-gold/80">investing.</span>
           </h1>
           <p className="mt-8 max-w-xl text-background/55 leading-relaxed text-lg">
             Founded at the Daniels School of Business. Built on the conviction
@@ -57,7 +57,7 @@ function About() {
           </p>
         </div>
         {/* Decorative rule */}
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-white/8" />
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-white/10" />
       </section>
 
       {/* ── History ───────────────────────────────────────────────── */}
@@ -149,8 +149,7 @@ function About() {
         <div className="grid gap-px bg-border md:grid-cols-4">
           {PROCESS.map(({ n, t, d }) => (
             <div key={n} className="bg-background p-8 lg:p-10 group hover:bg-secondary/50 transition-colors duration-300">
-              <div className="font-mono text-xs text-muted-foreground tracking-widest mb-6">{n}</div>
-              <div className="font-display text-4xl font-bold text-gold/20 leading-none mb-6 group-hover:text-gold/40 transition-colors duration-300">
+              <div className="font-display text-5xl font-bold text-gold/25 leading-none mb-6 group-hover:text-gold/45 transition-colors duration-300">
                 {n}
               </div>
               <h3 className="font-display text-xl font-semibold text-ink mb-3">{t}</h3>
