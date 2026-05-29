@@ -108,7 +108,7 @@ function Performance() {
           >
             Benchmarked.<br />
             Transparent.<br />
-            <em className="not-italic text-gold/80">Quarterly.</em>
+            <span className="text-gold/80">Quarterly.</span>
           </h1>
           <p className="mt-8 max-w-xl text-background/55 leading-relaxed text-lg">
             Measured against the S&P 500 Total Return Index.
