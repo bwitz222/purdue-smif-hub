@@ -9,8 +9,9 @@ export const Route = createFileRoute("/contact")({
       { name: "description", content: "Get in touch with the Purdue Student Managed Investment Fund." },
       { property: "og:title", content: "Contact Purdue SMIF" },
       { property: "og:description", content: "Reach the Purdue Student Managed Investment Fund — for prospective members, alumni, sponsors, and recruiters." },
-      { property: "og:url", content: "/contact" },
+      { property: "og:url", content: "https://purduesmif.org/contact" },
     ],
+    links: [{ rel: "canonical", href: "https://purduesmif.org/contact" }],
     scripts: [
       {
         type: "application/ld+json",

@@ -3,14 +3,11 @@ import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 
 const NAV = [
-  { to: "/about",        label: "About"       },
-  { to: "/team",         label: "Team"        },
-  { to: "/sectors",      label: "Sectors"     },
-  { to: "/holdings",     label: "Holdings"    },
-  { to: "/performance",  label: "Performance" },
-  { to: "/publications", label: "Research"    },
-  { to: "/recruiting",   label: "Recruiting"  },
-  { to: "/contact",      label: "Contact"     },
+  { to: "/about",        label: "About"      },
+  { to: "/team",         label: "Team"       },
+  { to: "/holdings",     label: "Portfolio"  },
+  { to: "/publications", label: "Research"   },
+  { to: "/recruiting",   label: "Recruiting" },
 ] as const;
 
 export function SiteHeader() {

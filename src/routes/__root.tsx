@@ -5,7 +5,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 
 function NotFoundComponent() {
-  return (<div className="flex min-h-screen items-center justify-center bg-ink px-4"><div className="max-w-md text-center text-background"><div className="font-display text-[8rem] font-bold text-gold/20 leading-none select-none">404</div><h1 className="font-display text-3xl font-bold text-background mt-4">Page not found</h1><p className="mt-3 text-sm text-background/50">The page you're looking for doesn't exist or has been moved.</p><div className="mt-8"><Link to="/" className="inline-flex items-center justify-center bg-gold px-6 py-3 text-sm font-semibold text-ink hover:bg-gold-mid transition-colors duration-200">Go home</Link></div></div></div>);
+  return (<div className="flex min-h-screen items-center justify-center bg-ink px-4"><div className="max-w-md text-center text-background"><span className="mx-auto mb-8 grid h-14 w-14 place-items-center bg-gold text-ink font-display text-2xl font-bold">P</span><div className="font-display text-[8rem] font-bold text-gold/20 leading-none select-none">404</div><h1 className="font-display text-3xl font-bold text-background mt-4">Page not found</h1><p className="mt-3 text-sm text-background/65">The page you're looking for doesn't exist or has been moved.</p><div className="mt-8"><Link to="/" className="inline-flex items-center justify-center bg-gold px-6 py-3 text-sm font-semibold text-ink hover:bg-gold-mid transition-colors duration-200">Go home</Link></div></div></div>);
 }
 
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {

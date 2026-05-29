@@ -69,8 +69,9 @@ export const Route = createFileRoute("/recruiting")({
       { name: "description", content: "Recruiting calendar and interview prep guide for the Purdue Student Managed Investment Fund." },
       { property: "og:title", content: "Recruiting Calendar & Interview Prep — Purdue SMIF" },
       { property: "og:description", content: "Callouts, coffee chats, interviews, and a behavioral + technical interview prep guide for joining Purdue SMIF." },
-      { property: "og:url", content: "/recruiting" },
+      { property: "og:url", content: "https://purduesmif.org/recruiting" },
     ],
+    links: [{ rel: "canonical", href: "https://purduesmif.org/recruiting" }],
   }),
 });
 
