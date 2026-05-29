@@ -37,35 +37,33 @@ export function MemberCard({ m, variant = "default" }: { m: Member; variant?: "d
 
   if (m.placeholder) {
     return (
-      <div className="group flex flex-col border border-dashed border-border bg-card/50 p-6 transition hover:border-gold hover:shadow-elegant">
-        <div className="flex items-start gap-4">
-          <div className="grid h-16 w-16 flex-shrink-0 place-items-center overflow-hidden border border-dashed border-gold/40 bg-secondary/40">
-            <UserPlus className="h-6 w-6 text-gold-deep" />
-          </div>
-          <div className="min-w-0">
-            <div className="text-xs font-semibold uppercase tracking-[0.18em] text-gold-deep">
-              {m.role}
-            </div>
-            <div className="mt-1 font-display text-lg font-bold leading-tight">Open Position</div>
-            <div className="text-xs text-muted-foreground">Recruiting</div>
-          </div>
+      <div className="group flex flex-col border border-dashed border-border bg-card/50 transition hover:border-gold hover:shadow-elegant">
+        <div className="grid aspect-square w-full place-items-center overflow-hidden border-b border-dashed border-border bg-secondary/40">
+          <UserPlus className="h-10 w-10 text-gold-deep" />
         </div>
-        <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-          We're recruiting for this seat. Interested in joining SMIF? Reach out — we'd love to hear from you.
-        </p>
-        <div className="mt-5 flex items-center gap-4 border-t border-border pt-4 text-xs">
-          <Link
-            to="/contact"
-            className="inline-flex items-center gap-1.5 text-muted-foreground transition hover:text-gold-deep"
-          >
-            <UserPlus className="h-3.5 w-3.5" /> Apply
-          </Link>
-          <a
-            href="mailto:smif@purdue.edu"
-            className="inline-flex items-center gap-1.5 text-muted-foreground transition hover:text-gold-deep"
-          >
-            <Mail className="h-3.5 w-3.5" /> Contact
-          </a>
+        <div className="flex flex-1 flex-col p-6">
+          <div className="text-xs font-semibold uppercase tracking-[0.18em] text-gold-deep">
+            {m.role}
+          </div>
+          <div className="mt-1 font-display text-lg font-bold leading-tight">Open Position</div>
+          <div className="text-xs text-muted-foreground">Recruiting</div>
+          <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+            We're recruiting for this seat. Interested in joining SMIF? Reach out — we'd love to hear from you.
+          </p>
+          <div className="mt-auto flex items-center gap-4 border-t border-border pt-4 text-xs">
+            <Link
+              to="/contact"
+              className="inline-flex items-center gap-1.5 text-muted-foreground transition hover:text-gold-deep"
+            >
+              <UserPlus className="h-3.5 w-3.5" /> Apply
+            </Link>
+            <a
+              href="mailto:smif@purdue.edu"
+              className="inline-flex items-center gap-1.5 text-muted-foreground transition hover:text-gold-deep"
+            >
+              <Mail className="h-3.5 w-3.5" /> Contact
+            </a>
+          </div>
         </div>
       </div>
     );
