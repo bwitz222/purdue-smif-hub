@@ -22,7 +22,7 @@ export const Route = createFileRoute("/contact")({
           url: "https://purduesmif.lovable.app/contact",
           address: {
             "@type": "PostalAddress",
-            streetAddress: "403 W State Street",
+            streetAddress: "403 Mitch Daniels Blvd",
             addressLocality: "West Lafayette",
             addressRegion: "IN",
             postalCode: "47907",
@@ -65,7 +65,7 @@ function Contact() {
             <div>
               <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Address</div>
               <div className="mt-1 font-display text-lg font-semibold">Daniels School of Business</div>
-              <div className="text-muted-foreground">403 W State Street<br />West Lafayette, IN 47907</div>
+              <div className="text-muted-foreground">403 Mitch Daniels Blvd<br />West Lafayette, IN 47907</div>
             </div>
           </div>
           <div className="flex gap-5">
