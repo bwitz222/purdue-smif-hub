@@ -1,0 +1,64 @@
+import { useEffect, useRef, useState } from "react";
+import { useInView, useMotionValue, animate } from "framer-motion";
+
+interface CountUpProps {
+  to: number;
+  from?: number;
+  duration?: number;
+  decimals?: number;
+  prefix?: string;
+  suffix?: string;
+  /** Format the numeric value. Receives the current number, returns a string. */
+  format?: (n: number) => string;
+  className?: string;
+}
+
+/**
+ * Animates a number from `from` to `to` when it scrolls into view.
+ * Respects prefers-reduced-motion by snapping to the final value.
+ */
+export function CountUp({
+  to,
+  from = 0,
+  duration = 1.6,
+  decimals = 0,
+  prefix = "",
+  suffix = "",
+  format,
+  className,
+}: CountUpProps) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-10% 0px" });
+  const mv = useMotionValue(from);
+  const [display, setDisplay] = useState(from);
+
+  useEffect(() => {
+    if (!inView) return;
+    const reduce =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) {
+      setDisplay(to);
+      return;
+    }
+    const controls = animate(mv, to, {
+      duration,
+      ease: [0.22, 1, 0.36, 1],
+      onUpdate: (v) => setDisplay(v),
+    });
+    return () => controls.stop();
+  }, [inView, to, duration, mv]);
+
+  const formatted = format
+    ? format(display)
+    : `${prefix}${display.toLocaleString("en-US", {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals,
+      })}${suffix}`;
+
+  return (
+    <span ref={ref} className={className}>
+      {formatted}
+    </span>
+  );
+}
