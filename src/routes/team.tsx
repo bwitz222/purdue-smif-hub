@@ -71,6 +71,8 @@ const GROUPS: { id: Group; label: string }[] = [
   { id: "pm", label: "Portfolio + Risk" },
 ];
 
+const SECTOR_NAMES = sectorTeams.map((t) => t.name);
+
 const matches = (m: Member, q: string) => {
   if (!q) return true;
   const s = q.toLowerCase();
@@ -86,6 +88,7 @@ function Team() {
   const totalMembers = 52;
   const [query, setQuery] = useState("");
   const [group, setGroup] = useState<Group>("all");
+  const [sectorFilter, setSectorFilter] = useState<string>("all");
   const [selected, setSelected] = useState<Member | null>(null);
 
   const showBoard = group === "all" || group === "board";
@@ -94,10 +97,13 @@ function Team() {
   const showPm = group === "all" || group === "pm";
 
   const filteredBoard = useMemo(() => board.filter((m) => matches(m, query)), [query]);
-  const filteredSectors = useMemo(
-    () => sectorTeams.map((t) => ({ ...t, members: t.members.filter((m) => matches(m, query)) })).filter((t) => t.members.length > 0),
-    [query],
-  );
+  const filteredSectors = useMemo(() => {
+    const teams = sectorTeams
+      .filter((t) => sectorFilter === "all" || t.name === sectorFilter)
+      .map((t) => ({ ...t, members: t.members.filter((m) => matches(m, query)) }))
+      .filter((t) => t.members.length > 0);
+    return teams;
+  }, [query, sectorFilter]);
   const filteredFim = useMemo(() => fixedIncomeMacro.filter((m) => matches(m, query)), [query]);
   const filteredPm = useMemo(() => portfolioManagers.filter((m) => matches(m, query)), [query]);
 
@@ -107,7 +113,12 @@ function Team() {
     (showFim ? filteredFim.length : 0) +
     (showPm ? filteredPm.length : 0);
 
-  const hasFilter = query.length > 0 || group !== "all";
+  const hasFilter = query.length > 0 || group !== "all" || sectorFilter !== "all";
+
+  const handleGroupChange = (g: Group) => {
+    setGroup(g);
+    setSectorFilter("all");
+  };
 
   return (
     <>
@@ -163,7 +174,7 @@ function Team() {
             {GROUPS.map((g) => (
               <button
                 key={g.id}
-                onClick={() => setGroup(g.id)}
+                onClick={() => handleGroupChange(g.id)}
                 className={`px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] border transition-colors ${
                   group === g.id
                     ? "bg-ink text-background border-ink"
@@ -174,6 +185,23 @@ function Team() {
               </button>
             ))}
           </div>
+          {(group === "all" || group === "sectors") && (
+            <div className="flex flex-wrap items-center gap-1.5">
+              {["All", ...SECTOR_NAMES].map((name) => (
+                <button
+                  key={name}
+                  onClick={() => setSectorFilter(name === "All" ? "all" : name)}
+                  className={`px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] border transition-colors ${
+                    (name === "All" ? sectorFilter === "all" : sectorFilter === name)
+                      ? "bg-ink text-background border-ink"
+                      : "bg-background text-foreground border-border hover:border-ink"
+                  }`}
+                >
+                  {name}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
         {hasFilter && (
           <div className="container-prose pb-3 text-[11px] font-mono uppercase tracking-[0.2em] text-muted-foreground">
@@ -187,7 +215,7 @@ function Team() {
         <section className="container-prose py-24 text-center">
           <p className="font-display text-2xl text-muted-foreground">No members match your search.</p>
           <button
-            onClick={() => { setQuery(""); setGroup("all"); }}
+            onClick={() => { setQuery(""); setGroup("all"); setSectorFilter("all"); }}
             className="mt-6 inline-flex items-center px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] border border-ink hover:bg-ink hover:text-background transition-colors"
           >
             Reset filters
