@@ -31,12 +31,24 @@ type SortKey = keyof Holding;
 
 const ETF_SECTOR_WEIGHTS: Record<string, Record<string, number>> = { SPY: { Technology: 33.5, Financials: 13.5, "Consumer Cyclical": 10.5, Healthcare: 10.0, "Communication Services": 9.5, Industrials: 8.5, "Consumer Defensive": 5.5, Energy: 3.0, Utilities: 2.5, "Real Estate": 2.0, Materials: 1.5 } };
 
-function KpiCard({ label, value, sub, accent }: { label: string; value: string; sub?: string; accent?: "positive" | "negative" | "neutral" }) {
+function KpiCard({
+  label,
+  value,
+  sub,
+  accent,
+  animatedValue,
+}: {
+  label: string;
+  value: string;
+  sub?: string;
+  accent?: "positive" | "negative" | "neutral";
+  animatedValue?: React.ReactNode;
+}) {
   const valueColor = accent === "positive" ? "text-emerald-600" : accent === "negative" ? "text-destructive" : "text-ink";
   return (
     <div className="border border-border bg-card p-6 flex flex-col gap-1">
       <div className="text-xs uppercase tracking-[0.22em] text-muted-foreground">{label}</div>
-      <div className={`font-display text-3xl font-bold ${valueColor} mt-1`}>{value}</div>
+      <div className={`font-display text-3xl font-bold ${valueColor} mt-1`}>{animatedValue ?? value}</div>
       {sub && <div className="text-xs text-muted-foreground font-mono mt-0.5">{sub}</div>}
     </div>
   );
