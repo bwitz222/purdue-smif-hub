@@ -22,7 +22,7 @@ export const memberSlug = (name: string) =>
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
 
-export function MemberCard({ m }: { m: Member }) {
+export function MemberCard({ m, variant = "default" }: { m: Member; variant?: "default" | "board" }) {
   const initials = m.name.split(" ").map((p) => p[0]).slice(0, 2).join("");
   const email = m.email ?? `${m.name.toLowerCase().replace(/[^a-z]+/g, "")}@purdue.edu`;
 
