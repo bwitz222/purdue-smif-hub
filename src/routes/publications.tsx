@@ -189,7 +189,7 @@ function PublicationCard({ pub }: { pub: Publication }) {
 
   return (
     <div className="group flex flex-col border border-border bg-card transition hover:border-gold hover:shadow-elegant">
-      <div className="aspect-[4/3] overflow-hidden border-b border-border bg-secondary/40">
+      <div className="aspect-[3/4] overflow-hidden border-b border-border bg-secondary/40">
         {isPdf ? (
           <object data={`${url}#toolbar=0&navpanes=0&view=FitH`} type="application/pdf" className="h-full w-full">
             <div className="grid h-full place-items-center text-muted-foreground">
