@@ -3,19 +3,25 @@ import tradingImg from "@/assets/nyc-skyline.jpg";
 import { ArrowRight, TrendingUp, Users, Award, BarChart3, ChevronRight, ExternalLink } from "lucide-react";
 import { CountUp } from "@/components/CountUp";
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
+import { socialMeta, canonical } from "@/lib/seo";
+
+const HOME_TITLE = "Purdue SMIF — Student Managed Investment Fund";
+const HOME_DESCRIPTION = "Founded to develop the next generation of investors. The Purdue Student Managed Investment Fund manages real capital across global markets.";
 
 export const Route = createFileRoute("/")({
   component: Index,
   head: () => ({
     meta: [
-      { title: "Purdue SMIF — Student Managed Investment Fund" },
-      { name: "description", content: "Founded to develop the next generation of investors. The Purdue Student Managed Investment Fund manages real capital across global markets." },
-      { property: "og:title", content: "Purdue SMIF — Student Managed Investment Fund" },
-      { property: "og:description", content: "Founded to develop the next generation of investors. The Purdue Student Managed Investment Fund manages real capital across global markets." },
-      { property: "og:url", content: "https://purduesmif.org/" },
+      { title: HOME_TITLE },
+      { name: "description", content: HOME_DESCRIPTION },
+      ...socialMeta({
+        title: HOME_TITLE,
+        description: HOME_DESCRIPTION,
+        url: canonical("/"),
+      }),
     ],
     links: [
-      { rel: "canonical", href: "https://purduesmif.org/" },
+      { rel: "canonical", href: canonical("/") },
       { rel: "preload", as: "image", href: tradingImg, fetchPriority: "high" },
     ],
   }),

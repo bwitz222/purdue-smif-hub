@@ -1,17 +1,23 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
+import { socialMeta, canonical } from "@/lib/seo";
+
+const PAGE_TITLE = "About — Purdue SMIF";
+const PAGE_DESCRIPTION = "How the Purdue Student Managed Investment Fund researches, debates, and votes on every real-money position — our history, philosophy, and process.";
 
 export const Route = createFileRoute("/about")({
   component: About,
   head: () => ({
     meta: [
-      { title: "About — Purdue SMIF" },
-      { name: "description", content: "Learn about the Purdue Student Managed Investment Fund's history, philosophy, and approach to investing." },
-      { property: "og:title", content: "About Purdue SMIF — History, Philosophy & Process" },
-      { property: "og:description", content: "How the Purdue Student Managed Investment Fund researches, debates, and votes on every real-money position." },
-      { property: "og:url", content: "https://purduesmif.org/about" },
+      { title: PAGE_TITLE },
+      { name: "description", content: PAGE_DESCRIPTION },
+      ...socialMeta({
+        title: "About Purdue SMIF — History, Philosophy & Process",
+        description: PAGE_DESCRIPTION,
+        url: canonical("/about"),
+      }),
     ],
-    links: [{ rel: "canonical", href: "https://purduesmif.org/about" }],
+    links: [{ rel: "canonical", href: canonical("/about") }],
   }),
 });
 
