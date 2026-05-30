@@ -145,6 +145,7 @@ function HoldingsPage() {
         </div>
       </section>
       <section className="container-prose py-14 space-y-10">
+        <h2 className="sr-only">Portfolio Summary</h2>
         <Reveal className="grid gap-px bg-border sm:grid-cols-2 lg:grid-cols-4">
           <KpiCard
             label="Portfolio Value"
@@ -173,6 +174,7 @@ function HoldingsPage() {
           />
         </Reveal>
 
+        <h2 className="sr-only">Sector Allocation</h2>
         <Reveal className="grid gap-px bg-border md:grid-cols-3">
           <div className="md:col-span-2 bg-card border border-border p-6">
             <div className="flex items-baseline justify-between mb-5 gap-3">
@@ -216,6 +218,7 @@ function HoldingsPage() {
           </div>
         </Reveal>
 
+        <h2 className="sr-only">Holdings</h2>
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-xs uppercase tracking-[0.22em] text-muted-foreground mr-1">Sector</span>
           {sectors.map((s) => {
