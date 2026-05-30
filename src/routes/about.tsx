@@ -88,18 +88,9 @@ function About() {
           </p>
 
           <div className="pt-6">
-            <div className="flex items-end justify-between flex-wrap gap-4 mb-6">
-              <span className="text-xs font-semibold uppercase tracking-[0.32em] text-gold-deep">
-                Where Our Members Go
-              </span>
-              <Link
-                to="/alumni"
-                className="group inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-ink hover:text-gold-deep transition-colors"
-              >
-                Alumni Network
-                <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-1" />
-              </Link>
-            </div>
+            <span className="text-xs font-semibold uppercase tracking-[0.32em] text-gold-deep block mb-6">
+              Where Our Members Go
+            </span>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-border border border-border">
               {[
                 "Morgan Stanley",
@@ -121,9 +112,6 @@ function About() {
                 </div>
               ))}
             </div>
-            <p className="mt-4 text-xs text-muted-foreground">
-              See the full alumni roster, placements by firm, and the mentorship network on the <Link to="/alumni" className="text-gold-deep hover:underline">Alumni page</Link>.
-            </p>
           </div>
         </div>
       </section>
