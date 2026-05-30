@@ -184,6 +184,7 @@ function UploadCard({ category, onUploaded }: { category: Category; onUploaded: 
         <input
           type="text"
           placeholder="Title"
+          aria-label="Report title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           className="border border-input bg-background px-3 py-2 text-sm outline-none focus:border-gold"
@@ -193,6 +194,7 @@ function UploadCard({ category, onUploaded }: { category: Category; onUploaded: 
           ref={fileInputRef}
           type="file"
           accept=".pdf,.doc,.docx,.ppt,.pptx,application/pdf"
+          aria-label="Report file"
           onChange={(e) => setFile(e.target.files?.[0] ?? null)}
           className="border border-input bg-background px-3 py-2 text-sm file:mr-3 file:border-0 file:bg-secondary file:px-3 file:py-1 file:text-xs file:font-semibold"
           required
