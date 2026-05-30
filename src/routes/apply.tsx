@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { CheckCircle2, ArrowRight } from "lucide-react";
 import { useEffect, useState } from "react";
+import { socialMeta, canonical } from "@/lib/seo";
 
 const DEADLINE = new Date("2026-09-04T23:59:00-04:00").getTime();
 
@@ -56,8 +57,15 @@ export const Route = createFileRoute("/apply")({
     meta: [
       { title: "Apply — Purdue SMIF" },
       { name: "description", content: "Application timeline, recruiting events, and how to join the Purdue Student Managed Investment Fund." },
-      { property: "og:title", content: "Apply to Join Purdue SMIF" },
-      { property: "og:description", content: "Deadline, recruiting events, and the application process for joining the Purdue Student Managed Investment Fund." },
+      ...socialMeta({
+        title: "Apply to Join Purdue SMIF",
+        description: "Deadline, recruiting events, and the application process for joining the Purdue Student Managed Investment Fund.",
+        url: canonical("/apply"),
+      }),
+    ],
+    links: [{ rel: "canonical", href: canonical("/apply") }],
+  }),
+});
       { property: "og:url", content: "https://purduesmif.org/apply" },
     ],
     links: [{ rel: "canonical", href: "https://purduesmif.org/apply" }],

@@ -1,17 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Mail, MapPin, Linkedin } from "lucide-react";
+import { socialMeta, canonical, SITE_URL } from "@/lib/seo";
 
 export const Route = createFileRoute("/contact")({
   component: Contact,
   head: () => ({
     meta: [
       { title: "Contact — Purdue SMIF" },
-      { name: "description", content: "Get in touch with the Purdue Student Managed Investment Fund." },
-      { property: "og:title", content: "Contact Purdue SMIF" },
-      { property: "og:description", content: "Reach the Purdue Student Managed Investment Fund — for prospective members, alumni, sponsors, and recruiters." },
-      { property: "og:url", content: "https://purduesmif.org/contact" },
+      { name: "description", content: "Reach the Purdue Student Managed Investment Fund — for prospective members, alumni, sponsors, and recruiters." },
+      ...socialMeta({
+        title: "Contact Purdue SMIF",
+        description: "Reach the Purdue Student Managed Investment Fund — for prospective members, alumni, sponsors, and recruiters.",
+        url: canonical("/contact"),
+      }),
     ],
-    links: [{ rel: "canonical", href: "https://purduesmif.org/contact" }],
+    links: [{ rel: "canonical", href: canonical("/contact") }],
     scripts: [
       {
         type: "application/ld+json",
@@ -20,7 +23,7 @@ export const Route = createFileRoute("/contact")({
           "@type": "Organization",
           name: "Purdue Student Managed Investment Fund",
           email: "smif26@purdue.edu",
-          url: "https://purduesmif.lovable.app/contact",
+          url: `${SITE_URL}/contact`,
           address: {
             "@type": "PostalAddress",
             streetAddress: "403 Mitch Daniels Blvd",

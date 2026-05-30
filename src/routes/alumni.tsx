@@ -18,6 +18,7 @@ import {
   type Alumnus,
   type AlumniIndustry,
 } from "@/data/alumni";
+import { socialMeta, canonical } from "@/lib/seo";
 
 export const Route = createFileRoute("/alumni")({
   component: Alumni,
@@ -25,11 +26,13 @@ export const Route = createFileRoute("/alumni")({
     meta: [
       { title: "Alumni — Purdue SMIF" },
       { name: "description", content: "Where Purdue SMIF alumni go: investment banking, private equity, hedge funds, asset management, consulting, and corporate roles across the country." },
-      { property: "og:title", content: "Alumni Network — Purdue SMIF" },
-      { property: "og:description", content: "Meet the SMIF alumni now working at Morgan Stanley, Goldman Sachs, Blackstone, Citadel, McKinsey, and more — and learn how to plug into the mentorship network." },
-      { property: "og:url", content: "https://purduesmif.org/alumni" },
+      ...socialMeta({
+        title: "Alumni Network — Purdue SMIF",
+        description: "Meet the SMIF alumni now working at Morgan Stanley, Goldman Sachs, Blackstone, Citadel, McKinsey, and more — and learn how to plug into the mentorship network.",
+        url: canonical("/alumni"),
+      }),
     ],
-    links: [{ rel: "canonical", href: "https://purduesmif.org/alumni" }],
+    links: [{ rel: "canonical", href: canonical("/alumni") }],
     scripts: [
       {
         type: "application/ld+json",
