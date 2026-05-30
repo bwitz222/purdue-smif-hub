@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
-import { FileText, Upload, Download, Trash2, Loader2, ExternalLink, Rss } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { FileText, Download, Loader2, ExternalLink, Rss, Search } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -25,6 +25,7 @@ export const Route = createFileRoute("/publications")({
 });
 
 type Category = "equity_research" | "semester" | "annual";
+type SortKey = "newest" | "oldest" | "title";
 
 interface Publication {
   id: string;
@@ -54,19 +55,37 @@ function formatBytes(bytes: number | null) {
 function Publications() {
   const [pubs, setPubs] = useState<Publication[]>([]);
   const [loading, setLoading] = useState(true);
+  const [query, setQuery] = useState("");
+  const [sort, setSort] = useState<SortKey>("newest");
 
-  const load = async () => {
-    setLoading(true);
-    const { data, error } = await supabase
-      .from("publications")
-      .select("*")
-      .order("created_at", { ascending: false });
-    if (error) toast.error(error.message);
-    else setPubs((data as Publication[]) ?? []);
-    setLoading(false);
-  };
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from("publications")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (error) toast.error(error.message);
+      else setPubs((data as Publication[]) ?? []);
+      setLoading(false);
+    })();
+  }, []);
 
-  useEffect(() => { load(); }, []);
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    const base = q
+      ? pubs.filter(
+          (p) =>
+            p.title.toLowerCase().includes(q) ||
+            (p.description ?? "").toLowerCase().includes(q),
+        )
+      : pubs;
+    const sorted = [...base];
+    if (sort === "newest") sorted.sort((a, b) => +new Date(b.created_at) - +new Date(a.created_at));
+    else if (sort === "oldest") sorted.sort((a, b) => +new Date(a.created_at) - +new Date(b.created_at));
+    else sorted.sort((a, b) => a.title.localeCompare(b.title));
+    return sorted;
+  }, [pubs, query, sort]);
 
   return (
     <>
@@ -75,7 +94,7 @@ function Publications() {
           <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">Publications</span>
           <h1 className="mt-4 font-display text-5xl font-bold md:text-6xl max-w-3xl">Reports & research from the fund.</h1>
           <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
-            Browse equity research, semester performance reviews, and annual reports authored by SMIF members.
+            Browse equity research, semester performance reviews, and annual reports authored by SMIF members. This library is view-only and curated by fund leadership.
           </p>
           <a
             href={SUBSTACK_URL}
@@ -90,6 +109,33 @@ function Publications() {
       </section>
 
       <section className="container-prose py-16">
+        <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="relative w-full sm:max-w-sm">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search reports…"
+              aria-label="Search reports"
+              className="w-full border border-input bg-background py-2 pl-9 pr-3 text-sm outline-none focus:border-gold"
+            />
+          </div>
+          <label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+            Sort
+            <select
+              value={sort}
+              onChange={(e) => setSort(e.target.value as SortKey)}
+              aria-label="Sort reports"
+              className="border border-input bg-background px-2 py-1.5 text-xs font-medium tracking-normal text-foreground outline-none focus:border-gold"
+            >
+              <option value="newest">Newest first</option>
+              <option value="oldest">Oldest first</option>
+              <option value="title">Title (A–Z)</option>
+            </select>
+          </label>
+        </div>
+
         <Tabs defaultValue="equity_research" className="w-full">
           <TabsList className="h-auto flex-wrap gap-1 bg-secondary/60 p-1">
             {CATEGORIES.map((c) => (
@@ -99,140 +145,47 @@ function Publications() {
             ))}
           </TabsList>
 
-          {CATEGORIES.map((c) => (
-            <TabsContent key={c.value} value={c.value} className="mt-8">
-              <div className="mb-6">
-                <h2 className="font-display text-2xl font-bold">{c.label}</h2>
-                <p className="mt-1 text-sm text-muted-foreground">{c.description}</p>
-              </div>
-
-              <UploadCard category={c.value} onUploaded={load} />
-
-              <div className="mt-8 grid gap-4 md:grid-cols-2">
-                {loading ? (
-                  <div className="col-span-full flex items-center justify-center py-12 text-muted-foreground">
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Loading…
+          {CATEGORIES.map((c) => {
+            const items = filtered.filter((p) => p.category === c.value);
+            return (
+              <TabsContent key={c.value} value={c.value} className="mt-8">
+                <div className="mb-6 flex items-baseline justify-between gap-4">
+                  <div>
+                    <h2 className="font-display text-2xl font-bold">{c.label}</h2>
+                    <p className="mt-1 text-sm text-muted-foreground">{c.description}</p>
                   </div>
-                ) : pubs.filter((p) => p.category === c.value).length === 0 ? (
-                  <div className="col-span-full border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
-                    No {c.label.toLowerCase()} uploaded yet.
-                  </div>
-                ) : (
-                  pubs
-                    .filter((p) => p.category === c.value)
-                    .map((p) => <PublicationCard key={p.id} pub={p} onDeleted={load} />)
-                )}
-              </div>
-            </TabsContent>
-          ))}
+                  <span className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                    {items.length} {items.length === 1 ? "report" : "reports"}
+                  </span>
+                </div>
+
+                <div className="grid gap-4 md:grid-cols-2">
+                  {loading ? (
+                    <div className="col-span-full flex items-center justify-center py-12 text-muted-foreground">
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Loading…
+                    </div>
+                  ) : items.length === 0 ? (
+                    <div className="col-span-full border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
+                      {query
+                        ? `No ${c.label.toLowerCase()} match "${query}".`
+                        : `No ${c.label.toLowerCase()} available yet.`}
+                    </div>
+                  ) : (
+                    items.map((p) => <PublicationCard key={p.id} pub={p} />)
+                  )}
+                </div>
+              </TabsContent>
+            );
+          })}
         </Tabs>
       </section>
     </>
   );
 }
 
-function UploadCard({ category, onUploaded }: { category: Category; onUploaded: () => void }) {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [file, setFile] = useState<File | null>(null);
-  const [uploading, setUploading] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!file || !title.trim()) {
-      toast.error("Title and file are required.");
-      return;
-    }
-    setUploading(true);
-    try {
-      const ext = file.name.split(".").pop() ?? "pdf";
-      const path = `${category}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
-      const { error: upErr } = await supabase.storage
-        .from("publications")
-        .upload(path, file, { contentType: file.type, upsert: false });
-      if (upErr) throw upErr;
-
-      const { error: insErr } = await supabase.from("publications").insert({
-        category,
-        title: title.trim(),
-        description: description.trim() || null,
-        file_path: path,
-        file_name: file.name,
-        file_size: file.size,
-        mime_type: file.type,
-      });
-      if (insErr) throw insErr;
-
-      toast.success("Uploaded.");
-      setTitle(""); setDescription(""); setFile(null);
-      if (fileInputRef.current) fileInputRef.current.value = "";
-      onUploaded();
-    } catch (err: any) {
-      toast.error(err.message ?? "Upload failed.");
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="border border-border bg-card p-6">
-      <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-gold-deep">
-        <Upload className="h-3.5 w-3.5" /> Upload new
-      </div>
-      <div className="mt-4 grid gap-4 md:grid-cols-2">
-        <input
-          type="text"
-          placeholder="Title"
-          aria-label="Report title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          className="border border-input bg-background px-3 py-2 text-sm outline-none focus:border-gold"
-          required
-        />
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept=".pdf,.doc,.docx,.ppt,.pptx,application/pdf"
-          aria-label="Report file"
-          onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-          className="border border-input bg-background px-3 py-2 text-sm file:mr-3 file:border-0 file:bg-secondary file:px-3 file:py-1 file:text-xs file:font-semibold"
-          required
-        />
-      </div>
-      <textarea
-        placeholder="Description (optional)"
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-        rows={2}
-        className="mt-4 w-full resize-none border border-input bg-background px-3 py-2 text-sm outline-none focus:border-gold"
-      />
-      <button
-        type="submit"
-        disabled={uploading}
-        className="mt-4 inline-flex items-center gap-2 bg-ink px-4 py-2 text-sm font-semibold text-background transition hover:bg-ink/90 disabled:opacity-50"
-      >
-        {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
-        {uploading ? "Uploading…" : "Upload report"}
-      </button>
-    </form>
-  );
-}
-
-function PublicationCard({ pub, onDeleted }: { pub: Publication; onDeleted: () => void }) {
+function PublicationCard({ pub }: { pub: Publication }) {
   const url = supabase.storage.from("publications").getPublicUrl(pub.file_path).data.publicUrl;
   const isPdf = (pub.mime_type ?? "").includes("pdf") || pub.file_name.toLowerCase().endsWith(".pdf");
-  const [deleting, setDeleting] = useState(false);
-
-  const handleDelete = async () => {
-    if (!confirm(`Delete "${pub.title}"?`)) return;
-    setDeleting(true);
-    await supabase.storage.from("publications").remove([pub.file_path]);
-    const { error } = await supabase.from("publications").delete().eq("id", pub.id);
-    if (error) toast.error(error.message);
-    else { toast.success("Deleted."); onDeleted(); }
-    setDeleting(false);
-  };
 
   return (
     <div className="group flex flex-col border border-border bg-card transition hover:border-gold hover:shadow-elegant">
@@ -261,9 +214,6 @@ function PublicationCard({ pub, onDeleted }: { pub: Publication; onDeleted: () =
           <a href={url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-muted-foreground transition hover:text-gold-deep">
             <Download className="h-3.5 w-3.5" /> View / Download
           </a>
-          <button onClick={handleDelete} disabled={deleting} className="ml-auto inline-flex items-center gap-1.5 text-muted-foreground transition hover:text-destructive disabled:opacity-50">
-            <Trash2 className="h-3.5 w-3.5" /> Delete
-          </button>
         </div>
       </div>
     </div>
