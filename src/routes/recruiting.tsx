@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowRight, Calendar, MapPin, Clock } from "lucide-react";
+import { socialMeta, canonical } from "@/lib/seo";
 
 const APPLICATION_URL = "https://purdue.ca1.qualtrics.com/jfe/form/SV_1G5FfwJUc1cGJ2m";
 
@@ -66,12 +67,14 @@ export const Route = createFileRoute("/recruiting")({
   head: () => ({
     meta: [
       { title: "Recruiting — Purdue SMIF" },
-      { name: "description", content: "Recruiting calendar and interview prep guide for the Purdue Student Managed Investment Fund." },
-      { property: "og:title", content: "Recruiting Calendar & Interview Prep — Purdue SMIF" },
-      { property: "og:description", content: "Callouts, coffee chats, interviews, and a behavioral + technical interview prep guide for joining Purdue SMIF." },
-      { property: "og:url", content: "https://purduesmif.org/recruiting" },
+      { name: "description", content: "Recruiting calendar and interview prep guide for the Purdue Student Managed Investment Fund — callouts, coffee chats, and interviews." },
+      ...socialMeta({
+        title: "Recruiting Calendar & Interview Prep — Purdue SMIF",
+        description: "Callouts, coffee chats, interviews, and a behavioral + technical interview prep guide for joining Purdue SMIF.",
+        url: canonical("/recruiting"),
+      }),
     ],
-    links: [{ rel: "canonical", href: "https://purduesmif.org/recruiting" }],
+    links: [{ rel: "canonical", href: canonical("/recruiting") }],
   }),
 });
 

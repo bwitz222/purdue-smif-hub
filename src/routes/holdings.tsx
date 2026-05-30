@@ -8,6 +8,7 @@ import { holdings as baseHoldings, portfolioSummary as baseSummary, type Holding
 import { getLiveQuotes } from "@/lib/quotes.functions";
 import { CountUp } from "@/components/CountUp";
 import { Reveal } from "@/components/Reveal";
+import { socialMeta, canonical } from "@/lib/seo";
 
 export const Route = createFileRoute("/holdings")({
   component: HoldingsPage,
@@ -15,11 +16,13 @@ export const Route = createFileRoute("/holdings")({
     meta: [
       { title: "Portfolio Holdings — Purdue SMIF" },
       { name: "description", content: "Current portfolio holdings of the Purdue Student Managed Investment Fund, including positions, allocations, and returns." },
-      { property: "og:title", content: "Portfolio Holdings — Purdue SMIF" },
-      { property: "og:description", content: "Live view of SMIF's positions, sector allocations, and returns across the real-money portfolio." },
-      { property: "og:url", content: "https://purduesmif.org/holdings" },
+      ...socialMeta({
+        title: "Portfolio Holdings — Purdue SMIF",
+        description: "Live view of SMIF's positions, sector allocations, and returns across the real-money portfolio.",
+        url: canonical("/holdings"),
+      }),
     ],
-    links: [{ rel: "canonical", href: "https://purduesmif.org/holdings" }],
+    links: [{ rel: "canonical", href: canonical("/holdings") }],
   }),
 });
 

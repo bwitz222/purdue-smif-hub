@@ -4,18 +4,21 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid,
   Tooltip, Legend, ResponsiveContainer, ReferenceLine,
 } from "recharts";
+import { socialMeta, canonical } from "@/lib/seo";
 
 export const Route = createFileRoute("/performance")({
   component: Performance,
   head: () => ({
     meta: [
       { title: "Performance — Purdue SMIF" },
-      { name: "description", content: "Track record and historical performance of the Purdue Student Managed Investment Fund vs. the S&P 500." },
-      { property: "og:title", content: "Performance & Track Record — Purdue SMIF" },
-      { property: "og:description", content: "Annual and cumulative returns of the Purdue SMIF benchmarked against the S&P 500." },
-      { property: "og:url", content: "https://purduesmif.org/performance" },
+      { name: "description", content: "Annual and cumulative returns of the Purdue Student Managed Investment Fund benchmarked against the S&P 500." },
+      ...socialMeta({
+        title: "Performance & Track Record — Purdue SMIF",
+        description: "Annual and cumulative returns of the Purdue SMIF benchmarked against the S&P 500.",
+        url: canonical("/performance"),
+      }),
     ],
-    links: [{ rel: "canonical", href: "https://purduesmif.org/performance" }],
+    links: [{ rel: "canonical", href: canonical("/performance") }],
   }),
 });
 

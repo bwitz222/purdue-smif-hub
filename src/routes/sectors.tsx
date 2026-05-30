@@ -1,17 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Cpu, HeartPulse, Banknote, Factory, ShoppingBag, Zap, Wifi, Home, LineChart, Briefcase } from "lucide-react";
+import { socialMeta, canonical } from "@/lib/seo";
 
 export const Route = createFileRoute("/sectors")({
   component: Sectors,
   head: () => ({
     meta: [
-      { title: "Teams — Purdue SMIF" },
-      { name: "description", content: "SMIF coverage spans equity sector teams, Fixed Income & Macro, and Portfolio + Risk Management." },
-      { property: "og:title", content: "Coverage Teams — Purdue SMIF" },
-      { property: "og:description", content: "Eight equity sector teams plus Fixed Income & Macro and Portfolio + Risk Management cover the SMIF investment universe." },
-      { property: "og:url", content: "https://purduesmif.org/sectors" },
+      { title: "Coverage Teams — Purdue SMIF" },
+      { name: "description", content: "SMIF coverage spans eight equity sector teams, Fixed Income & Macro, and Portfolio + Risk Management." },
+      ...socialMeta({
+        title: "Coverage Teams — Purdue SMIF",
+        description: "Eight equity sector teams plus Fixed Income & Macro and Portfolio + Risk Management cover the SMIF investment universe.",
+        url: canonical("/sectors"),
+      }),
     ],
-    links: [{ rel: "canonical", href: "https://purduesmif.org/sectors" }],
+    links: [{ rel: "canonical", href: canonical("/sectors") }],
   }),
 });
 

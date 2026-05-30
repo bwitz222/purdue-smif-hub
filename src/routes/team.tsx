@@ -4,6 +4,7 @@ import { Search, X } from "lucide-react";
 import { MemberCard, type Member } from "@/components/MemberCard";
 import { MemberDetailSheet } from "@/components/MemberDetailSheet";
 import { board, sectorTeams, fixedIncomeMacro, portfolioManagers } from "@/data/team";
+import { socialMeta, canonical } from "@/lib/seo";
 import {
   Select,
   SelectContent,
@@ -24,11 +25,13 @@ export const Route = createFileRoute("/team")({
     meta: [
       { title: "Team — Purdue SMIF" },
       { name: "description", content: "Meet the executive board, sector teams, fixed income & macro team, and portfolio managers of the Purdue Student Managed Investment Fund." },
-      { property: "og:title", content: "Meet the Team — Purdue SMIF" },
-      { property: "og:description", content: "The 52 students behind Purdue SMIF — executive board, sector analysts, fixed income & macro, and portfolio managers." },
-      { property: "og:url", content: "https://purduesmif.org/team" },
+      ...socialMeta({
+        title: "Meet the Team — Purdue SMIF",
+        description: "The 52 students behind Purdue SMIF — executive board, sector analysts, fixed income & macro, and portfolio managers.",
+        url: canonical("/team"),
+      }),
     ],
-    links: [{ rel: "canonical", href: "https://purduesmif.org/team" }],
+    links: [{ rel: "canonical", href: canonical("/team") }],
     scripts: [
       {
         type: "application/ld+json",

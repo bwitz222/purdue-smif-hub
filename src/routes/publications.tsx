@@ -4,6 +4,7 @@ import { FileText, Upload, Download, Trash2, Loader2, ExternalLink, Rss } from "
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { socialMeta, canonical } from "@/lib/seo";
 
 const SUBSTACK_URL = "https://purduesmif.substack.com";
 
@@ -13,11 +14,13 @@ export const Route = createFileRoute("/publications")({
     meta: [
       { title: "Publications & Reports — Purdue SMIF" },
       { name: "description", content: "Equity research reports, semester reports, and annual reports from the Purdue Student Managed Investment Fund." },
-      { property: "og:title", content: "Equity Research & Reports — Purdue SMIF" },
-      { property: "og:description", content: "Read SMIF's equity research pitches, semester performance reviews, and annual reports." },
-      { property: "og:url", content: "https://purduesmif.org/publications" },
+      ...socialMeta({
+        title: "Equity Research & Reports — Purdue SMIF",
+        description: "Read SMIF's equity research pitches, semester performance reviews, and annual reports.",
+        url: canonical("/publications"),
+      }),
     ],
-    links: [{ rel: "canonical", href: "https://purduesmif.org/publications" }],
+    links: [{ rel: "canonical", href: canonical("/publications") }],
   }),
 });
 
