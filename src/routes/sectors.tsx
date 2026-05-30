@@ -45,6 +45,7 @@ function Sectors() {
       </section>
 
       <section className="container-prose py-24">
+        <h2 className="sr-only">Coverage Teams</h2>
         <div className="grid gap-px bg-border md:grid-cols-2 lg:grid-cols-3">
           {sectors.map(({ Icon, name, lead }) => (
             <div key={name} className="bg-background p-8 transition hover:bg-secondary/50">
