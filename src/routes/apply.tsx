@@ -66,11 +66,6 @@ export const Route = createFileRoute("/apply")({
     links: [{ rel: "canonical", href: canonical("/apply") }],
   }),
 });
-      { property: "og:url", content: "https://purduesmif.org/apply" },
-    ],
-    links: [{ rel: "canonical", href: "https://purduesmif.org/apply" }],
-  }),
-});
 
 function Apply() {
   return (
