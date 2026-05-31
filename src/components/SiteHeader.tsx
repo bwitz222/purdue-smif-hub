@@ -103,23 +103,36 @@ export function SiteHeader() {
             </button>
           </div>
           <nav className="flex flex-col justify-center flex-1 container-prose gap-0 pb-8 overflow-y-auto">
-            {NAV.map(({ to, label }, i) => (
-              <motion.div
-                key={to}
-                initial={{ opacity: 0, x: -24 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.32, delay: 0.05 + i * 0.05, ease: [0.22, 1, 0.36, 1] }}
-              >
-                <Link
-                  to={to}
-                  onClick={() => setOpen(false)}
-                  className="block font-display text-[2.2rem] sm:text-[2.6rem] font-semibold text-background/55 hover:text-background border-b border-white/5 py-4 transition-colors duration-300 leading-none"
-                  activeProps={{ className: "text-gold" }}
+            {NAV.map(({ to, label }, i) =>
+              reduce ? (
+                <div key={to}>
+                  <Link
+                    to={to}
+                    onClick={() => setOpen(false)}
+                    className="block font-display text-[2.2rem] sm:text-[2.6rem] font-semibold text-background/55 hover:text-background border-b border-white/5 py-4 transition-colors duration-300 leading-none"
+                    activeProps={{ className: "text-gold" }}
+                  >
+                    {label}
+                  </Link>
+                </div>
+              ) : (
+                <motion.div
+                  key={to}
+                  initial={{ opacity: 0, x: -24 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.32, delay: 0.05 + i * 0.05, ease: [0.22, 1, 0.36, 1] }}
                 >
-                  {label}
-                </Link>
-              </motion.div>
-            ))}
+                  <Link
+                    to={to}
+                    onClick={() => setOpen(false)}
+                    className="block font-display text-[2.2rem] sm:text-[2.6rem] font-semibold text-background/55 hover:text-background border-b border-white/5 py-4 transition-colors duration-300 leading-none"
+                    activeProps={{ className: "text-gold" }}
+                  >
+                    {label}
+                  </Link>
+                </motion.div>
+              )
+            )}
             <motion.a
               href="https://purdue.ca1.qualtrics.com/jfe/form/SV_1G5FfwJUc1cGJ2m"
               target="_blank"
