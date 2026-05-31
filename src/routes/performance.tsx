@@ -122,6 +122,20 @@ function Performance() {
         <div className="absolute bottom-0 left-0 right-0 h-px bg-white/10" />
       </section>
 
+      <div className="container-prose pt-10">
+        <div className="border border-gold/40 bg-secondary/30 p-5 md:p-6 flex items-start gap-4">
+          <span className="rule-gold mt-2 shrink-0" aria-hidden="true" />
+          <div className="flex-1">
+            <div className="text-[10px] font-mono font-semibold uppercase tracking-[0.28em] text-gold-deep mb-1">
+              Work in progress
+            </div>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              This page is being refined. Returns shown are illustrative placeholders pending the next audited reporting cycle — treat them as such until the published annual report goes live.
+            </p>
+          </div>
+        </div>
+      </div>
+
       <section className="container-prose py-10 space-y-12 pt-14">
 
         {/* ── KPI cards ─────────────────────────────────────────── */}
