@@ -1,10 +1,11 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useReducedMotion } from "framer-motion";
 import { Search, X } from "lucide-react";
 import { MemberCard, type Member } from "@/components/MemberCard";
 import { MemberDetailSheet } from "@/components/MemberDetailSheet";
 import { board, sectorTeams, fixedIncomeMacro, portfolioManagers } from "@/data/team";
-import { socialMeta, canonical } from "@/lib/seo";
+import { socialMeta, canonical, OG_TEAM } from "@/lib/seo";
 import {
   Select,
   SelectContent,
@@ -19,8 +20,13 @@ const allMembers = [
   ...portfolioManagers,
 ].filter((m) => !m.placeholder);
 
+type TeamSearch = { sector?: string };
+
 export const Route = createFileRoute("/team")({
   component: Team,
+  validateSearch: (search: Record<string, unknown>): TeamSearch => ({
+    sector: typeof search.sector === "string" ? search.sector : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Team — Purdue SMIF" },
@@ -29,6 +35,7 @@ export const Route = createFileRoute("/team")({
         title: "Meet the Team — Purdue SMIF",
         description: "The 52 students behind Purdue SMIF — executive board, sector analysts, fixed income & macro, and portfolio managers.",
         url: canonical("/team"),
+        image: OG_TEAM,
       }),
     ],
     links: [{ rel: "canonical", href: canonical("/team") }],

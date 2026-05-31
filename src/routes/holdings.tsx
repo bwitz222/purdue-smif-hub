@@ -8,7 +8,7 @@ import { holdings as baseHoldings, portfolioSummary as baseSummary, type Holding
 import { getLiveQuotes } from "@/lib/quotes.functions";
 import { CountUp } from "@/components/CountUp";
 import { Reveal } from "@/components/Reveal";
-import { socialMeta, canonical } from "@/lib/seo";
+import { socialMeta, canonical, OG_HOLDINGS } from "@/lib/seo";
 
 export const Route = createFileRoute("/holdings")({
   component: HoldingsPage,
@@ -20,6 +20,7 @@ export const Route = createFileRoute("/holdings")({
         title: "Portfolio Holdings — Purdue SMIF",
         description: "Live view of SMIF's positions, sector allocations, and returns across the real-money portfolio.",
         url: canonical("/holdings"),
+        image: OG_HOLDINGS,
       }),
     ],
     links: [{ rel: "canonical", href: canonical("/holdings") }],

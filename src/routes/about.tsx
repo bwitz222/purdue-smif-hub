@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
-import { socialMeta, canonical } from "@/lib/seo";
+import { socialMeta, canonical, OG_ABOUT } from "@/lib/seo";
 
 const PAGE_TITLE = "About — Purdue SMIF";
 const PAGE_DESCRIPTION = "How the Purdue Student Managed Investment Fund researches, debates, and votes on every real-money position — our history, philosophy, and process.";
@@ -15,6 +15,7 @@ export const Route = createFileRoute("/about")({
         title: "About Purdue SMIF — History, Philosophy & Process",
         description: PAGE_DESCRIPTION,
         url: canonical("/about"),
+        image: OG_ABOUT,
       }),
     ],
     links: [{ rel: "canonical", href: canonical("/about") }],
