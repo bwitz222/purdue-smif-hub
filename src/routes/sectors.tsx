@@ -1,5 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { Cpu, HeartPulse, Banknote, Factory, ShoppingBag, Zap, Wifi, Home, LineChart, Briefcase } from "lucide-react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { ArrowRight, Cpu, HeartPulse, Banknote, Factory, ShoppingBag, Zap, Wifi, Home, LineChart, Briefcase } from "lucide-react";
 import { socialMeta, canonical } from "@/lib/seo";
 
 export const Route = createFileRoute("/sectors")({
@@ -48,11 +48,21 @@ function Sectors() {
         <h2 className="sr-only">Coverage Teams</h2>
         <div className="grid gap-px bg-border md:grid-cols-2 lg:grid-cols-3">
           {sectors.map(({ Icon, name, lead }) => (
-            <div key={name} className="bg-background p-8 transition hover:bg-secondary/50">
+            <Link
+              key={name}
+              to="/team"
+              search={{ sector: name }}
+              className="group bg-background p-8 transition hover:bg-secondary/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink"
+              aria-label={`View ${name} team members`}
+            >
               <Icon className="h-7 w-7 text-gold-deep" />
               <h3 className="mt-5 font-display text-lg font-bold">{name}</h3>
               <p className="mt-2 text-sm text-muted-foreground">{lead}</p>
-            </div>
+              <span className="mt-5 inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-gold-deep opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100">
+                View team
+                <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5" />
+              </span>
+            </Link>
           ))}
         </div>
       </section>
