@@ -175,17 +175,22 @@ function downloadICS() {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-function downloadSingleEventICS(event: Event) {
-  if (typeof window === "undefined") return;
-  const blob = new Blob([generateICS([event])], { type: "text/calendar;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = `smif-${slugify(event.name)}-${event.iso}.ics`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
+// Google Calendar render URL — opens a prefilled event the user just clicks "Save" on.
+// Works for any Google account (personal Gmail or Purdue's Google Workspace).
+function toGoogleCalendarLink(event: Event): string {
+  const { start, end } = parseEventTimes(event.time);
+  const ymd = event.iso.replace(/-/g, "");
+  // Floating local time + ctz tells Google to interpret it in Eastern.
+  const dates = `${ymd}T${pad2(start.h)}${pad2(start.m)}00/${ymd}T${pad2(end.h)}${pad2(end.m)}00`;
+  const params = new URLSearchParams({
+    action: "TEMPLATE",
+    text: event.name,
+    dates,
+    details: buildEventBody(event),
+    location: event.location,
+    ctz: "America/New_York",
+  });
+  return `https://calendar.google.com/calendar/render?${params.toString()}`;
 }
 
 export const Route = createFileRoute("/recruiting")({
@@ -270,11 +275,12 @@ function Recruiting() {
           {CALENDAR.map((e) => {
             const isPast = nowMs !== null && new Date(e.iso + "T23:59:59-04:00").getTime() < nowMs;
             return (
-              <button
+              <a
                 key={e.iso + e.name}
-                type="button"
-                onClick={() => downloadSingleEventICS(e)}
-                title={isPast ? "Add to calendar (.ics) (past event)" : "Add to calendar (.ics)"}
+                href={toGoogleCalendarLink(e)}
+                target="_blank"
+                rel="noopener noreferrer"
+                title={isPast ? "Add to Google Calendar (past event)" : "Add to Google Calendar — opens prefilled"}
                 className={`w-full text-left grid grid-cols-12 gap-4 py-5 transition hover:bg-secondary/40 px-2 -mx-2 cursor-pointer ${isPast ? "opacity-50" : ""}`}
               >
                 <div className="col-span-12 md:col-span-2 flex items-center gap-2 text-sm font-semibold text-foreground">
@@ -297,7 +303,7 @@ function Recruiting() {
                   <MapPin className="h-3.5 w-3.5" />
                   {e.location}
                 </div>
-              </button>
+              </a>
             );
           })}
         </div>
