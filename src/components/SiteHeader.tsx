@@ -16,6 +16,7 @@ const NAV = [
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
+  const reduce = useReducedMotion();
 
   // Toggle a data attribute on the header for scroll shadow — avoids React re-renders on every scroll event.
   useEffect(() => {
