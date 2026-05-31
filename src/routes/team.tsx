@@ -99,12 +99,45 @@ const matches = (m: Member, q: string) => {
   );
 };
 
+// Map every sector chip name to the (group, sectorFilter) state combo it should apply.
+type ChipSelection = { group: Group; sector: string };
+const SECTOR_CHIPS: { label: string; sel: ChipSelection }[] = [
+  { label: "All", sel: { group: "all", sector: "all" } },
+  { label: "Leadership", sel: { group: "board", sector: "all" } },
+  ...sectorTeams.map((t) => ({ label: t.name, sel: { group: "sectors" as Group, sector: t.name } })),
+  { label: "Fixed Income & Macro", sel: { group: "fim", sector: "all" } },
+  { label: "Portfolio + Risk Management", sel: { group: "pm", sector: "all" } },
+];
+
 function Team() {
   const totalMembers = 52;
+  const search = Route.useSearch();
+  const navigate = useNavigate({ from: "/team" });
+  const reduce = useReducedMotion();
+  const gridRef = useRef<HTMLDivElement | null>(null);
+
   const [query, setQuery] = useState("");
   const [group, setGroup] = useState<Group>("all");
   const [sectorFilter, setSectorFilter] = useState<string>("all");
   const [selected, setSelected] = useState<Member | null>(null);
+
+  // Sync URL ?sector=… → state and scroll to grid on change.
+  useEffect(() => {
+    const s = search.sector;
+    if (!s) return;
+    const chip = SECTOR_CHIPS.find((c) => c.label === s);
+    if (!chip) return;
+    setGroup(chip.sel.group);
+    setSectorFilter(chip.sel.sector);
+    // Defer scroll until layout settles after state update.
+    const id = requestAnimationFrame(() => {
+      gridRef.current?.scrollIntoView({
+        behavior: reduce ? "auto" : "smooth",
+        block: "start",
+      });
+    });
+    return () => cancelAnimationFrame(id);
+  }, [search.sector, reduce]);
 
   const showBoard = group === "all" || group === "board";
   const showSectors = group === "all" || group === "sectors";
@@ -130,9 +163,23 @@ function Team() {
 
   const hasFilter = query.length > 0 || group !== "all" || sectorFilter !== "all";
 
+  // Identify the currently active chip so we can render aria-pressed correctly.
+  const activeChipLabel =
+    SECTOR_CHIPS.find((c) => c.sel.group === group && c.sel.sector === sectorFilter)?.label ?? null;
+
+  const applyChip = (sel: ChipSelection, label: string) => {
+    setGroup(sel.group);
+    setSectorFilter(sel.sector);
+    navigate({
+      search: () => (label === "All" ? {} : { sector: label }),
+      replace: true,
+    });
+  };
+
   const handleGroupChange = (g: Group) => {
     setGroup(g);
     setSectorFilter("all");
+    navigate({ search: () => ({}), replace: true });
   };
 
   return (
