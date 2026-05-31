@@ -58,11 +58,13 @@ function Sectors() {
     <>
       <section className="border-b border-border bg-secondary/40">
         <div className="container-prose py-24">
-          <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">Coverage</span>
-          <h1 className="mt-4 font-display text-5xl font-bold md:text-6xl max-w-3xl">Our teams.</h1>
-          <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
-            Eight equity sector teams, a Fixed Income & Macro group, and a Portfolio + Risk Management team. Each meets weekly to discuss positioning, news flow, and pitch ideas.
-          </p>
+          <Reveal>
+            <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">Coverage</span>
+            <h1 className="mt-4 font-display text-5xl font-bold md:text-6xl max-w-3xl">Our teams.</h1>
+            <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
+              Eight equity sector teams, a Fixed Income & Macro group, and a Portfolio + Risk Management team. Each meets weekly to discuss positioning, news flow, and pitch ideas.
+            </p>
+          </Reveal>
         </div>
       </section>
 
