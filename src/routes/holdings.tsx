@@ -280,65 +280,132 @@ function HoldingsPage() {
           </div>
         </Reveal>
 
-        <h2 className="sr-only">Holdings</h2>
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs uppercase tracking-[0.22em] text-muted-foreground mr-1">Sector</span>
-          {sectors.map((s) => {
-            const active = sector === s;
-            return (
-              <button
-                key={s}
-                onClick={() => setSector(s)}
-                aria-pressed={active}
-                className={`min-h-11 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider border transition-colors duration-150 cursor-pointer ${active ? "bg-ink text-background border-ink" : "bg-background text-foreground border-border hover:border-ink hover:bg-secondary"}`}
-              >
-                {s}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Mobile: stacked cards */}
-        <div className="md:hidden space-y-3">
-          {rows.map((h) => (
-            <div key={h.symbol} className="border border-border bg-card p-4">
-              <div className="flex items-baseline justify-between gap-3">
-                <div className="min-w-0">
-                  <div className="font-mono text-sm font-bold text-gold-deep tracking-wider">{h.symbol}</div>
-                  <div className="text-sm font-medium truncate">{h.company}</div>
-                  <div className="text-[11px] text-muted-foreground mt-0.5">{h.industry}</div>
-                </div>
-                <div className="text-right shrink-0">
-                  <div className="font-mono text-sm">{fmtUSD(h.price)}</div>
-                  <div className={`font-mono text-xs inline-flex items-center justify-end gap-0.5 ${h.dayChange >= 0 ? "text-gain" : "text-loss"}`}>
-                    {h.dayChange >= 0 ? <ArrowUp className="h-3 w-3" aria-hidden="true" /> : <ArrowDown className="h-3 w-3" aria-hidden="true" />}
-                    {fmtPct(h.dayChange)}
+        {!(isFetching && !quoteData) && (
+          <Reveal>
+            <h2 className="sr-only">Today's Movers</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-border">
+              {[
+                { title: "Today's Leaders", items: movers.gainers },
+                { title: "Today's Laggards", items: movers.losers },
+              ].map((panel) => (
+                <div key={panel.title} className="bg-card border border-border p-6">
+                  <div className="flex items-baseline justify-between mb-4 gap-3">
+                    <span className="text-xs uppercase tracking-[0.22em] text-muted-foreground">{panel.title}</span>
+                    <span className="text-[10px] font-mono uppercase tracking-[0.18em] text-muted-foreground/70">By day change %</span>
                   </div>
+                  <ul className="space-y-1">
+                    {panel.items.map((h) => (
+                      <li key={h.symbol}>
+                        <button
+                          type="button"
+                          onClick={() => setSector(h.industry)}
+                          className="w-full flex items-center gap-3 px-2 py-2 -mx-2 text-left hover:bg-secondary/40 cursor-pointer transition-colors"
+                          aria-label={`Filter by ${h.industry} (${h.symbol})`}
+                        >
+                          <span className="font-mono font-bold text-gold-deep tracking-wider w-16">{h.symbol}</span>
+                          <span className="text-sm truncate flex-1">{h.company}</span>
+                          <span className={`font-mono font-semibold w-20 text-right inline-flex items-center justify-end gap-0.5 ${h.dayChange >= 0 ? "text-gain" : "text-loss"}`}>
+                            {h.dayChange >= 0 ? <ArrowUp className="h-3 w-3" aria-hidden="true" /> : <ArrowDown className="h-3 w-3" aria-hidden="true" />}
+                            {fmtPct(h.dayChange)}
+                          </span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-              </div>
-              <div className="mt-3 grid grid-cols-3 gap-3 border-t border-border pt-3 text-xs">
-                <div>
-                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Value</div>
-                  <div className="font-mono mt-0.5">{fmtUSD(h.value, { maximumFractionDigits: 0 })}</div>
-                </div>
-                <div>
-                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Return</div>
-                  <div className={`font-mono font-semibold mt-0.5 inline-flex items-center gap-0.5 ${h.returnPct >= 0 ? "text-gain" : "text-loss"}`}>
-                    {h.returnPct >= 0 ? <ArrowUp className="h-3 w-3" aria-hidden="true" /> : <ArrowDown className="h-3 w-3" aria-hidden="true" />}
-                    {fmtPct(h.returnPct)}
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Weight</div>
-                  <div className="font-mono mt-0.5 text-muted-foreground">{h.allocation.toFixed(2)}%</div>
-                </div>
-              </div>
+              ))}
             </div>
-          ))}
+          </Reveal>
+        )}
+
+        <h2 className="sr-only">Holdings</h2>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="relative w-full sm:max-w-xs">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" aria-hidden="true" />
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search ticker or company…"
+              aria-label="Search holdings"
+              className="w-full border border-input bg-background py-2 pl-9 pr-3 text-sm outline-none focus:border-gold"
+            />
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-xs uppercase tracking-[0.22em] text-muted-foreground mr-1">Sector</span>
+            {sectors.map((s) => {
+              const active = sector === s;
+              return (
+                <button
+                  key={s}
+                  onClick={() => setSector(s)}
+                  aria-pressed={active}
+                  className={`min-h-11 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider border transition-colors duration-150 cursor-pointer ${active ? "bg-ink text-background border-ink" : "bg-background text-foreground border-border hover:border-ink hover:bg-secondary"}`}
+                >
+                  {s}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
-        {/* Desktop: full table */}
-        <div className="hidden md:block overflow-x-auto border border-border"><table className="w-full text-left text-sm"><caption className="sr-only">Portfolio holdings — sortable by column</caption><thead className="bg-ink text-background"><tr>{cols.map((c) => { const ariaSort: "ascending" | "descending" | "none" = sortKey === c.k ? (sortDir === "asc" ? "ascending" : "descending") : "none"; return (<th key={c.k} aria-sort={ariaSort} className={`px-4 py-3 text-xs font-semibold uppercase tracking-[0.14em] whitespace-nowrap ${c.align === "right" ? "text-right" : ""}`}><button onClick={() => toggleSort(c.k)} className={`inline-flex items-center gap-1.5 hover:text-gold transition-colors duration-150 cursor-pointer ${c.align === "right" ? "ml-auto" : ""}`}>{c.label}<SortIcon active={sortKey === c.k} dir={sortDir} /></button></th>); })}</tr></thead><tbody>{rows.map((h, idx) => (<tr key={h.symbol} className={`border-t border-border hover:bg-secondary/50 transition-colors duration-150 ${idx % 2 === 0 ? "" : "bg-secondary/20"}`}><td className="px-4 py-3 font-medium whitespace-nowrap">{h.company}</td><td className="px-4 py-3 font-mono font-bold text-gold-deep tracking-wider">{h.symbol}</td><td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">{h.industry}</td><td className="px-4 py-3 text-right font-mono">{fmtUSD(h.price)}</td><td className="px-4 py-3 text-right font-mono text-muted-foreground">{fmtNum(h.beta)}</td><td className="px-4 py-3 text-right font-mono">{h.shares.toLocaleString()}</td><td className="px-4 py-3 text-right font-mono">{fmtUSD(h.value, { maximumFractionDigits: 0 })}</td><td className={`px-4 py-3 text-right font-mono font-medium ${h.dayChange >= 0 ? "text-gain" : "text-loss"}`}><span className="inline-flex items-center justify-end gap-0.5">{h.dayChange >= 0 ? <ArrowUp className="h-3 w-3" aria-hidden="true" /> : <ArrowDown className="h-3 w-3" aria-hidden="true" />}{fmtPct(h.dayChange)}</span></td><td className={`px-4 py-3 text-right font-mono ${h.totalReturn >= 0 ? "text-gain" : "text-loss"}`}>{fmtUSD(h.totalReturn, { maximumFractionDigits: 0 })}</td><td className={`px-4 py-3 text-right font-mono font-semibold ${h.returnPct >= 0 ? "text-gain" : "text-loss"}`}><span className="inline-flex items-center justify-end gap-0.5">{h.returnPct >= 0 ? <ArrowUp className="h-3 w-3" aria-hidden="true" /> : <ArrowDown className="h-3 w-3" aria-hidden="true" />}{fmtPct(h.returnPct)}</span></td><td className="px-4 py-3 text-right font-mono text-muted-foreground">{h.allocation.toFixed(2)}%</td></tr>))}</tbody><tfoot className="bg-secondary/60 border-t-2 border-ink font-semibold"><tr><td className="px-4 py-4" colSpan={6}>Total · {rows.length} position{rows.length !== 1 ? "s" : ""}</td><td className="px-4 py-4 text-right font-mono">{fmtUSD(rows.reduce((s, r) => s + r.value, 0), { maximumFractionDigits: 0 })}</td><td className="px-4 py-4 text-right font-mono text-muted-foreground">—</td><td className={`px-4 py-4 text-right font-mono ${rows.reduce((s, r) => s + r.totalReturn, 0) >= 0 ? "text-gain" : "text-loss"}`}>{fmtUSD(rows.reduce((s, r) => s + r.totalReturn, 0), { maximumFractionDigits: 0 })}</td><td className="px-4 py-4" /><td className="px-4 py-4 text-right font-mono">{rows.reduce((s, r) => s + r.allocation, 0).toFixed(2)}%</td></tr></tfoot></table></div>
+        {rows.length === 0 ? (
+          <div className="border border-dashed border-border p-12 text-center" role="status" aria-live="polite">
+            <Filter className="h-8 w-8 mx-auto text-muted-foreground mb-3" aria-hidden="true" />
+            <div className="font-display text-xl font-semibold">{emptyMessage}</div>
+            <p className="text-sm text-muted-foreground mt-2">Try a different sector or clear the filter.</p>
+            <button
+              onClick={() => { setSector("All"); setQuery(""); }}
+              className="inline-flex items-center gap-2 mt-5 border border-ink px-4 py-2 text-xs uppercase tracking-wider hover:bg-ink hover:text-background transition-colors cursor-pointer"
+            >
+              Clear filter
+            </button>
+          </div>
+        ) : (
+          <>
+            {/* Mobile: stacked cards */}
+            <div className="md:hidden space-y-3">
+              {rows.map((h) => (
+                <div key={h.symbol} className="border border-border bg-card p-4">
+                  <div className="flex items-baseline justify-between gap-3">
+                    <div className="min-w-0">
+                      <div className="font-mono text-sm font-bold text-gold-deep tracking-wider">{h.symbol}</div>
+                      <div className="text-sm font-medium truncate">{h.company}</div>
+                      <div className="text-[11px] text-muted-foreground mt-0.5">{h.industry}</div>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <div className="font-mono text-sm">{fmtUSD(h.price)}</div>
+                      <div className={`font-mono text-xs inline-flex items-center justify-end gap-0.5 ${h.dayChange >= 0 ? "text-gain" : "text-loss"}`}>
+                        {h.dayChange >= 0 ? <ArrowUp className="h-3 w-3" aria-hidden="true" /> : <ArrowDown className="h-3 w-3" aria-hidden="true" />}
+                        {fmtPct(h.dayChange)}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mt-3 grid grid-cols-3 gap-3 border-t border-border pt-3 text-xs">
+                    <div>
+                      <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Value</div>
+                      <div className="font-mono mt-0.5">{fmtUSD(h.value, { maximumFractionDigits: 0 })}</div>
+                    </div>
+                    <div>
+                      <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Return</div>
+                      <div className={`font-mono font-semibold mt-0.5 inline-flex items-center gap-0.5 ${h.returnPct >= 0 ? "text-gain" : "text-loss"}`}>
+                        {h.returnPct >= 0 ? <ArrowUp className="h-3 w-3" aria-hidden="true" /> : <ArrowDown className="h-3 w-3" aria-hidden="true" />}
+                        {fmtPct(h.returnPct)}
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Weight</div>
+                      <div className="font-mono mt-0.5 text-muted-foreground">{h.allocation.toFixed(2)}%</div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Desktop: full table */}
+            <div className="hidden md:block overflow-x-auto border border-border"><table className="w-full text-left text-sm"><caption className="sr-only">Portfolio holdings — sortable by column</caption><thead className="bg-ink text-background"><tr>{cols.map((c) => { const ariaSort: "ascending" | "descending" | "none" = sortKey === c.k ? (sortDir === "asc" ? "ascending" : "descending") : "none"; return (<th key={c.k} aria-sort={ariaSort} className={`px-4 py-3 text-xs font-semibold uppercase tracking-[0.14em] whitespace-nowrap ${c.align === "right" ? "text-right" : ""}`}><button onClick={() => toggleSort(c.k)} className={`inline-flex items-center gap-1.5 hover:text-gold transition-colors duration-150 cursor-pointer ${c.align === "right" ? "ml-auto" : ""}`}>{c.label}<SortIcon active={sortKey === c.k} dir={sortDir} /></button></th>); })}</tr></thead><tbody>{rows.map((h, idx) => (<tr key={h.symbol} className={`border-t border-border hover:bg-secondary/50 transition-colors duration-150 ${idx % 2 === 0 ? "" : "bg-secondary/20"}`}><td className="px-4 py-3 font-medium whitespace-nowrap">{h.company}</td><td className="px-4 py-3 font-mono font-bold text-gold-deep tracking-wider">{h.symbol}</td><td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">{h.industry}</td><td className="px-4 py-3 text-right font-mono">{fmtUSD(h.price)}</td><td className="px-4 py-3 text-right font-mono text-muted-foreground">{fmtNum(h.beta)}</td><td className="px-4 py-3 text-right font-mono">{h.shares.toLocaleString()}</td><td className="px-4 py-3 text-right font-mono">{fmtUSD(h.value, { maximumFractionDigits: 0 })}</td><td className={`px-4 py-3 text-right font-mono font-medium ${h.dayChange >= 0 ? "text-gain" : "text-loss"}`}><span className="inline-flex items-center justify-end gap-0.5">{h.dayChange >= 0 ? <ArrowUp className="h-3 w-3" aria-hidden="true" /> : <ArrowDown className="h-3 w-3" aria-hidden="true" />}{fmtPct(h.dayChange)}</span></td><td className={`px-4 py-3 text-right font-mono ${h.totalReturn >= 0 ? "text-gain" : "text-loss"}`}>{fmtUSD(h.totalReturn, { maximumFractionDigits: 0 })}</td><td className={`px-4 py-3 text-right font-mono font-semibold ${h.returnPct >= 0 ? "text-gain" : "text-loss"}`}><span className="inline-flex items-center justify-end gap-0.5">{h.returnPct >= 0 ? <ArrowUp className="h-3 w-3" aria-hidden="true" /> : <ArrowDown className="h-3 w-3" aria-hidden="true" />}{fmtPct(h.returnPct)}</span></td><td className="px-4 py-3 text-right font-mono text-muted-foreground">{h.allocation.toFixed(2)}%</td></tr>))}</tbody><tfoot className="bg-secondary/60 border-t-2 border-ink font-semibold"><tr><td className="px-4 py-4" colSpan={6}>Total · {rows.length} position{rows.length !== 1 ? "s" : ""}</td><td className="px-4 py-4 text-right font-mono">{fmtUSD(rows.reduce((s, r) => s + r.value, 0), { maximumFractionDigits: 0 })}</td><td className="px-4 py-4 text-right font-mono text-muted-foreground">—</td><td className={`px-4 py-4 text-right font-mono ${rows.reduce((s, r) => s + r.totalReturn, 0) >= 0 ? "text-gain" : "text-loss"}`}>{fmtUSD(rows.reduce((s, r) => s + r.totalReturn, 0), { maximumFractionDigits: 0 })}</td><td className="px-4 py-4" /><td className="px-4 py-4 text-right font-mono">{rows.reduce((s, r) => s + r.allocation, 0).toFixed(2)}%</td></tr></tfoot></table></div>
+          </>
+        )}
       </section>
     </>
   );
