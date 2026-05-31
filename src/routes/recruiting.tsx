@@ -107,32 +107,11 @@ function parseEventTimes(time: string): { start: { h: number; m: number }; end: 
 function pad2(n: number) { return String(n).padStart(2, "0"); }
 
 // Returns "2026-08-25T19:30:00-04:00" (EDT for Aug/Sep 2026)
-function toEasternIso(iso: string, t: { h: number; m: number }): string {
-  return `${iso}T${pad2(t.h)}:${pad2(t.m)}:00-04:00`;
-}
-
 function buildEventBody(event: Event): string {
   const prefix = event.time === "TBD"
     ? "⚠ Time TBD — your specific interview slot will be communicated by email. Update this event when you receive your slot.\n\n"
     : "";
   return `${prefix}Purdue SMIF recruiting event.\n\nLocation: ${event.location}\nRecruiting page: https://purduesmif.org/recruiting\nQuestions: smif26@purdue.edu`;
-}
-
-function toOutlookEventLink(event: Event): string {
-  const { start, end } = parseEventTimes(event.time);
-  const startdt = toEasternIso(event.iso, start);
-  const enddt = toEasternIso(event.iso, end);
-  const params = new URLSearchParams({
-    path: "/calendar/action/compose",
-    rru: "addevent",
-    subject: event.name,
-    startdt,
-    enddt,
-    location: event.location,
-    body: buildEventBody(event),
-    allday: "false",
-  });
-  return `https://outlook.live.com/calendar/0/deeplink/compose?${params.toString()}`;
 }
 
 function slugify(s: string): string {
@@ -154,7 +133,7 @@ function nowUtcStamp(): string {
   return `${d.getUTCFullYear()}${pad2(d.getUTCMonth() + 1)}${pad2(d.getUTCDate())}T${pad2(d.getUTCHours())}${pad2(d.getUTCMinutes())}${pad2(d.getUTCSeconds())}Z`;
 }
 
-function generateICS(): string {
+function generateICS(events: Event[] = CALENDAR): string {
   const stamp = nowUtcStamp();
   const lines: string[] = [
     "BEGIN:VCALENDAR",
@@ -165,7 +144,7 @@ function generateICS(): string {
     "X-WR-CALNAME:Purdue SMIF Recruiting — Fall 2026",
     "X-WR-TIMEZONE:America/New_York",
   ];
-  for (const e of CALENDAR) {
+  for (const e of events) {
     const { start, end } = parseEventTimes(e.time);
     lines.push(
       "BEGIN:VEVENT",
@@ -190,6 +169,19 @@ function downloadICS() {
   const a = document.createElement("a");
   a.href = url;
   a.download = "purdue-smif-recruiting-fall-2026.ics";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function downloadSingleEventICS(event: Event) {
+  if (typeof window === "undefined") return;
+  const blob = new Blob([generateICS([event])], { type: "text/calendar;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `smif-${slugify(event.name)}-${event.iso}.ics`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
@@ -278,13 +270,12 @@ function Recruiting() {
           {CALENDAR.map((e) => {
             const isPast = nowMs !== null && new Date(e.iso + "T23:59:59-04:00").getTime() < nowMs;
             return (
-              <a
+              <button
                 key={e.iso + e.name}
-                href={toOutlookEventLink(e)}
-                target="_blank"
-                rel="noopener noreferrer"
-                title={isPast ? "Add to Outlook (past event)" : "Add to Outlook"}
-                className={`grid grid-cols-12 gap-4 py-5 transition hover:bg-secondary/40 px-2 -mx-2 cursor-pointer ${isPast ? "opacity-50" : ""}`}
+                type="button"
+                onClick={() => downloadSingleEventICS(e)}
+                title={isPast ? "Add to calendar (.ics) (past event)" : "Add to calendar (.ics)"}
+                className={`w-full text-left grid grid-cols-12 gap-4 py-5 transition hover:bg-secondary/40 px-2 -mx-2 cursor-pointer ${isPast ? "opacity-50" : ""}`}
               >
                 <div className="col-span-12 md:col-span-2 flex items-center gap-2 text-sm font-semibold text-foreground">
                   <Calendar className="h-3.5 w-3.5 text-gold-deep" />
@@ -306,7 +297,7 @@ function Recruiting() {
                   <MapPin className="h-3.5 w-3.5" />
                   {e.location}
                 </div>
-              </a>
+              </button>
             );
           })}
         </div>
