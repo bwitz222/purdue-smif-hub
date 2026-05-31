@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Cpu, HeartPulse, Banknote, Factory, ShoppingBag, Zap, Wifi, Home, LineChart, Briefcase } from "lucide-react";
 import { socialMeta, canonical } from "@/lib/seo";
+import { Reveal } from "@/components/Reveal";
 
 export const Route = createFileRoute("/sectors")({
   component: Sectors,
@@ -15,6 +16,27 @@ export const Route = createFileRoute("/sectors")({
       }),
     ],
     links: [{ rel: "canonical", href: canonical("/sectors") }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          name: "Purdue SMIF Coverage Teams",
+          description: "Equity sector teams, Fixed Income & Macro, and Portfolio + Risk Management groups at the Purdue Student Managed Investment Fund.",
+          numberOfItems: sectors.length,
+          itemListElement: sectors.map((s, i) => ({
+            "@type": "ListItem",
+            position: i + 1,
+            item: {
+              "@type": "Thing",
+              name: s.name,
+              description: s.lead,
+            },
+          })),
+        }),
+      },
+    ],
   }),
 });
 
