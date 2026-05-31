@@ -252,11 +252,14 @@ function Performance() {
                 return (
                   <tr key={r.y} className={`border-t border-border hover:bg-secondary/50 transition-colors duration-150 ${idx % 2 !== 0 ? "bg-secondary/20" : ""}`}>
                     <td className="px-6 py-5 font-display font-bold text-ink">{r.y}</td>
-                    <td className={`px-6 py-5 font-mono text-right font-medium ${r.smif >= 0 ? "text-emerald-600" : "text-destructive"}`}>
-                      {fmtPct(r.smif)}
+                    <td className={`px-6 py-5 font-mono text-right font-medium ${r.smif >= 0 ? "text-gain" : "text-loss"}`}>
+                      <span className="inline-flex items-center justify-end gap-1">
+                        {r.smif >= 0 ? <ArrowUp className="h-3.5 w-3.5" aria-hidden="true" /> : <ArrowDown className="h-3.5 w-3.5" aria-hidden="true" />}
+                        {fmtPct(r.smif)}
+                      </span>
                     </td>
                     <td className="px-6 py-5 font-mono text-right text-muted-foreground">{fmtPct(r.bench)}</td>
-                    <td className={`px-6 py-5 font-mono text-right font-semibold ${spread >= 0 ? "text-emerald-600" : "text-destructive"}`}>
+                    <td className={`px-6 py-5 font-mono text-right font-semibold ${spread >= 0 ? "text-gain" : "text-loss"}`}>
                       {fmtPct(spread)}
                     </td>
                   </tr>

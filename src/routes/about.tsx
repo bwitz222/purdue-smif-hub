@@ -51,13 +51,13 @@ function About() {
           </div>
           <h1
             className="font-display font-bold text-background max-w-3xl"
-            style={{ fontSize: "clamp(2.8rem, 6vw, 5.5rem)", lineHeight: "0.96" }}
+            style={{ fontSize: "clamp(2.8rem, 6vw, 5.5rem)", lineHeight: "1.02" }}
           >
             A legacy of<br />
             disciplined<br />
             <span className="text-gold/80">investing.</span>
           </h1>
-          <p className="mt-8 max-w-xl text-background/55 leading-relaxed text-lg">
+          <p className="mt-8 max-w-xl text-on-dark-secondary leading-relaxed text-lg">
             Founded at the Daniels School of Business. Built on the conviction
             that the best way to learn investing is to actually invest.
           </p>
