@@ -76,10 +76,16 @@ function Index() {
               A premier student-run fund managing real capital, delivering rigorous research, and developing the next generation of investment professionals.
             </p>
             <div className="animate-fade-up delay-500 mt-10 flex flex-wrap gap-4">
-              <Link to="/about" className="group inline-flex items-center gap-2.5 bg-gold px-8 py-3.5 text-sm font-semibold text-ink hover:bg-gold-mid transition-colors duration-200">
-                Our Story
-                <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
-              </Link>
+              <a
+                href="https://purdue.ca1.qualtrics.com/jfe/form/SV_1G5FfwJUc1cGJ2m"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-flex items-center gap-2.5 bg-gold px-8 py-3.5 text-sm font-semibold text-ink hover:bg-gold-mid transition-colors duration-200"
+              >
+                Apply to Join
+                <ExternalLink className="h-4 w-4" aria-hidden="true" />
+                <span className="sr-only">(opens application form in new tab)</span>
+              </a>
               <Link to="/holdings" className="inline-flex items-center gap-2.5 border border-background/25 px-8 py-3.5 text-sm font-semibold text-background hover:border-gold hover:text-gold transition-colors duration-200">
                 View Portfolio
               </Link>

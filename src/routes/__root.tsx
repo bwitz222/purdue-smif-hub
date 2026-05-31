@@ -4,6 +4,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import appCss from "../styles.css?url";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { Toaster } from "@/components/ui/sonner";
 import smifLogo from "@/assets/smif-logo-mark.png";
 
 function NotFoundComponent() {
@@ -31,7 +32,7 @@ function NotFoundComponent() {
             <li><Link to="/about" className="text-on-dark-secondary hover:text-gold">About</Link></li>
             <li><Link to="/team" className="text-on-dark-secondary hover:text-gold">Team</Link></li>
             <li><Link to="/holdings" className="text-on-dark-secondary hover:text-gold">Holdings</Link></li>
-            <li><Link to="/performance" className="text-on-dark-secondary hover:text-gold">Performance</Link></li>
+            <li><Link to="/recruiting" className="text-on-dark-secondary hover:text-gold">Recruiting</Link></li>
           </ul>
         </div>
       </div>
@@ -163,6 +164,7 @@ function RootComponent() {
           <SiteFooter />
         </div>
       </div>
+      <Toaster />
     </QueryClientProvider>
   );
 }

@@ -7,13 +7,11 @@ import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import smifLogo from "@/assets/smif-logo-mark.png";
 
 const NAV = [
-  { to: "/about",        label: "About"       },
-  { to: "/team",         label: "Team"        },
-  { to: "/holdings",     label: "Holdings"    },
-  { to: "/performance",  label: "Performance" },
-  { to: "/sectors",      label: "Sectors"     },
-  { to: "/publications", label: "Research"    },
-  { to: "/recruiting",   label: "Recruiting"  },
+  { to: "/about",        label: "About"      },
+  { to: "/team",         label: "Team"       },
+  { to: "/holdings",     label: "Holdings"   },
+  { to: "/publications", label: "Research"   },
+  { to: "/recruiting",   label: "Recruiting" },
 ] as const;
 
 export function SiteHeader() {
