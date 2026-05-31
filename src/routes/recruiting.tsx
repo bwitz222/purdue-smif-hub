@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ArrowRight, Calendar, MapPin, Clock } from "lucide-react";
+import { ArrowRight, Calendar, MapPin, Clock, Download } from "lucide-react";
 import { useEffect, useState } from "react";
 import { socialMeta, canonical, OG_RECRUITING } from "@/lib/seo";
 
@@ -74,41 +74,126 @@ const CALENDAR: Event[] = [
   { iso: "2026-09-09", date: "Tue, Sep 9",  name: "SMIF Interviews – B",       time: "TBD",              location: "Young Hall 223, 217, 219, 213" },
 ];
 
-function toGoogleCalendarLink(event: Event): string {
-  if (event.time === "TBD") return "";
+// Parse "7:30 PM" / "12:00 PM" — returns { h, m } in 24h, or null
+function parseTimeToken(t: string): { h: number; m: number } | null {
+  const match = t.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+  if (!match) return null;
+  const [, hh, mm, mer] = match;
+  let h = parseInt(hh, 10);
+  const m = parseInt(mm, 10);
+  if (mer.toUpperCase() === "PM" && h !== 12) h += 12;
+  if (mer.toUpperCase() === "AM" && h === 12) h = 0;
+  return { h, m };
+}
 
-  const date = event.iso.replace(/-/g, "");
-  const parts = event.time.split("–").map((s) => s.trim());
-  if (parts.length !== 2) return "";
+// Parse event.time like "7:30 – 8:30 PM" or "12:00 – 3:00 PM" — meridiem from end token applies to start if missing
+function parseEventTimes(time: string): { start: { h: number; m: number }; end: { h: number; m: number } } {
+  if (time === "TBD") {
+    return { start: { h: 17, m: 0 }, end: { h: 18, m: 0 } };
+  }
+  const parts = time.split("–").map((s) => s.trim());
+  if (parts.length !== 2) return { start: { h: 17, m: 0 }, end: { h: 18, m: 0 } };
+  let [startStr, endStr] = parts;
+  // If start lacks meridiem, inherit from end
+  if (!/AM|PM/i.test(startStr)) {
+    const merMatch = endStr.match(/AM|PM/i);
+    if (merMatch) startStr = `${startStr} ${merMatch[0]}`;
+  }
+  const start = parseTimeToken(startStr) ?? { h: 17, m: 0 };
+  const end = parseTimeToken(endStr) ?? { h: 18, m: 0 };
+  return { start, end };
+}
 
-  const parseTime = (t: string) => {
-    const match = t.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
-    if (!match) return null;
-    let [, hh, mm, mer] = match;
-    let h = parseInt(hh, 10);
-    const m = parseInt(mm, 10);
-    if (mer.toUpperCase() === "PM" && h !== 12) h += 12;
-    if (mer.toUpperCase() === "AM" && h === 12) h = 0;
-    return { h, m };
-  };
+function pad2(n: number) { return String(n).padStart(2, "0"); }
 
-  const start = parseTime(parts[0]);
-  const end = parseTime(parts[1]);
-  if (!start || !end) return "";
+// Returns "2026-08-25T19:30:00-04:00" (EDT for Aug/Sep 2026)
+function toEasternIso(iso: string, t: { h: number; m: number }): string {
+  return `${iso}T${pad2(t.h)}:${pad2(t.m)}:00-04:00`;
+}
 
-  const pad = (n: number) => String(n).padStart(2, "0");
-  const startStr = `${date}T${pad(start.h)}${pad(start.m)}00`;
-  const endStr = `${date}T${pad(end.h)}${pad(end.m)}00`;
+function buildEventBody(event: Event): string {
+  const prefix = event.time === "TBD"
+    ? "⚠ Time TBD — your specific interview slot will be communicated by email. Update this event when you receive your slot.\n\n"
+    : "";
+  return `${prefix}Purdue SMIF recruiting event.\n\nLocation: ${event.location}\nRecruiting page: https://purduesmif.org/recruiting\nQuestions: smif26@purdue.edu`;
+}
 
+function toOutlookEventLink(event: Event): string {
+  const { start, end } = parseEventTimes(event.time);
+  const startdt = toEasternIso(event.iso, start);
+  const enddt = toEasternIso(event.iso, end);
   const params = new URLSearchParams({
-    action: "TEMPLATE",
-    text: event.name,
-    dates: `${startStr}/${endStr}`,
+    path: "/calendar/action/compose",
+    rru: "addevent",
+    subject: event.name,
+    startdt,
+    enddt,
     location: event.location,
-    details: `Purdue SMIF recruiting event. See purduesmif.com for more details.`,
+    body: buildEventBody(event),
+    allday: "false",
   });
+  return `https://outlook.live.com/calendar/0/deeplink/compose?${params.toString()}`;
+}
 
-  return `https://calendar.google.com/calendar/render?${params.toString()}`;
+function slugify(s: string): string {
+  return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+}
+
+function icsEscape(s: string): string {
+  return s.replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\r?\n/g, "\\n");
+}
+
+function toIcsLocal(iso: string, t: { h: number; m: number }): string {
+  // YYYYMMDDTHHMMSS (floating with TZID)
+  const ymd = iso.replace(/-/g, "");
+  return `${ymd}T${pad2(t.h)}${pad2(t.m)}00`;
+}
+
+function nowUtcStamp(): string {
+  const d = new Date();
+  return `${d.getUTCFullYear()}${pad2(d.getUTCMonth() + 1)}${pad2(d.getUTCDate())}T${pad2(d.getUTCHours())}${pad2(d.getUTCMinutes())}${pad2(d.getUTCSeconds())}Z`;
+}
+
+function generateICS(): string {
+  const stamp = nowUtcStamp();
+  const lines: string[] = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//Purdue SMIF//Recruiting Fall 2026//EN",
+    "CALSCALE:GREGORIAN",
+    "METHOD:PUBLISH",
+    "X-WR-CALNAME:Purdue SMIF Recruiting — Fall 2026",
+    "X-WR-TIMEZONE:America/New_York",
+  ];
+  for (const e of CALENDAR) {
+    const { start, end } = parseEventTimes(e.time);
+    lines.push(
+      "BEGIN:VEVENT",
+      `UID:${e.iso}-${slugify(e.name)}@purduesmif.org`,
+      `DTSTAMP:${stamp}`,
+      `DTSTART;TZID=America/New_York:${toIcsLocal(e.iso, start)}`,
+      `DTEND;TZID=America/New_York:${toIcsLocal(e.iso, end)}`,
+      `SUMMARY:${icsEscape(e.name)}`,
+      `LOCATION:${icsEscape(e.location)}`,
+      `DESCRIPTION:${icsEscape(buildEventBody(e))}`,
+      "END:VEVENT",
+    );
+  }
+  lines.push("END:VCALENDAR");
+  return lines.join("\r\n");
+}
+
+function downloadICS() {
+  if (typeof window === "undefined") return;
+  const blob = new Blob([generateICS()], { type: "text/calendar;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "purdue-smif-recruiting-fall-2026.ics";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 export const Route = createFileRoute("/recruiting")({
@@ -129,6 +214,10 @@ export const Route = createFileRoute("/recruiting")({
 });
 
 function Recruiting() {
+  // SSR-safe "now" — null on server, set on client mount
+  const [nowMs, setNowMs] = useState<number | null>(null);
+  useEffect(() => { setNowMs(Date.now()); }, []);
+
   return (
     <>
       <section className="border-b border-border bg-ink text-background">
@@ -173,41 +262,53 @@ function Recruiting() {
           </span>
         </div>
 
+        <div className="mt-6">
+          <button
+            type="button"
+            onClick={downloadICS}
+            aria-label="Download all 10 events as iCal file"
+            className="inline-flex items-center gap-2 border border-ink px-4 py-2 text-xs font-semibold uppercase tracking-wider hover:bg-ink hover:text-background transition-colors cursor-pointer"
+          >
+            <Download className="h-3.5 w-3.5" />
+            Download all events (.ics)
+          </button>
+        </div>
+
         <div className="mt-8 divide-y divide-border border-b border-border">
-          {CALENDAR.map((e) => (
-            <div key={e.iso + e.name} className="grid grid-cols-12 gap-4 py-5 transition hover:bg-secondary/40 px-2 -mx-2">
-              <div className="col-span-12 md:col-span-2 flex items-center gap-2 text-sm font-semibold text-foreground">
-                {(() => {
-                  const link = toGoogleCalendarLink(e);
-                  return link ? (
-                    <a
-                      href={link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center rounded-sm p-1 transition hover:bg-gold/20"
-                      title="Add to Google Calendar"
-                    >
-                      <Calendar className="h-3.5 w-3.5 text-gold-deep" />
-                    </a>
-                  ) : (
-                    <Calendar className="h-3.5 w-3.5 text-gold-deep opacity-50" />
-                  );
-                })()}
-                {e.date}
-              </div>
-              <div className="col-span-12 md:col-span-5 font-display text-lg font-bold">
-                {e.name}
-              </div>
-              <div className="col-span-6 md:col-span-2 flex items-center gap-2 text-sm text-muted-foreground">
-                <Clock className="h-3.5 w-3.5" />
-                {e.time}
-              </div>
-              <div className="col-span-6 md:col-span-3 flex items-center gap-2 text-sm text-muted-foreground">
-                <MapPin className="h-3.5 w-3.5" />
-                {e.location}
-              </div>
-            </div>
-          ))}
+          {CALENDAR.map((e) => {
+            const isPast = nowMs !== null && new Date(e.iso + "T23:59:59-04:00").getTime() < nowMs;
+            return (
+              <a
+                key={e.iso + e.name}
+                href={toOutlookEventLink(e)}
+                target="_blank"
+                rel="noopener noreferrer"
+                title={isPast ? "Add to Outlook (past event)" : "Add to Outlook"}
+                className={`grid grid-cols-12 gap-4 py-5 transition hover:bg-secondary/40 px-2 -mx-2 cursor-pointer ${isPast ? "opacity-50" : ""}`}
+              >
+                <div className="col-span-12 md:col-span-2 flex items-center gap-2 text-sm font-semibold text-foreground">
+                  <Calendar className="h-3.5 w-3.5 text-gold-deep" />
+                  {e.date}
+                </div>
+                <div className="col-span-12 md:col-span-5 font-display text-lg font-bold">
+                  {e.name}
+                  {isPast && (
+                    <span className="ml-2 inline-block px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider bg-muted text-muted-foreground border border-border">
+                      Past
+                    </span>
+                  )}
+                </div>
+                <div className="col-span-6 md:col-span-2 flex items-center gap-2 text-sm text-muted-foreground">
+                  <Clock className="h-3.5 w-3.5" />
+                  {e.time}
+                </div>
+                <div className="col-span-6 md:col-span-3 flex items-center gap-2 text-sm text-muted-foreground">
+                  <MapPin className="h-3.5 w-3.5" />
+                  {e.location}
+                </div>
+              </a>
+            );
+          })}
         </div>
 
         <p className="mt-6 text-sm text-muted-foreground">
