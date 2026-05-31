@@ -86,16 +86,18 @@ function Apply() {
       {/* Hero */}
       <section className="bg-ink text-background">
         <div className="container-prose py-28 max-w-3xl">
-          <span className="text-xs font-semibold uppercase tracking-[0.28em] text-gold">Apply</span>
-          <h1
-            className="mt-4 font-display text-5xl font-bold md:text-6xl"
-            style={{ lineHeight: "1.02" }}
-          >
-            We can't wait<br />to meet you.
-          </h1>
-          <p className="mt-6 text-lg text-on-dark-secondary">
-            Applications are open. Submit through the official portal, then explore what we look for, how the process works, and answers to the questions we hear most often.
-          </p>
+          <Reveal>
+            <span className="text-xs font-semibold uppercase tracking-[0.28em] text-gold">Apply</span>
+            <h1
+              className="mt-4 font-display text-5xl font-bold md:text-6xl"
+              style={{ lineHeight: "1.02" }}
+            >
+              We can't wait<br />to meet you.
+            </h1>
+            <p className="mt-6 text-lg text-on-dark-secondary">
+              Applications are open. Submit through the official portal, then explore what we look for, how the process works, and answers to the questions we hear most often.
+            </p>
+          </Reveal>
         </div>
       </section>
 
