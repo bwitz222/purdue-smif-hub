@@ -163,7 +163,11 @@ function RootComponent() {
         <div className="mt-24">
           <SiteFooter />
         </div>
+        <div className="mt-24">
+          <SiteFooter />
+        </div>
       </div>
+      <Toaster />
     </QueryClientProvider>
   );
 }
