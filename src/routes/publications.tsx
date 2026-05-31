@@ -108,6 +108,9 @@ function Publications() {
 
   return (
     <>
+      {jsonLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
+      )}
       <section className="border-b border-border bg-secondary/40">
         <div className="container-prose py-24">
           <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">Publications</span>
