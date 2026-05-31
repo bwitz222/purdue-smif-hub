@@ -18,6 +18,18 @@ export const Route = createFileRoute("/about")({
       }),
     ],
     links: [{ rel: "canonical", href: canonical("/about") }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "AboutPage",
+          name: "About — Purdue SMIF",
+          url: "https://purduesmif.org/about",
+          about: { "@id": "https://purduesmif.org/#organization" },
+        }),
+      },
+    ],
   }),
 });
 
