@@ -121,10 +121,10 @@ function Team() {
   useEffect(() => {
     const s = search.sector;
     if (!s) return;
-    const chip = SECTOR_CHIPS.find((c) => c.label === s);
-    if (!chip) return;
-    setGroup(chip.sel.group);
-    setSectorFilter(chip.sel.sector);
+    const opt = SCOPE_OPTIONS.find((o) => o.label === s);
+    if (!opt) return;
+    setGroup(opt.group);
+    setSectorFilter(opt.sector);
     // Defer scroll until layout settles after state update.
     const id = requestAnimationFrame(() => {
       gridRef.current?.scrollIntoView({
@@ -159,24 +159,26 @@ function Team() {
 
   const hasFilter = query.length > 0 || group !== "all" || sectorFilter !== "all";
 
-  // Identify the currently active chip so we can render aria-pressed correctly.
-  const activeChipLabel =
-    SECTOR_CHIPS.find((c) => c.sel.group === group && c.sel.sector === sectorFilter)?.label ?? null;
+  const currentScopeValue = useMemo(() => {
+    if (group === "board") return "leadership";
+    if (group === "fim") return "fim";
+    if (group === "pm") return "pm";
+    if (group === "sectors" && sectorFilter !== "all") return sectorFilter;
+    return "all";
+  }, [group, sectorFilter]);
 
-  const applyChip = (sel: ChipSelection, label: string) => {
-    setGroup(sel.group);
-    setSectorFilter(sel.sector);
+  const handleScopeChange = (val: string) => {
+    const opt = SCOPE_OPTIONS.find((o) => o.value === val);
+    if (!opt) return;
+    setGroup(opt.group);
+    setSectorFilter(opt.sector);
     navigate({
-      search: () => (label === "All" ? {} : { sector: label }),
+      search: () => (val === "all" ? {} : { sector: opt.label }),
       replace: true,
     });
   };
 
-  const handleGroupChange = (g: Group) => {
-    setGroup(g);
-    setSectorFilter("all");
-    navigate({ search: () => ({}), replace: true });
-  };
+
 
   return (
     <>
