@@ -270,13 +270,12 @@ function Recruiting() {
           {CALENDAR.map((e) => {
             const isPast = nowMs !== null && new Date(e.iso + "T23:59:59-04:00").getTime() < nowMs;
             return (
-              <a
+              <button
                 key={e.iso + e.name}
-                href={toOutlookEventLink(e)}
-                target="_blank"
-                rel="noopener noreferrer"
-                title={isPast ? "Add to Outlook (past event)" : "Add to Outlook"}
-                className={`grid grid-cols-12 gap-4 py-5 transition hover:bg-secondary/40 px-2 -mx-2 cursor-pointer ${isPast ? "opacity-50" : ""}`}
+                type="button"
+                onClick={() => downloadSingleEventICS(e)}
+                title={isPast ? "Add to calendar (.ics) (past event)" : "Add to calendar (.ics)"}
+                className={`w-full text-left grid grid-cols-12 gap-4 py-5 transition hover:bg-secondary/40 px-2 -mx-2 cursor-pointer ${isPast ? "opacity-50" : ""}`}
               >
                 <div className="col-span-12 md:col-span-2 flex items-center gap-2 text-sm font-semibold text-foreground">
                   <Calendar className="h-3.5 w-3.5 text-gold-deep" />
@@ -298,7 +297,7 @@ function Recruiting() {
                   <MapPin className="h-3.5 w-3.5" />
                   {e.location}
                 </div>
-              </a>
+              </button>
             );
           })}
         </div>
