@@ -30,27 +30,6 @@ export const Route = createFileRoute("/contact")({
       }),
     ],
     links: [{ rel: "canonical", href: canonical("/contact") }],
-    scripts: [
-      {
-        type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "Organization",
-          name: "Purdue Student Managed Investment Fund",
-          email: "smif26@purdue.edu",
-          url: `${SITE_URL}/contact`,
-          address: {
-            "@type": "PostalAddress",
-            streetAddress: "403 Mitch Daniels Blvd",
-            addressLocality: "West Lafayette",
-            addressRegion: "IN",
-            postalCode: "47907",
-            addressCountry: "US",
-          },
-          sameAs: ["https://www.linkedin.com/company/purdue-smif/"],
-        }),
-      },
-    ],
   }),
 });
 
