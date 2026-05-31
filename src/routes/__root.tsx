@@ -88,6 +88,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
               alternateName: "Purdue SMIF",
               url: "https://purduesmif.org",
               email: "smif26@purdue.edu",
+              foundingDate: "2009",
+              slogan: "Real capital. Real research. Real outcomes.",
+              description: "The premier student-run investment fund at the Mitch Daniels School of Business, Purdue University — managing real capital across global markets since 2009.",
               parentOrganization: {
                 "@type": "CollegeOrUniversity",
                 name: "Daniels School of Business, Purdue University",
@@ -100,7 +103,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
                 postalCode: "47907",
                 addressCountry: "US",
               },
-              sameAs: ["https://www.linkedin.com/company/purdue-smif/"],
+              sameAs: [
+                "https://www.linkedin.com/company/purdue-smif/",
+                "https://www.instagram.com/smif_purdue/",
+                "https://purduesmif.substack.com/",
+              ],
             },
             {
               "@type": "WebSite",
