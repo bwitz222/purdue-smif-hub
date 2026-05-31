@@ -12,7 +12,7 @@ function NotFoundComponent() {
     <div className="flex min-h-dvh items-center justify-center bg-ink px-4 py-16">
       <div className="max-w-md text-center text-background">
         <span className="mx-auto mb-8 grid h-16 w-16 place-items-center bg-background p-2">
-          <img src={smifLogo} alt="Purdue SMIF" className="h-full w-full object-contain" />
+          <img src={smifLogo} alt="Purdue SMIF" width={64} height={64} decoding="async" className="h-full w-full object-contain" />
         </span>
         <div className="font-display text-[8rem] font-bold text-gold/20 leading-none select-none">404</div>
         <h1 className="font-display text-3xl font-bold text-background mt-4">Page not found</h1>
