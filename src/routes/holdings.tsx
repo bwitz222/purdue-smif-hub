@@ -177,7 +177,11 @@ function HoldingsPage() {
           <span className="rule-gold mb-5 block" />
           <span className="text-xs font-semibold uppercase tracking-[0.32em] text-gold-deep block mb-4">Portfolio Holdings</span>
           <h1 className="font-display font-bold text-ink" style={{ fontSize: "clamp(2.5rem, 6vw, 5rem)" }}>Current portfolio.</h1>
-          <div className="mt-5 inline-flex items-center gap-2 border border-border bg-background/60 px-3 py-1.5 text-xs font-mono text-muted-foreground">
+          <div
+            aria-live="polite"
+            aria-atomic="true"
+            className="mt-5 inline-flex items-center gap-2 border border-border bg-background/60 px-3 py-1.5 text-xs font-mono text-muted-foreground"
+          >
             {isFetching ? (
               <><RefreshCw className="h-3 w-3 animate-spin text-gold" /> Refreshing prices…</>
             ) : quoteData?.cachedAt ? (
@@ -194,7 +198,7 @@ function HoldingsPage() {
       </section>
       <section className="container-prose py-14 space-y-10">
         {error && (
-          <div className="border border-loss/40 bg-loss/5 p-4 flex items-center justify-between gap-4">
+          <div role="alert" className="border border-loss/40 bg-loss/5 p-4 flex items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-sm text-foreground">
               <AlertCircle className="h-4 w-4 text-loss shrink-0" aria-hidden="true" />
               <span>Couldn't refresh live prices — showing last reported snapshot.</span>
