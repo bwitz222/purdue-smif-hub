@@ -3,7 +3,7 @@ import { Mail, MapPin, Linkedin, Send } from "lucide-react";
 import { useState } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
-import { socialMeta, canonical, SITE_URL } from "@/lib/seo";
+import { socialMeta, canonical } from "@/lib/seo";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
