@@ -278,7 +278,7 @@ function Team() {
           <SectionHeader
             kicker="Leadership"
             title="Executive Board"
-            blurb="Seven senior students elected each spring to lead the fund's strategy, research, risk, recruiting, education, and operations."
+            blurb="Seven students elected each spring to lead the fund's strategy, research, risk, recruiting, education, and operations."
             count={hasFilter ? filteredBoard.length : undefined}
           />
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
