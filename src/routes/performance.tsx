@@ -108,13 +108,13 @@ function Performance() {
           </div>
           <h1
             className="font-display font-bold text-background max-w-3xl"
-            style={{ fontSize: "clamp(2.8rem, 6vw, 5.5rem)", lineHeight: "0.96" }}
+            style={{ fontSize: "clamp(2.8rem, 6vw, 5.5rem)", lineHeight: "1.02" }}
           >
             Benchmarked.<br />
             Transparent.<br />
             <span className="text-gold/80">Quarterly.</span>
           </h1>
-          <p className="mt-8 max-w-xl text-background/55 leading-relaxed text-lg">
+          <p className="mt-8 max-w-xl text-on-dark-secondary leading-relaxed text-lg">
             Measured against the S&P 500 Total Return Index.
             Returns shown are illustrative.
           </p>
@@ -122,28 +122,16 @@ function Performance() {
         <div className="absolute bottom-0 left-0 right-0 h-px bg-white/10" />
       </section>
 
-      {/* ── Work in progress notice ─────────────────────────────── */}
-      <section className="container-prose pt-10">
-        <div className="border border-destructive/20 bg-destructive/[0.06] px-6 py-5 md:px-8 md:py-6">
-          <div className="flex items-start gap-3">
-            <div className="mt-0.5 h-2 w-2 flex-shrink-0 bg-destructive" />
-            <p className="text-sm leading-relaxed text-destructive">
-              <span className="font-semibold">Work in progress.</span>{" "}
-              This page is currently being updated. Please check back at a later date.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <section className="container-prose py-10 space-y-12">
+      <section className="container-prose py-10 space-y-12 pt-14">
 
         {/* ── KPI cards ─────────────────────────────────────────── */}
         <div className="grid gap-px bg-border md:grid-cols-3">
           {KPI_STATS.map(({ l, v, pos }) => (
             <div key={l} className="bg-card p-8 flex flex-col gap-1 border border-border">
-              <div className="text-xs uppercase tracking-[0.22em] text-muted-foreground">{l}</div>
-              <div className={`font-display text-4xl font-bold mt-1 ${pos ? "text-emerald-600" : "text-destructive"}`}>
-                {v}
+              <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">{l}</div>
+              <div className={`font-display text-4xl font-bold mt-1 inline-flex items-baseline gap-1.5 ${pos ? "text-gain" : "text-loss"}`}>
+                {pos ? <ArrowUp className="h-6 w-6" aria-hidden="true" /> : <ArrowDown className="h-6 w-6" aria-hidden="true" />}
+                <span>{v}</span>
               </div>
             </div>
           ))}
