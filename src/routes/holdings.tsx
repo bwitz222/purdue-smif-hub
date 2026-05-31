@@ -126,7 +126,23 @@ function HoldingsPage() {
   const sectorBreakdown = useMemo(() => { const investedValue = holdings.reduce((s, h) => s + h.value, 0); const map = new Map<string, number>(); holdings.forEach((h) => { const weights = ETF_SECTOR_WEIGHTS[h.symbol]; if (weights) { const totalWeight = Object.values(weights).reduce((s, w) => s + w, 0); Object.entries(weights).forEach(([sec, w]) => { const attributed = h.value * (w / totalWeight); map.set(sec, (map.get(sec) || 0) + attributed); }); } else { map.set(h.industry, (map.get(h.industry) || 0) + h.value); } }); return Array.from(map.entries()).map(([s, v]) => [s, investedValue > 0 ? (v / investedValue) * 100 : 0] as [string, number]).sort((a, b) => b[1] - a[1]); }, [holdings]);
 
   const sectors = useMemo<string[]>(() => ["All", ...Array.from(new Set(holdings.map((h) => h.industry)))], [holdings]);
-  const rows = useMemo(() => { const filtered = sector === "All" ? holdings : holdings.filter((h) => h.industry === sector); return [...filtered].sort((a, b) => { const av = a[sortKey]; const bv = b[sortKey]; if (typeof av === "number" && typeof bv === "number") return sortDir === "asc" ? av - bv : bv - av; return sortDir === "asc" ? String(av).localeCompare(String(bv)) : String(bv).localeCompare(String(av)); }); }, [sortKey, sortDir, sector, holdings]);
+  const rows = useMemo(() => {
+    let filtered = sector === "All" ? holdings : holdings.filter((h) => h.industry === sector);
+    if (debouncedQuery) {
+      const q = debouncedQuery.toLowerCase();
+      filtered = filtered.filter((h) => h.symbol.toLowerCase().includes(q) || h.company.toLowerCase().includes(q));
+    }
+    return [...filtered].sort((a, b) => { const av = a[sortKey]; const bv = b[sortKey]; if (typeof av === "number" && typeof bv === "number") return sortDir === "asc" ? av - bv : bv - av; return sortDir === "asc" ? String(av).localeCompare(String(bv)) : String(bv).localeCompare(String(av)); });
+  }, [sortKey, sortDir, sector, holdings, debouncedQuery]);
+  const movers = useMemo(() => {
+    const sorted = [...holdings].sort((a, b) => b.dayChange - a.dayChange);
+    return { gainers: sorted.slice(0, 3), losers: sorted.slice(-3).reverse() };
+  }, [holdings]);
+  const emptyMessage = sector !== "All" && debouncedQuery
+    ? `No positions match "${debouncedQuery}" in ${sector}`
+    : debouncedQuery
+    ? `No positions match "${debouncedQuery}"`
+    : `No positions in ${sector}`;
   const toggleSort = (k: SortKey) => { if (k === sortKey) setSortDir(sortDir === "asc" ? "desc" : "asc"); else { setSortKey(k); setSortDir(typeof holdings[0]?.[k] === "number" ? "desc" : "asc"); } };
   const cols: { k: SortKey; label: string; align?: "right" }[] = [{ k: "company", label: "Company" },{ k: "symbol", label: "Ticker" },{ k: "industry", label: "Industry" },{ k: "price", label: "Price", align: "right" },{ k: "beta", label: "Beta", align: "right" },{ k: "shares", label: "Shares", align: "right" },{ k: "value", label: "Value", align: "right" },{ k: "dayChange", label: "Day", align: "right" },{ k: "totalReturn", label: "Return $", align: "right" },{ k: "returnPct", label: "Return %", align: "right" },{ k: "allocation", label: "Weight", align: "right" }];
   const dayAccent = portfolioSummary.totalDayGain >= 0 ? "positive" : "negative";
