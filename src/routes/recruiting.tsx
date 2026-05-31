@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowRight, Calendar, MapPin, Clock } from "lucide-react";
 import { useEffect, useState } from "react";
-import { socialMeta, canonical } from "@/lib/seo";
+import { socialMeta, canonical, OG_RECRUITING } from "@/lib/seo";
 
 const APPLICATION_URL = "https://purdue.ca1.qualtrics.com/jfe/form/SV_1G5FfwJUc1cGJ2m";
 const DEADLINE = new Date("2026-09-04T23:59:00-04:00").getTime();
@@ -121,6 +121,7 @@ export const Route = createFileRoute("/recruiting")({
         title: "Recruiting Calendar & Interview Prep — Purdue SMIF",
         description: "Callouts, coffee chats, interviews, and a behavioral + technical interview prep guide for joining Purdue SMIF.",
         url: canonical("/recruiting"),
+        image: OG_RECRUITING,
       }),
     ],
     links: [{ rel: "canonical", href: canonical("/recruiting") }],

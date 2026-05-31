@@ -3,6 +3,10 @@
 
 export const SITE_URL = "https://purduesmif.org";
 export const OG_IMAGE = `${SITE_URL}/og-share.jpg`;
+export const OG_HOLDINGS = `${SITE_URL}/og-holdings.jpg`;
+export const OG_TEAM = `${SITE_URL}/og-team.jpg`;
+export const OG_ABOUT = `${SITE_URL}/og-about.jpg`;
+export const OG_RECRUITING = `${SITE_URL}/og-recruiting.jpg`;
 export const OG_IMAGE_WIDTH = "1216";
 export const OG_IMAGE_HEIGHT = "640";
 export const OG_IMAGE_ALT = "Purdue SMIF — Student Managed Investment Fund";

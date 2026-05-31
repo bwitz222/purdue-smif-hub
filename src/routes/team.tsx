@@ -1,10 +1,11 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useReducedMotion } from "framer-motion";
 import { Search, X } from "lucide-react";
 import { MemberCard, type Member } from "@/components/MemberCard";
 import { MemberDetailSheet } from "@/components/MemberDetailSheet";
 import { board, sectorTeams, fixedIncomeMacro, portfolioManagers } from "@/data/team";
-import { socialMeta, canonical } from "@/lib/seo";
+import { socialMeta, canonical, OG_TEAM } from "@/lib/seo";
 import {
   Select,
   SelectContent,
@@ -19,8 +20,13 @@ const allMembers = [
   ...portfolioManagers,
 ].filter((m) => !m.placeholder);
 
+type TeamSearch = { sector?: string };
+
 export const Route = createFileRoute("/team")({
   component: Team,
+  validateSearch: (search: Record<string, unknown>): TeamSearch => ({
+    sector: typeof search.sector === "string" ? search.sector : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Team — Purdue SMIF" },
@@ -29,6 +35,7 @@ export const Route = createFileRoute("/team")({
         title: "Meet the Team — Purdue SMIF",
         description: "The 52 students behind Purdue SMIF — executive board, sector analysts, fixed income & macro, and portfolio managers.",
         url: canonical("/team"),
+        image: OG_TEAM,
       }),
     ],
     links: [{ rel: "canonical", href: canonical("/team") }],
@@ -92,12 +99,45 @@ const matches = (m: Member, q: string) => {
   );
 };
 
+// Map every sector chip name to the (group, sectorFilter) state combo it should apply.
+type ChipSelection = { group: Group; sector: string };
+const SECTOR_CHIPS: { label: string; sel: ChipSelection }[] = [
+  { label: "All", sel: { group: "all", sector: "all" } },
+  { label: "Leadership", sel: { group: "board", sector: "all" } },
+  ...sectorTeams.map((t) => ({ label: t.name, sel: { group: "sectors" as Group, sector: t.name } })),
+  { label: "Fixed Income & Macro", sel: { group: "fim", sector: "all" } },
+  { label: "Portfolio + Risk Management", sel: { group: "pm", sector: "all" } },
+];
+
 function Team() {
   const totalMembers = 52;
+  const search = Route.useSearch();
+  const navigate = useNavigate({ from: "/team" });
+  const reduce = useReducedMotion();
+  const gridRef = useRef<HTMLDivElement | null>(null);
+
   const [query, setQuery] = useState("");
   const [group, setGroup] = useState<Group>("all");
   const [sectorFilter, setSectorFilter] = useState<string>("all");
   const [selected, setSelected] = useState<Member | null>(null);
+
+  // Sync URL ?sector=… → state and scroll to grid on change.
+  useEffect(() => {
+    const s = search.sector;
+    if (!s) return;
+    const chip = SECTOR_CHIPS.find((c) => c.label === s);
+    if (!chip) return;
+    setGroup(chip.sel.group);
+    setSectorFilter(chip.sel.sector);
+    // Defer scroll until layout settles after state update.
+    const id = requestAnimationFrame(() => {
+      gridRef.current?.scrollIntoView({
+        behavior: reduce ? "auto" : "smooth",
+        block: "start",
+      });
+    });
+    return () => cancelAnimationFrame(id);
+  }, [search.sector, reduce]);
 
   const showBoard = group === "all" || group === "board";
   const showSectors = group === "all" || group === "sectors";
@@ -123,9 +163,23 @@ function Team() {
 
   const hasFilter = query.length > 0 || group !== "all" || sectorFilter !== "all";
 
+  // Identify the currently active chip so we can render aria-pressed correctly.
+  const activeChipLabel =
+    SECTOR_CHIPS.find((c) => c.sel.group === group && c.sel.sector === sectorFilter)?.label ?? null;
+
+  const applyChip = (sel: ChipSelection, label: string) => {
+    setGroup(sel.group);
+    setSectorFilter(sel.sector);
+    navigate({
+      search: () => (label === "All" ? {} : { sector: label }),
+      replace: true,
+    });
+  };
+
   const handleGroupChange = (g: Group) => {
     setGroup(g);
     setSectorFilter("all");
+    navigate({ search: () => ({}), replace: true });
   };
 
   return (
@@ -229,12 +283,43 @@ function Team() {
         )}
       </div>
 
+      {/* Sector cross-link chips (mirror /sectors taxonomy; URL-driven via ?sector=…) */}
+      <div ref={gridRef} className="border-b border-border bg-background">
+        <div className="container-prose py-5">
+          <div className="text-[10px] font-mono uppercase tracking-[0.22em] text-muted-foreground mb-3">
+            Filter by sector
+          </div>
+          <div className="-mx-4 md:mx-0 px-4 md:px-0 overflow-x-auto scrollbar-none">
+            <div className="flex items-center gap-1.5 w-max md:w-auto md:flex-wrap">
+              {SECTOR_CHIPS.map(({ label, sel }) => {
+                const active = activeChipLabel === label;
+                return (
+                  <button
+                    key={label}
+                    type="button"
+                    onClick={() => applyChip(sel, label)}
+                    aria-pressed={active}
+                    className={`cursor-pointer shrink-0 min-h-11 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] border transition-colors whitespace-nowrap ${
+                      active
+                        ? "bg-ink text-background border-ink"
+                        : "bg-background text-foreground border-border hover:border-ink hover:bg-secondary"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
+
       {totalResults === 0 && (
         <section className="container-prose py-24 text-center">
           <p className="font-display text-2xl text-muted-foreground">No members match your search.</p>
           <button
-            onClick={() => { setQuery(""); setGroup("all"); setSectorFilter("all"); }}
-            className="mt-6 inline-flex items-center px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] border border-ink hover:bg-ink hover:text-background transition-colors"
+            onClick={() => { setQuery(""); setGroup("all"); setSectorFilter("all"); navigate({ search: () => ({}), replace: true }); }}
+            className="mt-6 inline-flex items-center px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] border border-ink hover:bg-ink hover:text-background transition-colors cursor-pointer"
           >
             Reset filters
           </button>
