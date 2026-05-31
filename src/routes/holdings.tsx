@@ -193,6 +193,20 @@ function HoldingsPage() {
         </div>
       </section>
       <section className="container-prose py-14 space-y-10">
+        {error && (
+          <div className="border border-loss/40 bg-loss/5 p-4 flex items-center justify-between gap-4">
+            <div className="flex items-center gap-2 text-sm text-foreground">
+              <AlertCircle className="h-4 w-4 text-loss shrink-0" aria-hidden="true" />
+              <span>Couldn't refresh live prices — showing last reported snapshot.</span>
+            </div>
+            <button
+              onClick={() => refetch()}
+              className="border border-ink px-3 py-1.5 text-xs uppercase tracking-wider hover:bg-ink hover:text-background transition-colors cursor-pointer shrink-0"
+            >
+              Retry
+            </button>
+          </div>
+        )}
         <h2 className="sr-only">Portfolio Summary</h2>
         <Reveal className="grid gap-px bg-border sm:grid-cols-2 lg:grid-cols-4">
           <KpiCard
