@@ -283,12 +283,43 @@ function Team() {
         )}
       </div>
 
+      {/* Sector cross-link chips (mirror /sectors taxonomy; URL-driven via ?sector=…) */}
+      <div ref={gridRef} className="border-b border-border bg-background">
+        <div className="container-prose py-5">
+          <div className="text-[10px] font-mono uppercase tracking-[0.22em] text-muted-foreground mb-3">
+            Filter by sector
+          </div>
+          <div className="-mx-4 md:mx-0 px-4 md:px-0 overflow-x-auto scrollbar-none">
+            <div className="flex items-center gap-1.5 w-max md:w-auto md:flex-wrap">
+              {SECTOR_CHIPS.map(({ label, sel }) => {
+                const active = activeChipLabel === label;
+                return (
+                  <button
+                    key={label}
+                    type="button"
+                    onClick={() => applyChip(sel, label)}
+                    aria-pressed={active}
+                    className={`cursor-pointer shrink-0 min-h-11 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] border transition-colors whitespace-nowrap ${
+                      active
+                        ? "bg-ink text-background border-ink"
+                        : "bg-background text-foreground border-border hover:border-ink hover:bg-secondary"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
+
       {totalResults === 0 && (
         <section className="container-prose py-24 text-center">
           <p className="font-display text-2xl text-muted-foreground">No members match your search.</p>
           <button
-            onClick={() => { setQuery(""); setGroup("all"); setSectorFilter("all"); }}
-            className="mt-6 inline-flex items-center px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] border border-ink hover:bg-ink hover:text-background transition-colors"
+            onClick={() => { setQuery(""); setGroup("all"); setSectorFilter("all"); navigate({ search: () => ({}), replace: true }); }}
+            className="mt-6 inline-flex items-center px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] border border-ink hover:bg-ink hover:text-background transition-colors cursor-pointer"
           >
             Reset filters
           </button>
