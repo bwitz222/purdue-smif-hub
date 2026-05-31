@@ -78,16 +78,6 @@ function SectionHeader({ kicker, title, blurb, count }: { kicker: string; title:
 
 type Group = "all" | "board" | "sectors" | "fim" | "pm";
 
-const GROUPS: { id: Group; label: string }[] = [
-  { id: "all", label: "All" },
-  { id: "board", label: "Executive Board" },
-  { id: "sectors", label: "Sector Teams" },
-  { id: "fim", label: "Fixed Income & Macro" },
-  { id: "pm", label: "Portfolio + Risk" },
-];
-
-const SECTOR_NAMES = sectorTeams.map((t) => t.name);
-
 const matches = (m: Member, q: string) => {
   if (!q) return true;
   const s = q.toLowerCase();
@@ -99,15 +89,21 @@ const matches = (m: Member, q: string) => {
   );
 };
 
-// Map every sector chip name to the (group, sectorFilter) state combo it should apply.
-type ChipSelection = { group: Group; sector: string };
-const SECTOR_CHIPS: { label: string; sel: ChipSelection }[] = [
-  { label: "All", sel: { group: "all", sector: "all" } },
-  { label: "Leadership", sel: { group: "board", sector: "all" } },
-  ...sectorTeams.map((t) => ({ label: t.name, sel: { group: "sectors" as Group, sector: t.name } })),
-  { label: "Fixed Income & Macro", sel: { group: "fim", sector: "all" } },
-  { label: "Portfolio + Risk Management", sel: { group: "pm", sector: "all" } },
+// Unified scope options: drives both group and sector state from a single Select.
+type ScopeOption = { value: string; label: string; group: Group; sector: string };
+const SCOPE_OPTIONS: ScopeOption[] = [
+  { value: "all", label: "All Sectors", group: "all", sector: "all" },
+  { value: "leadership", label: "Leadership", group: "board", sector: "all" },
+  ...sectorTeams.map((t) => ({
+    value: t.name,
+    label: t.name,
+    group: "sectors" as Group,
+    sector: t.name,
+  })),
+  { value: "fim", label: "Fixed Income & Macro", group: "fim", sector: "all" },
+  { value: "pm", label: "Portfolio + Risk Management", group: "pm", sector: "all" },
 ];
+
 
 function Team() {
   const totalMembers = 52;
@@ -125,10 +121,10 @@ function Team() {
   useEffect(() => {
     const s = search.sector;
     if (!s) return;
-    const chip = SECTOR_CHIPS.find((c) => c.label === s);
-    if (!chip) return;
-    setGroup(chip.sel.group);
-    setSectorFilter(chip.sel.sector);
+    const opt = SCOPE_OPTIONS.find((o) => o.label === s);
+    if (!opt) return;
+    setGroup(opt.group);
+    setSectorFilter(opt.sector);
     // Defer scroll until layout settles after state update.
     const id = requestAnimationFrame(() => {
       gridRef.current?.scrollIntoView({
@@ -163,24 +159,26 @@ function Team() {
 
   const hasFilter = query.length > 0 || group !== "all" || sectorFilter !== "all";
 
-  // Identify the currently active chip so we can render aria-pressed correctly.
-  const activeChipLabel =
-    SECTOR_CHIPS.find((c) => c.sel.group === group && c.sel.sector === sectorFilter)?.label ?? null;
+  const currentScopeValue = useMemo(() => {
+    if (group === "board") return "leadership";
+    if (group === "fim") return "fim";
+    if (group === "pm") return "pm";
+    if (group === "sectors" && sectorFilter !== "all") return sectorFilter;
+    return "all";
+  }, [group, sectorFilter]);
 
-  const applyChip = (sel: ChipSelection, label: string) => {
-    setGroup(sel.group);
-    setSectorFilter(sel.sector);
+  const handleScopeChange = (val: string) => {
+    const opt = SCOPE_OPTIONS.find((o) => o.value === val);
+    if (!opt) return;
+    setGroup(opt.group);
+    setSectorFilter(opt.sector);
     navigate({
-      search: () => (label === "All" ? {} : { sector: label }),
+      search: () => (val === "all" ? {} : { sector: opt.label }),
       replace: true,
     });
   };
 
-  const handleGroupChange = (g: Group) => {
-    setGroup(g);
-    setSectorFilter("all");
-    navigate({ search: () => ({}), replace: true });
-  };
+
 
   return (
     <>
@@ -211,109 +209,57 @@ function Team() {
 
       {/* Sticky filter bar */}
       <div className="sticky top-14 z-30 border-b border-border bg-background/95 backdrop-blur-md">
-        <div className="container-prose py-3 md:py-4 space-y-3">
-          <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-4">
-            <div className="relative flex-1 md:max-w-md">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <input
-                type="search"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search by name, role, year…"
-                className="w-full border border-border bg-background pl-10 pr-9 py-2 text-sm font-mono placeholder:text-muted-foreground/60 focus:outline-none focus:border-ink transition-colors"
-                aria-label="Search team members"
-              />
-              {query && (
-                <button
-                  onClick={() => setQuery("")}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-ink transition-colors"
-                  aria-label="Clear search"
-                >
-                  <X className="h-3.5 w-3.5" />
-                </button>
-              )}
-            </div>
-            {(group === "all" || group === "sectors") && (
-              <Select value={sectorFilter} onValueChange={setSectorFilter}>
-                <SelectTrigger className="h-9 w-full md:w-56 rounded-none border-border bg-background text-[11px] font-semibold uppercase tracking-[0.14em] focus:ring-0 focus:ring-offset-0 focus:border-ink">
-                  <span className="truncate text-left">
-                    {sectorFilter === "all" ? "All Sectors" : sectorFilter}
-                  </span>
-                </SelectTrigger>
-                <SelectContent className="rounded-none border-border bg-background">
-                  <SelectItem value="all" className="text-[11px] font-semibold uppercase tracking-[0.14em] focus:bg-secondary focus:text-foreground">
-                    All Sectors
-                  </SelectItem>
-                  {SECTOR_NAMES.map((name) => (
-                    <SelectItem
-                      key={name}
-                      value={name}
-                      className="text-[11px] font-semibold uppercase tracking-[0.14em] focus:bg-secondary focus:text-foreground"
-                    >
-                      {name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+        <div className="container-prose py-3 md:py-4 flex flex-col gap-3 md:flex-row md:items-center md:gap-4">
+          <div className="relative flex-1 md:max-w-md">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search by name, role, year…"
+              className="w-full border border-border bg-background pl-10 pr-9 py-2 text-sm font-mono placeholder:text-muted-foreground/60 focus:outline-none focus:border-ink transition-colors"
+              aria-label="Search team members"
+            />
+            {query && (
+              <button
+                onClick={() => setQuery("")}
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-ink transition-colors"
+                aria-label="Clear search"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
             )}
           </div>
-          <div className="-mx-4 md:mx-0 px-4 md:px-0 overflow-x-auto scrollbar-none">
-            <div className="flex items-center gap-1.5 w-max md:w-auto md:flex-wrap">
-              {GROUPS.map((g) => (
-                <button
-                  key={g.id}
-                  onClick={() => handleGroupChange(g.id)}
-                  className={`shrink-0 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] border transition-colors whitespace-nowrap ${
-                    group === g.id
-                      ? "bg-ink text-background border-ink"
-                      : "bg-background text-foreground border-border hover:border-ink"
-                  }`}
+          <Select value={currentScopeValue} onValueChange={handleScopeChange}>
+            <SelectTrigger
+              aria-label="Filter team by scope"
+              className="h-9 w-full md:w-56 rounded-none border-border bg-background text-[11px] font-semibold uppercase tracking-[0.14em] focus:ring-0 focus:ring-offset-0 focus:border-ink"
+            >
+              <span className="truncate text-left">
+                {SCOPE_OPTIONS.find((o) => o.value === currentScopeValue)?.label ?? "All Sectors"}
+              </span>
+            </SelectTrigger>
+            <SelectContent className="rounded-none border-border bg-background">
+              {SCOPE_OPTIONS.map((o) => (
+                <SelectItem
+                  key={o.value}
+                  value={o.value}
+                  className="text-[11px] font-semibold uppercase tracking-[0.14em] focus:bg-secondary focus:text-foreground"
                 >
-                  {g.label}
-                </button>
+                  {o.label}
+                </SelectItem>
               ))}
-            </div>
-          </div>
-        </div>
-        {hasFilter && (
-          <div className="container-prose pb-3 text-[11px] font-mono uppercase tracking-[0.2em] text-muted-foreground">
-            {totalResults} {totalResults === 1 ? "match" : "matches"}
-            {query && <> for &ldquo;{query}&rdquo;</>}
-          </div>
-        )}
-      </div>
-
-      {/* Sector cross-link chips (mirror /sectors taxonomy; URL-driven via ?sector=…) */}
-      <div ref={gridRef} className="border-b border-border bg-background">
-        <div className="container-prose py-5">
-          <div className="text-[10px] font-mono uppercase tracking-[0.22em] text-muted-foreground mb-3">
-            Filter by sector
-          </div>
-          <div className="-mx-4 md:mx-0 px-4 md:px-0 overflow-x-auto scrollbar-none">
-            <div className="flex items-center gap-1.5 w-max md:w-auto md:flex-wrap">
-              {SECTOR_CHIPS.map(({ label, sel }) => {
-                const active = activeChipLabel === label;
-                return (
-                  <button
-                    key={label}
-                    type="button"
-                    onClick={() => applyChip(sel, label)}
-                    aria-pressed={active}
-                    className={`cursor-pointer shrink-0 min-h-11 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] border transition-colors whitespace-nowrap ${
-                      active
-                        ? "bg-ink text-background border-ink"
-                        : "bg-background text-foreground border-border hover:border-ink hover:bg-secondary"
-                    }`}
-                  >
-                    {label}
-                  </button>
-                );
-              })}
-            </div>
+            </SelectContent>
+          </Select>
+          <div className="text-[11px] font-mono uppercase tracking-[0.2em] text-muted-foreground whitespace-nowrap md:ml-auto text-right">
+            {hasFilter
+              ? `${totalResults} ${totalResults === 1 ? "match" : "matches"}`
+              : `${totalMembers} members`}
           </div>
         </div>
       </div>
 
+      <div ref={gridRef}>
       {totalResults === 0 && (
         <section className="container-prose py-24 text-center">
           <p className="font-display text-2xl text-muted-foreground">No members match your search.</p>
@@ -325,6 +271,7 @@ function Team() {
           </button>
         </section>
       )}
+
 
       {showBoard && filteredBoard.length > 0 && (
         <section className="container-prose py-20">
@@ -400,6 +347,9 @@ function Team() {
           </div>
         </section>
       )}
+      </div>
+
+
 
       <section className="bg-ink py-24 text-background">
         <div className="container-prose">
