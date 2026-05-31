@@ -155,7 +155,9 @@ function Recruiting() {
               Jump to Prep Guide
             </a>
           </div>
+          <Countdown />
         </div>
+
       </section>
 
       {/* Calendar */}
