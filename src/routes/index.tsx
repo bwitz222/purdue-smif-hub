@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import tradingImg from "@/assets/nyc-skyline.jpg";
 import { ArrowRight, TrendingUp, Users, Award, BarChart3, ChevronRight, ExternalLink } from "lucide-react";
 import { CountUp } from "@/components/CountUp";
+import { HeroChart } from "@/components/HeroChart";
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import { socialMeta, canonical } from "@/lib/seo";
 
@@ -49,6 +50,8 @@ function Index() {
           <img
             src={tradingImg}
             alt=""
+            width={1920}
+            height={1080}
             fetchPriority="high"
             decoding="async"
             className="h-full w-full object-cover opacity-30"
@@ -56,29 +59,36 @@ function Index() {
           <div className="absolute inset-0 bg-gradient-to-b from-ink/85 via-ink/70 to-ink" />
         </div>
         <div className="relative flex-1 container-prose flex flex-col justify-center py-24 lg:py-28 text-background">
-          <div className="animate-fade-in flex items-center gap-3 mb-8">
-            <span className="rule-gold animate-expand-x delay-100" />
-            <span className="text-xs font-semibold uppercase tracking-[0.32em] text-gold/80">
-              Daniels School of Business · Est. 2009
-            </span>
-          </div>
-          <h1
-            className="animate-fade-up delay-200 font-display font-bold text-background max-w-5xl"
-            style={{ fontSize: "clamp(2.75rem, 8.5vw, 6.5rem)", lineHeight: "1.02" }}
-          >
-            Purdue <span className="text-gold">Student</span> Managed<br />Investment Fund
-          </h1>
-          <p className="animate-fade-up delay-400 mt-8 max-w-md text-background/80 text-base leading-relaxed">
-            A premier student-run fund managing real capital, delivering rigorous research, and developing the next generation of investment professionals.
-          </p>
-          <div className="animate-fade-up delay-500 mt-10 flex flex-wrap gap-4">
-            <Link to="/about" className="group inline-flex items-center gap-2.5 bg-gold px-8 py-3.5 text-sm font-semibold text-ink hover:bg-gold-mid transition-colors duration-200">
-              Our Story
-              <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
-            </Link>
-            <Link to="/holdings" className="inline-flex items-center gap-2.5 border border-background/25 px-8 py-3.5 text-sm font-semibold text-background hover:border-gold hover:text-gold transition-colors duration-200">
-              View Portfolio
-            </Link>
+          <div className="grid lg:grid-cols-12 gap-12 items-center">
+            <div className="lg:col-span-7">
+              <div className="animate-fade-in flex items-center gap-3 mb-8">
+                <span className="rule-gold animate-expand-x delay-100" />
+                <span className="text-xs font-semibold uppercase tracking-[0.18em] text-gold/80">
+                  Daniels School of Business · Est. 2009
+                </span>
+              </div>
+              <h1
+                className="animate-fade-up delay-200 font-display font-bold text-background max-w-4xl"
+                style={{ fontSize: "clamp(2.5rem, 7vw, 5.5rem)", lineHeight: "1.02" }}
+              >
+                Purdue <span className="text-gold">Student</span> Managed<br />Investment Fund
+              </h1>
+              <p className="animate-fade-up delay-400 mt-8 max-w-md text-on-dark-primary text-base leading-relaxed">
+                A premier student-run fund managing real capital, delivering rigorous research, and developing the next generation of investment professionals.
+              </p>
+              <div className="animate-fade-up delay-500 mt-10 flex flex-wrap gap-4">
+                <Link to="/about" className="group inline-flex items-center gap-2.5 bg-gold px-8 py-3.5 text-sm font-semibold text-ink hover:bg-gold-mid transition-colors duration-200">
+                  Our Story
+                  <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
+                </Link>
+                <Link to="/holdings" className="inline-flex items-center gap-2.5 border border-background/25 px-8 py-3.5 text-sm font-semibold text-background hover:border-gold hover:text-gold transition-colors duration-200">
+                  View Portfolio
+                </Link>
+              </div>
+            </div>
+            <div className="lg:col-span-5 animate-fade-up delay-500">
+              <HeroChart />
+            </div>
           </div>
           {/* Stats — CountUp carries the entrance; no double-animation */}
           <div className="mt-16 grid grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-10 max-w-5xl">
@@ -90,8 +100,8 @@ function Index() {
                    s.display === "15Y+"  ? (<><CountUp to={15} duration={1.2} /><span>Y+</span></>) :
                                            (<CountUp to={10} duration={1.0} />)}
                 </div>
-                <div className="mt-3 text-xs uppercase tracking-[0.22em] text-background/80">{s.label}</div>
-                <div className="mt-1 text-xs text-background/70 font-mono">{s.sub}</div>
+                <div className="mt-3 text-xs uppercase tracking-[0.16em] text-on-dark-primary font-medium">{s.label}</div>
+                <div className="mt-1 text-xs text-on-dark-secondary font-mono">{s.sub}</div>
               </div>
             ))}
           </div>
