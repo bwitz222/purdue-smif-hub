@@ -177,16 +177,19 @@ function HoldingsPage() {
           <span className="rule-gold mb-5 block" />
           <span className="text-xs font-semibold uppercase tracking-[0.32em] text-gold-deep block mb-4">Portfolio Holdings</span>
           <h1 className="font-display font-bold text-ink" style={{ fontSize: "clamp(2.5rem, 6vw, 5rem)" }}>Current portfolio.</h1>
-          <p className="mt-5 max-w-2xl text-muted-foreground leading-relaxed">A snapshot of every position held by the Purdue Student Managed Investment Fund, with cost basis, returns, and portfolio weighting.</p>
-          <div className="mt-6 inline-flex items-center gap-2 text-xs font-mono text-muted-foreground">
+          <div className="mt-5 inline-flex items-center gap-2 border border-border bg-background/60 px-3 py-1.5 text-xs font-mono text-muted-foreground">
             {isFetching ? (
-              <><RefreshCw className="h-3 w-3 animate-spin text-gold" />Refreshing prices…</>
+              <><RefreshCw className="h-3 w-3 animate-spin text-gold" /> Refreshing prices…</>
             ) : quoteData?.cachedAt ? (
-              <>Daily snapshot — updated at market close ({new Date(quoteData.cachedAt).toLocaleDateString()})</>
+              <>
+                <span className="h-1.5 w-1.5 rounded-full bg-gain animate-pulse" aria-hidden="true" />
+                Live snapshot · {new Date(quoteData.cachedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+              </>
             ) : (
-              <>Showing last reported snapshot</>
+              <>Last reported snapshot</>
             )}
           </div>
+          <p className="mt-5 max-w-2xl text-muted-foreground leading-relaxed">A snapshot of every position held by the Purdue Student Managed Investment Fund, with cost basis, returns, and portfolio weighting.</p>
         </div>
       </section>
       <section className="container-prose py-14 space-y-10">
