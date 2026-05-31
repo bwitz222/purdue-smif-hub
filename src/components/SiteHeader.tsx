@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import smifLogo from "@/assets/smif-logo-mark.png";
@@ -16,6 +16,7 @@ const NAV = [
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
+  const reduce = useReducedMotion();
 
   // Toggle a data attribute on the header for scroll shadow — avoids React re-renders on every scroll event.
   useEffect(() => {
@@ -102,35 +103,60 @@ export function SiteHeader() {
             </button>
           </div>
           <nav className="flex flex-col justify-center flex-1 container-prose gap-0 pb-8 overflow-y-auto">
-            {NAV.map(({ to, label }, i) => (
-              <motion.div
-                key={to}
-                initial={{ opacity: 0, x: -24 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.32, delay: 0.05 + i * 0.05, ease: [0.22, 1, 0.36, 1] }}
-              >
-                <Link
-                  to={to}
-                  onClick={() => setOpen(false)}
-                  className="block font-display text-[2.2rem] sm:text-[2.6rem] font-semibold text-background/55 hover:text-background border-b border-white/5 py-4 transition-colors duration-300 leading-none"
-                  activeProps={{ className: "text-gold" }}
+            {NAV.map(({ to, label }, i) =>
+              reduce ? (
+                <div key={to}>
+                  <Link
+                    to={to}
+                    onClick={() => setOpen(false)}
+                    className="block font-display text-[2.2rem] sm:text-[2.6rem] font-semibold text-background/55 hover:text-background border-b border-white/5 py-4 transition-colors duration-300 leading-none"
+                    activeProps={{ className: "text-gold" }}
+                  >
+                    {label}
+                  </Link>
+                </div>
+              ) : (
+                <motion.div
+                  key={to}
+                  initial={{ opacity: 0, x: -24 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.32, delay: 0.05 + i * 0.05, ease: [0.22, 1, 0.36, 1] }}
                 >
-                  {label}
-                </Link>
-              </motion.div>
-            ))}
-            <motion.a
-              href="https://purdue.ca1.qualtrics.com/jfe/form/SV_1G5FfwJUc1cGJ2m"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => setOpen(false)}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.35, delay: 0.05 + NAV.length * 0.05, ease: [0.22, 1, 0.36, 1] }}
-              className="mt-10 inline-flex items-center justify-center py-4 text-sm font-semibold uppercase tracking-[0.16em] bg-gold text-ink hover:bg-gold-mid transition-colors duration-150"
-            >
-              Apply to Join
-            </motion.a>
+                  <Link
+                    to={to}
+                    onClick={() => setOpen(false)}
+                    className="block font-display text-[2.2rem] sm:text-[2.6rem] font-semibold text-background/55 hover:text-background border-b border-white/5 py-4 transition-colors duration-300 leading-none"
+                    activeProps={{ className: "text-gold" }}
+                  >
+                    {label}
+                  </Link>
+                </motion.div>
+              )
+            )}
+            {reduce ? (
+              <a
+                href="https://purdue.ca1.qualtrics.com/jfe/form/SV_1G5FfwJUc1cGJ2m"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setOpen(false)}
+                className="mt-10 inline-flex items-center justify-center py-4 text-sm font-semibold uppercase tracking-[0.16em] bg-gold text-ink hover:bg-gold-mid transition-colors duration-150"
+              >
+                Apply to Join
+              </a>
+            ) : (
+              <motion.a
+                href="https://purdue.ca1.qualtrics.com/jfe/form/SV_1G5FfwJUc1cGJ2m"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setOpen(false)}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.35, delay: 0.05 + NAV.length * 0.05, ease: [0.22, 1, 0.36, 1] }}
+                className="mt-10 inline-flex items-center justify-center py-4 text-sm font-semibold uppercase tracking-[0.16em] bg-gold text-ink hover:bg-gold-mid transition-colors duration-150"
+              >
+                Apply to Join
+              </motion.a>
+            )}
           </nav>
           <div className="container-prose pb-6 shrink-0">
             <span className="text-xs uppercase tracking-[0.18em] text-on-dark-dim font-mono">

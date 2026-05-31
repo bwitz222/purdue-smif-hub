@@ -212,7 +212,12 @@ function Contact() {
                   Topic
                 </Label>
                 <Select value={topic} onValueChange={setTopic}>
-                  <SelectTrigger id="topic" className="mt-2 rounded-none border-input">
+                  <SelectTrigger
+                    id="topic"
+                    aria-invalid={!!errors.topic}
+                    aria-describedby={errors.topic ? "topic-error" : undefined}
+                    className="mt-2 rounded-none border-input"
+                  >
                     <SelectValue placeholder="Choose a topic" />
                   </SelectTrigger>
                   <SelectContent>
@@ -223,7 +228,7 @@ function Contact() {
                     ))}
                   </SelectContent>
                 </Select>
-                {errors.topic && <p className="mt-1.5 text-xs text-destructive">{errors.topic}</p>}
+                {errors.topic && <p id="topic-error" role="alert" className="mt-1.5 text-xs text-destructive">{errors.topic}</p>}
               </div>
 
               <div className="grid gap-6 sm:grid-cols-2">
@@ -237,9 +242,11 @@ function Contact() {
                     onChange={(e) => setName(e.target.value)}
                     maxLength={120}
                     autoComplete="name"
+                    aria-invalid={!!errors.name}
+                    aria-describedby={errors.name ? "name-error" : undefined}
                     className="mt-2 rounded-none"
                   />
-                  {errors.name && <p className="mt-1.5 text-xs text-destructive">{errors.name}</p>}
+                  {errors.name && <p id="name-error" role="alert" className="mt-1.5 text-xs text-destructive">{errors.name}</p>}
                 </div>
                 <div>
                   <Label htmlFor="email" className="text-xs uppercase tracking-[0.16em] text-ink">
@@ -252,9 +259,11 @@ function Contact() {
                     onChange={(e) => setEmail(e.target.value)}
                     maxLength={255}
                     autoComplete="email"
+                    aria-invalid={!!errors.email}
+                    aria-describedby={errors.email ? "email-error" : undefined}
                     className="mt-2 rounded-none"
                   />
-                  {errors.email && <p className="mt-1.5 text-xs text-destructive">{errors.email}</p>}
+                  {errors.email && <p id="email-error" role="alert" className="mt-1.5 text-xs text-destructive">{errors.email}</p>}
                 </div>
               </div>
 
@@ -269,10 +278,12 @@ function Contact() {
                   minLength={20}
                   maxLength={4000}
                   rows={6}
+                  aria-invalid={!!errors.message}
+                  aria-describedby={errors.message ? "message-error" : undefined}
                   className="mt-2 rounded-none"
                 />
                 <div className="mt-1.5 flex justify-between text-xs">
-                  <span className="text-destructive">{errors.message ?? ""}</span>
+                  <span id="message-error" role="alert" className="text-destructive">{errors.message ?? ""}</span>
                   <span className="text-muted-foreground font-mono">{message.length}/4000</span>
                 </div>
               </div>
@@ -294,6 +305,7 @@ function Contact() {
               <button
                 type="submit"
                 disabled={submitting}
+                aria-busy={submitting}
                 className="group inline-flex items-center gap-2.5 bg-ink px-7 py-3.5 text-sm font-semibold text-background hover:bg-ink/85 transition-colors duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 {submitting ? "Sending…" : "Send message"}
