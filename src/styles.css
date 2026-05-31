@@ -32,6 +32,8 @@
   --color-gold:                 var(--gold);
   --color-gold-deep:            var(--gold-deep);
   --color-ink:                  var(--ink);
+  --color-gain:                 var(--gain);
+  --color-loss:                 var(--loss);
 }
 
 :root {
@@ -46,7 +48,7 @@
   --secondary:          #F2EFE7;
   --secondary-foreground: #0A0A0A;
   --muted:              #EDEDEA;
-  --muted-foreground:   #6B6860;
+  --muted-foreground:   #5A5955;
   --accent:             #CFB991;
   --accent-foreground:  #0A0A0A;
   --destructive:        #C0392B;
@@ -59,6 +61,14 @@
   --gold-deep: #8E6F3E;
   --ink:       #0A0A0A;
   --ink-soft:  #1C1C1A;
+  /* Semantic financial colors — distinct from destructive (error) red */
+  --gain:      #2E7D52;
+  --loss:      #B94040;
+  /* Semantic on-dark text tokens — replace ad-hoc text-background/[n] values */
+  --text-on-dark-primary:   rgba(250,250,246,0.95);
+  --text-on-dark-secondary: rgba(250,250,246,0.75);
+  --text-on-dark-muted:     rgba(250,250,246,0.55);
+  --text-on-dark-dim:       rgba(250,250,246,0.35);
   --gradient-hero: linear-gradient(160deg, rgba(10,10,10,0.88) 0%, rgba(10,10,10,0.52) 100%);
   --gradient-gold: linear-gradient(135deg, #CFB991 0%, #8E6F3E 100%);
   --shadow-elegant: 0 24px 60px -20px rgba(10,10,10,0.22);
@@ -83,6 +93,13 @@
     line-height: 1.05;
   }
   table, .font-mono { font-variant-numeric: tabular-nums; }
+  /* Global keyboard-focus indicator */
+  :focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 3px;
+  }
+  /* Pause the ticker when any keyboard focus lands inside it */
+  .ticker-wrap:focus-within .ticker-inner { animation-play-state: paused; }
 }
 
 @layer utilities {
@@ -90,6 +107,10 @@
   .text-gold-mid  { color: var(--gold-mid); }
   .text-gold-deep { color: var(--gold-deep); }
   .text-ink       { color: var(--ink); }
+  .text-gain      { color: var(--gain); }
+  .text-loss      { color: var(--loss); }
+  .bg-gain        { background-color: var(--gain); }
+  .bg-loss        { background-color: var(--loss); }
   .bg-gold        { background-color: var(--gold); }
   .bg-gold-mid    { background-color: var(--gold-mid); }
   .bg-ink         { background-color: var(--ink); }
@@ -99,6 +120,11 @@
   .bg-gradient-hero { background-image: var(--gradient-hero); }
   .shadow-elegant   { box-shadow: var(--shadow-elegant); }
   .shadow-gold      { box-shadow: var(--shadow-gold); }
+  /* Semantic on-dark text utilities */
+  .text-on-dark-primary   { color: var(--text-on-dark-primary); }
+  .text-on-dark-secondary { color: var(--text-on-dark-secondary); }
+  .text-on-dark-muted     { color: var(--text-on-dark-muted); }
+  .text-on-dark-dim       { color: var(--text-on-dark-dim); }
   .container-prose {
     max-width: 1280px;
     margin-inline: auto;
@@ -153,4 +179,4 @@
     .animate-expand-x,
     .ticker-inner { animation: none !important; opacity: 1 !important; }
   }
-      }
+}

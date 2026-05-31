@@ -7,11 +7,13 @@ import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import smifLogo from "@/assets/smif-logo-mark.png";
 
 const NAV = [
-  { to: "/about",        label: "About"      },
-  { to: "/team",         label: "Team"       },
-  { to: "/holdings",     label: "Portfolio"  },
-  { to: "/publications", label: "Research"   },
-  { to: "/recruiting",   label: "Recruiting" },
+  { to: "/about",        label: "About"       },
+  { to: "/team",         label: "Team"        },
+  { to: "/holdings",     label: "Holdings"    },
+  { to: "/performance",  label: "Performance" },
+  { to: "/sectors",      label: "Sectors"     },
+  { to: "/publications", label: "Research"    },
+  { to: "/recruiting",   label: "Recruiting"  },
 ] as const;
 
 export function SiteHeader() {
@@ -42,19 +44,19 @@ export function SiteHeader() {
         data-scrolled="false"
         className="sticky top-0 z-50 bg-ink border-b border-white/10 transition-shadow duration-300 data-[scrolled=true]:shadow-[0_4px_24px_-4px_rgba(0,0,0,0.4)]"
       >
-        <div className="container-prose flex h-14 items-center justify-between">
+        <div className="container-prose flex h-14 items-center justify-between gap-4">
           <Link to="/" className="group flex items-center gap-2.5 shrink-0">
             <img src={smifLogo} alt="Purdue SMIF" className="h-7 w-7 object-contain select-none" />
-            <span className="font-mono text-xs uppercase tracking-[0.28em] text-background/70 group-hover:text-gold transition-colors duration-300">
+            <span className="font-mono text-xs uppercase tracking-[0.18em] text-on-dark-secondary group-hover:text-gold transition-colors duration-300">
               SMIF
             </span>
           </Link>
-          <nav className="hidden md:flex items-center gap-7">
+          <nav className="hidden lg:flex items-center gap-5 xl:gap-7">
             {NAV.map(({ to, label }) => (
               <Link
                 key={to}
                 to={to}
-                className="text-xs font-semibold uppercase tracking-[0.18em] text-background/45 hover:text-background transition-colors duration-300 py-1"
+                className="text-xs font-semibold uppercase tracking-[0.14em] text-background/65 hover:text-background transition-colors duration-300 py-1"
                 activeProps={{ className: "text-gold" }}
               >
                 {label}
@@ -66,12 +68,12 @@ export function SiteHeader() {
               href="https://purdue.ca1.qualtrics.com/jfe/form/SV_1G5FfwJUc1cGJ2m"
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden md:inline-flex items-center px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] bg-gold text-ink transition-[background-color,transform] duration-150 hover:bg-gold-mid active:scale-95"
+              className="hidden lg:inline-flex items-center px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] bg-gold text-ink transition-[background-color,transform] duration-150 hover:bg-gold-mid active:scale-95"
             >
               Apply
             </a>
             <button
-              className="md:hidden inline-flex items-center justify-center min-h-11 min-w-11 -mr-2 text-background/70 hover:text-background transition-colors duration-150"
+              className="lg:hidden inline-flex items-center justify-center min-h-11 min-w-11 -mr-2 text-background/70 hover:text-background transition-colors duration-150"
               onClick={() => setOpen(true)}
               aria-label="Open menu"
             >
@@ -92,7 +94,7 @@ export function SiteHeader() {
             <DialogDescription>Site navigation links</DialogDescription>
           </VisuallyHidden>
           <div className="container-prose flex h-14 items-center justify-between border-b border-white/10 shrink-0">
-            <span className="font-mono text-xs uppercase tracking-[0.28em] text-background/70">SMIF</span>
+            <span className="font-mono text-xs uppercase tracking-[0.18em] text-on-dark-secondary">SMIF</span>
             <button
               onClick={() => setOpen(false)}
               className="inline-flex items-center justify-center min-h-11 min-w-11 -mr-2 text-background/70 hover:text-background transition-colors duration-150"
@@ -101,7 +103,7 @@ export function SiteHeader() {
               <X className="h-5 w-5" />
             </button>
           </div>
-          <nav className="flex flex-col justify-center flex-1 container-prose gap-0 pb-8">
+          <nav className="flex flex-col justify-center flex-1 container-prose gap-0 pb-8 overflow-y-auto">
             {NAV.map(({ to, label }, i) => (
               <motion.div
                 key={to}
@@ -112,7 +114,7 @@ export function SiteHeader() {
                 <Link
                   to={to}
                   onClick={() => setOpen(false)}
-                  className="block font-display text-[2.6rem] font-bold text-background/30 hover:text-background border-b border-white/5 py-4 transition-colors duration-300 leading-none"
+                  className="block font-display text-[2.2rem] sm:text-[2.6rem] font-semibold text-background/55 hover:text-background border-b border-white/5 py-4 transition-colors duration-300 leading-none"
                   activeProps={{ className: "text-gold" }}
                 >
                   {label}
@@ -127,13 +129,13 @@ export function SiteHeader() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.35, delay: 0.05 + NAV.length * 0.05, ease: [0.22, 1, 0.36, 1] }}
-              className="mt-10 inline-flex items-center justify-center py-4 text-sm font-semibold uppercase tracking-[0.18em] bg-gold text-ink hover:bg-gold-mid transition-colors duration-150"
+              className="mt-10 inline-flex items-center justify-center py-4 text-sm font-semibold uppercase tracking-[0.16em] bg-gold text-ink hover:bg-gold-mid transition-colors duration-150"
             >
               Apply to Join
             </motion.a>
           </nav>
           <div className="container-prose pb-6 shrink-0">
-            <span className="text-xs uppercase tracking-[0.3em] text-background/20 font-mono">
+            <span className="text-xs uppercase tracking-[0.18em] text-on-dark-dim font-mono">
               Daniels School of Business · Est. 2009
             </span>
           </div>

@@ -54,6 +54,8 @@ export function Reveal({ children, delay = 0, y = 24, className, as = "div" }: R
 }
 
 /** Stagger children with `<RevealItem>` items inside. */
+import { Children } from "react";
+
 export function RevealGroup({
   children,
   stagger = 0.08,
@@ -66,6 +68,9 @@ export function RevealGroup({
   const reduce = useReducedMotion();
   const mounted = useHasMounted();
   if (reduce || !mounted) return <div className={className}>{children}</div>;
+  // Cap total stagger time at 600ms so long lists don't drag the entrance out.
+  const count = Math.max(1, Children.count(children));
+  const cappedStagger = Math.min(stagger, 0.6 / count);
   return (
     <motion.div
       initial="hidden"
@@ -73,7 +78,7 @@ export function RevealGroup({
       viewport={{ once: true, amount: 0.15 }}
       variants={{
         hidden: {},
-        visible: { transition: { staggerChildren: stagger } },
+        visible: { transition: { staggerChildren: cappedStagger } },
       }}
       className={className}
     >
