@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import tradingImg from "@/assets/nyc-skyline.jpg";
 import { ArrowRight, TrendingUp, Users, Award, BarChart3, ChevronRight, ExternalLink } from "lucide-react";
 import { CountUp } from "@/components/CountUp";
-import { HeroChart } from "@/components/HeroChart";
+
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import { socialMeta, canonical } from "@/lib/seo";
 
