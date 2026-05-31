@@ -193,6 +193,11 @@ function HoldingsPage() {
               <>Last reported snapshot</>
             )}
           </div>
+          {quoteData?.cachedAt && (Date.now() - new Date(quoteData.cachedAt).getTime()) > 24 * 60 * 60 * 1000 && (
+            <div className="mt-2 text-xs text-muted-foreground italic" role="status">
+              Snapshot is more than 24 hours old — prices may have changed.
+            </div>
+          )}
           <p className="mt-5 max-w-2xl text-muted-foreground leading-relaxed">A snapshot of every position held by the Purdue Student Managed Investment Fund, with cost basis, returns, and portfolio weighting.</p>
         </div>
       </section>

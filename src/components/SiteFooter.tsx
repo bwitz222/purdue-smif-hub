@@ -63,6 +63,13 @@ export function SiteFooter() {
         </div>
       </div>
       <div className="border-t border-background/10">
+        <div className="container-prose py-5 flex items-center gap-4">
+          <span className="text-[10px] font-mono uppercase tracking-[0.32em] text-on-dark-muted whitespace-nowrap">Est. 2009</span>
+          <span className="flex-1 h-px bg-gradient-gold opacity-50" aria-hidden="true" />
+          <span className="text-[10px] font-mono uppercase tracking-[0.32em] text-on-dark-muted whitespace-nowrap">Present</span>
+        </div>
+      </div>
+      <div className="border-t border-background/10">
         <div className="container-prose flex flex-col md:flex-row items-center justify-between gap-2 py-6 text-xs text-on-dark-dim">
           <span>© {new Date().getFullYear()} Purdue Student Managed Investment Fund. All rights reserved.</span>
           <span>Boiler Up. Hammer Down.</span>
