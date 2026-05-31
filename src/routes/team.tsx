@@ -347,6 +347,9 @@ function Team() {
           </div>
         </section>
       )}
+      </div>
+
+
 
       <section className="bg-ink py-24 text-background">
         <div className="container-prose">
