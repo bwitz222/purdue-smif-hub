@@ -118,23 +118,6 @@ function buildEventBody(event: Event): string {
   return `${prefix}Purdue SMIF recruiting event.\n\nLocation: ${event.location}\nRecruiting page: https://purduesmif.org/recruiting\nQuestions: smif26@purdue.edu`;
 }
 
-function toOutlookEventLink(event: Event): string {
-  const { start, end } = parseEventTimes(event.time);
-  const startdt = toEasternIso(event.iso, start);
-  const enddt = toEasternIso(event.iso, end);
-  const params = new URLSearchParams({
-    path: "/calendar/action/compose",
-    rru: "addevent",
-    subject: event.name,
-    startdt,
-    enddt,
-    location: event.location,
-    body: buildEventBody(event),
-    allday: "false",
-  });
-  return `https://outlook.live.com/calendar/0/deeplink/compose?${params.toString()}`;
-}
-
 function slugify(s: string): string {
   return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 }
