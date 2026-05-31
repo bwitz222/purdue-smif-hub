@@ -68,7 +68,7 @@
   --text-on-dark-primary:   rgba(250,250,246,0.95);
   --text-on-dark-secondary: rgba(250,250,246,0.75);
   --text-on-dark-muted:     rgba(250,250,246,0.55);
-  --text-on-dark-dim:       rgba(250,250,246,0.35);
+  --text-on-dark-dim:       rgba(250,250,246,0.45);
   --gradient-hero: linear-gradient(160deg, rgba(10,10,10,0.88) 0%, rgba(10,10,10,0.52) 100%);
   --gradient-gold: linear-gradient(135deg, #CFB991 0%, #8E6F3E 100%);
   --shadow-elegant: 0 24px 60px -20px rgba(10,10,10,0.22);
