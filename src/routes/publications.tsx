@@ -87,8 +87,30 @@ function Publications() {
     return sorted;
   }, [pubs, query, sort]);
 
+  const jsonLd = useMemo(() => {
+    if (pubs.length === 0) return null;
+    return JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      itemListElement: pubs.map((p, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        item: {
+          "@type": "Article",
+          headline: p.title,
+          description: p.description ?? "",
+          datePublished: p.created_at,
+          publisher: { "@id": "https://purduesmif.org/#organization" },
+        },
+      })),
+    });
+  }, [pubs]);
+
   return (
     <>
+      {jsonLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
+      )}
       <section className="border-b border-border bg-secondary/40">
         <div className="container-prose py-24">
           <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">Publications</span>

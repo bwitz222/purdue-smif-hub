@@ -23,6 +23,28 @@ export const Route = createFileRoute("/holdings")({
       }),
     ],
     links: [{ rel: "canonical", href: canonical("/holdings") }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          name: "Purdue SMIF Holdings",
+          description: "Active equity positions held by the Purdue Student Managed Investment Fund.",
+          numberOfItems: baseHoldings.length,
+          itemListElement: baseHoldings.map((h, i) => ({
+            "@type": "ListItem",
+            position: i + 1,
+            item: {
+              "@type": "Thing",
+              name: h.symbol,
+              description: `${h.company} — ${h.industry}`,
+              identifier: h.symbol,
+            },
+          })),
+        }),
+      },
+    ],
   }),
 });
 

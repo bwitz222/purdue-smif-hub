@@ -12,7 +12,7 @@ function NotFoundComponent() {
     <div className="flex min-h-dvh items-center justify-center bg-ink px-4 py-16">
       <div className="max-w-md text-center text-background">
         <span className="mx-auto mb-8 grid h-16 w-16 place-items-center bg-background p-2">
-          <img src={smifLogo} alt="Purdue SMIF" className="h-full w-full object-contain" />
+          <img src={smifLogo} alt="Purdue SMIF" width={64} height={64} decoding="async" className="h-full w-full object-contain" />
         </span>
         <div className="font-display text-[8rem] font-bold text-gold/20 leading-none select-none">404</div>
         <h1 className="font-display text-3xl font-bold text-background mt-4">Page not found</h1>
@@ -69,7 +69,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "apple-touch-icon", href: "/favicon.ico" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400&display=swap" },
+      { rel: "dns-prefetch", href: "https://gnmwcihxtytlaesuvuqg.supabase.co" },
+      // Body font — must render fast
+      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&display=swap" },
+      // Display + mono — decorative, can wait for the real face
+      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=IBM+Plex+Mono:wght@400&display=optional" },
     ],
     scripts: [
       {
@@ -84,6 +88,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
               alternateName: "Purdue SMIF",
               url: "https://purduesmif.org",
               email: "smif26@purdue.edu",
+              foundingDate: "2009",
+              slogan: "Real capital. Real research. Real outcomes.",
+              description: "The premier student-run investment fund at the Mitch Daniels School of Business, Purdue University — managing real capital across global markets since 2009.",
               parentOrganization: {
                 "@type": "CollegeOrUniversity",
                 name: "Daniels School of Business, Purdue University",
@@ -96,7 +103,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
                 postalCode: "47907",
                 addressCountry: "US",
               },
-              sameAs: ["https://www.linkedin.com/company/purdue-smif/"],
+              sameAs: [
+                "https://www.linkedin.com/company/purdue-smif/",
+                "https://www.instagram.com/smif_purdue/",
+                "https://purduesmif.substack.com/",
+              ],
             },
             {
               "@type": "WebSite",

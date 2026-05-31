@@ -44,7 +44,7 @@ export function SiteHeader() {
       >
         <div className="container-prose flex h-14 items-center justify-between gap-4">
           <Link to="/" className="group flex items-center gap-2.5 shrink-0">
-            <img src={smifLogo} alt="Purdue SMIF" className="h-7 w-7 object-contain select-none" />
+            <img src={smifLogo} alt="Purdue SMIF" width={28} height={28} decoding="async" className="h-7 w-7 object-contain select-none" />
             <span className="font-mono text-xs uppercase tracking-[0.18em] text-on-dark-secondary group-hover:text-gold transition-colors duration-300">
               SMIF
             </span>

@@ -47,10 +47,7 @@ export const Route = createFileRoute("/alumni")({
               name: a.name,
               jobTitle: a.currentTitle,
               worksFor: { "@type": "Organization", name: a.currentCompany },
-              alumniOf: {
-                "@type": "EducationalOrganization",
-                name: "Purdue Student Managed Investment Fund",
-              },
+              alumniOf: { "@id": "https://purduesmif.org/#organization" },
             },
           })),
         }),
