@@ -175,17 +175,22 @@ function downloadICS() {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-function downloadSingleEventICS(event: Event) {
-  if (typeof window === "undefined") return;
-  const blob = new Blob([generateICS([event])], { type: "text/calendar;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = `smif-${slugify(event.name)}-${event.iso}.ics`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
+// Google Calendar render URL — opens a prefilled event the user just clicks "Save" on.
+// Works for any Google account (personal Gmail or Purdue's Google Workspace).
+function toGoogleCalendarLink(event: Event): string {
+  const { start, end } = parseEventTimes(event.time);
+  const ymd = event.iso.replace(/-/g, "");
+  // Floating local time + ctz tells Google to interpret it in Eastern.
+  const dates = `${ymd}T${pad2(start.h)}${pad2(start.m)}00/${ymd}T${pad2(end.h)}${pad2(end.m)}00`;
+  const params = new URLSearchParams({
+    action: "TEMPLATE",
+    text: event.name,
+    dates,
+    details: buildEventBody(event),
+    location: event.location,
+    ctz: "America/New_York",
+  });
+  return `https://calendar.google.com/calendar/render?${params.toString()}`;
 }
 
 export const Route = createFileRoute("/recruiting")({
