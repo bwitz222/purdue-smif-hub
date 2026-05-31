@@ -275,11 +275,12 @@ function Recruiting() {
           {CALENDAR.map((e) => {
             const isPast = nowMs !== null && new Date(e.iso + "T23:59:59-04:00").getTime() < nowMs;
             return (
-              <button
+              <a
                 key={e.iso + e.name}
-                type="button"
-                onClick={() => downloadSingleEventICS(e)}
-                title={isPast ? "Add to calendar (.ics) (past event)" : "Add to calendar (.ics)"}
+                href={toGoogleCalendarLink(e)}
+                target="_blank"
+                rel="noopener noreferrer"
+                title={isPast ? "Add to Google Calendar (past event)" : "Add to Google Calendar — opens prefilled"}
                 className={`w-full text-left grid grid-cols-12 gap-4 py-5 transition hover:bg-secondary/40 px-2 -mx-2 cursor-pointer ${isPast ? "opacity-50" : ""}`}
               >
                 <div className="col-span-12 md:col-span-2 flex items-center gap-2 text-sm font-semibold text-foreground">
