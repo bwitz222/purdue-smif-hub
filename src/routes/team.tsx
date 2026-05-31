@@ -78,16 +78,6 @@ function SectionHeader({ kicker, title, blurb, count }: { kicker: string; title:
 
 type Group = "all" | "board" | "sectors" | "fim" | "pm";
 
-const GROUPS: { id: Group; label: string }[] = [
-  { id: "all", label: "All" },
-  { id: "board", label: "Executive Board" },
-  { id: "sectors", label: "Sector Teams" },
-  { id: "fim", label: "Fixed Income & Macro" },
-  { id: "pm", label: "Portfolio + Risk" },
-];
-
-const SECTOR_NAMES = sectorTeams.map((t) => t.name);
-
 const matches = (m: Member, q: string) => {
   if (!q) return true;
   const s = q.toLowerCase();
@@ -99,15 +89,21 @@ const matches = (m: Member, q: string) => {
   );
 };
 
-// Map every sector chip name to the (group, sectorFilter) state combo it should apply.
-type ChipSelection = { group: Group; sector: string };
-const SECTOR_CHIPS: { label: string; sel: ChipSelection }[] = [
-  { label: "All", sel: { group: "all", sector: "all" } },
-  { label: "Leadership", sel: { group: "board", sector: "all" } },
-  ...sectorTeams.map((t) => ({ label: t.name, sel: { group: "sectors" as Group, sector: t.name } })),
-  { label: "Fixed Income & Macro", sel: { group: "fim", sector: "all" } },
-  { label: "Portfolio + Risk Management", sel: { group: "pm", sector: "all" } },
+// Unified scope options: drives both group and sector state from a single Select.
+type ScopeOption = { value: string; label: string; group: Group; sector: string };
+const SCOPE_OPTIONS: ScopeOption[] = [
+  { value: "all", label: "All Sectors", group: "all", sector: "all" },
+  { value: "leadership", label: "Leadership", group: "board", sector: "all" },
+  ...sectorTeams.map((t) => ({
+    value: t.name,
+    label: t.name,
+    group: "sectors" as Group,
+    sector: t.name,
+  })),
+  { value: "fim", label: "Fixed Income & Macro", group: "fim", sector: "all" },
+  { value: "pm", label: "Portfolio + Risk Management", group: "pm", sector: "all" },
 ];
+
 
 function Team() {
   const totalMembers = 52;
