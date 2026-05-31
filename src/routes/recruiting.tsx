@@ -1,8 +1,57 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowRight, Calendar, MapPin, Clock } from "lucide-react";
+import { useEffect, useState } from "react";
 import { socialMeta, canonical } from "@/lib/seo";
 
 const APPLICATION_URL = "https://purdue.ca1.qualtrics.com/jfe/form/SV_1G5FfwJUc1cGJ2m";
+const DEADLINE = new Date("2026-09-04T23:59:00-04:00").getTime();
+
+function useCountdown() {
+  const [now, setNow] = useState<number | null>(null);
+  useEffect(() => {
+    setNow(Date.now());
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, []);
+  if (now === null) return null;
+  const diff = Math.max(0, DEADLINE - now);
+  return {
+    days: Math.floor(diff / 86_400_000),
+    hours: Math.floor((diff % 86_400_000) / 3_600_000),
+    minutes: Math.floor((diff % 3_600_000) / 60_000),
+    seconds: Math.floor((diff % 60_000) / 1000),
+    expired: diff === 0,
+  };
+}
+
+function CountdownUnit({ value, label }: { value: number | string; label: string }) {
+  return (
+    <div className="flex flex-col items-center border border-gold/30 bg-ink/40 px-4 py-3 min-w-[72px]">
+      <span className="font-display text-3xl font-bold text-gold tabular-nums md:text-4xl">{value}</span>
+      <span className="mt-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-on-dark-secondary">{label}</span>
+    </div>
+  );
+}
+
+function Countdown() {
+  const c = useCountdown();
+  const pad = (n: number) => n.toString().padStart(2, "0");
+  return (
+    <div className="mt-10 border border-gold/30 bg-ink/60 p-6 text-background md:p-8" aria-live="off" aria-atomic="true">
+      <div className="text-xs font-semibold uppercase tracking-[0.3em] text-gold">
+        {c?.expired ? "Applications Closed" : "Deadline Countdown"}
+      </div>
+      <div className="mt-1 text-sm text-on-dark-secondary">September 4th, 2026 · 11:59pm EST</div>
+      <div className="mt-5 flex flex-wrap gap-3">
+        <CountdownUnit value={c ? c.days : "—"} label="Days" />
+        <CountdownUnit value={c ? pad(c.hours) : "—"} label="Hours" />
+        <CountdownUnit value={c ? pad(c.minutes) : "—"} label="Minutes" />
+        <CountdownUnit value={c ? pad(c.seconds) : "—"} label="Seconds" />
+      </div>
+    </div>
+  );
+}
+
 
 type Event = {
   date: string; // display date
@@ -106,7 +155,9 @@ function Recruiting() {
               Jump to Prep Guide
             </a>
           </div>
+          <Countdown />
         </div>
+
       </section>
 
       {/* Calendar */}
