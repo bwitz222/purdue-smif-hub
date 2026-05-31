@@ -89,9 +89,16 @@ function HoldingsPage() {
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const [sector, setSector] = useState<string>("All");
   const [showSticky, setShowSticky] = useState(false);
+  const [query, setQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
   const fetchQuotes = useServerFn(getLiveQuotes);
   const symbols = useMemo(() => baseHoldings.map((h) => h.symbol), []);
-  const { data: quoteData, isFetching } = useQuery({ queryKey: ["live-quotes", symbols], queryFn: () => fetchQuotes({ data: { symbols } }), staleTime: 12 * 60 * 60 * 1000 });
+  const { data: quoteData, isFetching, error, refetch } = useQuery({ queryKey: ["live-quotes", symbols], queryFn: () => fetchQuotes({ data: { symbols } }), staleTime: 12 * 60 * 60 * 1000 });
+
+  useEffect(() => {
+    const id = setTimeout(() => setDebouncedQuery(query), 200);
+    return () => clearTimeout(id);
+  }, [query]);
 
   // Sticky compact summary appears after the hero scrolls past.
   useEffect(() => {
