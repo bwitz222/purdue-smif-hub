@@ -113,6 +113,27 @@ export type Database = {
         }
         Relationships: []
       }
+      quote_cache: {
+        Row: {
+          change_pct: number
+          fetched_at: string
+          price: number
+          symbol: string
+        }
+        Insert: {
+          change_pct?: number
+          fetched_at?: string
+          price: number
+          symbol: string
+        }
+        Update: {
+          change_pct?: number
+          fetched_at?: string
+          price?: number
+          symbol?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

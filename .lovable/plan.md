@@ -1,52 +1,63 @@
-## Alumni Page Plan
+## What's broken
 
-A new `/alumni` route, structured as a sub-page under About: linked from the About page and footer, **not** added to the top nav (keeps it at 5 items). Visually and tonally consistent with `/team` and `/about` — Reveal animations, gold/ink palette, mono kickers, display headings, card hover states.
+The live-quotes server function (`src/lib/quotes.functions.ts`) hits Alpha Vantage's free tier, which allows ~25 requests/day. The holdings page asks for 23 symbols sequentially per cold cache, so the daily quota is exhausted almost immediately. After that:
 
-### Route & nav wiring
-- Create `src/routes/alumni.tsx` with route-specific `head()` (title, description, og:title, og:description, canonical, JSON-LD `ItemList` of alumni).
-- Add an "Alumni Network" link/section to `src/routes/about.tsx`.
-- Add an "Alumni" link to `src/components/SiteFooter.tsx`.
-- Leave `SiteHeader` untouched.
+1. `fetchQuote` returns `null` for every symbol.
+2. `fetchAll` returns `{}`.
+3. The current cache guard `if (Object.keys(quotes).length > 0)` refuses to cache empty results — so every subsequent page load **re-hammers** the rate-limited API and keeps getting `{}`.
+4. `holdings.tsx` falls back to the static seed values in `src/data/holdings.ts` (last hand-edited prices). That's why the page looks "not updating."
 
-### Data layer
-- New `src/data/alumni.ts` exporting:
-  - `Alumnus` type: `name`, `gradYear`, `roleAtSMIF` (e.g. "Former Co-President", "Energy Sector Lead"), `currentTitle`, `currentCompany`, `industry`, `location?`, `linkedin?`, `bio?`, `featured?: boolean`, `photo?`.
-  - `alumni: Alumnus[]` — ~24 realistic placeholder entries spread across grad years 2015–2025 and across target firms (BB IB, EB, MM PE, HF, AM, consulting, corp dev, tech).
-  - `placementFirms: { name: string; category: string; count: number }[]` — ~20 firms grouped by category (Investment Banking, Asset & Wealth Management, Private Equity / Credit, Hedge Funds, Consulting, Corporate / Tech). Wordmark-style text tiles, no logo files needed.
-  - `notableSpotlights: string[]` — names of 3 alumni to feature.
+Network capture confirms it: the most recent `_serverFn` response payload contains `quotes: {}`.
 
-### Page sections (top → bottom)
+## Fix (no new API keys, no provider swap)
 
-1. **Hero band** — ink background, gold kicker "Alumni Network", display headline ("Where Boilermakers go next."), short blurb. Three count-up KPI tiles using existing `CountUp`: *Alumni*, *Firms placed*, *Years running* (since 2009).
+Two-layer cache that keeps the page showing real recent prices even when Alpha Vantage is throttling us:
 
-2. **Placement showcase** — "Selected placements" section. Category-grouped wordmark grid (4–5 cols on desktop, 2 on mobile), each tile shows firm name + small count badge ("3 alumni"). Hover lifts to gold border, matching MemberCard treatment. Wrapped in `Reveal` for stagger.
+### 1. Persistent last-good cache in the database
 
-3. **Notable alumni spotlights** — 3 large editorial cards (asymmetric layout: 1 wide + 2 stacked, or 3-up on desktop). Pull-quote, name, grad year, current role, LinkedIn link. Larger photo aspect, gold accent rule.
+New table `public.quote_cache`:
 
-4. **Alumni directory** — searchable/filterable grid reusing the `/team` UX pattern:
-   - Search input + filter chips: `All / Investment Banking / Buy-side / Consulting / Tech / Other` + grad-year `Select`.
-   - Reuses `MemberCard` styling via a new lightweight `AlumniCard` (same border/hover/typography) showing role-at-SMIF as kicker, name, "Class of YYYY", "Current Title @ Company", LinkedIn icon link.
-   - Empty state mirrors team page.
+```text
+symbol       text primary key
+price        numeric
+change_pct   numeric
+fetched_at   timestamptz
+```
 
-5. **Network & mentorship CTA** — split panel:
-   - Left: "Are you an alum?" — short blurb, button to mailto/contact form to update info, LinkedIn group link (placeholder URL).
-   - Right: "Mentor a current analyst" — describes speaker series + 1:1 mentorship, button to contact page.
-   - Below: subtle "Give back" line linking to a fundraising/contact mailto.
+GRANTs: `select` to `anon`/`authenticated`, `all` to `service_role`. RLS on; public read policy (prices are not sensitive). Writes only from server fn using `supabaseAdmin`.
 
-6. **Footer note** — "Class of 2009 → present" timeline strip (thin gold rule with year markers) as a quiet closing flourish.
+### 2. Rewrite `src/lib/quotes.functions.ts`
 
-### Design notes & ideas folded in
-- **Reuse** existing tokens (`gold`, `gold-deep`, `gold-mid`, `ink`, `shadow-elegant`, `bg-gradient-gold`) and `Reveal` animation wrapper — no new colors or motion primitives.
-- **Wordmark tiles** instead of real logos avoid trademark/asset issues and stay on-brand with the editorial typography.
-- **Cards are clickable** like the team page — opens a `MemberDetailSheet`-style side sheet (a new `AlumniDetailSheet` mirroring it) with bio, current role, LinkedIn.
-- **SEO**: alumni listed as `Person` items with `alumniOf: "Purdue Student Managed Investment Fund"`.
-- **Recruiting signal**: placement firms grouped by category doubles as a credibility section for prospective applicants — reinforces the fund's recruiting pipeline narrative.
-- **Future-proof**: data file is the single source of truth; you can replace placeholders incrementally without touching the page.
+- On request: read existing rows from `quote_cache` first — that's the immediate response baseline.
+- If the newest `fetched_at` is older than 12h, try to refresh **in the background** (don't block the response): fetch symbols one at a time, upsert each into `quote_cache` as it succeeds. Partial success is fine — even one new quote gets persisted.
+- Negative-cache rate-limit responses: if Alpha Vantage returns the "Note"/"Information" rate-limit payload (no `Global Quote`), mark a short in-memory `cooldownUntil = now + 15min` and skip new fetches until then. This stops the hammering loop.
+- Keep the in-memory `inflight` dedupe so concurrent requests don't double-fetch.
+- Always return whatever is in `quote_cache` (possibly stale, but real), plus `cachedAt` and a new `stale: boolean` flag.
 
-### Files touched
-- New: `src/routes/alumni.tsx`, `src/data/alumni.ts`, `src/components/AlumniCard.tsx`, `src/components/AlumniDetailSheet.tsx`.
-- Edited: `src/routes/about.tsx` (add Alumni Network teaser block linking to `/alumni`), `src/components/SiteFooter.tsx` (add Alumni link), `src/routes/sitemap[.]xml.ts` (add `/alumni`).
-- Untouched: `SiteHeader`, team data, holdings, all existing routes.
+### 3. `src/routes/holdings.tsx` — small UX tweak
 
-### Open question (proceeding with a default unless you say otherwise)
-- Placeholder data tone: I'll use **plausible but clearly generic** names (e.g. "Jordan Park, Class of 2019, Associate @ Goldman Sachs") so it reads as real without misrepresenting any actual alum. You can swap them as you gather the real list.
+- If `stale: true` (most recent quote >24h old), show the existing "as of" line with a subtle "delayed" note. No layout change.
+- No other logic changes — the merge with `holdings` seed continues to work; whatever symbols are in `quote_cache` override seed prices, the rest fall back to seed.
+
+### 4. One-time seed of `quote_cache`
+
+The migration will insert the current `holdings.ts` price/change rows so the table is never empty on first deploy. From that point on, the server fn keeps it warm.
+
+## Files touched
+
+- **new migration** — create `quote_cache` table + GRANTs + RLS + seed rows
+- **edit** `src/lib/quotes.functions.ts` — DB-backed cache, negative cooldown, background refresh, stale flag
+- **edit** `src/routes/holdings.tsx` — surface `stale` in the existing "as of" line (≤5 lines of JSX)
+
+No other files change. No new dependencies. No new secrets.
+
+## Why not switch providers right now
+
+Switching to Finnhub/Twelve Data is the right long-term move (their free tiers easily cover 23 symbols), but it requires a new API key from you and a rewrite of `fetchQuote`. The fix above makes the page reliable today with what's already configured. Once it's stable, swapping the actual fetch call to a different provider is a ~20-line follow-up — the cache layer stays identical.
+
+## Technical notes
+
+- `supabaseAdmin` is used inside the server fn for upserts (bypasses RLS, safe because it's server-only).
+- Background refresh uses `ctx.waitUntil`-style fire-and-forget (`refresh().catch(console.error)` without `await`) so the response returns instantly with cached data.
+- The 15-min cooldown is in-memory per worker — that's fine; worst case one extra wasted fetch after a cold start.
+- `stale` threshold: 24h (data refreshes daily after market close, so >24h means we missed a cycle).
