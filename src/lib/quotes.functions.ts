@@ -49,35 +49,6 @@ async function fetchQuoteFromProvider(
   }
 }
 
-async function backgroundRefresh(symbols: string[]): Promise<void> {
-  const apiKey = process.env.ALPHA_VANTAGE_API_KEY;
-  if (!apiKey) return;
-  if (Date.now() < cooldownUntil) return;
-
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-
-  for (const symbol of symbols) {
-    if (Date.now() < cooldownUntil) break;
-    const { quote, rateLimited } = await fetchQuoteFromProvider(symbol, apiKey);
-    if (rateLimited) {
-      cooldownUntil = Date.now() + COOLDOWN_MS;
-      break;
-    }
-    if (!quote) continue;
-    // Upsert each success individually so partial progress is durable.
-    await supabaseAdmin
-      .from("quote_cache")
-      .upsert(
-        {
-          symbol: quote.symbol,
-          price: quote.price,
-          change_pct: quote.changePct,
-          fetched_at: new Date().toISOString(),
-        },
-        { onConflict: "symbol" },
-      );
-  }
-}
 
 export const getLiveQuotes = createServerFn({ method: "POST" })
   .inputValidator((data: { symbols: string[] }) => {
