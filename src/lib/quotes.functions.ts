@@ -92,7 +92,7 @@ export const getLiveQuotes = createServerFn({ method: "POST" })
     }
 
     const ageMs = newest > 0 ? now - newest : Infinity;
-    const apiKey = process.env.POLYGON_API_KEY;
+    const apiKey = process.env.POLYGON_API_KEY?.trim();
 
     if (apiKey && now >= cooldownUntil && ageMs > REFRESH_AFTER_MS) {
       const { quotes: fresh, rateLimited } = await fetchSnapshots(data.symbols, apiKey);
