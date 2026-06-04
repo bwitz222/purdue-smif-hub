@@ -98,7 +98,9 @@ export const getLiveQuotes = createServerFn({ method: "POST" })
       .in("symbol", data.symbols);
 
     const quotes: Record<string, Quote> = {};
+    const ageBySymbol = new Map<string, number>();
     let newest = 0;
+    const now = Date.now();
     for (const r of rows ?? []) {
       quotes[r.symbol] = {
         symbol: r.symbol,
@@ -106,24 +108,51 @@ export const getLiveQuotes = createServerFn({ method: "POST" })
         changePct: Number(r.change_pct),
       };
       const ts = new Date(r.fetched_at).getTime();
+      ageBySymbol.set(r.symbol, now - ts);
       if (ts > newest) newest = ts;
     }
 
-    const ageMs = newest > 0 ? Date.now() - newest : Infinity;
-    const shouldRefresh =
-      ageMs > REFRESH_AFTER_MS && Date.now() >= cooldownUntil;
+    // Cloudflare Workers kill fire-and-forget promises the moment the
+    // response is sent, so refresh synchronously — but only a tiny batch
+    // per request to stay under Alpha Vantage's 5/min limit and the
+    // Worker CPU budget. With ~23 symbols, ~5 page loads = full refresh.
+    const REFRESH_BATCH = 5;
+    const apiKey = process.env.ALPHA_VANTAGE_API_KEY;
+    if (apiKey && now >= cooldownUntil) {
+      // Stalest first; symbols missing from cache rank as oldest of all.
+      const candidates = data.symbols
+        .map((s) => ({ s, age: ageBySymbol.get(s) ?? Infinity }))
+        .filter((c) => c.age > REFRESH_AFTER_MS)
+        .sort((a, b) => b.age - a.age)
+        .slice(0, REFRESH_BATCH)
+        .map((c) => c.s);
 
-    // Kick off a background refresh — do NOT await. The response returns
-    // immediately with whatever the cache currently holds.
-    if (shouldRefresh && !refreshInflight) {
-      refreshInflight = backgroundRefresh(data.symbols).finally(() => {
-        refreshInflight = null;
-      });
-      refreshInflight.catch((err) => {
-        console.error("[quotes] background refresh failed:", err);
-      });
+      for (const symbol of candidates) {
+        if (Date.now() < cooldownUntil) break;
+        const { quote, rateLimited } = await fetchQuoteFromProvider(symbol, apiKey);
+        if (rateLimited) {
+          cooldownUntil = Date.now() + COOLDOWN_MS;
+          break;
+        }
+        if (!quote) continue;
+        const fetchedAt = new Date().toISOString();
+        await supabaseAdmin.from("quote_cache").upsert(
+          {
+            symbol: quote.symbol,
+            price: quote.price,
+            change_pct: quote.changePct,
+            fetched_at: fetchedAt,
+          },
+          { onConflict: "symbol" },
+        );
+        // Reflect the fresh value in this response too.
+        quotes[quote.symbol] = quote;
+        const ts = Date.parse(fetchedAt);
+        if (ts > newest) newest = ts;
+      }
     }
 
+    const ageMs = newest > 0 ? Date.now() - newest : Infinity;
     return {
       quotes,
       cachedAt: newest > 0 ? newest : Date.now(),
