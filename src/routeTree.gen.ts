@@ -21,6 +21,7 @@ import { Route as ApplyRouteImport } from './routes/apply'
 import { Route as AlumniRouteImport } from './routes/alumni'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiPublicHooksRefreshQuotesRouteImport } from './routes/api/public/hooks/refresh-quotes'
 
 const TeamRoute = TeamRouteImport.update({
   id: '/team',
@@ -82,6 +83,12 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicHooksRefreshQuotesRoute =
+  ApiPublicHooksRefreshQuotesRouteImport.update({
+    id: '/api/public/hooks/refresh-quotes',
+    path: '/api/public/hooks/refresh-quotes',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -96,6 +103,7 @@ export interface FileRoutesByFullPath {
   '/sectors': typeof SectorsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/team': typeof TeamRoute
+  '/api/public/hooks/refresh-quotes': typeof ApiPublicHooksRefreshQuotesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -110,6 +118,7 @@ export interface FileRoutesByTo {
   '/sectors': typeof SectorsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/team': typeof TeamRoute
+  '/api/public/hooks/refresh-quotes': typeof ApiPublicHooksRefreshQuotesRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -125,6 +134,7 @@ export interface FileRoutesById {
   '/sectors': typeof SectorsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/team': typeof TeamRoute
+  '/api/public/hooks/refresh-quotes': typeof ApiPublicHooksRefreshQuotesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -141,6 +151,7 @@ export interface FileRouteTypes {
     | '/sectors'
     | '/sitemap.xml'
     | '/team'
+    | '/api/public/hooks/refresh-quotes'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -155,6 +166,7 @@ export interface FileRouteTypes {
     | '/sectors'
     | '/sitemap.xml'
     | '/team'
+    | '/api/public/hooks/refresh-quotes'
   id:
     | '__root__'
     | '/'
@@ -169,6 +181,7 @@ export interface FileRouteTypes {
     | '/sectors'
     | '/sitemap.xml'
     | '/team'
+    | '/api/public/hooks/refresh-quotes'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -184,6 +197,7 @@ export interface RootRouteChildren {
   SectorsRoute: typeof SectorsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TeamRoute: typeof TeamRoute
+  ApiPublicHooksRefreshQuotesRoute: typeof ApiPublicHooksRefreshQuotesRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -272,6 +286,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/refresh-quotes': {
+      id: '/api/public/hooks/refresh-quotes'
+      path: '/api/public/hooks/refresh-quotes'
+      fullPath: '/api/public/hooks/refresh-quotes'
+      preLoaderRoute: typeof ApiPublicHooksRefreshQuotesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -288,6 +309,7 @@ const rootRouteChildren: RootRouteChildren = {
   SectorsRoute: SectorsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TeamRoute: TeamRoute,
+  ApiPublicHooksRefreshQuotesRoute: ApiPublicHooksRefreshQuotesRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
