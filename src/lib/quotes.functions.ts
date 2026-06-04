@@ -2,63 +2,62 @@ import { createServerFn } from "@tanstack/react-start";
 
 type Quote = { symbol: string; price: number; changePct: number };
 
-// Polygon free tier: 5 req/min. The batch snapshot endpoint returns every
-// requested ticker in ONE call, so a full refresh of all holdings = 1 call.
+// Polygon free/basic tier: the snapshot endpoints require a paid plan, but
+// the "grouped daily" aggregate endpoint returns every US stock's last-close
+// bar in ONE request — a full refresh of all holdings = 1 API call.
 const COOLDOWN_MS = 5 * 60 * 1000;
 const REFRESH_AFTER_MS = 6 * 60 * 60 * 1000;
 let cooldownUntil = 0;
 
-type PolygonSnapshotTicker = {
-  ticker: string;
-  todaysChangePerc?: number;
-  day?: { c?: number; o?: number };
-  prevDay?: { c?: number };
-  lastTrade?: { p?: number };
-  min?: { c?: number };
+type PolygonBar = {
+  T: string; // ticker
+  c: number; // close
+  o: number; // open
+  h?: number;
+  l?: number;
+  v?: number;
+  t?: number;
 };
 
-type PolygonSnapshotResponse = {
+type PolygonGroupedResponse = {
   status?: string;
-  tickers?: PolygonSnapshotTicker[];
-  error?: string;
+  resultsCount?: number;
+  results?: PolygonBar[];
+  message?: string;
 };
 
-async function fetchSnapshots(
-  symbols: string[],
-  apiKey: string,
-): Promise<{ quotes: Quote[]; rateLimited: boolean }> {
-  if (symbols.length === 0) return { quotes: [], rateLimited: false };
-  try {
-    const tickers = symbols.join(",");
-    const url = `https://api.polygon.io/v2/snapshot/locale/us/markets/stocks/tickers?tickers=${encodeURIComponent(
-      tickers,
-    )}&apiKey=${apiKey}`;
-    const res = await fetch(url);
-    if (res.status === 429) return { quotes: [], rateLimited: true };
-    if (!res.ok) return { quotes: [], rateLimited: false };
-    const json = (await res.json()) as PolygonSnapshotResponse;
-    if (!json.tickers) return { quotes: [], rateLimited: false };
+function toYmd(d: Date): string {
+  return d.toISOString().slice(0, 10);
+}
 
-    const out: Quote[] = [];
-    for (const t of json.tickers) {
-      // Prefer most current price: day close → last trade → min close → prev close.
-      const price =
-        (t.day?.c && t.day.c > 0 ? t.day.c : undefined) ??
-        t.lastTrade?.p ??
-        t.min?.c ??
-        t.prevDay?.c;
-      if (!price || !isFinite(price)) continue;
-      const changePct = typeof t.todaysChangePerc === "number" ? t.todaysChangePerc : 0;
-      out.push({
-        symbol: t.ticker,
-        price,
-        changePct: isFinite(changePct) ? changePct : 0,
-      });
+// Walk back up to 7 days to skip weekends/holidays/not-yet-published days.
+async function fetchGroupedBars(
+  apiKey: string,
+): Promise<{ bars: Map<string, PolygonBar>; rateLimited: boolean; unauthorized: boolean }> {
+  const bars = new Map<string, PolygonBar>();
+  const today = new Date();
+  for (let back = 1; back <= 7; back++) {
+    const d = new Date(today);
+    d.setUTCDate(d.getUTCDate() - back);
+    const date = toYmd(d);
+    const url = `https://api.polygon.io/v2/aggs/grouped/locale/us/market/stocks/${date}?adjusted=true&apiKey=${apiKey}`;
+    try {
+      const res = await fetch(url);
+      if (res.status === 429) return { bars, rateLimited: true, unauthorized: false };
+      if (res.status === 401 || res.status === 403) {
+        return { bars, rateLimited: false, unauthorized: true };
+      }
+      if (!res.ok) continue;
+      const json = (await res.json()) as PolygonGroupedResponse;
+      if (json.results && json.results.length > 0) {
+        for (const b of json.results) bars.set(b.T, b);
+        return { bars, rateLimited: false, unauthorized: false };
+      }
+    } catch {
+      // try previous day
     }
-    return { quotes: out, rateLimited: false };
-  } catch {
-    return { quotes: [], rateLimited: false };
   }
+  return { bars, rateLimited: false, unauthorized: false };
 }
 
 export const getLiveQuotes = createServerFn({ method: "POST" })
@@ -92,25 +91,45 @@ export const getLiveQuotes = createServerFn({ method: "POST" })
     }
 
     const ageMs = newest > 0 ? now - newest : Infinity;
+    // Trim defensively — pasted secrets sometimes carry stray whitespace,
+    // which makes the constructed URL throw "Malformed input to a URL function".
     const apiKey = process.env.POLYGON_API_KEY?.trim();
 
     if (apiKey && now >= cooldownUntil && ageMs > REFRESH_AFTER_MS) {
-      const { quotes: fresh, rateLimited } = await fetchSnapshots(data.symbols, apiKey);
+      const { bars, rateLimited } = await fetchGroupedBars(apiKey);
       if (rateLimited) {
         cooldownUntil = Date.now() + COOLDOWN_MS;
-      } else if (fresh.length > 0) {
+      } else if (bars.size > 0) {
         const fetchedAt = new Date().toISOString();
-        const upserts = fresh.map((q) => ({
-          symbol: q.symbol,
-          price: q.price,
-          change_pct: q.changePct,
-          fetched_at: fetchedAt,
-        }));
-        for (const q of fresh) quotes[q.symbol] = q;
-        await supabaseAdmin
-          .from("quote_cache")
-          .upsert(upserts, { onConflict: "symbol" });
-        newest = Date.parse(fetchedAt);
+        const upserts: Array<{
+          symbol: string;
+          price: number;
+          change_pct: number;
+          fetched_at: string;
+        }> = [];
+        for (const symbol of data.symbols) {
+          const bar = bars.get(symbol);
+          if (!bar || !isFinite(bar.c)) continue;
+          const changePct = bar.o > 0 ? ((bar.c - bar.o) / bar.o) * 100 : 0;
+          const quote: Quote = {
+            symbol,
+            price: bar.c,
+            changePct: isFinite(changePct) ? changePct : 0,
+          };
+          quotes[symbol] = quote;
+          upserts.push({
+            symbol,
+            price: quote.price,
+            change_pct: quote.changePct,
+            fetched_at: fetchedAt,
+          });
+        }
+        if (upserts.length > 0) {
+          await supabaseAdmin
+            .from("quote_cache")
+            .upsert(upserts, { onConflict: "symbol" });
+          newest = Date.parse(fetchedAt);
+        }
       }
     }
 
