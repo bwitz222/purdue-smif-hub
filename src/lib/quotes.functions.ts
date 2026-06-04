@@ -2,61 +2,63 @@ import { createServerFn } from "@tanstack/react-start";
 
 type Quote = { symbol: string; price: number; changePct: number };
 
-// Polygon free tier: 5 req/min. We use the "grouped daily" endpoint which
-// returns every US stock's previous-close bar in ONE request, so a full
-// refresh of all holdings costs a single call.
+// Polygon free tier: 5 req/min. The batch snapshot endpoint returns every
+// requested ticker in ONE call, so a full refresh of all holdings = 1 call.
 const COOLDOWN_MS = 5 * 60 * 1000;
 const REFRESH_AFTER_MS = 6 * 60 * 60 * 1000;
 let cooldownUntil = 0;
 
-type PolygonGroupedBar = {
-  T: string; // ticker
-  c: number; // close
-  o: number; // open
-  h?: number;
-  l?: number;
-  v?: number;
-  t?: number;
+type PolygonSnapshotTicker = {
+  ticker: string;
+  todaysChangePerc?: number;
+  day?: { c?: number; o?: number };
+  prevDay?: { c?: number };
+  lastTrade?: { p?: number };
+  min?: { c?: number };
 };
 
-type PolygonGroupedResponse = {
+type PolygonSnapshotResponse = {
   status?: string;
-  resultsCount?: number;
-  results?: PolygonGroupedBar[];
+  tickers?: PolygonSnapshotTicker[];
   error?: string;
 };
 
-function toYmd(d: Date): string {
-  return d.toISOString().slice(0, 10);
-}
-
-// Try the most recent trading day; walk back up to 5 days to skip
-// weekends/holidays/not-yet-available days.
-async function fetchGroupedDaily(
+async function fetchSnapshots(
+  symbols: string[],
   apiKey: string,
-): Promise<{ bars: Map<string, PolygonGroupedBar>; rateLimited: boolean }> {
-  const bars = new Map<string, PolygonGroupedBar>();
-  const today = new Date();
-  for (let back = 1; back <= 5; back++) {
-    const d = new Date(today);
-    d.setUTCDate(d.getUTCDate() - back);
-    const date = toYmd(d);
-    const url = `https://api.polygon.io/v2/aggs/grouped/locale/us/market/stocks/${date}?adjusted=true&apiKey=${apiKey}`;
-    try {
-      const res = await fetch(url);
-      if (res.status === 429) return { bars, rateLimited: true };
-      if (!res.ok) continue;
-      const json = (await res.json()) as PolygonGroupedResponse;
-      if (json.status === "ERROR") continue;
-      if (json.results && json.results.length > 0) {
-        for (const b of json.results) bars.set(b.T, b);
-        return { bars, rateLimited: false };
-      }
-    } catch {
-      // try previous day
+): Promise<{ quotes: Quote[]; rateLimited: boolean }> {
+  if (symbols.length === 0) return { quotes: [], rateLimited: false };
+  try {
+    const tickers = symbols.join(",");
+    const url = `https://api.polygon.io/v2/snapshot/locale/us/markets/stocks/tickers?tickers=${encodeURIComponent(
+      tickers,
+    )}&apiKey=${apiKey}`;
+    const res = await fetch(url);
+    if (res.status === 429) return { quotes: [], rateLimited: true };
+    if (!res.ok) return { quotes: [], rateLimited: false };
+    const json = (await res.json()) as PolygonSnapshotResponse;
+    if (!json.tickers) return { quotes: [], rateLimited: false };
+
+    const out: Quote[] = [];
+    for (const t of json.tickers) {
+      // Prefer most current price: day close → last trade → min close → prev close.
+      const price =
+        (t.day?.c && t.day.c > 0 ? t.day.c : undefined) ??
+        t.lastTrade?.p ??
+        t.min?.c ??
+        t.prevDay?.c;
+      if (!price || !isFinite(price)) continue;
+      const changePct = typeof t.todaysChangePerc === "number" ? t.todaysChangePerc : 0;
+      out.push({
+        symbol: t.ticker,
+        price,
+        changePct: isFinite(changePct) ? changePct : 0,
+      });
     }
+    return { quotes: out, rateLimited: false };
+  } catch {
+    return { quotes: [], rateLimited: false };
   }
-  return { bars, rateLimited: false };
 }
 
 export const getLiveQuotes = createServerFn({ method: "POST" })
@@ -93,41 +95,22 @@ export const getLiveQuotes = createServerFn({ method: "POST" })
     const apiKey = process.env.POLYGON_API_KEY;
 
     if (apiKey && now >= cooldownUntil && ageMs > REFRESH_AFTER_MS) {
-      const { bars, rateLimited } = await fetchGroupedDaily(apiKey);
+      const { quotes: fresh, rateLimited } = await fetchSnapshots(data.symbols, apiKey);
       if (rateLimited) {
         cooldownUntil = Date.now() + COOLDOWN_MS;
-      } else if (bars.size > 0) {
+      } else if (fresh.length > 0) {
         const fetchedAt = new Date().toISOString();
-        const upserts: Array<{
-          symbol: string;
-          price: number;
-          change_pct: number;
-          fetched_at: string;
-        }> = [];
-        for (const symbol of data.symbols) {
-          // Polygon uses "BRK.B" style tickers as-is.
-          const bar = bars.get(symbol);
-          if (!bar || !isFinite(bar.c)) continue;
-          const changePct = bar.o > 0 ? ((bar.c - bar.o) / bar.o) * 100 : 0;
-          const quote: Quote = {
-            symbol,
-            price: bar.c,
-            changePct: isFinite(changePct) ? changePct : 0,
-          };
-          quotes[symbol] = quote;
-          upserts.push({
-            symbol,
-            price: quote.price,
-            change_pct: quote.changePct,
-            fetched_at: fetchedAt,
-          });
-        }
-        if (upserts.length > 0) {
-          await supabaseAdmin
-            .from("quote_cache")
-            .upsert(upserts, { onConflict: "symbol" });
-          newest = Date.parse(fetchedAt);
-        }
+        const upserts = fresh.map((q) => ({
+          symbol: q.symbol,
+          price: q.price,
+          change_pct: q.changePct,
+          fetched_at: fetchedAt,
+        }));
+        for (const q of fresh) quotes[q.symbol] = q;
+        await supabaseAdmin
+          .from("quote_cache")
+          .upsert(upserts, { onConflict: "symbol" });
+        newest = Date.parse(fetchedAt);
       }
     }
 
