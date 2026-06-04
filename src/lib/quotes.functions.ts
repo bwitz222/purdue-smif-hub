@@ -8,7 +8,7 @@ type Quote = { symbol: string; price: number; changePct: number };
 const COOLDOWN_MS = 15 * 60 * 1000;
 const REFRESH_AFTER_MS = 12 * 60 * 60 * 1000;
 let cooldownUntil = 0;
-let refreshInflight: Promise<void> | null = null;
+
 
 type AlphaVantageResponse = {
   "Global Quote"?: Record<string, string>;
