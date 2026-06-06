@@ -94,7 +94,20 @@ function HoldingsPage() {
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const fetchQuotes = useServerFn(getLiveQuotes);
   const symbols = useMemo(() => baseHoldings.map((h) => h.symbol), []);
-  const { data: quoteData, isFetching, error, refetch } = useQuery({ queryKey: ["live-quotes", symbols], queryFn: () => fetchQuotes({ data: { symbols } }), staleTime: 12 * 60 * 60 * 1000 });
+  // Quote cache refreshes daily via the scheduled cron job. Mirror that cadence
+  // on the client so every derived value on the page (KPIs, sector breakdown,
+  // movers, table) recomputes on the same schedule — and pick up a fresher
+  // snapshot whenever the user returns to the tab.
+  const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+  const { data: quoteData, isFetching, error, refetch } = useQuery({
+    queryKey: ["live-quotes", symbols],
+    queryFn: () => fetchQuotes({ data: { symbols } }),
+    staleTime: ONE_DAY_MS,
+    refetchInterval: ONE_DAY_MS,
+    refetchIntervalInBackground: false,
+    refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
+  });
 
   useEffect(() => {
     const id = setTimeout(() => setDebouncedQuery(query), 200);
