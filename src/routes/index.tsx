@@ -92,7 +92,7 @@ function Index() {
             <div className="animate-fade-in flex items-center gap-3 mb-8">
               <span className="rule-gold animate-expand-x delay-100" />
               <span className="text-xs font-semibold uppercase tracking-[0.18em] text-gold/80">
-                Daniels School of Business · Est. 2009
+                Daniels School of Business · Est. {s.founded_year}
               </span>
             </div>
             <h1
@@ -175,7 +175,7 @@ function Index() {
                 className="w-full aspect-[3/4] object-cover shadow-elegant"
               />
               <div className="absolute -bottom-5 -left-5 bg-gold p-5 shadow-gold hidden lg:block">
-                <div className="font-display text-3xl font-bold text-ink leading-none">15Y+</div>
+                <div className="font-display text-3xl font-bold text-ink leading-none">{trackRecordYears}Y+</div>
                 <div className="text-xs uppercase tracking-wider text-ink/60 mt-1">Track record</div>
               </div>
             </Reveal>
