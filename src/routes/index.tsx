@@ -54,6 +54,23 @@ const PILLARS = [
 ];
 
 function Index() {
+  const fetchStats = useServerFn(getFundStats);
+  const { data: fundStats } = useQuery({
+    queryKey: ["fund-stats"],
+    queryFn: () => fetchStats(),
+    staleTime: 60 * 60 * 1000,
+  });
+  const s = fundStats ?? FALLBACK_STATS;
+  const currentYear = new Date().getFullYear();
+  const trackRecordYears = Math.max(0, currentYear - s.founded_year);
+  const aum = parseStatDisplay(s.aum_display);
+  const members = parseStatDisplay(s.active_members);
+  const STATS = [
+    { kind: "aum" as const, label: "Assets Under Management", sub: "actively deployed" },
+    { kind: "members" as const, label: "Active Members", sub: "across all years" },
+    { kind: "track" as const, label: "Track Record", sub: `since est. ${s.founded_year}` },
+    { kind: "sectors" as const, label: "Sector Coverage Teams", sub: "bottom-up research" },
+  ];
   return (
     <>
       {/* Hero */}
