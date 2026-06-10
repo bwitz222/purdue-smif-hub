@@ -55,11 +55,11 @@ function Publications() {
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<SortKey>("newest");
 
-  const filtered = useMemo(() => {
+  const filtered = useMemo<PublicationRow[]>(() => {
     const q = query.trim().toLowerCase();
     const base = q
       ? pubs.filter(
-          (p) =>
+          (p: PublicationRow) =>
             p.title.toLowerCase().includes(q) ||
             (p.description ?? "").toLowerCase().includes(q),
         )
@@ -76,7 +76,7 @@ function Publications() {
     return JSON.stringify({
       "@context": "https://schema.org",
       "@type": "ItemList",
-      itemListElement: pubs.map((p, i) => ({
+      itemListElement: pubs.map((p: PublicationRow, i: number) => ({
         "@type": "ListItem",
         position: i + 1,
         item: {
