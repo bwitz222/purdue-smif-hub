@@ -67,12 +67,6 @@ const TOOLS = [
   { name: "Koyfin", url: "https://www.koyfin.com/", note: "Market data, charting, and screening." },
 ];
 
-const TEMPLATES = [
-  { name: "DCF model template", ext: ".xlsx" },
-  { name: "Trading comps template", ext: ".xlsx" },
-  { name: "Pitch deck template", ext: ".pptx" },
-  { name: "One-page thesis memo", ext: ".docx" },
-];
 
 const GLOSSARY = [
   { term: "Intrinsic Value", def: "What a business is actually worth based on the cash it will generate, independent of its market price." },
