@@ -386,19 +386,38 @@ function HoldingsPage() {
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-xs uppercase tracking-[0.22em] text-muted-foreground mr-1">Sector</span>
-            {sectors.map((s) => {
-              const active = sector === s;
-              return (
-                <button
-                  key={s}
-                  onClick={() => setSector(s)}
-                  aria-pressed={active}
-                  className={`min-h-11 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider border transition-colors duration-150 cursor-pointer ${active ? "bg-ink text-background border-ink" : "bg-background text-foreground border-border hover:border-ink hover:bg-secondary"}`}
+            {sectors.length > 8 ? (
+              <label className="inline-flex items-center gap-2">
+                <span className="sr-only">Filter by sector</span>
+                <select
+                  value={sector}
+                  onChange={(e) => setSector(e.target.value)}
+                  aria-label="Filter by sector"
+                  className="min-h-11 border border-border bg-background px-3 text-xs font-semibold uppercase tracking-wider text-foreground outline-none focus:border-ink"
                 >
-                  {s}
-                </button>
-              );
-            })}
+                  {sectors.map((s) => (
+                    <option key={s} value={s}>{s}</option>
+                  ))}
+                </select>
+              </label>
+            ) : (
+              sectors.map((s) => {
+                const active = sector === s;
+                return (
+                  <button
+                    key={s}
+                    onClick={() => setSector(s)}
+                    aria-pressed={active}
+                    // min-h-11 keeps the touch target ≥44px; py-2.5 makes the
+                    // visual block match that height so the hit area and the
+                    // rendered chip share the same bounds (no offset clicks).
+                    className={`inline-flex min-h-11 items-center px-3 py-2.5 text-xs font-semibold uppercase tracking-wider border transition-colors duration-150 cursor-pointer ${active ? "bg-ink text-background border-ink" : "bg-background text-foreground border-border hover:border-ink hover:bg-secondary"}`}
+                  >
+                    {s}
+                  </button>
+                );
+              })
+            )}
           </div>
         </div>
 
