@@ -231,7 +231,7 @@ function Learn() {
         <Reveal className="container-prose max-w-3xl text-center">
           <span className="rule-gold block mb-6 mx-auto" />
           <h2 className="font-display font-bold text-background" style={{ fontSize: "clamp(2rem, 4.5vw, 3.5rem)" }}>
-            The reading is free.<br />
+            The resources are free.<br />
             <span className="text-gold">The seat is earned.</span>
           </h2>
           <p className="mt-6 text-on-dark-secondary max-w-xl mx-auto">
