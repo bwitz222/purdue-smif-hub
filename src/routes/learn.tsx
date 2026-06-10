@@ -5,6 +5,8 @@ import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import { applyUrl } from "@/lib/apply-url";
 import dcfAmzn from "@/assets/dcf-model-amzn.xlsx.asset.json";
 import amznThesis from "@/assets/amzn-investment-thesis.docx.asset.json";
+import amznCca from "@/assets/amzn-cca.xlsx.asset.json";
+import amznCcaCommentary from "@/assets/amzn-cca-commentary.docx.asset.json";
 
 const APPLICATION_URL = applyUrl("learn-cta");
 
@@ -15,6 +17,20 @@ const EXAMPLES = [
     href: dcfAmzn.url,
     filename: "DCF-Model-AMZN.xlsx",
     kind: "Excel · DCF",
+  },
+  {
+    title: "Comparable Company Analysis — Amazon (AMZN)",
+    note: "A trading comps set for Amazon. Peer selection, calendarized metrics, and EV/Revenue, EV/EBITDA, and P/E multiples to triangulate valuation alongside the DCF.",
+    href: amznCca.url,
+    filename: "AMZN-Comparable-Company-Analysis-SMIF.xlsx",
+    kind: "Excel · Comps",
+  },
+  {
+    title: "CCA Commentary — Amazon (AMZN)",
+    note: "Written commentary that pairs with the AMZN comps. Explains peer choice, multiple selection, and how to read the implied valuation range.",
+    href: amznCcaCommentary.url,
+    filename: "AMZN-CCA-Commentary-SMIF.docx",
+    kind: "Word · Comps commentary",
   },
   {
     title: "One-Page Thesis — Amazon (AMZN)",
