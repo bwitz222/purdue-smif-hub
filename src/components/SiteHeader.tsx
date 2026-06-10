@@ -5,6 +5,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import smifLogo from "@/assets/smif-logo-mark.png";
+import { applyUrl } from "@/lib/apply-url";
 
 const NAV = [
   { to: "/about",        label: "About"      },
@@ -64,7 +65,7 @@ export function SiteHeader() {
           </nav>
           <div className="flex items-center gap-4">
             <a
-              href="https://purdue.ca1.qualtrics.com/jfe/form/SV_1G5FfwJUc1cGJ2m"
+              href={applyUrl("header-apply")}
               target="_blank"
               rel="noopener noreferrer"
               className="hidden lg:inline-flex items-center px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] bg-gold text-ink transition-[background-color,transform] duration-150 hover:bg-gold-mid active:scale-95"
@@ -135,7 +136,7 @@ export function SiteHeader() {
             )}
             {reduce ? (
               <a
-                href="https://purdue.ca1.qualtrics.com/jfe/form/SV_1G5FfwJUc1cGJ2m"
+                href={applyUrl("mobile-menu")}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setOpen(false)}
@@ -145,7 +146,7 @@ export function SiteHeader() {
               </a>
             ) : (
               <motion.a
-                href="https://purdue.ca1.qualtrics.com/jfe/form/SV_1G5FfwJUc1cGJ2m"
+                href={applyUrl("mobile-menu")}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setOpen(false)}

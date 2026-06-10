@@ -3,7 +3,9 @@ import { ArrowRight, Calendar, MapPin, Clock, Download } from "lucide-react";
 import { useEffect, useState } from "react";
 import { socialMeta, canonical, OG_RECRUITING } from "@/lib/seo";
 
-const APPLICATION_URL = "https://purdue.ca1.qualtrics.com/jfe/form/SV_1G5FfwJUc1cGJ2m";
+import { applyUrl } from "@/lib/apply-url";
+
+const APPLICATION_URL = applyUrl("recruiting-hero");
 const DEADLINE = new Date("2026-09-04T23:59:00-04:00").getTime();
 
 function useCountdown() {

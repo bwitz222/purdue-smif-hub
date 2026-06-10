@@ -9,7 +9,9 @@ import {
   AccordionContent,
 } from "@/components/ui/accordion";
 
-const APPLICATION_URL = "https://purdue.ca1.qualtrics.com/jfe/form/SV_1G5FfwJUc1cGJ2m";
+import { applyUrl } from "@/lib/apply-url";
+
+const APPLICATION_URL = applyUrl("apply-page-primary");
 
 export const Route = createFileRoute("/apply")({
   component: Apply,

@@ -1,14 +1,18 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
-import { FileText, Download, Loader2, ExternalLink, Rss, Search } from "lucide-react";
+import { useMemo, useState } from "react";
+import { FileText, Download, ExternalLink, Rss, Search } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
 import { socialMeta, canonical } from "@/lib/seo";
+import { getPublications, type PublicationRow } from "@/lib/publications.functions";
 
 const SUBSTACK_URL = "https://purduesmif.substack.com";
 
 export const Route = createFileRoute("/publications")({
+  // SSR loader — the publications list is fetched on the server so the
+  // page renders fully-formed HTML (no client-side loading spinner, fully
+  // indexable by crawlers). Client-side search/sort still operate on the
+  // returned array.
+  loader: async (): Promise<{ pubs: PublicationRow[] }> => ({ pubs: await getPublications() }),
   component: Publications,
   head: () => ({
     meta: [
@@ -27,23 +31,17 @@ export const Route = createFileRoute("/publications")({
 type Category = "equity_research" | "semester" | "annual";
 type SortKey = "newest" | "oldest" | "title";
 
-interface Publication {
-  id: string;
-  category: Category;
-  title: string;
-  description: string | null;
-  file_path: string;
-  file_name: string;
-  file_size: number | null;
-  mime_type: string | null;
-  created_at: string;
-}
-
 const CATEGORIES: { value: Category; label: string; description: string }[] = [
   { value: "equity_research", label: "Equity Research", description: "Single-name pitches and deep-dive analyst reports." },
   { value: "semester", label: "Semester Reports", description: "End-of-semester performance and attribution reviews." },
   { value: "annual", label: "Annual Reports", description: "Comprehensive yearly reports to the Daniels School and stakeholders." },
 ];
+
+const CATEGORY_LABEL: Record<Category, string> = {
+  equity_research: "Equity Research",
+  semester: "Semester Report",
+  annual: "Annual Report",
+};
 
 function formatBytes(bytes: number | null) {
   if (!bytes) return "";
@@ -53,29 +51,15 @@ function formatBytes(bytes: number | null) {
 }
 
 function Publications() {
-  const [pubs, setPubs] = useState<Publication[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { pubs } = Route.useLoaderData();
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<SortKey>("newest");
 
-  useEffect(() => {
-    (async () => {
-      setLoading(true);
-      const { data, error } = await supabase
-        .from("publications")
-        .select("*")
-        .order("created_at", { ascending: false });
-      if (error) toast.error(error.message);
-      else setPubs((data as Publication[]) ?? []);
-      setLoading(false);
-    })();
-  }, []);
-
-  const filtered = useMemo(() => {
+  const filtered = useMemo<PublicationRow[]>(() => {
     const q = query.trim().toLowerCase();
     const base = q
       ? pubs.filter(
-          (p) =>
+          (p: PublicationRow) =>
             p.title.toLowerCase().includes(q) ||
             (p.description ?? "").toLowerCase().includes(q),
         )
@@ -92,7 +76,7 @@ function Publications() {
     return JSON.stringify({
       "@context": "https://schema.org",
       "@type": "ItemList",
-      itemListElement: pubs.map((p, i) => ({
+      itemListElement: pubs.map((p: PublicationRow, i: number) => ({
         "@type": "ListItem",
         position: i + 1,
         item: {
@@ -182,11 +166,7 @@ function Publications() {
                 </div>
 
                 <div className="grid gap-4 md:grid-cols-2">
-                  {loading ? (
-                    <div className="col-span-full flex items-center justify-center py-12 text-muted-foreground">
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Loading…
-                    </div>
-                  ) : items.length === 0 ? (
+                  {items.length === 0 ? (
                     <div className="col-span-full border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
                       {query
                         ? `No ${c.label.toLowerCase()} match "${query}".`
@@ -205,24 +185,19 @@ function Publications() {
   );
 }
 
-function PublicationCard({ pub }: { pub: Publication }) {
-  const url = supabase.storage.from("publications").getPublicUrl(pub.file_path).data.publicUrl;
-  const isPdf = (pub.mime_type ?? "").includes("pdf") || pub.file_name.toLowerCase().endsWith(".pdf");
-
+function PublicationCard({ pub }: { pub: PublicationRow }) {
   return (
     <div className="group flex flex-col border border-border bg-card transition hover:border-gold hover:shadow-elegant">
-      <div className="aspect-[3/4] overflow-hidden border-b border-border bg-secondary/40">
-        {isPdf ? (
-          <object data={`${url}#toolbar=0&navpanes=0&view=FitH`} type="application/pdf" className="h-full w-full">
-            <div className="grid h-full place-items-center text-muted-foreground">
-              <FileText className="h-12 w-12" />
-            </div>
-          </object>
-        ) : (
-          <div className="grid h-full place-items-center text-muted-foreground">
-            <FileText className="h-12 w-12" />
-          </div>
-        )}
+      {/* Lightweight thumbnail — never load PDFs in the card.
+          Category label + FileText icon + gold accent rule. */}
+      <div className="relative aspect-[3/4] overflow-hidden border-b border-border bg-secondary/40">
+        <div className="absolute inset-x-0 top-0 h-0.5 bg-gradient-gold" aria-hidden="true" />
+        <div className="flex h-full flex-col items-center justify-center gap-4 p-6 text-center">
+          <FileText className="h-12 w-12 text-gold-deep/70" aria-hidden="true" />
+          <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+            {CATEGORY_LABEL[pub.category]}
+          </span>
+        </div>
       </div>
       <div className="flex flex-1 flex-col p-5">
         <h3 className="font-display text-lg font-bold leading-tight">{pub.title}</h3>
@@ -233,7 +208,7 @@ function PublicationCard({ pub }: { pub: Publication }) {
           {new Date(pub.created_at).toLocaleDateString()} · {formatBytes(pub.file_size)}
         </div>
         <div className="mt-4 flex items-center gap-3 border-t border-border pt-3 text-xs">
-          <a href={url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-muted-foreground transition hover:text-gold-deep">
+          <a href={pub.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-muted-foreground transition hover:text-gold-deep">
             <Download className="h-3.5 w-3.5" /> View / Download
           </a>
         </div>

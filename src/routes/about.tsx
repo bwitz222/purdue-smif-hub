@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { socialMeta, canonical, OG_ABOUT } from "@/lib/seo";
+import { applyUrl } from "@/lib/apply-url";
 
 const PAGE_TITLE = "About — Purdue SMIF";
 const PAGE_DESCRIPTION = "How the Purdue Student Managed Investment Fund researches, debates, and votes on every real-money position — our history, philosophy, and process.";
@@ -221,7 +222,7 @@ function About() {
           </div>
           <div className="flex gap-4 shrink-0">
             <a
-              href="https://purdue.ca1.qualtrics.com/jfe/form/SV_1G5FfwJUc1cGJ2m"
+              href={applyUrl("about-cta")}
               target="_blank"
               rel="noopener noreferrer"
               className="group inline-flex items-center gap-2 bg-gold px-7 py-3.5 text-sm font-semibold text-ink hover:bg-gold-mid transition-colors duration-200"
