@@ -219,8 +219,42 @@ function Learn() {
         </div>
       </section>
 
+      {/* Example models */}
+      <section className="bg-background border-t border-border py-28">
+        <div className="container-prose">
+          <Reveal className="max-w-2xl mb-14">
+            <span className="rule-gold mb-5 block" />
+            <h2 className="font-display font-bold text-ink" style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>
+              Example models.
+            </h2>
+            <p className="mt-5 text-muted-foreground leading-relaxed">
+              Worked examples from our analyst training. Open them, tear them apart, and build your own.
+            </p>
+          </Reveal>
+          <RevealGroup className="grid sm:grid-cols-2 gap-px bg-border border border-border" stagger={0.05}>
+            {EXAMPLES.map((e) => (
+              <RevealItem key={e.title} className="bg-background">
+                <a
+                  href={e.href}
+                  download={e.filename}
+                  className="group flex flex-col h-full p-7 lg:p-8 hover:bg-secondary/40 transition-colors duration-200"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="font-display text-lg font-semibold text-ink group-hover:text-gold-deep transition-colors">{e.title}</h3>
+                    <Download className="h-4 w-4 text-muted-foreground group-hover:text-gold-deep transition-colors" aria-hidden="true" />
+                  </div>
+                  <p className="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground mb-3">{e.kind}</p>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{e.note}</p>
+                </a>
+              </RevealItem>
+            ))}
+          </RevealGroup>
+        </div>
+      </section>
+
       {/* Glossary */}
       <section className="bg-secondary/40 border-t border-border py-28">
+
         <div className="container-prose">
           <Reveal className="max-w-2xl mb-14">
             <h2 className="font-display font-bold text-ink" style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>
