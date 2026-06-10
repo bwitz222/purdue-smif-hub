@@ -75,7 +75,7 @@ function Index() {
   return (
     <>
       {/* Hero */}
-      <section className="relative isolate overflow-hidden bg-ink min-h-screen flex flex-col">
+      <section className="relative isolate overflow-hidden bg-ink min-h-[100dvh] flex flex-col">
         <div aria-hidden="true" className="absolute inset-0">
           <img
             src={tradingImg}
@@ -145,9 +145,6 @@ function Index() {
         <div className="container-prose">
           <Reveal className="max-w-2xl mb-20">
             <span className="rule-gold mb-5 block" />
-            <span className="text-xs font-semibold uppercase tracking-[0.32em] text-gold/70 block mb-5">
-              Mission
-            </span>
             <h2 className="font-display font-bold text-background" style={{ fontSize: "clamp(2.4rem, 5vw, 4.5rem)" }}>
               Real capital.<br />Real research.<br />
               <span className="text-gold/70">Real outcomes.</span>
@@ -219,9 +216,6 @@ function Index() {
       <section className="bg-secondary/60 border-t border-border py-20">
         <Reveal className="container-prose flex flex-col md:flex-row items-center justify-between gap-8">
           <div>
-            <span className="text-xs font-semibold uppercase tracking-[0.32em] text-gold-deep block mb-3">
-              Fund Performance
-            </span>
             <h2 className="font-display text-3xl md:text-4xl font-bold text-ink">
               Benchmarked against the S&amp;P 500.<br className="hidden md:block" />
               Reported every quarter.
