@@ -1,10 +1,22 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Download } from "lucide-react";
 import { socialMeta, canonical, OG_RECRUITING } from "@/lib/seo";
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import { applyUrl } from "@/lib/apply-url";
+import dcfAmzn from "@/assets/dcf-model-amzn.xlsx.asset.json";
 
 const APPLICATION_URL = applyUrl("learn-cta");
+
+const EXAMPLES = [
+  {
+    title: "DCF Model — Amazon (AMZN)",
+    note: "A worked discounted cash flow on Amazon. Drivers, WACC build, terminal value, and a sensitivity table. Use it as a reference for structure and formatting.",
+    href: dcfAmzn.url,
+    filename: "DCF-Model-AMZN.xlsx",
+    kind: "Excel · DCF",
+  },
+];
+
 
 export const Route = createFileRoute("/learn")({
   component: Learn,
