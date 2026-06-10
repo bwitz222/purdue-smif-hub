@@ -6,6 +6,7 @@ import { ArrowUpDown, ArrowUp, ArrowDown, RefreshCw, AlertCircle, Filter, Search
 import { motion, AnimatePresence } from "framer-motion";
 import { holdings as baseHoldings, portfolioSummary as baseSummary, type Holding } from "@/data/holdings";
 import { getLiveQuotes } from "@/lib/quotes.functions";
+import { getFundStats } from "@/lib/fund-stats.functions";
 import { CountUp } from "@/components/CountUp";
 import { Reveal } from "@/components/Reveal";
 import { socialMeta, canonical, OG_HOLDINGS } from "@/lib/seo";
