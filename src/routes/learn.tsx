@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ExternalLink, FileText } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import { socialMeta, canonical, OG_RECRUITING } from "@/lib/seo";
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import { applyUrl } from "@/lib/apply-url";
@@ -67,12 +67,6 @@ const TOOLS = [
   { name: "Koyfin", url: "https://www.koyfin.com/", note: "Market data, charting, and screening." },
 ];
 
-const TEMPLATES = [
-  { name: "DCF model template", ext: ".xlsx" },
-  { name: "Trading comps template", ext: ".xlsx" },
-  { name: "Pitch deck template", ext: ".pptx" },
-  { name: "One-page thesis memo", ext: ".docx" },
-];
 
 const GLOSSARY = [
   { term: "Intrinsic Value", def: "What a business is actually worth based on the cash it will generate, independent of its market price." },
@@ -210,23 +204,6 @@ function Learn() {
             ))}
           </RevealGroup>
 
-          <Reveal className="mt-16 mb-6">
-            <p className="font-mono text-xs uppercase tracking-[0.22em] text-gold-deep">Templates</p>
-          </Reveal>
-          <RevealGroup className="grid sm:grid-cols-2 lg:grid-cols-4 gap-px bg-border border border-border" stagger={0.05}>
-            {TEMPLATES.map((t) => (
-              <RevealItem key={t.name} className="bg-background p-7 lg:p-8 flex flex-col">
-                <div className="flex items-center justify-between mb-3">
-                  <FileText className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
-                  <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground border border-border px-2 py-0.5">
-                    Coming soon
-                  </span>
-                </div>
-                <h3 className="font-display text-lg font-semibold text-ink leading-snug">{t.name}</h3>
-                <p className="mt-2 font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">{t.ext}</p>
-              </RevealItem>
-            ))}
-          </RevealGroup>
         </div>
       </section>
 
@@ -258,7 +235,7 @@ function Learn() {
             <span className="text-gold">The seat is earned.</span>
           </h2>
           <p className="mt-6 text-on-dark-secondary max-w-xl mx-auto">
-            Members get the full training, the templates, and a senior mentor. Applications open each fall and spring.
+            Members get the full training and a senior mentor. Applications open each fall and spring.
           </p>
           <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
             <a
