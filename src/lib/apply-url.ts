@@ -12,6 +12,7 @@ export type ApplyPlacement =
   | "home-cta"
   | "about-cta"
   | "recruiting-hero"
+  | "learn-cta"
   | "apply-page-primary";
 
 export function applyUrl(placement: ApplyPlacement): string {

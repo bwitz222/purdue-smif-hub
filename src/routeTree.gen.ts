@@ -15,6 +15,7 @@ import { Route as SectorsRouteImport } from './routes/sectors'
 import { Route as RecruitingRouteImport } from './routes/recruiting'
 import { Route as PublicationsRouteImport } from './routes/publications'
 import { Route as PerformanceRouteImport } from './routes/performance'
+import { Route as LearnRouteImport } from './routes/learn'
 import { Route as HoldingsRouteImport } from './routes/holdings'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ApplyRouteImport } from './routes/apply'
@@ -51,6 +52,11 @@ const PublicationsRoute = PublicationsRouteImport.update({
 const PerformanceRoute = PerformanceRouteImport.update({
   id: '/performance',
   path: '/performance',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LearnRoute = LearnRouteImport.update({
+  id: '/learn',
+  path: '/learn',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HoldingsRoute = HoldingsRouteImport.update({
@@ -97,6 +103,7 @@ export interface FileRoutesByFullPath {
   '/apply': typeof ApplyRoute
   '/contact': typeof ContactRoute
   '/holdings': typeof HoldingsRoute
+  '/learn': typeof LearnRoute
   '/performance': typeof PerformanceRoute
   '/publications': typeof PublicationsRoute
   '/recruiting': typeof RecruitingRoute
@@ -112,6 +119,7 @@ export interface FileRoutesByTo {
   '/apply': typeof ApplyRoute
   '/contact': typeof ContactRoute
   '/holdings': typeof HoldingsRoute
+  '/learn': typeof LearnRoute
   '/performance': typeof PerformanceRoute
   '/publications': typeof PublicationsRoute
   '/recruiting': typeof RecruitingRoute
@@ -128,6 +136,7 @@ export interface FileRoutesById {
   '/apply': typeof ApplyRoute
   '/contact': typeof ContactRoute
   '/holdings': typeof HoldingsRoute
+  '/learn': typeof LearnRoute
   '/performance': typeof PerformanceRoute
   '/publications': typeof PublicationsRoute
   '/recruiting': typeof RecruitingRoute
@@ -145,6 +154,7 @@ export interface FileRouteTypes {
     | '/apply'
     | '/contact'
     | '/holdings'
+    | '/learn'
     | '/performance'
     | '/publications'
     | '/recruiting'
@@ -160,6 +170,7 @@ export interface FileRouteTypes {
     | '/apply'
     | '/contact'
     | '/holdings'
+    | '/learn'
     | '/performance'
     | '/publications'
     | '/recruiting'
@@ -175,6 +186,7 @@ export interface FileRouteTypes {
     | '/apply'
     | '/contact'
     | '/holdings'
+    | '/learn'
     | '/performance'
     | '/publications'
     | '/recruiting'
@@ -191,6 +203,7 @@ export interface RootRouteChildren {
   ApplyRoute: typeof ApplyRoute
   ContactRoute: typeof ContactRoute
   HoldingsRoute: typeof HoldingsRoute
+  LearnRoute: typeof LearnRoute
   PerformanceRoute: typeof PerformanceRoute
   PublicationsRoute: typeof PublicationsRoute
   RecruitingRoute: typeof RecruitingRoute
@@ -242,6 +255,13 @@ declare module '@tanstack/react-router' {
       path: '/performance'
       fullPath: '/performance'
       preLoaderRoute: typeof PerformanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/learn': {
+      id: '/learn'
+      path: '/learn'
+      fullPath: '/learn'
+      preLoaderRoute: typeof LearnRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/holdings': {
@@ -303,6 +323,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApplyRoute: ApplyRoute,
   ContactRoute: ContactRoute,
   HoldingsRoute: HoldingsRoute,
+  LearnRoute: LearnRoute,
   PerformanceRoute: PerformanceRoute,
   PublicationsRoute: PublicationsRoute,
   RecruitingRoute: RecruitingRoute,
