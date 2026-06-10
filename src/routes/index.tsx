@@ -2,6 +2,9 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import tradingImg from "@/assets/nyc-skyline.jpg";
 import { ArrowRight, TrendingUp, Users, Award, BarChart3, ChevronRight, ExternalLink } from "lucide-react";
 import { CountUp } from "@/components/CountUp";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { getFundStats } from "@/lib/fund-stats.functions";
 
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import { socialMeta, canonical } from "@/lib/seo";
@@ -28,12 +31,21 @@ export const Route = createFileRoute("/")({
   }),
 });
 
-const STATS = [
-  { display: "$600K", label: "Assets Under Management", sub: "actively deployed" },
-  { display: "50+",   label: "Active Members",          sub: "across all years" },
-  { display: "15Y+",  label: "Track Record",            sub: "since est. 2009" },
-  { display: "10",    label: "Sector Coverage Teams",   sub: "bottom-up research" },
-];
+// Hardcoded fallback values — used if the fund_stats table fetch fails.
+const FALLBACK_STATS = {
+  aum_display: "$600K",
+  active_members: "50+",
+  founded_year: 2009,
+  sector_teams: 10,
+};
+
+// Parse a display string like "$600K" or "50+" into { prefix, value, suffix }
+// so CountUp can animate the numeric portion while preserving formatting.
+function parseStatDisplay(display: string): { prefix: string; value: number; suffix: string } {
+  const match = display.match(/^([^\d.-]*)([\d.]+)(.*)$/);
+  if (!match) return { prefix: "", value: 0, suffix: display };
+  return { prefix: match[1] ?? "", value: parseFloat(match[2]) || 0, suffix: match[3] ?? "" };
+}
 
 const PILLARS = [
   { Icon: BarChart3, title: "Investment Research", body: "Bottom-up fundamental analysis across equity sector teams. Every pitch is defended live before the full investment committee — the same rigor as a professional fund." },
