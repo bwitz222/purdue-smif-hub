@@ -123,6 +123,14 @@ function HoldingsPage() {
     refetchOnReconnect: true,
   });
 
+  const fetchFundStats = useServerFn(getFundStats);
+  const { data: fundStats } = useQuery({
+    queryKey: ["fund-stats"],
+    queryFn: () => fetchFundStats(),
+    staleTime: 60 * 60 * 1000,
+  });
+  const cashHoldings = fundStats?.cash_holdings ?? baseSummary.cashHoldings;
+
   useEffect(() => {
     const id = setTimeout(() => setDebouncedQuery(query), 200);
     return () => clearTimeout(id);
