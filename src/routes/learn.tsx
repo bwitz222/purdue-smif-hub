@@ -100,7 +100,7 @@ const TOOLS = [
   { name: "SEC EDGAR", url: "https://www.sec.gov/edgar", note: "Primary filings: 10-K, 10-Q, 8-K." },
   { name: "Damodaran Online", url: "https://pages.stern.nyu.edu/~adamodar/", note: "Free valuation data, spreadsheets, and lectures." },
   { name: "FRED", url: "https://fred.stlouisfed.org/", note: "Macro and interest-rate data from the St. Louis Fed." },
-  { name: "Koyfin", url: "https://www.koyfin.com/", note: "Market data, charting, and screening." },
+  { name: "LSEG", url: "https://www.lseg.com/", note: "Market data, analytics, and the Refinitiv terminal for institutional research." },
 ];
 
 
