@@ -6,6 +6,7 @@ import { ArrowUpDown, ArrowUp, ArrowDown, RefreshCw, AlertCircle, Filter, Search
 import { motion, AnimatePresence } from "framer-motion";
 import { holdings as baseHoldings, portfolioSummary as baseSummary, type Holding } from "@/data/holdings";
 import { getLiveQuotes } from "@/lib/quotes.functions";
+import { getFundStats } from "@/lib/fund-stats.functions";
 import { CountUp } from "@/components/CountUp";
 import { Reveal } from "@/components/Reveal";
 import { socialMeta, canonical, OG_HOLDINGS } from "@/lib/seo";
@@ -122,6 +123,14 @@ function HoldingsPage() {
     refetchOnReconnect: true,
   });
 
+  const fetchFundStats = useServerFn(getFundStats);
+  const { data: fundStats } = useQuery({
+    queryKey: ["fund-stats"],
+    queryFn: () => fetchFundStats(),
+    staleTime: 60 * 60 * 1000,
+  });
+  const cashHoldings = fundStats?.cash_holdings ?? baseSummary.cashHoldings;
+
   useEffect(() => {
     const id = setTimeout(() => setDebouncedQuery(query), 200);
     return () => clearTimeout(id);
@@ -140,15 +149,15 @@ function HoldingsPage() {
     const updated: Holding[] = baseHoldings.map((h) => { const q = quotes[h.symbol]; if (!q) return h; const price = q.price; const value = price * h.shares; const totalReturn = value - h.costBasis; const returnPct = h.costBasis > 0 ? (totalReturn / h.costBasis) * 100 : 0; const dayChange = q.changePct; const dayGain = (dayChange / 100) * value; return { ...h, price, value, totalReturn, returnPct, dayChange, dayGain }; });
     const investedValue = updated.reduce((s, r) => s + r.value, 0);
     const totalDayGain = updated.reduce((s, r) => s + r.dayGain, 0);
-    const portfolioValue = investedValue + baseSummary.cashHoldings;
+    const portfolioValue = investedValue + cashHoldings;
     const costBasisTotal = updated.reduce((s, r) => s + r.costBasis, 0);
     const totalReturn = investedValue - costBasisTotal;
     const totalReturnPct = costBasisTotal > 0 ? (totalReturn / costBasisTotal) * 100 : 0;
     const totalDayChange = investedValue > 0 ? (totalDayGain / investedValue) * 100 : 0;
     const weightedBeta = investedValue > 0 ? updated.reduce((s, r) => s + r.beta * r.value, 0) / investedValue : baseSummary.weightedBeta;
     const withAlloc = updated.map((r) => ({ ...r, allocation: portfolioValue > 0 ? (r.value / portfolioValue) * 100 : r.allocation }));
-    return { holdings: withAlloc, portfolioSummary: { investedCapital: portfolioValue - baseSummary.cashHoldings, cashHoldings: baseSummary.cashHoldings, portfolioValue, totalDayGain, totalDayChange, totalReturn, totalReturnPct, weightedBeta } };
-  }, [quoteData]);
+    return { holdings: withAlloc, portfolioSummary: { investedCapital: portfolioValue - cashHoldings, cashHoldings, portfolioValue, totalDayGain, totalDayChange, totalReturn, totalReturnPct, weightedBeta } };
+  }, [quoteData, cashHoldings]);
 
   const sectorBreakdown = useMemo(() => { const investedValue = holdings.reduce((s, h) => s + h.value, 0); const map = new Map<string, number>(); holdings.forEach((h) => { const weights = ETF_SECTOR_WEIGHTS[h.symbol]; if (weights) { const totalWeight = Object.values(weights).reduce((s, w) => s + w, 0); Object.entries(weights).forEach(([sec, w]) => { const attributed = h.value * (w / totalWeight); map.set(sec, (map.get(sec) || 0) + attributed); }); } else { map.set(h.industry, (map.get(h.industry) || 0) + h.value); } }); return Array.from(map.entries()).map(([s, v]) => [s, investedValue > 0 ? (v / investedValue) * 100 : 0] as [string, number]).sort((a, b) => b[1] - a[1]); }, [holdings]);
 

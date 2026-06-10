@@ -77,6 +77,84 @@ export type Database = {
         }
         Relationships: []
       }
+      fund_performance: {
+        Row: {
+          bench_return: number
+          is_audited: boolean
+          smif_return: number
+          updated_at: string
+          year: number
+        }
+        Insert: {
+          bench_return: number
+          is_audited?: boolean
+          smif_return: number
+          updated_at?: string
+          year: number
+        }
+        Update: {
+          bench_return?: number
+          is_audited?: boolean
+          smif_return?: number
+          updated_at?: string
+          year?: number
+        }
+        Relationships: []
+      }
+      fund_performance_kpis: {
+        Row: {
+          five_year_annualized: number
+          id: boolean
+          inception_annualized: number
+          one_year: number
+          updated_at: string
+        }
+        Insert: {
+          five_year_annualized: number
+          id?: boolean
+          inception_annualized: number
+          one_year: number
+          updated_at?: string
+        }
+        Update: {
+          five_year_annualized?: number
+          id?: boolean
+          inception_annualized?: number
+          one_year?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      fund_stats: {
+        Row: {
+          active_members: string
+          aum_display: string
+          cash_holdings: number
+          founded_year: number
+          id: boolean
+          sector_teams: number
+          updated_at: string
+        }
+        Insert: {
+          active_members: string
+          aum_display: string
+          cash_holdings: number
+          founded_year: number
+          id?: boolean
+          sector_teams: number
+          updated_at?: string
+        }
+        Update: {
+          active_members?: string
+          aum_display?: string
+          cash_holdings?: number
+          founded_year?: number
+          id?: boolean
+          sector_teams?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       publications: {
         Row: {
           category: Database["public"]["Enums"]["publication_category"]
@@ -131,6 +209,24 @@ export type Database = {
           fetched_at?: string
           price?: number
           symbol?: string
+        }
+        Relationships: []
+      }
+      quote_meta: {
+        Row: {
+          key: string
+          updated_at: string
+          value_ts: string | null
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value_ts?: string | null
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value_ts?: string | null
         }
         Relationships: []
       }

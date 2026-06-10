@@ -2,6 +2,9 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import tradingImg from "@/assets/nyc-skyline.jpg";
 import { ArrowRight, TrendingUp, Users, Award, BarChart3, ChevronRight, ExternalLink } from "lucide-react";
 import { CountUp } from "@/components/CountUp";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { getFundStats } from "@/lib/fund-stats.functions";
 
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import { socialMeta, canonical } from "@/lib/seo";
@@ -28,12 +31,21 @@ export const Route = createFileRoute("/")({
   }),
 });
 
-const STATS = [
-  { display: "$600K", label: "Assets Under Management", sub: "actively deployed" },
-  { display: "50+",   label: "Active Members",          sub: "across all years" },
-  { display: "15Y+",  label: "Track Record",            sub: "since est. 2009" },
-  { display: "10",    label: "Sector Coverage Teams",   sub: "bottom-up research" },
-];
+// Hardcoded fallback values — used if the fund_stats table fetch fails.
+const FALLBACK_STATS = {
+  aum_display: "$600K",
+  active_members: "50+",
+  founded_year: 2009,
+  sector_teams: 10,
+};
+
+// Parse a display string like "$600K" or "50+" into { prefix, value, suffix }
+// so CountUp can animate the numeric portion while preserving formatting.
+function parseStatDisplay(display: string): { prefix: string; value: number; suffix: string } {
+  const match = display.match(/^([^\d.-]*)([\d.]+)(.*)$/);
+  if (!match) return { prefix: "", value: 0, suffix: display };
+  return { prefix: match[1] ?? "", value: parseFloat(match[2]) || 0, suffix: match[3] ?? "" };
+}
 
 const PILLARS = [
   { Icon: BarChart3, title: "Investment Research", body: "Bottom-up fundamental analysis across equity sector teams. Every pitch is defended live before the full investment committee — the same rigor as a professional fund." },
@@ -42,6 +54,23 @@ const PILLARS = [
 ];
 
 function Index() {
+  const fetchStats = useServerFn(getFundStats);
+  const { data: fundStats } = useQuery({
+    queryKey: ["fund-stats"],
+    queryFn: () => fetchStats(),
+    staleTime: 60 * 60 * 1000,
+  });
+  const s = fundStats ?? FALLBACK_STATS;
+  const currentYear = new Date().getFullYear();
+  const trackRecordYears = Math.max(0, currentYear - s.founded_year);
+  const aum = parseStatDisplay(s.aum_display);
+  const members = parseStatDisplay(s.active_members);
+  const STATS = [
+    { kind: "aum" as const, label: "Assets Under Management", sub: "actively deployed" },
+    { kind: "members" as const, label: "Active Members", sub: "across all years" },
+    { kind: "track" as const, label: "Track Record", sub: `since est. ${s.founded_year}` },
+    { kind: "sectors" as const, label: "Sector Coverage Teams", sub: "bottom-up research" },
+  ];
   return (
     <>
       {/* Hero */}
@@ -63,7 +92,7 @@ function Index() {
             <div className="animate-fade-in flex items-center gap-3 mb-8">
               <span className="rule-gold animate-expand-x delay-100" />
               <span className="text-xs font-semibold uppercase tracking-[0.18em] text-gold/80">
-                Daniels School of Business · Est. 2009
+                Daniels School of Business · Est. {s.founded_year}
               </span>
             </div>
             <h1
@@ -94,16 +123,16 @@ function Index() {
 
           {/* Stats — CountUp carries the entrance; no double-animation */}
           <div className="mt-16 grid grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-10 max-w-5xl">
-            {STATS.map((s) => (
-              <div key={s.label}>
+            {STATS.map((stat) => (
+              <div key={stat.label}>
                 <div className="font-display text-4xl lg:text-5xl font-bold text-gold leading-none">
-                  {s.display === "$600K" ? (<><span>$</span><CountUp to={600} duration={1.8} /><span>K</span></>) :
-                   s.display === "50+"   ? (<><CountUp to={50} duration={1.4} /><span>+</span></>) :
-                   s.display === "15Y+"  ? (<><CountUp to={15} duration={1.2} /><span>Y+</span></>) :
-                                           (<CountUp to={10} duration={1.0} />)}
+                  {stat.kind === "aum" ? (<>{aum.prefix && <span>{aum.prefix}</span>}<CountUp to={aum.value} duration={1.8} /><span>{aum.suffix}</span></>) :
+                   stat.kind === "members" ? (<>{members.prefix && <span>{members.prefix}</span>}<CountUp to={members.value} duration={1.4} /><span>{members.suffix}</span></>) :
+                   stat.kind === "track" ? (<><CountUp to={trackRecordYears} duration={1.2} /><span>Y+</span></>) :
+                                           (<CountUp to={s.sector_teams} duration={1.0} />)}
                 </div>
-                <div className="mt-3 text-xs uppercase tracking-[0.16em] text-on-dark-primary font-medium">{s.label}</div>
-                <div className="mt-1 text-xs text-on-dark-secondary font-mono">{s.sub}</div>
+                <div className="mt-3 text-xs uppercase tracking-[0.16em] text-on-dark-primary font-medium">{stat.label}</div>
+                <div className="mt-1 text-xs text-on-dark-secondary font-mono">{stat.sub}</div>
               </div>
             ))}
           </div>
@@ -146,7 +175,7 @@ function Index() {
                 className="w-full aspect-[3/4] object-cover shadow-elegant"
               />
               <div className="absolute -bottom-5 -left-5 bg-gold p-5 shadow-gold hidden lg:block">
-                <div className="font-display text-3xl font-bold text-ink leading-none">15Y+</div>
+                <div className="font-display text-3xl font-bold text-ink leading-none">{trackRecordYears}Y+</div>
                 <div className="text-xs uppercase tracking-wider text-ink/60 mt-1">Track record</div>
               </div>
             </Reveal>

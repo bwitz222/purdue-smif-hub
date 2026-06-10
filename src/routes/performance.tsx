@@ -1,11 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { ArrowUp, ArrowDown } from "lucide-react";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid,
   Tooltip, Legend, ResponsiveContainer, ReferenceLine,
 } from "recharts";
 import { socialMeta, canonical } from "@/lib/seo";
+import { getFundPerformance, type PerfRow, type PerfKpis } from "@/lib/fund-performance.functions";
 
 export const Route = createFileRoute("/performance")({
   component: Performance,
@@ -23,29 +26,16 @@ export const Route = createFileRoute("/performance")({
   }),
 });
 
-const years = [
-  { y: "2024", smif: 22.4,  bench: 24.2  },
-  { y: "2023", smif: 27.1,  bench: 26.3  },
-  { y: "2022", smif: -15.8, bench: -18.1 },
-  { y: "2021", smif: 29.6,  bench: 28.7  },
-  { y: "2020", smif: 19.2,  bench: 18.4  },
-  { y: "2019", smif: 30.1,  bench: 31.5  },
+// Hardcoded fallback — used only if the fund_performance table fetch fails.
+const FALLBACK_ROWS: PerfRow[] = [
+  { year: 2024, smif_return: 22.4,  bench_return: 24.2,  is_audited: false },
+  { year: 2023, smif_return: 27.1,  bench_return: 26.3,  is_audited: false },
+  { year: 2022, smif_return: -15.8, bench_return: -18.1, is_audited: false },
+  { year: 2021, smif_return: 29.6,  bench_return: 28.7,  is_audited: false },
+  { year: 2020, smif_return: 19.2,  bench_return: 18.4,  is_audited: false },
+  { year: 2019, smif_return: 30.1,  bench_return: 31.5,  is_audited: false },
 ];
-
-const chronological = [...years].reverse();
-
-const cumulative = (() => {
-  let smif = 1, bench = 1;
-  return [{ year: "2018", smif: 1, bench: 1 }].concat(
-    chronological.map((r) => {
-      smif  *= 1 + r.smif  / 100;
-      bench *= 1 + r.bench / 100;
-      return { year: r.y, smif: Number(smif.toFixed(3)), bench: Number(bench.toFixed(3)) };
-    })
-  );
-})();
-
-const annual = chronological.map((r) => ({ year: r.y, smif: r.smif, bench: r.bench }));
+const FALLBACK_KPIS: PerfKpis = { one_year: 22.4, five_year_annualized: 15.6, inception_annualized: 12.8 };
 
 type Mode   = "cumulative" | "annual";
 type Series = "both" | "smif" | "bench";
@@ -81,19 +71,50 @@ function ChartTooltip({ active, payload, label, mode }: {
   );
 }
 
-const KPI_STATS = [
-  { l: "1Y Return",             v: "+22.4%", pos: true  },
-  { l: "5Y Annualized",         v: "+15.6%", pos: true  },
-  { l: "Inception Annualized",  v: "+12.8%", pos: true  },
-];
-
 function Performance() {
   const [mode,   setMode]   = useState<Mode>("cumulative");
   const [series, setSeries] = useState<Series>("both");
 
+  const fetchPerf = useServerFn(getFundPerformance);
+  const { data: perfData } = useQuery({
+    queryKey: ["fund-performance"],
+    queryFn: () => fetchPerf(),
+    staleTime: 60 * 60 * 1000,
+  });
+
+  const years: PerfRow[] = perfData?.rows && perfData.rows.length > 0 ? perfData.rows : FALLBACK_ROWS;
+  const kpis: PerfKpis = perfData?.kpis ?? FALLBACK_KPIS;
+  // Hide the "work in progress / illustrative" banner once every displayed
+  // row is flagged as audited in the database.
+  const allAudited = years.length > 0 && years.every((r) => r.is_audited);
+
+  const KPI_STATS = useMemo(() => [
+    { l: "1Y Return",            v: fmtPct(kpis.one_year),            pos: kpis.one_year >= 0 },
+    { l: "5Y Annualized",        v: fmtPct(kpis.five_year_annualized), pos: kpis.five_year_annualized >= 0 },
+    { l: "Inception Annualized", v: fmtPct(kpis.inception_annualized), pos: kpis.inception_annualized >= 0 },
+  ], [kpis]);
+
+  const { cumulative, annual, baseYear } = useMemo(() => {
+    const chronological = [...years].sort((a, b) => a.year - b.year);
+    const baseYear = chronological.length > 0 ? chronological[0].year - 1 : 2018;
+    let smif = 1, bench = 1;
+    const cumulative = [{ year: String(baseYear), smif: 1, bench: 1 }].concat(
+      chronological.map((r) => {
+        smif  *= 1 + r.smif_return  / 100;
+        bench *= 1 + r.bench_return / 100;
+        return { year: String(r.year), smif: Number(smif.toFixed(3)), bench: Number(bench.toFixed(3)) };
+      })
+    );
+    const annual = chronological.map((r) => ({ year: String(r.year), smif: r.smif_return, bench: r.bench_return }));
+    return { cumulative, annual, baseYear };
+  }, [years]);
+
   const data       = mode === "cumulative" ? cumulative : annual;
   const showSmif   = series !== "bench";
   const showBench  = series !== "smif";
+
+  // Sort table rows most-recent first.
+  const tableRows = useMemo(() => [...years].sort((a, b) => b.year - a.year), [years]);
 
   return (
     <>
@@ -116,25 +137,27 @@ function Performance() {
           </h1>
           <p className="mt-8 max-w-xl text-on-dark-secondary leading-relaxed text-lg">
             Measured against the S&P 500 Total Return Index.
-            Returns shown are illustrative.
+            {allAudited ? "" : " Returns shown are illustrative."}
           </p>
         </div>
         <div className="absolute bottom-0 left-0 right-0 h-px bg-white/10" />
       </section>
 
-      <div className="container-prose pt-10">
-        <div className="border border-gold/40 bg-secondary/30 p-5 md:p-6 flex items-start gap-4">
-          <span className="rule-gold mt-2 shrink-0" aria-hidden="true" />
-          <div className="flex-1">
-            <div className="text-[10px] font-mono font-semibold uppercase tracking-[0.28em] text-gold-deep mb-1">
-              Work in progress
+      {!allAudited && (
+        <div className="container-prose pt-10">
+          <div className="border border-gold/40 bg-secondary/30 p-5 md:p-6 flex items-start gap-4">
+            <span className="rule-gold mt-2 shrink-0" aria-hidden="true" />
+            <div className="flex-1">
+              <div className="text-[10px] font-mono font-semibold uppercase tracking-[0.28em] text-gold-deep mb-1">
+                Work in progress
+              </div>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                This page is being refined. Returns shown are illustrative placeholders pending the next audited reporting cycle — treat them as such until the published annual report goes live.
+              </p>
             </div>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              This page is being refined. Returns shown are illustrative placeholders pending the next audited reporting cycle — treat them as such until the published annual report goes live.
-            </p>
           </div>
         </div>
-      </div>
+      )}
 
       <section className="container-prose py-10 space-y-12 pt-14">
 
@@ -157,7 +180,7 @@ function Performance() {
             <div>
               <div className="text-xs uppercase tracking-[0.22em] text-muted-foreground mb-2">Interactive</div>
               <h2 className="font-display text-2xl font-bold text-ink md:text-3xl">
-                {mode === "cumulative" ? "Growth of $1 since 2018" : "Annual returns"}
+                {mode === "cumulative" ? `Growth of $1 since ${baseYear}` : "Annual returns"}
               </h2>
             </div>
 
@@ -261,18 +284,18 @@ function Performance() {
               </tr>
             </thead>
             <tbody>
-              {years.map((r, idx) => {
-                const spread = r.smif - r.bench;
+              {tableRows.map((r, idx) => {
+                const spread = r.smif_return - r.bench_return;
                 return (
-                  <tr key={r.y} className={`border-t border-border hover:bg-secondary/50 transition-colors duration-150 ${idx % 2 !== 0 ? "bg-secondary/20" : ""}`}>
-                    <td className="px-6 py-5 font-display font-bold text-ink">{r.y}</td>
-                    <td className={`px-6 py-5 font-mono text-right font-medium ${r.smif >= 0 ? "text-gain" : "text-loss"}`}>
+                  <tr key={r.year} className={`border-t border-border hover:bg-secondary/50 transition-colors duration-150 ${idx % 2 !== 0 ? "bg-secondary/20" : ""}`}>
+                    <td className="px-6 py-5 font-display font-bold text-ink">{r.year}</td>
+                    <td className={`px-6 py-5 font-mono text-right font-medium ${r.smif_return >= 0 ? "text-gain" : "text-loss"}`}>
                       <span className="inline-flex items-center justify-end gap-1">
-                        {r.smif >= 0 ? <ArrowUp className="h-3.5 w-3.5" aria-hidden="true" /> : <ArrowDown className="h-3.5 w-3.5" aria-hidden="true" />}
-                        {fmtPct(r.smif)}
+                        {r.smif_return >= 0 ? <ArrowUp className="h-3.5 w-3.5" aria-hidden="true" /> : <ArrowDown className="h-3.5 w-3.5" aria-hidden="true" />}
+                        {fmtPct(r.smif_return)}
                       </span>
                     </td>
-                    <td className="px-6 py-5 font-mono text-right text-muted-foreground">{fmtPct(r.bench)}</td>
+                    <td className="px-6 py-5 font-mono text-right text-muted-foreground">{fmtPct(r.bench_return)}</td>
                     <td className={`px-6 py-5 font-mono text-right font-semibold ${spread >= 0 ? "text-gain" : "text-loss"}`}>
                       {fmtPct(spread)}
                     </td>
@@ -284,8 +307,7 @@ function Performance() {
         </div>
 
         <p className="text-xs text-muted-foreground max-w-3xl pb-8">
-          Past performance does not guarantee future results. Figures shown for illustrative
-          purposes; consult the latest annual report for audited returns.
+          Past performance does not guarantee future results.{allAudited ? "" : " Figures shown for illustrative purposes;"} consult the latest annual report for audited returns.
         </p>
       </section>
     </>

@@ -8,10 +8,14 @@ function toYmd(d: Date): string {
   return d.toISOString().slice(0, 10);
 }
 
-async function fetchGroupedBars(apiKey: string): Promise<Map<string, PolygonBar>> {
-  const bars = new Map<string, PolygonBar>();
+// Walk back up to 10 days to find the TWO most recent trading days
+// (skipping weekends/holidays/not-yet-published days).
+async function fetchTwoDaysGroupedBars(
+  apiKey: string,
+): Promise<{ latest: Map<string, PolygonBar> | null; prior: Map<string, PolygonBar> | null }> {
+  const found: Array<Map<string, PolygonBar>> = [];
   const today = new Date();
-  for (let back = 1; back <= 7; back++) {
+  for (let back = 1; back <= 10 && found.length < 2; back++) {
     const d = new Date(today);
     d.setUTCDate(d.getUTCDate() - back);
     const url = `https://api.polygon.io/v2/aggs/grouped/locale/us/market/stocks/${toYmd(
@@ -23,14 +27,15 @@ async function fetchGroupedBars(apiKey: string): Promise<Map<string, PolygonBar>
       if (!res.ok) continue;
       const json = (await res.json()) as PolygonGroupedResponse;
       if (json.results && json.results.length > 0) {
-        for (const b of json.results) bars.set(b.T, b);
-        return bars;
+        const m = new Map<string, PolygonBar>();
+        for (const b of json.results) m.set(b.T, b);
+        found.push(m);
       }
     } catch {
       // try previous day
     }
   }
-  return bars;
+  return { latest: found[0] ?? null, prior: found[1] ?? null };
 }
 
 export const Route = createFileRoute("/api/public/hooks/refresh-quotes")({
@@ -45,8 +50,8 @@ export const Route = createFileRoute("/api/public/hooks/refresh-quotes")({
           );
         }
 
-        const bars = await fetchGroupedBars(apiKey);
-        if (bars.size === 0) {
+        const { latest, prior } = await fetchTwoDaysGroupedBars(apiKey);
+        if (!latest || latest.size === 0) {
           return new Response(
             JSON.stringify({ ok: false, error: "No bars returned from provider" }),
             { status: 502, headers: { "Content-Type": "application/json" } },
@@ -62,9 +67,15 @@ export const Route = createFileRoute("/api/public/hooks/refresh-quotes")({
           fetched_at: string;
         }> = [];
         for (const symbol of symbols) {
-          const bar = bars.get(symbol);
+          const bar = latest.get(symbol);
           if (!bar || !isFinite(bar.c)) continue;
-          const changePct = bar.o > 0 ? ((bar.c - bar.o) / bar.o) * 100 : 0;
+          const priorBar = prior?.get(symbol);
+          let changePct = 0;
+          if (priorBar && isFinite(priorBar.c) && priorBar.c > 0) {
+            changePct = ((bar.c - priorBar.c) / priorBar.c) * 100;
+          } else if (bar.o > 0) {
+            changePct = ((bar.c - bar.o) / bar.o) * 100;
+          }
           upserts.push({
             symbol,
             price: bar.c,
