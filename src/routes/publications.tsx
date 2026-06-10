@@ -12,7 +12,7 @@ export const Route = createFileRoute("/publications")({
   // page renders fully-formed HTML (no client-side loading spinner, fully
   // indexable by crawlers). Client-side search/sort still operate on the
   // returned array.
-  loader: async () => ({ pubs: await getPublications() }),
+  loader: async (): Promise<{ pubs: PublicationRow[] }> => ({ pubs: await getPublications() }),
   component: Publications,
   head: () => ({
     meta: [
