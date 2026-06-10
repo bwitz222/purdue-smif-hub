@@ -1,4 +1,4 @@
-import { createFileRoute, useLoaderData } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { FileText, Download, ExternalLink, Rss, Search } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -51,7 +51,7 @@ function formatBytes(bytes: number | null) {
 }
 
 function Publications() {
-  const { pubs } = useLoaderData({ from: "/publications" });
+  const { pubs } = Route.useLoaderData();
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<SortKey>("newest");
 
