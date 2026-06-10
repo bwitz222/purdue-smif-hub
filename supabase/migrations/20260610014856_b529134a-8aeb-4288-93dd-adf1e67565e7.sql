@@ -1,0 +1,2 @@
+CREATE POLICY "Public read team-headshots" ON storage.objects FOR SELECT TO anon, authenticated USING (bucket_id = 'team-headshots');
+CREATE POLICY "Public read publications" ON storage.objects FOR SELECT TO anon, authenticated USING (bucket_id = 'publications');
