@@ -235,7 +235,7 @@ function Learn() {
             <span className="text-gold">The seat is earned.</span>
           </h2>
           <p className="mt-6 text-on-dark-secondary max-w-xl mx-auto">
-            Members get the full training, the templates, and a senior mentor. Applications open each fall and spring.
+            Members get the full training and a senior mentor. Applications open each fall and spring.
           </p>
           <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
             <a
