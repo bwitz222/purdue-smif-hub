@@ -136,8 +136,16 @@ function HoldingsPage() {
     return () => clearTimeout(id);
   }, [query]);
 
-  // Sticky compact summary appears after the hero scrolls past.
+  // Sticky compact summary appears after the hero scrolls past — md+ only.
+  // On mobile the sticky bar would stack under the site header and eat
+  // viewport, so we skip the listener entirely below md.
   useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mq = window.matchMedia("(min-width: 768px)");
+    if (!mq.matches) {
+      setShowSticky(false);
+      return;
+    }
     const onScroll = () => setShowSticky(window.scrollY > 420);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
