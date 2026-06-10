@@ -101,6 +101,8 @@ const TOOLS = [
   { name: "Damodaran Online", url: "https://pages.stern.nyu.edu/~adamodar/", note: "Free valuation data, spreadsheets, and lectures." },
   { name: "FRED", url: "https://fred.stlouisfed.org/", note: "Macro and interest-rate data from the St. Louis Fed." },
   { name: "LSEG", url: "https://www.lseg.com/", note: "Market data, analytics, and the Refinitiv terminal for institutional research." },
+  { name: "Yahoo Finance", url: "https://finance.yahoo.com/", note: "Real-time quotes, historical data, and news for public equities." },
+  { name: "Bloomberg", url: "https://www.bloomberg.com/professional/", note: "The Bloomberg Terminal: data, analytics, and execution for finance professionals." },
 ];
 
 
