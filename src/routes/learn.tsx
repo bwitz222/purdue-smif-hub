@@ -4,6 +4,7 @@ import { socialMeta, canonical, OG_RECRUITING } from "@/lib/seo";
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import { applyUrl } from "@/lib/apply-url";
 import dcfAmzn from "@/assets/dcf-model-amzn.xlsx.asset.json";
+import amznThesis from "@/assets/amzn-investment-thesis.docx.asset.json";
 
 const APPLICATION_URL = applyUrl("learn-cta");
 
@@ -14,6 +15,13 @@ const EXAMPLES = [
     href: dcfAmzn.url,
     filename: "DCF-Model-AMZN.xlsx",
     kind: "Excel · DCF",
+  },
+  {
+    title: "One-Page Thesis — Amazon (AMZN)",
+    note: "A one-page investment thesis on Amazon. Shows how to frame the setup, catalysts, valuation, and risks in the format we pitch in fund meetings.",
+    href: amznThesis.url,
+    filename: "AMZN-Investment-Thesis-SMIF.docx",
+    kind: "Word · Thesis memo",
   },
 ];
 
