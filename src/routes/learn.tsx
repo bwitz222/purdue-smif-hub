@@ -19,6 +19,13 @@ const EXAMPLES = [
     kind: "Excel · DCF",
   },
   {
+    title: "One-Page Thesis — Amazon (AMZN)",
+    note: "A one-page investment thesis on Amazon. Shows how to frame the setup, catalysts, valuation, and risks in the format we pitch in fund meetings.",
+    href: amznThesis.url,
+    filename: "AMZN-Investment-Thesis-SMIF.docx",
+    kind: "Word · Thesis memo",
+  },
+  {
     title: "Comparable Company Analysis — Amazon (AMZN)",
     note: "A trading comps set for Amazon. Peer selection, calendarized metrics, and EV/Revenue, EV/EBITDA, and P/E multiples to triangulate valuation alongside the DCF.",
     href: amznCca.url,
@@ -31,13 +38,6 @@ const EXAMPLES = [
     href: amznCcaCommentary.url,
     filename: "AMZN-CCA-Commentary-SMIF.docx",
     kind: "Word · Comps commentary",
-  },
-  {
-    title: "One-Page Thesis — Amazon (AMZN)",
-    note: "A one-page investment thesis on Amazon. Shows how to frame the setup, catalysts, valuation, and risks in the format we pitch in fund meetings.",
-    href: amznThesis.url,
-    filename: "AMZN-Investment-Thesis-SMIF.docx",
-    kind: "Word · Thesis memo",
   },
 ];
 
