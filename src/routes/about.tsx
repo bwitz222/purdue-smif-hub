@@ -221,7 +221,7 @@ function About() {
           </div>
           <div className="flex gap-4 shrink-0">
             <a
-              href="https://purdue.ca1.qualtrics.com/jfe/form/SV_1G5FfwJUc1cGJ2m"
+              href={applyUrl("about-cta")}
               target="_blank"
               rel="noopener noreferrer"
               className="group inline-flex items-center gap-2 bg-gold px-7 py-3.5 text-sm font-semibold text-ink hover:bg-gold-mid transition-colors duration-200"

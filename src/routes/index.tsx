@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import tradingImg from "@/assets/nyc-skyline.jpg";
+import tradingImg from "@/assets/nyc-skyline.webp";
+import { applyUrl } from "@/lib/apply-url";
 import { ArrowRight, TrendingUp, Users, Award, BarChart3, ChevronRight, ExternalLink } from "lucide-react";
 import { CountUp } from "@/components/CountUp";
 import { useQuery } from "@tanstack/react-query";
@@ -106,7 +107,7 @@ function Index() {
             </p>
             <div className="animate-fade-up delay-500 mt-10 flex flex-wrap gap-4">
               <a
-                href="https://purdue.ca1.qualtrics.com/jfe/form/SV_1G5FfwJUc1cGJ2m"
+                href={applyUrl("home-hero")}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group inline-flex items-center gap-2.5 bg-gold px-8 py-3.5 text-sm font-semibold text-ink hover:bg-gold-mid transition-colors duration-200"
@@ -258,7 +259,7 @@ function Index() {
           </p>
           <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
             <a
-              href="https://purdue.ca1.qualtrics.com/jfe/form/SV_1G5FfwJUc1cGJ2m"
+              href={applyUrl("home-cta")}
               target="_blank"
               rel="noopener noreferrer"
               className="group inline-flex items-center justify-center gap-2.5 bg-gold px-9 py-4 text-sm font-semibold text-ink hover:bg-gold-mid transition-colors duration-200 cursor-pointer"
