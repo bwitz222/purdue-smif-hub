@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { socialMeta, canonical, OG_ABOUT } from "@/lib/seo";
+import { applyUrl } from "@/lib/apply-url";
 
 const PAGE_TITLE = "About — Purdue SMIF";
 const PAGE_DESCRIPTION = "How the Purdue Student Managed Investment Fund researches, debates, and votes on every real-money position — our history, philosophy, and process.";
