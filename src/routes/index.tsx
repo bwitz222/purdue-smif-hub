@@ -10,7 +10,7 @@ import { getFundStats } from "@/lib/fund-stats.functions";
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import { socialMeta, canonical } from "@/lib/seo";
 
-const HOME_TITLE = "Purdue SMIF — Student Managed Investment Fund";
+const HOME_TITLE = "Purdue SMIF | Student Managed Investment Fund";
 const HOME_DESCRIPTION = "Founded to develop the next generation of investors. The Purdue Student Managed Investment Fund manages real capital across global markets.";
 
 export const Route = createFileRoute("/")({
@@ -49,9 +49,9 @@ function parseStatDisplay(display: string): { prefix: string; value: number; suf
 }
 
 const PILLARS = [
-  { Icon: BarChart3, title: "Investment Research", body: "Bottom-up fundamental analysis across equity sector teams. Every pitch is defended live before the full investment committee — the same rigor as a professional fund." },
-  { Icon: Users, title: "Mentorship & Recruiting", body: "Direct access to Purdue alumni at top investment banks, hedge funds, and asset managers — and structured preparation to compete for those seats." },
-  { Icon: Award, title: "Real Portfolio", body: "Students vote on every position. Performance is benchmarked against the S&P 500 and reported quarterly. No simulations — real capital, real accountability." },
+  { Icon: BarChart3, title: "Investment Research", body: "Bottom-up fundamental analysis across equity sector teams. Every pitch is defended live before the full investment committee, with the same rigor as a professional fund." },
+  { Icon: Users, title: "Mentorship & Recruiting", body: "Direct access to Purdue alumni at investment banks, hedge funds, and asset managers, plus structured preparation to compete for those seats." },
+  { Icon: Award, title: "Real Portfolio", body: "Students vote on every position. Performance is benchmarked against the S&P 500 and reported quarterly. No simulations: real capital, real accountability." },
 ];
 
 function Index() {
@@ -84,7 +84,7 @@ function Index() {
             height={1080}
             fetchPriority="high"
             decoding="async"
-            className="h-full w-full object-cover opacity-30"
+            className="h-full w-full object-cover opacity-30 animate-ken-burns"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-ink/85 via-ink/70 to-ink" />
         </div>
@@ -103,7 +103,7 @@ function Index() {
               Purdue <span className="text-gold">Student</span> Managed<br />Investment Fund
             </h1>
             <p className="animate-fade-up delay-400 mt-8 max-w-xl text-on-dark-primary text-base leading-relaxed">
-              A premier student-run fund managing real capital, delivering rigorous research, and developing the next generation of investment professionals.
+              A student-run fund managing real university capital, built on rigorous research and a disciplined investment process.
             </p>
             <div className="animate-fade-up delay-500 mt-10 flex flex-wrap gap-4">
               <a
@@ -153,7 +153,7 @@ function Index() {
           <div className="grid md:grid-cols-5 gap-16 items-start">
             <Reveal className="md:col-span-3 space-y-5" delay={0.1}>
               <p className="text-background/85 text-lg leading-relaxed">
-                SMIF gives Purdue students the rare opportunity to manage actual investment capital under faculty mentorship. Our analysts apply institutional-grade frameworks to fundamental equity research — building skills that translate directly to careers in asset management, investment banking, and equity research.
+                SMIF gives Purdue students the rare opportunity to manage actual investment capital under faculty mentorship. Our analysts apply institutional-grade frameworks to fundamental equity research, building skills that translate directly to careers in asset management, investment banking, and equity research.
               </p>
               <p className="text-background/75 leading-relaxed">
                 Every semester, analysts pitch positions to the full fund. Accepted ideas enter the real portfolio. Rejected ideas come with feedback that sharpens the next pitch. This is the closest an undergraduate education gets to the actual job.

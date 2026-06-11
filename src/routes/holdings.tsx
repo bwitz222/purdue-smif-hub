@@ -15,10 +15,10 @@ export const Route = createFileRoute("/holdings")({
   component: HoldingsPage,
   head: () => ({
     meta: [
-      { title: "Portfolio Holdings — Purdue SMIF" },
+      { title: "Portfolio Holdings | Purdue SMIF" },
       { name: "description", content: "Current portfolio holdings of the Purdue Student Managed Investment Fund, including positions, allocations, and returns." },
       ...socialMeta({
-        title: "Portfolio Holdings — Purdue SMIF",
+        title: "Portfolio Holdings | Purdue SMIF",
         description: "Live view of SMIF's positions, sector allocations, and returns across the real-money portfolio.",
         url: canonical("/holdings"),
         image: OG_HOLDINGS,
@@ -40,7 +40,7 @@ export const Route = createFileRoute("/holdings")({
             item: {
               "@type": "Thing",
               name: h.symbol,
-              description: `${h.company} — ${h.industry}`,
+              description: `${h.company} (${h.industry})`,
               identifier: h.symbol,
             },
           })),
@@ -239,7 +239,7 @@ function HoldingsPage() {
           </div>
           {quoteData?.cachedAt && (Date.now() - new Date(quoteData.cachedAt).getTime()) > 24 * 60 * 60 * 1000 && (
             <div className="mt-2 text-xs text-muted-foreground italic" role="status">
-              Snapshot is more than 24 hours old — prices may have changed.
+              Snapshot is more than 24 hours old; prices may have changed.
             </div>
           )}
           <p className="mt-5 max-w-2xl text-muted-foreground leading-relaxed">A snapshot of every position held by the Purdue Student Managed Investment Fund, with cost basis, returns, and portfolio weighting.</p>
@@ -250,7 +250,7 @@ function HoldingsPage() {
           <div role="alert" className="border border-loss/40 bg-loss/5 p-4 flex items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-sm text-foreground">
               <AlertCircle className="h-4 w-4 text-loss shrink-0" aria-hidden="true" />
-              <span>Couldn't refresh live prices — showing last reported snapshot.</span>
+              <span>Couldn't refresh live prices. Showing the last reported snapshot.</span>
             </div>
             <button
               onClick={() => refetch()}
@@ -475,7 +475,7 @@ function HoldingsPage() {
             </div>
 
             {/* Desktop: full table */}
-            <div className="hidden md:block overflow-x-auto border border-border"><table className="w-full text-left text-sm"><caption className="sr-only">Portfolio holdings — sortable by column</caption><thead className="bg-ink text-background"><tr>{cols.map((c) => { const ariaSort: "ascending" | "descending" | "none" = sortKey === c.k ? (sortDir === "asc" ? "ascending" : "descending") : "none"; return (<th key={c.k} aria-sort={ariaSort} className={`px-4 py-3 text-xs font-semibold uppercase tracking-[0.14em] whitespace-nowrap ${c.align === "right" ? "text-right" : ""}`}><button onClick={() => toggleSort(c.k)} className={`inline-flex items-center gap-1.5 hover:text-gold transition-colors duration-150 cursor-pointer ${c.align === "right" ? "ml-auto" : ""}`}>{c.label}<SortIcon active={sortKey === c.k} dir={sortDir} /></button></th>); })}</tr></thead><tbody>{rows.map((h, idx) => (<tr key={h.symbol} className={`border-t border-border hover:bg-secondary/50 transition-colors duration-150 ${idx % 2 === 0 ? "" : "bg-secondary/20"}`}><td className="px-4 py-3 font-medium whitespace-nowrap">{h.company}</td><td className="px-4 py-3 font-mono font-bold text-gold-deep tracking-wider">{h.symbol}</td><td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">{h.industry}</td><td className="px-4 py-3 text-right font-mono">{fmtUSD(h.price)}</td><td className="px-4 py-3 text-right font-mono text-muted-foreground">{fmtNum(h.beta)}</td><td className="px-4 py-3 text-right font-mono">{h.shares.toLocaleString()}</td><td className="px-4 py-3 text-right font-mono">{fmtUSD(h.value, { maximumFractionDigits: 0 })}</td><td className={`px-4 py-3 text-right font-mono font-medium ${h.dayChange >= 0 ? "text-gain" : "text-loss"}`}><span className="inline-flex items-center justify-end gap-0.5">{h.dayChange >= 0 ? <ArrowUp className="h-3 w-3" aria-hidden="true" /> : <ArrowDown className="h-3 w-3" aria-hidden="true" />}{fmtPct(h.dayChange)}</span></td><td className={`px-4 py-3 text-right font-mono ${h.totalReturn >= 0 ? "text-gain" : "text-loss"}`}>{fmtUSD(h.totalReturn, { maximumFractionDigits: 0 })}</td><td className={`px-4 py-3 text-right font-mono font-semibold ${h.returnPct >= 0 ? "text-gain" : "text-loss"}`}><span className="inline-flex items-center justify-end gap-0.5">{h.returnPct >= 0 ? <ArrowUp className="h-3 w-3" aria-hidden="true" /> : <ArrowDown className="h-3 w-3" aria-hidden="true" />}{fmtPct(h.returnPct)}</span></td><td className="px-4 py-3 text-right font-mono text-muted-foreground">{h.allocation.toFixed(2)}%</td></tr>))}</tbody><tfoot className="bg-secondary/60 border-t-2 border-ink font-semibold"><tr><td className="px-4 py-4" colSpan={6}>Total · {rows.length} position{rows.length !== 1 ? "s" : ""}</td><td className="px-4 py-4 text-right font-mono">{fmtUSD(rows.reduce((s, r) => s + r.value, 0), { maximumFractionDigits: 0 })}</td><td className="px-4 py-4 text-right font-mono text-muted-foreground">—</td><td className={`px-4 py-4 text-right font-mono ${rows.reduce((s, r) => s + r.totalReturn, 0) >= 0 ? "text-gain" : "text-loss"}`}>{fmtUSD(rows.reduce((s, r) => s + r.totalReturn, 0), { maximumFractionDigits: 0 })}</td><td className="px-4 py-4" /><td className="px-4 py-4 text-right font-mono">{rows.reduce((s, r) => s + r.allocation, 0).toFixed(2)}%</td></tr></tfoot></table></div>
+            <div className="hidden md:block overflow-x-auto border border-border"><table className="w-full text-left text-sm"><caption className="sr-only">Portfolio holdings, sortable by column</caption><thead className="bg-ink text-background"><tr>{cols.map((c) => { const ariaSort: "ascending" | "descending" | "none" = sortKey === c.k ? (sortDir === "asc" ? "ascending" : "descending") : "none"; return (<th key={c.k} aria-sort={ariaSort} className={`px-4 py-3 text-xs font-semibold uppercase tracking-[0.14em] whitespace-nowrap ${c.align === "right" ? "text-right" : ""}`}><button onClick={() => toggleSort(c.k)} className={`inline-flex items-center gap-1.5 hover:text-gold transition-colors duration-150 cursor-pointer ${c.align === "right" ? "ml-auto" : ""}`}>{c.label}<SortIcon active={sortKey === c.k} dir={sortDir} /></button></th>); })}</tr></thead><tbody>{rows.map((h, idx) => (<tr key={h.symbol} className={`border-t border-border hover:bg-secondary/50 transition-colors duration-150 ${idx % 2 === 0 ? "" : "bg-secondary/20"}`}><td className="px-4 py-3 font-medium whitespace-nowrap">{h.company}</td><td className="px-4 py-3 font-mono font-bold text-gold-deep tracking-wider">{h.symbol}</td><td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">{h.industry}</td><td className="px-4 py-3 text-right font-mono">{fmtUSD(h.price)}</td><td className="px-4 py-3 text-right font-mono text-muted-foreground">{fmtNum(h.beta)}</td><td className="px-4 py-3 text-right font-mono">{h.shares.toLocaleString()}</td><td className="px-4 py-3 text-right font-mono">{fmtUSD(h.value, { maximumFractionDigits: 0 })}</td><td className={`px-4 py-3 text-right font-mono font-medium ${h.dayChange >= 0 ? "text-gain" : "text-loss"}`}><span className="inline-flex items-center justify-end gap-0.5">{h.dayChange >= 0 ? <ArrowUp className="h-3 w-3" aria-hidden="true" /> : <ArrowDown className="h-3 w-3" aria-hidden="true" />}{fmtPct(h.dayChange)}</span></td><td className={`px-4 py-3 text-right font-mono ${h.totalReturn >= 0 ? "text-gain" : "text-loss"}`}>{fmtUSD(h.totalReturn, { maximumFractionDigits: 0 })}</td><td className={`px-4 py-3 text-right font-mono font-semibold ${h.returnPct >= 0 ? "text-gain" : "text-loss"}`}><span className="inline-flex items-center justify-end gap-0.5">{h.returnPct >= 0 ? <ArrowUp className="h-3 w-3" aria-hidden="true" /> : <ArrowDown className="h-3 w-3" aria-hidden="true" />}{fmtPct(h.returnPct)}</span></td><td className="px-4 py-3 text-right font-mono text-muted-foreground">{h.allocation.toFixed(2)}%</td></tr>))}</tbody><tfoot className="bg-secondary/60 border-t-2 border-ink font-semibold"><tr><td className="px-4 py-4" colSpan={6}>Total · {rows.length} position{rows.length !== 1 ? "s" : ""}</td><td className="px-4 py-4 text-right font-mono">{fmtUSD(rows.reduce((s, r) => s + r.value, 0), { maximumFractionDigits: 0 })}</td><td className="px-4 py-4 text-right font-mono text-muted-foreground"><span aria-hidden="true">-</span><span className="sr-only">Not applicable</span></td><td className={`px-4 py-4 text-right font-mono ${rows.reduce((s, r) => s + r.totalReturn, 0) >= 0 ? "text-gain" : "text-loss"}`}>{fmtUSD(rows.reduce((s, r) => s + r.totalReturn, 0), { maximumFractionDigits: 0 })}</td><td className="px-4 py-4" /><td className="px-4 py-4 text-right font-mono">{rows.reduce((s, r) => s + r.allocation, 0).toFixed(2)}%</td></tr></tfoot></table></div>
           </>
         )}
       </section>

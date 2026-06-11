@@ -91,6 +91,12 @@
     font-family: var(--font-display);
     letter-spacing: -0.02em;
     line-height: 1.05;
+    text-wrap: balance;
+  }
+  p { text-wrap: pretty; }
+  ::selection {
+    background: var(--gold);
+    color: var(--ink);
   }
   table, .font-mono { font-variant-numeric: tabular-nums; }
   /* Global keyboard-focus indicator */
@@ -161,9 +167,16 @@
     from { transform: scaleX(0); transform-origin: left; }
     to   { transform: scaleX(1); transform-origin: left; }
   }
+  /* Slow drift for hero imagery — paired with an opacity overlay so the
+     scale never reads as zoom-jank. transform-only: no layout cost. */
+  @keyframes ken-burns {
+    from { transform: scale(1); }
+    to   { transform: scale(1.07); }
+  }
   .animate-fade-up   { animation: fade-up   0.72s cubic-bezier(0.22,1,0.36,1) both; }
   .animate-fade-in   { animation: fade-in   0.55s ease both; }
   .animate-expand-x  { animation: expand-x  0.65s cubic-bezier(0.22,1,0.36,1) both; }
+  .animate-ken-burns { animation: ken-burns 24s cubic-bezier(0.22,1,0.36,1) both; }
   .delay-100 { animation-delay: 100ms; }
   .delay-200 { animation-delay: 200ms; }
   .delay-300 { animation-delay: 300ms; }
@@ -177,6 +190,7 @@
     .animate-fade-up,
     .animate-fade-in,
     .animate-expand-x,
+    .animate-ken-burns,
     .ticker-inner { animation: none !important; opacity: 1 !important; }
   }
 }

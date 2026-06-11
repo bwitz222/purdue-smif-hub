@@ -8,16 +8,17 @@ import {
   Tooltip, Legend, ResponsiveContainer, ReferenceLine,
 } from "recharts";
 import { socialMeta, canonical } from "@/lib/seo";
+import { Reveal } from "@/components/Reveal";
 import { getFundPerformance, type PerfRow, type PerfKpis } from "@/lib/fund-performance.functions";
 
 export const Route = createFileRoute("/performance")({
   component: Performance,
   head: () => ({
     meta: [
-      { title: "Performance — Purdue SMIF" },
+      { title: "Performance | Purdue SMIF" },
       { name: "description", content: "Annual and cumulative returns of the Purdue Student Managed Investment Fund benchmarked against the S&P 500." },
       ...socialMeta({
-        title: "Performance & Track Record — Purdue SMIF",
+        title: "Performance & Track Record | Purdue SMIF",
         description: "Annual and cumulative returns of the Purdue SMIF benchmarked against the S&P 500.",
         url: canonical("/performance"),
       }),
@@ -152,7 +153,7 @@ function Performance() {
                 Work in progress
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                This page is being refined. Returns shown are illustrative placeholders pending the next audited reporting cycle — treat them as such until the published annual report goes live.
+                This page is being refined. Returns shown are illustrative placeholders pending the next audited reporting cycle; treat them as such until the published annual report goes live.
               </p>
             </div>
           </div>
@@ -162,7 +163,7 @@ function Performance() {
       <section className="container-prose py-10 space-y-12 pt-14">
 
         {/* ── KPI cards ─────────────────────────────────────────── */}
-        <div className="grid gap-px bg-border md:grid-cols-3">
+        <Reveal className="grid gap-px bg-border md:grid-cols-3">
           {KPI_STATS.map(({ l, v, pos }) => (
             <div key={l} className="bg-card p-8 flex flex-col gap-1 border border-border">
               <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">{l}</div>
@@ -172,10 +173,10 @@ function Performance() {
               </div>
             </div>
           ))}
-        </div>
+        </Reveal>
 
         {/* ── Chart ─────────────────────────────────────────────── */}
-        <div className="border border-border bg-card p-6 md:p-10">
+        <Reveal className="border border-border bg-card p-6 md:p-10" delay={0.08}>
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between mb-8">
             <div>
               <div className="text-xs uppercase tracking-[0.22em] text-muted-foreground mb-2">Interactive</div>
@@ -270,10 +271,10 @@ function Performance() {
               </LineChart>
             </ResponsiveContainer>
           </div>
-        </div>
+        </Reveal>
 
         {/* ── Annual returns table ───────────────────────────────── */}
-        <div className="overflow-hidden border border-border">
+        <Reveal className="overflow-hidden border border-border">
           <table className="w-full text-left">
             <thead className="bg-ink text-background">
               <tr>
@@ -304,7 +305,7 @@ function Performance() {
               })}
             </tbody>
           </table>
-        </div>
+        </Reveal>
 
         <p className="text-xs text-muted-foreground max-w-3xl pb-8">
           Past performance does not guarantee future results.{allAudited ? "" : " Figures shown for illustrative purposes;"} consult the latest annual report for audited returns.

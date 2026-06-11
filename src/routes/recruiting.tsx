@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ArrowRight, Calendar, MapPin, Clock, Download } from "lucide-react";
+import { ArrowRight, Calendar, CalendarPlus, MapPin, Clock, Download } from "lucide-react";
 import { useEffect, useState } from "react";
 import { socialMeta, canonical, OG_RECRUITING } from "@/lib/seo";
 
@@ -43,12 +43,12 @@ function Countdown() {
       <div className="text-xs font-semibold uppercase tracking-[0.3em] text-gold">
         {c?.expired ? "Applications Closed" : "Deadline Countdown"}
       </div>
-      <div className="mt-1 text-sm text-on-dark-secondary">September 4th, 2026 · 11:59pm EST</div>
+      <div className="mt-1 text-sm text-on-dark-secondary">September 4th, 2026 · 11:59 PM ET</div>
       <div className="mt-5 flex flex-wrap gap-3">
-        <CountdownUnit value={c ? c.days : "—"} label="Days" />
-        <CountdownUnit value={c ? pad(c.hours) : "—"} label="Hours" />
-        <CountdownUnit value={c ? pad(c.minutes) : "—"} label="Minutes" />
-        <CountdownUnit value={c ? pad(c.seconds) : "—"} label="Seconds" />
+        <CountdownUnit value={c ? c.days : "00"} label="Days" />
+        <CountdownUnit value={c ? pad(c.hours) : "00"} label="Hours" />
+        <CountdownUnit value={c ? pad(c.minutes) : "00"} label="Minutes" />
+        <CountdownUnit value={c ? pad(c.seconds) : "00"} label="Seconds" />
       </div>
     </div>
   );
@@ -64,16 +64,16 @@ type Event = {
 };
 
 const CALENDAR: Event[] = [
-  { iso: "2026-08-22", date: "Sat, Aug 22", name: "B-Involved Fair",          time: "12:00 – 3:00 PM",  location: "Memorial Mall (TBD)" },
-  { iso: "2026-08-25", date: "Tue, Aug 25", name: "SMIF Callout 1",            time: "7:30 – 8:30 PM",   location: "Rawls 1086" },
-  { iso: "2026-08-26", date: "Wed, Aug 26", name: "SMIF Coffee Chats 1",       time: "7:15 – 8:00 PM",   location: "Rawls 1011" },
-  { iso: "2026-08-27", date: "Thu, Aug 27", name: "Daniels Club Expo",         time: "12:00 – 4:00 PM",  location: "Rawls Atrium" },
-  { iso: "2026-08-27", date: "Thu, Aug 27", name: "SMIF Callout 2",            time: "7:30 – 8:30 PM",   location: "Rawls 1086" },
-  { iso: "2026-08-31", date: "Mon, Aug 31", name: "SMIF Finance Club Consortium", time: "12:00 – 2:30 PM", location: "Rawls Atrium" },
-  { iso: "2026-08-31", date: "Mon, Aug 31", name: "SMIF Coffee Chats 2",       time: "7:00 – 8:00 PM",   location: "Rawls 1086" },
-  { iso: "2026-09-01", date: "Tue, Sep 1",  name: "SMIF Callout 3",            time: "7:30 – 8:30 PM",   location: "Rawls 1086" },
-  { iso: "2026-09-08", date: "Mon, Sep 8",  name: "SMIF Interviews – A",       time: "TBD",              location: "Young Hall 223, 217, 219, 213" },
-  { iso: "2026-09-09", date: "Tue, Sep 9",  name: "SMIF Interviews – B",       time: "TBD",              location: "Young Hall 223, 217, 219, 213" },
+  { iso: "2026-08-22", date: "Sat, Aug 22", name: "B-Involved Fair",          time: "12:00 - 3:00 PM",  location: "Memorial Mall (TBD)" },
+  { iso: "2026-08-25", date: "Tue, Aug 25", name: "SMIF Callout 1",            time: "7:30 - 8:30 PM",   location: "Rawls 1086" },
+  { iso: "2026-08-26", date: "Wed, Aug 26", name: "SMIF Coffee Chats 1",       time: "7:15 - 8:00 PM",   location: "Rawls 1011" },
+  { iso: "2026-08-27", date: "Thu, Aug 27", name: "Daniels Club Expo",         time: "12:00 - 4:00 PM",  location: "Rawls Atrium" },
+  { iso: "2026-08-27", date: "Thu, Aug 27", name: "SMIF Callout 2",            time: "7:30 - 8:30 PM",   location: "Rawls 1086" },
+  { iso: "2026-08-31", date: "Mon, Aug 31", name: "SMIF Finance Club Consortium", time: "12:00 - 2:30 PM", location: "Rawls Atrium" },
+  { iso: "2026-08-31", date: "Mon, Aug 31", name: "SMIF Coffee Chats 2",       time: "7:00 - 8:00 PM",   location: "Rawls 1086" },
+  { iso: "2026-09-01", date: "Tue, Sep 1",  name: "SMIF Callout 3",            time: "7:30 - 8:30 PM",   location: "Rawls 1086" },
+  { iso: "2026-09-08", date: "Mon, Sep 8",  name: "SMIF Interviews, Day A",    time: "TBD",              location: "Young Hall 223, 217, 219, 213" },
+  { iso: "2026-09-09", date: "Tue, Sep 9",  name: "SMIF Interviews, Day B",    time: "TBD",              location: "Young Hall 223, 217, 219, 213" },
 ];
 
 // Parse "7:30 PM" / "12:00 PM" — returns { h, m } in 24h, or null
@@ -88,12 +88,14 @@ function parseTimeToken(t: string): { h: number; m: number } | null {
   return { h, m };
 }
 
-// Parse event.time like "7:30 – 8:30 PM" or "12:00 – 3:00 PM" — meridiem from end token applies to start if missing
+// Parse event.time like "7:30 - 8:30 PM" or "12:00 - 3:00 PM" — meridiem from end token applies to start if missing
 function parseEventTimes(time: string): { start: { h: number; m: number }; end: { h: number; m: number } } {
   if (time === "TBD") {
     return { start: { h: 17, m: 0 }, end: { h: 18, m: 0 } };
   }
-  const parts = time.split("–").map((s) => s.trim());
+  // Accept hyphen or en-dash range separators (surrounded by spaces so
+  // clock values like "7:30" are never split).
+  const parts = time.split(/\s+[–-]\s+/).map((s) => s.trim());
   if (parts.length !== 2) return { start: { h: 17, m: 0 }, end: { h: 18, m: 0 } };
   let [startStr, endStr] = parts;
   // If start lacks meridiem, inherit from end
@@ -111,7 +113,7 @@ function pad2(n: number) { return String(n).padStart(2, "0"); }
 // Returns "2026-08-25T19:30:00-04:00" (EDT for Aug/Sep 2026)
 function buildEventBody(event: Event): string {
   const prefix = event.time === "TBD"
-    ? "⚠ Time TBD — your specific interview slot will be communicated by email. Update this event when you receive your slot.\n\n"
+    ? "Note: time TBD. Your specific interview slot will be communicated by email. Update this event when you receive your slot.\n\n"
     : "";
   return `${prefix}Purdue SMIF recruiting event.\n\nLocation: ${event.location}\nRecruiting page: https://purduesmif.org/recruiting\nQuestions: smif26@purdue.edu`;
 }
@@ -143,7 +145,7 @@ function generateICS(events: Event[] = CALENDAR): string {
     "PRODID:-//Purdue SMIF//Recruiting Fall 2026//EN",
     "CALSCALE:GREGORIAN",
     "METHOD:PUBLISH",
-    "X-WR-CALNAME:Purdue SMIF Recruiting — Fall 2026",
+    "X-WR-CALNAME:Purdue SMIF Recruiting - Fall 2026",
     "X-WR-TIMEZONE:America/New_York",
   ];
   for (const e of events) {
@@ -199,16 +201,47 @@ export const Route = createFileRoute("/recruiting")({
   component: Recruiting,
   head: () => ({
     meta: [
-      { title: "Recruiting — Purdue SMIF" },
-      { name: "description", content: "Recruiting calendar and interview prep guide for the Purdue Student Managed Investment Fund — callouts, coffee chats, and interviews." },
+      { title: "Recruiting | Purdue SMIF" },
+      { name: "description", content: "Recruiting calendar and interview prep guide for the Purdue Student Managed Investment Fund: callouts, coffee chats, and interviews." },
       ...socialMeta({
-        title: "Recruiting Calendar & Interview Prep — Purdue SMIF",
+        title: "Recruiting Calendar & Interview Prep | Purdue SMIF",
         description: "Callouts, coffee chats, interviews, and a behavioral + technical interview prep guide for joining Purdue SMIF.",
         url: canonical("/recruiting"),
         image: OG_RECRUITING,
       }),
     ],
     links: [{ rel: "canonical", href: canonical("/recruiting") }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify(
+          CALENDAR.map((e) => {
+            const { start, end } = parseEventTimes(e.time);
+            return {
+              "@context": "https://schema.org",
+              "@type": "Event",
+              name: `Purdue SMIF: ${e.name}`,
+              startDate: `${e.iso}T${pad2(start.h)}:${pad2(start.m)}:00-04:00`,
+              endDate: `${e.iso}T${pad2(end.h)}:${pad2(end.m)}:00-04:00`,
+              eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+              eventStatus: "https://schema.org/EventScheduled",
+              location: {
+                "@type": "Place",
+                name: e.location,
+                address: {
+                  "@type": "PostalAddress",
+                  addressLocality: "West Lafayette",
+                  addressRegion: "IN",
+                  addressCountry: "US",
+                },
+              },
+              organizer: { "@id": "https://purduesmif.org/#organization" },
+              url: "https://purduesmif.org/recruiting",
+            };
+          }),
+        ),
+      },
+    ],
   }),
 });
 
@@ -261,6 +294,10 @@ function Recruiting() {
           </span>
         </div>
 
+        <p className="mt-4 text-sm text-muted-foreground">
+          Select any event to open it prefilled in Google Calendar, or download the full schedule below.
+        </p>
+
         <div className="mt-6">
           <button
             type="button"
@@ -282,15 +319,21 @@ function Recruiting() {
                 href={toGoogleCalendarLink(e)}
                 target="_blank"
                 rel="noopener noreferrer"
-                title={isPast ? "Add to Google Calendar (past event)" : "Add to Google Calendar — opens prefilled"}
-                className={`w-full text-left grid grid-cols-12 gap-4 py-5 transition hover:bg-secondary/40 px-2 -mx-2 cursor-pointer ${isPast ? "opacity-50" : ""}`}
+                aria-label={`Add ${e.name} on ${e.date} to Google Calendar (opens in new tab)`}
+                className={`group w-full text-left grid grid-cols-12 gap-4 py-5 transition hover:bg-secondary/40 px-2 -mx-2 cursor-pointer ${isPast ? "opacity-50" : ""}`}
               >
                 <div className="col-span-12 md:col-span-2 flex items-center gap-2 text-sm font-semibold text-foreground">
                   <Calendar className="h-3.5 w-3.5 text-gold-deep" />
                   {e.date}
                 </div>
                 <div className="col-span-12 md:col-span-5 font-display text-lg font-bold">
-                  {e.name}
+                  <span className="inline-flex items-center gap-2">
+                    {e.name}
+                    <CalendarPlus
+                      aria-hidden="true"
+                      className="h-4 w-4 shrink-0 text-muted-foreground/60 transition-colors duration-200 group-hover:text-gold-deep"
+                    />
+                  </span>
                   {isPast && (
                     <span className="ml-2 inline-block px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider bg-muted text-muted-foreground border border-border">
                       Past
@@ -322,10 +365,9 @@ function Recruiting() {
       {/* Prep Guide */}
       <section id="prep" className="border-t border-border bg-secondary/40">
         <div className="container-prose py-20">
-          <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">Interview Guide</span>
-          <h2 className="mt-3 font-display text-3xl font-bold md:text-4xl">Tips & Tricks to Prep</h2>
+          <h2 className="font-display text-3xl font-bold md:text-4xl">Tips & Tricks to Prep</h2>
           <p className="mt-4 max-w-3xl text-muted-foreground">
-            We recruit for curiosity, work ethic, and intellectual honesty — not pedigree. A finance background helps, but we've taken students from every major. Use the guide below to walk in confident and prepared.
+            We recruit for curiosity, work ethic, and intellectual honesty, not pedigree. A finance background helps, but we've taken students from every major. Use the guide below to walk in confident and prepared.
           </p>
 
           {/* Behavioral */}
@@ -344,16 +386,16 @@ function Recruiting() {
                 title="Know Your 'Why'"
                 items={[
                   "Why finance? Why investing? Why SMIF specifically?",
-                  "Tie answers to specific experiences — a class, a book, a market event — not buzzwords.",
+                  "Tie answers to specific experiences (a class, a book, a market event), not buzzwords.",
                   "Have a thoughtful answer for 'why this sector' if asked.",
                 ]}
               />
               <PrepCard
                 title="STAR Stories"
                 items={[
-                  "Prepare 3–4 stories: leadership, teamwork, conflict, failure.",
+                  "Prepare 3-4 stories: leadership, teamwork, conflict, failure.",
                   "Situation → Task → Action → Result. Keep each story to ~90 seconds.",
-                  "Reuse stories across questions — depth beats breadth.",
+                  "Reuse stories across questions; depth beats breadth.",
                 ]}
               />
               <PrepCard
@@ -367,7 +409,7 @@ function Recruiting() {
               <PrepCard
                 title="Ask Sharp Questions"
                 items={[
-                  "Always have 2–3 questions ready for your interviewers.",
+                  "Always have 2-3 questions ready for your interviewers.",
                   "Avoid questions answered on the website. Ask about their experience, not logistics.",
                   "Good prompt: 'What's a position you pushed back on in committee and why?'",
                 ]}
@@ -391,7 +433,7 @@ function Recruiting() {
                 title="Accounting Foundations"
                 items={[
                   "Walk through the three financial statements and how they link.",
-                  "Depreciation +$10 — walk through impact on IS, CF, and BS (after taxes).",
+                  "Depreciation +$10: walk through the impact on IS, CF, and BS (after taxes).",
                   "Know the difference between EBITDA, operating income, and net income.",
                 ]}
               />
@@ -400,7 +442,7 @@ function Recruiting() {
                 items={[
                   "Understand the big picture: a company is worth the present value of its future cash flows.",
                   "Learn the three main approaches: DCF (intrinsic), comparables (relative), and precedent transactions.",
-                  "Start with P/E and EV/EBITDA — know what they measure and when each is useful.",
+                  "Start with P/E and EV/EBITDA: know what they measure and when each is useful.",
                 ]}
               />
               <PrepCard
@@ -414,8 +456,8 @@ function Recruiting() {
               <PrepCard
                 title="Stock Pitch"
                 items={[
-                  "Prepare one long idea: thesis, 2–3 catalysts, valuation, and key risks.",
-                  "Pick a name you genuinely understand — not the most complex one you can find.",
+                  "Prepare one long idea: thesis, 2-3 catalysts, valuation, and key risks.",
+                  "Pick a name you genuinely understand, not the most complex one you can find.",
                   "Structure: 'I'd buy X at $Y because… Catalysts are… Valuation supports… Risks are…'",
                 ]}
               />
@@ -425,25 +467,25 @@ function Recruiting() {
           {/* Day-of */}
           <div className="mt-14 border border-gold/30 bg-background p-6 md:p-8">
             <h3 className="font-display text-xl font-bold">Day-Of Checklist</h3>
-            <ul className="mt-4 grid gap-2 text-sm text-muted-foreground md:grid-cols-2">
-              <li>• Business professional dress — suit and tie / equivalent.</li>
-              <li>• Arrive 10 minutes early. Silence your phone.</li>
-              <li>• Bring printed copies of your resume and a notepad.</li>
-              <li>• Know your resume cold — anything on it is fair game.</li>
-              <li>• Firm handshake, eye contact, and smile.</li>
-              <li>• Be yourself — we evaluate fit as much as skill.</li>
+            <ul className="mt-4 grid gap-2 text-sm text-muted-foreground md:grid-cols-2 list-disc pl-5 marker:text-gold-deep">
+              <li>Business professional dress: suit and tie or equivalent.</li>
+              <li>Arrive 10 minutes early. Silence your phone.</li>
+              <li>Bring printed copies of your resume and a notepad.</li>
+              <li>Know your resume cold; anything on it is fair game.</li>
+              <li>Firm handshake, eye contact, and smile.</li>
+              <li>Be yourself. We evaluate fit as much as skill.</li>
             </ul>
           </div>
 
           {/* Reading list */}
           <div className="mt-10 border border-border bg-background p-6 md:p-8">
             <h3 className="font-display text-xl font-bold">Recommended Reading</h3>
-            <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
-              <li>• <span className="font-medium text-foreground">The Intelligent Investor</span> — Benjamin Graham · foundational value investing</li>
-              <li>• <span className="font-medium text-foreground">One Up On Wall Street</span> — Peter Lynch · intuitive intro to stock picking</li>
-              <li>• <span className="font-medium text-foreground">Investment Banking</span> — Rosenbaum &amp; Pearl · valuation reference</li>
-              <li>• <span className="font-medium text-foreground">Damodaran Online</span> — free valuation resources from NYU Stern</li>
-              <li>• <span className="font-medium text-foreground">Money Stuff</span> — Matt Levine's daily Bloomberg newsletter</li>
+            <ul className="mt-4 space-y-2 text-sm text-muted-foreground list-disc pl-5 marker:text-gold-deep">
+              <li><span className="font-medium text-foreground">The Intelligent Investor</span>, Benjamin Graham: foundational value investing.</li>
+              <li><span className="font-medium text-foreground">One Up On Wall Street</span>, Peter Lynch: intuitive intro to stock picking.</li>
+              <li><span className="font-medium text-foreground">Investment Banking</span>, Rosenbaum &amp; Pearl: valuation reference.</li>
+              <li><span className="font-medium text-foreground">Damodaran Online</span>: free valuation resources from NYU Stern.</li>
+              <li><span className="font-medium text-foreground">Money Stuff</span>: Matt Levine's daily Bloomberg newsletter.</li>
             </ul>
           </div>
 

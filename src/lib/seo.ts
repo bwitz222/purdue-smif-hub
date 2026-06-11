@@ -9,7 +9,7 @@ export const OG_ABOUT = `${SITE_URL}/og-about.jpg`;
 export const OG_RECRUITING = `${SITE_URL}/og-recruiting.jpg`;
 export const OG_IMAGE_WIDTH = "1216";
 export const OG_IMAGE_HEIGHT = "640";
-export const OG_IMAGE_ALT = "Purdue SMIF — Student Managed Investment Fund";
+export const OG_IMAGE_ALT = "Purdue SMIF | Student Managed Investment Fund";
 
 export const canonical = (path: string) => `${SITE_URL}${path}`;
 

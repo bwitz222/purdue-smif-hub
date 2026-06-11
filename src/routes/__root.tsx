@@ -54,7 +54,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Purdue Student Managed Investment Fund" },
-      { name: "description", content: "The Purdue Student Managed Investment Fund — The premier student-run investment fund at the Mitch Daniels School of Business." },
+      { name: "description", content: "The Purdue Student Managed Investment Fund: a student-run fund at the Mitch Daniels School of Business managing real university capital since 2009." },
       { name: "author", content: "Purdue SMIF" },
       { name: "theme-color", content: "#0E0E0E" },
       { property: "og:site_name", content: "Purdue SMIF" },
@@ -66,7 +66,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     links: [
       { rel: "stylesheet", href: appCss },
       { rel: "icon", href: "/favicon.ico" },
-      { rel: "apple-touch-icon", href: "/favicon.ico" },
+      { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "dns-prefetch", href: "https://gnmwcihxtytlaesuvuqg.supabase.co" },
@@ -90,7 +90,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
               email: "smif26@purdue.edu",
               foundingDate: "2009",
               slogan: "Real capital. Real research. Real outcomes.",
-              description: "The premier student-run investment fund at the Mitch Daniels School of Business, Purdue University — managing real capital across global markets since 2009.",
+              description: "A student-run investment fund at the Mitch Daniels School of Business, Purdue University, managing real capital across global markets since 2009.",
               parentOrganization: {
                 "@type": "CollegeOrUniversity",
                 name: "Daniels School of Business, Purdue University",
