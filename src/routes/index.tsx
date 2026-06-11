@@ -10,8 +10,8 @@ import { getFundStats } from "@/lib/fund-stats.functions";
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import { socialMeta, canonical } from "@/lib/seo";
 
-const HOME_TITLE = "Purdue SMIF | Student Managed Investment Fund";
-const HOME_DESCRIPTION = "Founded to develop the next generation of investors. The Purdue Student Managed Investment Fund manages real capital across global markets.";
+const HOME_TITLE = "Purdue SMIF | Purdue Student Managed Investment Fund & Investment Club";
+const HOME_DESCRIPTION = "Purdue SMIF is Purdue's premier student investment fund, investment club, and finance club. The Purdue Student Managed Investment Fund manages real capital across global markets at the Daniels School of Business.";
 
 export const Route = createFileRoute("/")({
   component: Index,
