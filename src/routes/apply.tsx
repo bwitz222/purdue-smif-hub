@@ -17,8 +17,8 @@ export const Route = createFileRoute("/apply")({
   component: Apply,
   head: () => ({
     meta: [
-      { title: "Apply — Purdue SMIF" },
-      { name: "description", content: "Apply to join the Purdue Student Managed Investment Fund — application portal, what we look for, timeline, and FAQ." },
+      { title: "Apply | Purdue SMIF" },
+      { name: "description", content: "Apply to join the Purdue Student Managed Investment Fund: application portal, what we look for, timeline, and FAQ." },
       ...socialMeta({
         title: "Apply to Join Purdue SMIF",
         description: "Application portal, what we look for, timeline, and FAQ for joining the Purdue Student Managed Investment Fund.",
@@ -27,6 +27,20 @@ export const Route = createFileRoute("/apply")({
       }),
     ],
     links: [{ rel: "canonical", href: canonical("/apply") }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: FAQ.map((f) => ({
+            "@type": "Question",
+            name: f.q,
+            acceptedAnswer: { "@type": "Answer", text: f.a },
+          })),
+        }),
+      },
+    ],
   }),
 });
 
@@ -34,7 +48,7 @@ const LOOKING_FOR = [
   {
     Icon: BookOpen,
     title: "Intellectual curiosity",
-    body: "We want students who read 10-Ks for fun and can defend a thesis under pressure. Major doesn't matter — engineering, finance, ag econ, CS, liberal arts.",
+    body: "We want students who read 10-Ks for fun and can defend a thesis under pressure. Major doesn't matter: engineering, finance, ag econ, CS, liberal arts.",
   },
   {
     Icon: Users,
@@ -62,7 +76,7 @@ const FAQ = [
   },
   {
     q: "What's the time commitment?",
-    a: "Plan on ~6 hours per week — one full fund meeting, one sector team meeting, plus independent research. Sector leads and PMs invest more.",
+    a: "Plan on ~6 hours per week: one full fund meeting, one sector team meeting, plus independent research. Sector leads and PMs invest more.",
   },
   {
     q: "Is SMIF only for finance majors?",
@@ -70,7 +84,7 @@ const FAQ = [
   },
   {
     q: "How competitive is the application?",
-    a: "We typically receive 100–150 applications per recruiting cycle and accept 15–25 analysts. Pre-recruiting events matter — attendance signals fit.",
+    a: "We typically receive 100-150 applications per recruiting cycle and accept 15-25 analysts. Pre-recruiting events matter; attendance signals fit.",
   },
   {
     q: "Can freshmen apply?",
@@ -89,9 +103,9 @@ function Apply() {
       <section className="bg-ink text-background">
         <div className="container-prose py-28 max-w-3xl">
           <Reveal>
-            <span className="text-xs font-semibold uppercase tracking-[0.28em] text-gold">Apply</span>
+            <span className="rule-gold mb-6" />
             <h1
-              className="mt-4 font-display text-5xl font-bold md:text-6xl"
+              className="font-display text-5xl font-bold md:text-6xl"
               style={{ lineHeight: "1.02" }}
             >
               We can't wait<br />to meet you.
@@ -134,9 +148,6 @@ function Apply() {
       <section className="bg-secondary/40 border-t border-border py-28">
         <div className="container-prose">
           <Reveal className="max-w-2xl mb-14">
-            <span className="text-xs font-semibold uppercase tracking-[0.32em] text-gold-deep block mb-4">
-              Process
-            </span>
             <h2 className="font-display font-bold text-ink" style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>
               Four steps,<br />about three weeks.
             </h2>
@@ -160,9 +171,6 @@ function Apply() {
         <div className="container-prose max-w-3xl">
           <Reveal className="mb-12">
             <span className="rule-gold mb-5 block" />
-            <span className="text-xs font-semibold uppercase tracking-[0.32em] text-gold-deep block mb-4">
-              FAQ
-            </span>
             <h2 className="font-display font-bold text-ink" style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>
               Questions, answered.
             </h2>

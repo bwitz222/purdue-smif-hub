@@ -4,6 +4,7 @@ import { useReducedMotion } from "framer-motion";
 import { Search, X } from "lucide-react";
 import { MemberCard, type Member } from "@/components/MemberCard";
 import { MemberDetailSheet } from "@/components/MemberDetailSheet";
+import { RevealGroup, RevealItem } from "@/components/Reveal";
 import { board, sectorTeams, fixedIncomeMacro, portfolioManagers } from "@/data/team";
 import { socialMeta, canonical, OG_TEAM } from "@/lib/seo";
 import {
@@ -29,11 +30,11 @@ export const Route = createFileRoute("/team")({
   }),
   head: () => ({
     meta: [
-      { title: "Team — Purdue SMIF" },
+      { title: "Team | Purdue SMIF" },
       { name: "description", content: "Meet the executive board, sector teams, fixed income & macro team, and portfolio managers of the Purdue Student Managed Investment Fund." },
       ...socialMeta({
-        title: "Meet the Team — Purdue SMIF",
-        description: "The 52 students behind Purdue SMIF — executive board, sector analysts, fixed income & macro, and portfolio managers.",
+        title: "Meet the Team | Purdue SMIF",
+        description: "The 52 students behind Purdue SMIF: executive board, sector analysts, fixed income & macro, and portfolio managers.",
         url: canonical("/team"),
         image: OG_TEAM,
       }),
@@ -189,7 +190,7 @@ function Team() {
             The people behind the portfolio.
           </h1>
           <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
-            {totalMembers} students. Executive board members also serve as sector leads or senior analysts across the eight sector teams, the Fixed Income &amp; Macro group, and the Portfolio + Risk Management team &mdash; all working together to manage real capital for Purdue.
+            {totalMembers} students working together to manage real capital for Purdue. Executive board members also serve as sector leads or senior analysts across the eight sector teams, the Fixed Income &amp; Macro group, and the Portfolio + Risk Management team.
           </p>
           <div className="mt-10 grid grid-cols-2 gap-6 md:grid-cols-4 max-w-3xl">
             {[
@@ -198,9 +199,9 @@ function Team() {
               ["1", "Fixed Income & Macro"],
               ["1", "Portfolio + Risk Mgmt."],
             ].map(([n, l]) => (
-              <div key={l} className="border-l-2 border-gold pl-4">
+              <div key={l} className="border-t-2 border-gold pt-3">
                 <div className="font-display text-3xl font-bold">{n}</div>
-                <div className="text-xs uppercase tracking-wider text-muted-foreground">{l}</div>
+                <div className="text-xs uppercase tracking-wider text-muted-foreground mt-1">{l}</div>
               </div>
             ))}
           </div>
@@ -281,9 +282,9 @@ function Team() {
             blurb="Seven students elected each spring to lead the fund's strategy, research, risk, recruiting, education, and operations."
             count={hasFilter ? filteredBoard.length : undefined}
           />
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {filteredBoard.map((m) => <MemberCard key={m.name} m={m} variant="board" onSelect={setSelected} />)}
-          </div>
+          <RevealGroup className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" stagger={0.06}>
+            {filteredBoard.map((m) => <RevealItem key={m.name} className="h-full [&>div]:h-full"><MemberCard m={m} variant="board" onSelect={setSelected} /></RevealItem>)}
+          </RevealGroup>
         </section>
       )}
 
@@ -308,9 +309,9 @@ function Team() {
                       {team.members.length} {team.members.length === 1 ? "member" : "members"}
                     </span>
                   </div>
-                  <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                    {team.members.map((m) => <MemberCard key={m.name} m={m} onSelect={setSelected} />)}
-                  </div>
+                  <RevealGroup className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" stagger={0.05}>
+                    {team.members.map((m) => <RevealItem key={m.name} className="h-full [&>div]:h-full"><MemberCard m={m} onSelect={setSelected} /></RevealItem>)}
+                  </RevealGroup>
                 </div>
               ))}
             </div>
@@ -323,12 +324,12 @@ function Team() {
           <SectionHeader
             kicker="Cross-Asset"
             title="Fixed Income & Macro Team"
-            blurb="Covers rates, credit, FX, and global macro themes — informing both the fixed income sleeve and the equity portfolio's macro overlay."
+            blurb="Covers rates, credit, FX, and global macro themes, informing both the fixed income sleeve and the equity portfolio's macro overlay."
             count={hasFilter ? filteredFim.length : undefined}
           />
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {filteredFim.map((m) => <MemberCard key={m.name} m={m} onSelect={setSelected} />)}
-          </div>
+          <RevealGroup className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" stagger={0.06}>
+            {filteredFim.map((m) => <RevealItem key={m.name} className="h-full [&>div]:h-full"><MemberCard m={m} onSelect={setSelected} /></RevealItem>)}
+          </RevealGroup>
         </section>
       )}
 
@@ -341,9 +342,9 @@ function Team() {
               blurb="Implement allocation decisions, monitor portfolio risk, manage trading and rebalancing, and own performance attribution."
               count={hasFilter ? filteredPm.length : undefined}
             />
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {filteredPm.map((m) => <MemberCard key={m.name} m={m} onSelect={setSelected} />)}
-            </div>
+            <RevealGroup className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" stagger={0.06}>
+              {filteredPm.map((m) => <RevealItem key={m.name} className="h-full [&>div]:h-full"><MemberCard m={m} onSelect={setSelected} /></RevealItem>)}
+            </RevealGroup>
           </div>
         </section>
       )}
@@ -356,7 +357,7 @@ function Team() {
           <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold/80">Mentorship</span>
           <h2 className="mt-3 font-display text-3xl font-bold">Faculty Advisor</h2>
           <p className="mt-4 max-w-2xl text-background/70">
-            SMIF benefits from the mentorship of finance faculty at the Daniels School of Business, who provide guidance on strategy, governance, and professional development &mdash; and ensure continuity year over year.
+            SMIF benefits from the mentorship of finance faculty at the Daniels School of Business, who provide guidance on strategy, governance, and professional development, and ensure continuity year over year.
           </p>
         </div>
       </section>

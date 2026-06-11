@@ -12,28 +12,28 @@ const APPLICATION_URL = applyUrl("learn-cta");
 
 const EXAMPLES = [
   {
-    title: "DCF Model — Amazon (AMZN)",
+    title: "DCF Model: Amazon (AMZN)",
     note: "A worked discounted cash flow on Amazon. Drivers, WACC build, terminal value, and a sensitivity table. Use it as a reference for structure and formatting.",
     href: dcfAmzn.url,
     filename: "DCF-Model-AMZN.xlsx",
     kind: "Excel · DCF",
   },
   {
-    title: "One-Page Thesis — Amazon (AMZN)",
+    title: "One-Page Thesis: Amazon (AMZN)",
     note: "A one-page investment thesis on Amazon. Shows how to frame the setup, catalysts, valuation, and risks in the format we pitch in fund meetings.",
     href: amznThesis.url,
     filename: "AMZN-Investment-Thesis-SMIF.docx",
     kind: "Word · Thesis memo",
   },
   {
-    title: "Comparable Company Analysis — Amazon (AMZN)",
+    title: "Comparable Company Analysis: Amazon (AMZN)",
     note: "A trading comps set for Amazon. Peer selection, calendarized metrics, and EV/Revenue, EV/EBITDA, and P/E multiples to triangulate valuation alongside the DCF.",
     href: amznCca.url,
     filename: "AMZN-Comparable-Company-Analysis-SMIF.xlsx",
     kind: "Excel · Comps",
   },
   {
-    title: "CCA Commentary — Amazon (AMZN)",
+    title: "CCA Commentary: Amazon (AMZN)",
     note: "Written commentary that pairs with the AMZN comps. Explains peer choice, multiple selection, and how to read the implied valuation range.",
     href: amznCcaCommentary.url,
     filename: "AMZN-CCA-Commentary-SMIF.docx",
@@ -46,14 +46,14 @@ export const Route = createFileRoute("/learn")({
   component: Learn,
   head: () => ({
     meta: [
-      { title: "Learn — Purdue SMIF" },
+      { title: "Learn | Purdue SMIF" },
       {
         name: "description",
         content:
-          "The Purdue SMIF education hub — analyst training curriculum, reading list, research tools, and a glossary of investing terms.",
+          "The Purdue SMIF education hub: analyst training curriculum, reading list, research tools, and a glossary of investing terms.",
       },
       ...socialMeta({
-        title: "Learn — Purdue SMIF",
+        title: "Learn | Purdue SMIF",
         description:
           "Analyst training, course companion material, reading list, tools, and a glossary for serious students of investing.",
         url: canonical("/learn"),

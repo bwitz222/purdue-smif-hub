@@ -119,22 +119,22 @@ export const sectorTeams = [
 ];
 
 export const fixedIncomeMacro: Member[] = make("Fixed Income & Macro", [
-  ["Andrew Lacambra", "Head — Fixed Income & Macro", "alacambr@purdue.edu", "2027"],
-  ["Keren Wadhwani", "Senior Analyst — Rates", "kwadhwan@purdue.edu", "2028"],
-  ["Aditya Balaji", "Analyst — Credit", "balaji57@purdue.edu", "2028"],
-  ["Balthazar Schmit", "Analyst — FX & Macro", "bschm@purdue.edu", "2028"],
+  ["Andrew Lacambra", "Head, Fixed Income & Macro", "alacambr@purdue.edu", "2027"],
+  ["Keren Wadhwani", "Senior Analyst, Rates", "kwadhwan@purdue.edu", "2028"],
+  ["Aditya Balaji", "Analyst, Credit", "balaji57@purdue.edu", "2028"],
+  ["Balthazar Schmit", "Analyst, FX & Macro", "bschm@purdue.edu", "2028"],
 ]).map((m) => (m.name === "Andrew Lacambra" ? { ...m, photo: andrewLacambraPhoto } : m));
 
 export const portfolioManagers: Member[] = make("Portfolio + Risk Management", [
   ["Hunter Specht", "Lead Portfolio Manager", "hspecht@purdue.edu", "2027"],
   ["Sandhya Gopinath", "Portfolio Manager", "gopinas@purdue.edu", "2028"],
-  ["Yashita Pujari", "Portfolio Manager — Risk", "ypujari@purdue.edu", "2028"],
-  ["Anushka Patel", "Portfolio Manager — Performance", "pate3115@purdue.edu", "2029"],
-  ["Abhipsa Prajapati", "Portfolio Manager — Trading", "aprajap@purdue.edu", "2029"],
+  ["Yashita Pujari", "Portfolio Manager, Risk", "ypujari@purdue.edu", "2028"],
+  ["Anushka Patel", "Portfolio Manager, Performance", "pate3115@purdue.edu", "2029"],
+  ["Abhipsa Prajapati", "Portfolio Manager, Trading", "aprajap@purdue.edu", "2029"],
   ["", "Risk Analyst"],
 ]);
 
-// LinkedIn profiles — keyed by name, applied across board, sector teams, FIM, and PM groups.
+// LinkedIn profiles, keyed by name, applied across board, sector teams, FIM, and PM groups.
 const LINKEDIN_BY_NAME: Record<string, string> = {
   "Gabriel Fridman": "https://www.linkedin.com/in/gabriel-fridman-a5732b242",
   "Fabian Segura Vargas": "https://www.linkedin.com/in/fabianseguravargas",

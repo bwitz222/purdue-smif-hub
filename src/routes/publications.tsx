@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { FileText, Download, ExternalLink, Rss, Search } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { RevealGroup, RevealItem } from "@/components/Reveal";
 import { socialMeta, canonical } from "@/lib/seo";
 import { getPublications, type PublicationRow } from "@/lib/publications.functions";
 
@@ -16,10 +17,10 @@ export const Route = createFileRoute("/publications")({
   component: Publications,
   head: () => ({
     meta: [
-      { title: "Publications & Reports — Purdue SMIF" },
+      { title: "Publications & Reports | Purdue SMIF" },
       { name: "description", content: "Equity research reports, semester reports, and annual reports from the Purdue Student Managed Investment Fund." },
       ...socialMeta({
-        title: "Equity Research & Reports — Purdue SMIF",
+        title: "Equity Research & Reports | Purdue SMIF",
         description: "Read SMIF's equity research pitches, semester performance reviews, and annual reports.",
         url: canonical("/publications"),
       }),
@@ -137,7 +138,7 @@ function Publications() {
             >
               <option value="newest">Newest first</option>
               <option value="oldest">Oldest first</option>
-              <option value="title">Title (A–Z)</option>
+              <option value="title">Title (A-Z)</option>
             </select>
           </label>
         </div>
@@ -165,7 +166,7 @@ function Publications() {
                   </span>
                 </div>
 
-                <div className="grid gap-4 md:grid-cols-2">
+                <RevealGroup className="grid gap-4 md:grid-cols-2" stagger={0.06}>
                   {items.length === 0 ? (
                     <div className="col-span-full border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
                       {query
@@ -173,9 +174,13 @@ function Publications() {
                         : `No ${c.label.toLowerCase()} available yet.`}
                     </div>
                   ) : (
-                    items.map((p) => <PublicationCard key={p.id} pub={p} />)
+                    items.map((p) => (
+                      <RevealItem key={p.id} className="h-full [&>div]:h-full">
+                        <PublicationCard pub={p} />
+                      </RevealItem>
+                    ))
                   )}
-                </div>
+                </RevealGroup>
               </TabsContent>
             );
           })}

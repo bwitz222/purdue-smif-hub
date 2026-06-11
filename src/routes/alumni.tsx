@@ -24,11 +24,11 @@ export const Route = createFileRoute("/alumni")({
   component: Alumni,
   head: () => ({
     meta: [
-      { title: "Alumni — Purdue SMIF" },
+      { title: "Alumni | Purdue SMIF" },
       { name: "description", content: "Where Purdue SMIF alumni go: investment banking, private equity, hedge funds, asset management, consulting, and corporate roles across the country." },
       ...socialMeta({
-        title: "Alumni Network — Purdue SMIF",
-        description: "Meet the SMIF alumni now working at Morgan Stanley, Goldman Sachs, Blackstone, Citadel, McKinsey, and more — and learn how to plug into the mentorship network.",
+        title: "Alumni Network | Purdue SMIF",
+        description: "Meet the SMIF alumni now working at Morgan Stanley, Goldman Sachs, Blackstone, Citadel, McKinsey, and more, and learn how to plug into the mentorship network.",
         url: canonical("/alumni"),
       }),
     ],
@@ -277,7 +277,7 @@ function Alumni() {
               Find an alum.
             </h2>
             <p className="mt-4 max-w-2xl text-muted-foreground">
-              Filter by industry or graduating class. Reach out on LinkedIn — most SMIF
+              Filter by industry or graduating class. Reach out on LinkedIn; most SMIF
               alumni are happy to take a coffee chat with a current Boilermaker.
             </p>
           </Reveal>
@@ -381,7 +381,7 @@ function Alumni() {
             <h3 className="font-display text-3xl font-bold text-ink">Are you a SMIF alum?</h3>
             <p className="mt-4 text-muted-foreground leading-relaxed">
               Help us keep the roster accurate. Send your latest role, grad year, and
-              LinkedIn — we'll add you to the directory and our private alumni list.
+              LinkedIn and we'll add you to the directory and our private alumni list.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <a

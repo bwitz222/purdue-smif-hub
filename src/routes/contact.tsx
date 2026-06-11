@@ -21,11 +21,11 @@ export const Route = createFileRoute("/contact")({
   component: Contact,
   head: () => ({
     meta: [
-      { title: "Contact — Purdue SMIF" },
-      { name: "description", content: "Reach the Purdue Student Managed Investment Fund — for prospective members, alumni, sponsors, and recruiters." },
+      { title: "Contact | Purdue SMIF" },
+      { name: "description", content: "Reach the Purdue Student Managed Investment Fund: for prospective members, alumni, sponsors, and recruiters." },
       ...socialMeta({
         title: "Contact Purdue SMIF",
-        description: "Reach the Purdue Student Managed Investment Fund — for prospective members, alumni, sponsors, and recruiters.",
+        description: "Reach the Purdue Student Managed Investment Fund: for prospective members, alumni, sponsors, and recruiters.",
         url: canonical("/contact"),
       }),
     ],
@@ -78,7 +78,7 @@ function Contact() {
 
     // Honeypot — silently succeed
     if (company.trim().length > 0) {
-      toast.success("Thanks — we'll reply within 2 business days.");
+      toast.success("Thanks! We'll reply within 2 business days.");
       resetForm();
       return;
     }
@@ -105,7 +105,7 @@ function Contact() {
         company: null,
       });
       if (error) throw error;
-      toast.success("Thanks — we'll reply within 2 business days.");
+      toast.success("Thanks! We'll reply within 2 business days.");
       resetForm();
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Something went wrong";
@@ -119,11 +119,13 @@ function Contact() {
     <>
       <section className="border-b border-border bg-secondary/40">
         <div className="container-prose py-24">
-          <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">Contact</span>
-          <h1 className="mt-4 font-display text-5xl font-bold md:text-6xl max-w-3xl">Get in touch.</h1>
-          <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
-            Prospective members, alumni, sponsors, and recruiters — we'd love to hear from you.
-          </p>
+          <Reveal>
+            <span className="rule-gold mb-6" />
+            <h1 className="font-display text-5xl font-bold md:text-6xl max-w-3xl">Get in touch.</h1>
+            <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
+              Prospective members, alumni, sponsors, and recruiters: we'd love to hear from you.
+            </p>
+          </Reveal>
         </div>
       </section>
 
@@ -169,9 +171,6 @@ function Contact() {
         <div className="container-prose grid gap-12 lg:grid-cols-5">
           <Reveal className="lg:col-span-2">
             <span className="rule-gold mb-5 block" />
-            <span className="text-xs font-semibold uppercase tracking-[0.32em] text-gold-deep block mb-4">
-              Send a note
-            </span>
             <h2 className="font-display text-4xl font-bold text-ink leading-tight">
               Tell us why<br />you're writing.
             </h2>

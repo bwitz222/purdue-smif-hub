@@ -15,32 +15,32 @@ export function SiteFooter() {
             </div>
           </div>
           <p className="mt-6 max-w-md text-sm font-normal text-on-dark-secondary">
-            A premier student-run investment fund at the Daniels School of Business, managing real capital and developing the next generation of investment professionals.
+            A student-run investment fund at the Daniels School of Business, managing real capital with a disciplined, thesis-driven process since 2009.
           </p>
         </div>
-        <div>
-          <h4 className="text-sm font-medium text-gold mb-4 uppercase tracking-[0.14em]">Explore</h4>
+        <nav aria-label="Footer">
+          <h2 className="text-sm font-medium text-gold mb-4 uppercase tracking-[0.14em]">Explore</h2>
           <ul className="space-y-2 text-sm text-on-dark-secondary">
-            <li><Link to="/about" className="hover:text-gold">About</Link></li>
-            <li><Link to="/team" className="hover:text-gold">Team</Link></li>
-            <li><Link to="/sectors" className="hover:text-gold">Sectors</Link></li>
-            <li><Link to="/holdings" className="hover:text-gold">Holdings</Link></li>
-            <li><Link to="/performance" className="hover:text-gold">Performance</Link></li>
-            <li><Link to="/publications" className="hover:text-gold">Research</Link></li>
-            <li><Link to="/learn" className="hover:text-gold">Learn</Link></li>
+            <li><Link to="/about" className="hover:text-gold transition-colors duration-200">About</Link></li>
+            <li><Link to="/team" className="hover:text-gold transition-colors duration-200">Team</Link></li>
+            <li><Link to="/sectors" className="hover:text-gold transition-colors duration-200">Sectors</Link></li>
+            <li><Link to="/holdings" className="hover:text-gold transition-colors duration-200">Holdings</Link></li>
+            <li><Link to="/performance" className="hover:text-gold transition-colors duration-200">Performance</Link></li>
+            <li><Link to="/publications" className="hover:text-gold transition-colors duration-200">Research</Link></li>
+            <li><Link to="/learn" className="hover:text-gold transition-colors duration-200">Learn</Link></li>
           </ul>
-        </div>
+        </nav>
         <div>
-          <h4 className="text-sm font-medium text-gold mb-4 uppercase tracking-[0.14em]">Contact</h4>
+          <h2 className="text-sm font-medium text-gold mb-4 uppercase tracking-[0.14em]">Contact</h2>
           <ul className="space-y-2 text-sm text-on-dark-secondary">
             <li>Daniels School of Business</li>
             <li>403 Mitch Daniels Blvd</li>
             <li>West Lafayette, IN 47907</li>
-            <li><Link to="/contact" className="hover:text-gold">Get in touch →</Link></li>
+            <li><Link to="/contact" className="hover:text-gold transition-colors duration-200">Get in touch →</Link></li>
           </ul>
         </div>
         <div>
-          <h4 className="text-sm font-medium text-gold mb-4 uppercase tracking-[0.14em]">Social</h4>
+          <h2 className="text-sm font-medium text-gold mb-4 uppercase tracking-[0.14em]">Social</h2>
           <ul className="space-y-2 text-sm text-on-dark-secondary">
             <li>
               <a href="https://www.instagram.com/smif_purdue/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 hover:text-gold transition-colors duration-200">

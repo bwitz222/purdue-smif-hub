@@ -1,16 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Cpu, HeartPulse, Banknote, Factory, ShoppingBag, Zap, Wifi, Home, LineChart, Briefcase } from "lucide-react";
 import { socialMeta, canonical } from "@/lib/seo";
-import { Reveal } from "@/components/Reveal";
+import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 
 export const Route = createFileRoute("/sectors")({
   component: Sectors,
   head: () => ({
     meta: [
-      { title: "Coverage Teams — Purdue SMIF" },
+      { title: "Coverage Teams | Purdue SMIF" },
       { name: "description", content: "SMIF coverage spans eight equity sector teams, Fixed Income & Macro, and Portfolio + Risk Management." },
       ...socialMeta({
-        title: "Coverage Teams — Purdue SMIF",
+        title: "Coverage Teams | Purdue SMIF",
         description: "Eight equity sector teams plus Fixed Income & Macro and Portfolio + Risk Management cover the SMIF investment universe.",
         url: canonical("/sectors"),
       }),
@@ -70,25 +70,26 @@ function Sectors() {
 
       <section className="container-prose py-24">
         <h2 className="sr-only">Coverage Teams</h2>
-        <div className="grid gap-px bg-border md:grid-cols-2 lg:grid-cols-3">
+        <RevealGroup className="grid gap-px bg-border md:grid-cols-2 lg:grid-cols-3" stagger={0.05}>
           {sectors.map(({ Icon, name, lead }) => (
-            <Link
-              key={name}
-              to="/team"
-              search={{ sector: name }}
-              className="group bg-background p-8 transition hover:bg-secondary/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink"
-              aria-label={`View ${name} team members`}
-            >
-              <Icon className="h-7 w-7 text-gold-deep" />
-              <h3 className="mt-5 font-display text-lg font-bold">{name}</h3>
-              <p className="mt-2 text-sm text-muted-foreground">{lead}</p>
-              <span className="mt-5 inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-gold-deep opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100">
-                View team
-                <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5" />
-              </span>
-            </Link>
+            <RevealItem key={name} className="h-full [&>a]:h-full">
+              <Link
+                to="/team"
+                search={{ sector: name }}
+                className="group flex flex-col bg-background p-8 transition hover:bg-secondary/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink"
+                aria-label={`View ${name} team members`}
+              >
+                <Icon className="h-7 w-7 text-gold-deep transition-transform duration-200 group-hover:scale-110" />
+                <h3 className="mt-5 font-display text-lg font-bold">{name}</h3>
+                <p className="mt-2 text-sm text-muted-foreground">{lead}</p>
+                <span className="mt-auto pt-5 inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-gold-deep opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100">
+                  View team
+                  <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5" />
+                </span>
+              </Link>
+            </RevealItem>
           ))}
-        </div>
+        </RevealGroup>
       </section>
     </>
   );

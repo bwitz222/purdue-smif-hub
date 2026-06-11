@@ -52,13 +52,13 @@ export function SiteHeader() {
               SMIF
             </span>
           </Link>
-          <nav className="hidden lg:flex items-center gap-5 xl:gap-7">
+          <nav aria-label="Primary" className="hidden lg:flex items-center gap-5 xl:gap-7">
             {NAV.map(({ to, label }) => (
               <Link
                 key={to}
                 to={to}
-                className="text-xs font-semibold uppercase tracking-[0.14em] text-background/65 hover:text-background transition-colors duration-300 py-1"
-                activeProps={{ className: "text-gold" }}
+                className="relative py-1 text-xs font-semibold uppercase tracking-[0.14em] text-background/65 hover:text-background transition-colors duration-300 after:absolute after:inset-x-0 after:bottom-0 after:h-px after:origin-left after:scale-x-0 after:bg-gold after:transition-transform after:duration-300 after:ease-[cubic-bezier(0.22,1,0.36,1)] hover:after:scale-x-100 motion-reduce:after:transition-none"
+                activeProps={{ className: "text-gold after:scale-x-100" }}
               >
                 {label}
               </Link>
