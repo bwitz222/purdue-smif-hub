@@ -22,7 +22,10 @@ export const getPublications = createServerFn({ method: "GET" }).handler(
       .from("publications")
       .select("*")
       .order("created_at", { ascending: false });
-    if (error) throw new Error(error.message);
+    if (error) {
+      console.error("[publications] fetch error:", error);
+      throw new Error("Failed to load publications.");
+    }
     const rows = (data ?? []) as Omit<PublicationRow, "url">[];
     return rows.map((p) => ({
       ...p,
