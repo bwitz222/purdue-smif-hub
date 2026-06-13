@@ -1,6 +1,17 @@
 import type { Member } from "@/components/MemberCard";
 import andrewLacambraPhoto from "@/assets/team/andrew-lacambra.jpg";
 import ianTehPhoto from "@/assets/team/ian-teh.jpg";
+import landonHaffnerPhoto from "@/assets/team/landon-haffner.jpg";
+import yashitaPujariPhoto from "@/assets/team/yashita-pujari.jpg";
+import chrisAndreouPhoto from "@/assets/team/chris-andreou.jpg";
+import parthDamaPhoto from "@/assets/team/parth-dama.png";
+
+const BIO_BY_NAME: Record<string, string> = {
+  "Landon Haffner": "Landon Haffner is a sophomore in the Daniels School of Business, majoring in Finance with a minor in Real Estate Finance, Management Consulting and Entrepreneurship. He is interning at Lennar this summer in sales and land acquisition. In his free time, he enjoys going to the gym, golfing and playing rocket league with friends.",
+  "Yashita Pujari": "Yashita Pujari is a junior in the Daniels School of Business, majoring in Business Analytics and Information Management. Outside of SMIF, she serves on the executive board of UR Global and will be a team lead for the Doster Leadership Conference. In her free time, she enjoys baking, reading and trying new restaurants.",
+  "Chris Andreou": "Chris Andreou is a junior in the Daniels School of Business, majoring in Finance and Accounting. He has previously interned at Zurich Insurance as a Finance Intern. In his free time, he enjoys visiting new countries, weightlifting, playing basketball, and golfing.",
+  "Parth Dama": "Parth Dama is a sophomore in the Purdue Integrated Business and Engineering (IBE) program. He is currently working as an Associate Consultant Intern at IBM in Data & AI, and is an incoming Markets Quantitative Analyst at Barclays for Summer 2027. In his free time, he enjoys lifting, playing poker, and watching basketball.",
+};
 
 export const board: Member[] = [
   { name: "Andrew Lacambra", role: "Co-President", year: "Class of 2027", email: "alacambr@purdue.edu", photo: andrewLacambraPhoto, bio: "Co-leads the fund's strategic direction and executive operations alongside the other Co-President." },
@@ -8,7 +19,7 @@ export const board: Member[] = [
   { name: "Hunter Specht", role: "Co-CIO & Co-Head of Education", year: "Class of 2027", email: "hspecht@purdue.edu", bio: "Drives portfolio strategy and final investment decisions across all sectors, and co-leads the analyst education curriculum." },
   { name: "Sandhya Gopinath", role: "Co-CIO & Co-Head of Education", year: "Class of 2028", email: "gopinas@purdue.edu", bio: "Drives portfolio strategy and final investment decisions across all sectors, and co-leads the analyst education curriculum." },
   { name: "Keren Wadhwani", role: "Treasurer and Director of Fundraising", year: "Class of 2028", email: "kwadhwan@purdue.edu", bio: "Oversees fund accounting, cash management, and leads fundraising efforts for the organization." },
-  { name: "Chris Andreou", role: "Director of Talent and Operations", year: "Class of 2028", email: "andreou@purdue.edu", bio: "Manages recruiting, onboarding, and day-to-day operations across the fund." },
+  { name: "Chris Andreou", role: "Director of Talent and Operations", year: "Class of 2028", email: "andreou@purdue.edu", photo: chrisAndreouPhoto, bio: BIO_BY_NAME["Chris Andreou"] },
   { name: "Shaheera Ali", role: "Director of Marketing and Outreach", year: "Class of 2028", email: "ali251@purdue.edu", bio: "Leads marketing, branding, and external outreach for the fund." },
 ];
 
@@ -16,6 +27,10 @@ export const board: Member[] = [
 const PHOTO_BY_NAME: Record<string, string> = {
   "Andrew Lacambra": andrewLacambraPhoto,
   "Ian Teh": ianTehPhoto,
+  "Landon Haffner": landonHaffnerPhoto,
+  "Yashita Pujari": yashitaPujariPhoto,
+  "Chris Andreou": chrisAndreouPhoto,
+  "Parth Dama": parthDamaPhoto,
 };
 
 type Entry = [name: string, role: string, email?: string, gradYear?: string];
