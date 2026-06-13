@@ -11,6 +11,8 @@ const BIO_BY_NAME: Record<string, string> = {
   "Yashita Pujari": "Yashita Pujari is a junior in the Daniels School of Business, majoring in Business Analytics and Information Management. Outside of SMIF, she serves on the executive board of UR Global and will be a team lead for the Doster Leadership Conference. In her free time, she enjoys baking, reading and trying new restaurants.",
   "Chris Andreou": "Chris Andreou is a junior in the Daniels School of Business, majoring in Finance and Accounting. He has previously interned at Zurich Insurance as a Finance Intern. In his free time, he enjoys visiting new countries, weightlifting, playing basketball, and golfing.",
   "Parth Dama": "Parth Dama is a sophomore in the Purdue Integrated Business and Engineering (IBE) program. He is currently working as an Associate Consultant Intern at IBM in Data & AI, and is an incoming Markets Quantitative Analyst at Barclays for Summer 2027. In his free time, he enjoys lifting, playing poker, and watching basketball.",
+  "Andrew Lacambra": "Andrew Lacambra is a senior in the Daniels School of Business, majoring in Finance and General Management. He previously interned at State Farm as a Fixed Income Investments Intern. In his free time, he enjoys visiting National Parks, going to the gym, and watching soccer & basketball.",
+  "Ian Teh": "Ian Teh is a senior in the Daniels School of Business, majoring in Finance with a minor in Real Estate Finance. He has previously interned at CenterPoint Properties as a Capital Markets Summer Analyst. In his free time, he enjoys hiking, going to the gym, and cooking new cuisines.",
 };
 
 export const board: Member[] = [
