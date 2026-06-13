@@ -108,8 +108,8 @@ function Contact() {
       toast.success("Thanks! We'll reply within 2 business days.");
       resetForm();
     } catch (err) {
-      const msg = err instanceof Error ? err.message : "Something went wrong";
-      toast.error(`Couldn't send your message: ${msg}`);
+      console.error("[contact] insert error:", err);
+      toast.error("Couldn't send your message. Please try again.");
     } finally {
       setSubmitting(false);
     }
