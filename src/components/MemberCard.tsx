@@ -11,6 +11,7 @@ export interface Member {
   email?: string;
   linkedin?: string;
   photo?: string;
+  photoPosition?: string;
   placeholder?: boolean;
 }
 
