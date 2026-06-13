@@ -34,7 +34,7 @@ const PHOTO_BY_NAME: Record<string, string> = {
 };
 
 const PHOTO_POSITION_BY_NAME: Record<string, string> = {
-  "Landon Haffner": "center 18%",
+  "Landon Haffner": "62% 37%",
   "Yashita Pujari": "center 22%",
 };
 
