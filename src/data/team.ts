@@ -33,6 +33,11 @@ const PHOTO_BY_NAME: Record<string, string> = {
   "Parth Dama": parthDamaPhoto,
 };
 
+const PHOTO_POSITION_BY_NAME: Record<string, string> = {
+  "Landon Haffner": "center 18%",
+  "Yashita Pujari": "center 22%",
+};
+
 type Entry = [name: string, role: string, email?: string, gradYear?: string];
 
 const make = (team: string, members: Entry[]): Member[] =>
@@ -43,6 +48,7 @@ const make = (team: string, members: Entry[]): Member[] =>
     email: email || undefined,
     placeholder: !name,
     photo: name ? PHOTO_BY_NAME[name] : undefined,
+    photoPosition: name ? PHOTO_POSITION_BY_NAME[name] : undefined,
     bio: (name && BIO_BY_NAME[name])
       ? BIO_BY_NAME[name]
       : i === 0
