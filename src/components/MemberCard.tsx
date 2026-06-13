@@ -12,6 +12,7 @@ export interface Member {
   linkedin?: string;
   photo?: string;
   photoPosition?: string;
+  photoScale?: number;
   placeholder?: boolean;
 }
 
