@@ -38,6 +38,14 @@ const PHOTO_POSITION_BY_NAME: Record<string, string> = {
   "Yashita Pujari": "center 22%",
 };
 
+const PHOTO_SCALE_BY_NAME: Record<string, number> = {
+  "Landon Haffner": 1.45,
+};
+
+// Members listed on the executive board — for these, sector/PM team entries
+// keep the generic stock bio so the personal bio only appears once (on the board).
+const BOARD_NAMES = new Set(board.map((m) => m.name));
+
 type Entry = [name: string, role: string, email?: string, gradYear?: string];
 
 const make = (team: string, members: Entry[]): Member[] =>
@@ -49,7 +57,8 @@ const make = (team: string, members: Entry[]): Member[] =>
     placeholder: !name,
     photo: name ? PHOTO_BY_NAME[name] : undefined,
     photoPosition: name ? PHOTO_POSITION_BY_NAME[name] : undefined,
-    bio: (name && BIO_BY_NAME[name])
+    photoScale: name ? PHOTO_SCALE_BY_NAME[name] : undefined,
+    bio: (name && BIO_BY_NAME[name] && !BOARD_NAMES.has(name))
       ? BIO_BY_NAME[name]
       : i === 0
         ? `Leads the ${team} team, driving sector strategy, idea generation, and final pitch review.`
