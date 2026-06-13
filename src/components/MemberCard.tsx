@@ -105,7 +105,7 @@ export function MemberCard({
             src={src}
             alt={`${m.name} headshot`}
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-            style={{ objectPosition: m.photoPosition ?? "center 25%" }}
+            style={{ objectPosition: m.photoPosition ?? "center" }}
             loading="lazy"
             onError={() => {
               if (!m.photo && !triedPng) {
