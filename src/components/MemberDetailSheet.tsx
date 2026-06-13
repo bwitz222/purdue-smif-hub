@@ -40,6 +40,7 @@ function MemberDetail({ m }: { m: Member }) {
             src={src}
             alt={`${m.name} headshot`}
             className="h-full w-full object-cover"
+            style={{ objectPosition: m.photoPosition ?? "center" }}
             onError={() => {
               if (!m.photo && !triedPng) {
                 setTriedPng(true);
