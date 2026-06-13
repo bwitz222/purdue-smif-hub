@@ -43,9 +43,11 @@ const make = (team: string, members: Entry[]): Member[] =>
     email: email || undefined,
     placeholder: !name,
     photo: name ? PHOTO_BY_NAME[name] : undefined,
-    bio: i === 0
-      ? `Leads the ${team} team, driving sector strategy, idea generation, and final pitch review.`
-      : `Covers names within the ${team} mandate. Builds full operating models, valuation, and pitches new ideas to the investment committee.`,
+    bio: (name && BIO_BY_NAME[name])
+      ? BIO_BY_NAME[name]
+      : i === 0
+        ? `Leads the ${team} team, driving sector strategy, idea generation, and final pitch review.`
+        : `Covers names within the ${team} mandate. Builds full operating models, valuation, and pitches new ideas to the investment committee.`,
   }));
 
 export const sectorTeams = [
