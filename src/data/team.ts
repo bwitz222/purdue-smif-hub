@@ -72,7 +72,7 @@ export const sectorTeams = [
     name: "Information Technology",
     description: "Software, semiconductors, hardware, and IT services across mega-caps and emerging growth.",
     members: make("Information Technology", [
-      ["Chris Andreou", "Sector Lead", "andreou@purdue.edu", "2028"],
+      ["Chris Andreou", "Head, Sector", "andreou@purdue.edu", "2028"],
       ["Parth Dama", "Senior Analyst", "damap@purdue.edu", "2029"],
       ["Shaheera Ali", "Analyst", "ali251@purdue.edu", "2028"],
       ["Landon Haffner", "Analyst", "haffnel@purdue.edu", "2029"],
@@ -83,7 +83,7 @@ export const sectorTeams = [
     name: "Consumer Discretionary",
     description: "Retail, autos, leisure, apparel, and other cyclical consumer names.",
     members: make("Consumer Discretionary", [
-      ["Ayden Wong", "Sector Lead", "wong482@purdue.edu", "2028"],
+      ["Ayden Wong", "Head, Sector", "wong482@purdue.edu", "2028"],
       ["Riley Collins", "Senior Analyst", "colli571@purdue.edu", "2028"],
       ["Karanvir Singh", "Senior Analyst", "sing2553@purdue.edu", "2028"],
       ["Fabian Segura Vargas", "Senior Analyst", "fsegurav@purdue.edu", "2028"],
@@ -94,7 +94,7 @@ export const sectorTeams = [
     name: "Financials",
     description: "Banks, insurers, asset managers, and capital markets infrastructure.",
     members: make("Financials", [
-      ["Alex Belanger", "Sector Lead", "belangea@purdue.edu", "2027"],
+      ["Alex Belanger", "Head, Sector", "belangea@purdue.edu", "2027"],
       ["Daniel Friedman", "Senior Analyst", "friedmd@purdue.edu", "Dec 2026"],
       ["", "Analyst"],
       ["", "Analyst"],
@@ -105,7 +105,7 @@ export const sectorTeams = [
     name: "Consumer Staples",
     description: "Food, beverage, household products, and other defensive consumer names.",
     members: make("Consumer Staples", [
-      ["Evan Wright", "Sector Lead", "wrigh712@purdue.edu", "2027"],
+      ["Evan Wright", "Head, Sector", "wrigh712@purdue.edu", "2027"],
       ["Logan Friedman", "Senior Analyst", "friedml@purdue.edu", "2028"],
       ["Mikhail Bilokin", "Analyst", "mbilokin@purdue.edu", "2029"],
       ["", "Analyst"],
@@ -116,7 +116,7 @@ export const sectorTeams = [
     name: "Industrials",
     description: "Aerospace & defense, machinery, transports, and capital goods.",
     members: make("Industrials", [
-      ["Ian Teh", "Sector Lead", "iteh@purdue.edu", "2027"],
+      ["Ian Teh", "Head, Sector", "iteh@purdue.edu", "2027"],
       ["Dallas White", "Senior Analyst", "whit1259@purdue.edu", "2029"],
       ["Cooper Weiss", "Senior Analyst", "weiss109@purdue.edu", "2028"],
       ["Augustus Matushek", "Senior Analyst", "amatush@purdue.edu", "2029"],
@@ -127,7 +127,7 @@ export const sectorTeams = [
     name: "Healthcare & Utilities",
     description: "Pharma, biotech, med-tech, managed care, and regulated utilities.",
     members: make("Healthcare & Utilities", [
-      ["", "Sector Lead"],
+      ["", "Head, Sector"],
       ["Gautham Santhanam", "Senior Analyst", "gsanthan@purdue.edu", "2028"],
       ["Brock Heller", "Senior Analyst", "baheller@purdue.edu", "2027"],
       ["Sid Voona", "Senior Analyst", "voona@purdue.edu", "2028"],
@@ -138,7 +138,7 @@ export const sectorTeams = [
     name: "Communications",
     description: "Telecom, media, interactive entertainment, and select platform names.",
     members: make("Communications", [
-      ["", "Sector Lead"],
+      ["", "Head, Sector"],
       ["Gabriel Fridman", "Senior Analyst", "gfridman@purdue.edu", "2028"],
       ["", "Analyst"],
       ["", "Analyst"],
@@ -149,7 +149,7 @@ export const sectorTeams = [
     name: "Energy & Real Estate",
     description: "Integrated energy, E&P, midstream, refiners, and listed real estate (REITs).",
     members: make("Energy & Real Estate", [
-      ["Jacob George", "Sector Lead", "georg243@purdue.edu", "2029"],
+      ["Jacob George", "Head, Sector", "georg243@purdue.edu", "2029"],
       ["Alejandro Cabrales", "Senior Analyst", "acabrale@purdue.edu", "2028"],
       ["Arav Ginde", "Senior Analyst", "aginde@purdue.edu", "2027"],
       ["Veer Sanyal", "Senior Analyst", "vsanyal@purdue.edu", "2028"],
