@@ -166,7 +166,7 @@ export const fixedIncomeMacro: Member[] = make("Fixed Income & Macro", [
 ]).map((m) => (m.name === "Andrew Lacambra" ? { ...m, photo: andrewLacambraPhoto } : m));
 
 export const portfolioManagers: Member[] = make("Portfolio + Risk Management", [
-  ["Hunter Specht", "Lead Portfolio Manager", "hspecht@purdue.edu", "2027"],
+  ["Hunter Specht", "Portfolio Manager", "hspecht@purdue.edu", "2027"],
   ["Sandhya Gopinath", "Portfolio Manager", "gopinas@purdue.edu", "2028"],
   ["Yashita Pujari", "Portfolio Manager, Risk", "ypujari@purdue.edu", "2028"],
   ["Anushka Patel", "Portfolio Manager, Performance", "pate3115@purdue.edu", "2029"],
