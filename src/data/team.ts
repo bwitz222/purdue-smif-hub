@@ -168,10 +168,10 @@ export const fixedIncomeMacro: Member[] = make("Fixed Income & Macro", [
 export const portfolioManagers: Member[] = make("Portfolio + Risk Management", [
   ["Hunter Specht", "Portfolio Manager", "hspecht@purdue.edu", "2027"],
   ["Sandhya Gopinath", "Portfolio Manager", "gopinas@purdue.edu", "2028"],
-  ["Yashita Pujari", "Portfolio Manager, Risk", "ypujari@purdue.edu", "2028"],
-  ["Anushka Patel", "Portfolio Manager, Performance", "pate3115@purdue.edu", "2029"],
-  ["Abhipsa Prajapati", "Portfolio Manager, Trading", "aprajap@purdue.edu", "2029"],
-  ["", "Risk Analyst"],
+  ["Yashita Pujari", "Portfolio Management Associate", "ypujari@purdue.edu", "2028"],
+  ["Anushka Patel", "Portfolio Management Associate", "pate3115@purdue.edu", "2029"],
+  ["Abhipsa Prajapati", "Portfolio Management Associate", "aprajap@purdue.edu", "2029"],
+  ["", "Portfolio Management Associate"],
 ]);
 
 // LinkedIn profiles, keyed by name, applied across board, sector teams, FIM, and PM groups.
