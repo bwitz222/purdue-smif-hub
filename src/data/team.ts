@@ -53,7 +53,7 @@ type Entry = [name: string, role: string, email?: string, gradYear?: string];
 const make = (team: string, members: Entry[]): Member[] =>
   members.map(([name, role, email, gradYear], i) => ({
     name: name || "Open Position",
-    role,
+    role: i === 0 ? `Head, ${team}` : role,
     year: gradYear ? `Class of ${gradYear}` : "",
     email: email || undefined,
     placeholder: !name,
