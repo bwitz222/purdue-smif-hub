@@ -42,15 +42,9 @@ export const Route = createFileRoute("/api/public/hooks/refresh-quotes")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const expectedSecret = process.env.CRON_SECRET;
-        if (!expectedSecret) {
-          return new Response(
-            JSON.stringify({ ok: false, error: "CRON_SECRET not configured" }),
-            { status: 500, headers: { "Content-Type": "application/json" } },
-          );
-        }
-        const provided = request.headers.get("x-cron-secret");
-        if (!provided || provided !== expectedSecret) {
+        const expectedKey = process.env.SUPABASE_PUBLISHABLE_KEY?.trim();
+        const provided = request.headers.get("apikey")?.trim();
+        if (!expectedKey || !provided || provided !== expectedKey) {
           return new Response(
             JSON.stringify({ ok: false, error: "Unauthorized" }),
             { status: 401, headers: { "Content-Type": "application/json" } },
