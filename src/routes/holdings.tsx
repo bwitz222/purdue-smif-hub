@@ -95,13 +95,13 @@ function HoldingsPage() {
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const fetchQuotes = useServerFn(getLiveQuotes);
   const symbols = useMemo(() => baseHoldings.map((h) => h.symbol), []);
-  // Quote cache is refreshed by a pg_cron job at 06:00 UTC daily
-  // (schedule "0 6 * * *"). Align the client query to that exact wall clock
-  // — staleTime/refetchInterval are the time until the *next* 06:05 UTC
-  // (5-minute buffer for the cron + Polygon round trip to finish), so every
-  // derived value on the page (KPIs, sector breakdown, leaders/laggards,
-  // table) recomputes on the same schedule as the backend refresh.
-  const CRON_HOUR_UTC = 6;
+  // Quote cache is refreshed by a pg_cron job at 21:00 UTC weekdays
+  // (4:00 PM EST, just after market close). Align the client query to that
+  // exact wall clock — staleTime/refetchInterval are the time until the
+  // *next* 21:05 UTC (5-minute buffer for the cron + Polygon round trip),
+  // so every derived value on the page (KPIs, sector breakdown,
+  // leaders/laggards, table) recomputes on the same schedule as the backend.
+  const CRON_HOUR_UTC = 21;
   const CRON_BUFFER_MS = 5 * 60 * 1000;
   const msUntilNextCron = () => {
     const now = new Date();
