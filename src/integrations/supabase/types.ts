@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      benchmark_monthly: {
+        Row: {
+          close: number
+          fetched_at: string
+          month: string
+          return_pct: number | null
+          symbol: string
+        }
+        Insert: {
+          close: number
+          fetched_at?: string
+          month: string
+          return_pct?: number | null
+          symbol: string
+        }
+        Update: {
+          close?: number
+          fetched_at?: string
+          month?: string
+          return_pct?: number | null
+          symbol?: string
+        }
+        Relationships: []
+      }
       contact_inquiries: {
         Row: {
           company: string | null
@@ -74,6 +98,51 @@ export type Database = {
           last_name?: string
           message?: string
           subject?: string
+        }
+        Relationships: []
+      }
+      fund_monthly_history: {
+        Row: {
+          beginning_balance: number
+          created_at: string
+          deposits: number
+          dividends: number
+          ending_balance: number
+          interest: number
+          is_transition: boolean
+          market_change: number
+          month: string
+          net_advisory_fees: number
+          updated_at: string
+          withdrawals: number
+        }
+        Insert: {
+          beginning_balance?: number
+          created_at?: string
+          deposits?: number
+          dividends?: number
+          ending_balance?: number
+          interest?: number
+          is_transition?: boolean
+          market_change?: number
+          month: string
+          net_advisory_fees?: number
+          updated_at?: string
+          withdrawals?: number
+        }
+        Update: {
+          beginning_balance?: number
+          created_at?: string
+          deposits?: number
+          dividends?: number
+          ending_balance?: number
+          interest?: number
+          is_transition?: boolean
+          market_change?: number
+          month?: string
+          net_advisory_fees?: number
+          updated_at?: string
+          withdrawals?: number
         }
         Relationships: []
       }
