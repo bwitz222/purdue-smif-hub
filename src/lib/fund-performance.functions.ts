@@ -59,3 +59,171 @@ export const getFundPerformance = createServerFn({ method: "GET" }).handler(
     }
   },
 );
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Monthly history (since inception) + SPY total-return benchmark
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type MonthlyPoint = {
+  month: string; // YYYY-MM-DD (first of month)
+  smif_return_pct: number; // monthly return, 0 for transition months
+  bench_return_pct: number; // SPY total-return monthly, 0 if missing
+  smif_growth: number; // cumulative growth-of-$1
+  bench_growth: number; // cumulative growth-of-$1
+  smif_drawdown_pct: number; // peak-to-current drawdown
+  bench_drawdown_pct: number;
+  is_transition: boolean;
+};
+
+export type MonthlyHistoryKpis = {
+  one_year_pct: number;
+  five_year_annualized_pct: number;
+  inception_annualized_pct: number;
+  max_drawdown_pct: number;
+  bench_inception_annualized_pct: number;
+};
+
+export type FundMonthlyHistory = {
+  series: MonthlyPoint[];
+  inceptionMonth: string;
+  lastMonth: string;
+  kpis: MonthlyHistoryKpis;
+  benchSymbol: string;
+};
+
+type RawFundRow = {
+  month: string;
+  beginning_balance: number | string;
+  market_change: number | string;
+  dividends: number | string;
+  interest: number | string;
+  deposits: number | string;
+  withdrawals: number | string;
+  net_advisory_fees: number | string;
+  ending_balance: number | string;
+  is_transition: boolean;
+};
+type RawBenchRow = { month: string; close: number | string; return_pct: number | string | null };
+
+function n(v: number | string | null | undefined): number {
+  if (v === null || v === undefined) return 0;
+  const x = typeof v === "string" ? parseFloat(v) : v;
+  return isFinite(x) ? x : 0;
+}
+
+export const getFundMonthlyHistory = createServerFn({ method: "GET" }).handler(
+  async (): Promise<FundMonthlyHistory | null> => {
+    try {
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const [{ data: fund, error: fundErr }, { data: bench, error: benchErr }] = await Promise.all([
+        supabaseAdmin
+          .from("fund_monthly_history")
+          .select(
+            "month, beginning_balance, market_change, dividends, interest, deposits, withdrawals, net_advisory_fees, ending_balance, is_transition",
+          )
+          .order("month", { ascending: true }),
+        supabaseAdmin
+          .from("benchmark_monthly")
+          .select("month, close, return_pct")
+          .eq("symbol", "SPY")
+          .order("month", { ascending: true }),
+      ]);
+      if (fundErr || benchErr || !fund || fund.length === 0) return null;
+
+      const benchMap = new Map<string, RawBenchRow>();
+      (bench ?? []).forEach((b) => benchMap.set(b.month, b as RawBenchRow));
+
+      // Compute returns and cumulative growth.
+      let smifGrowth = 1;
+      let benchGrowth = 1;
+      let smifPeak = 1;
+      let benchPeak = 1;
+      const series: MonthlyPoint[] = [];
+
+      for (const raw of fund as RawFundRow[]) {
+        const beg = n(raw.beginning_balance);
+        const mc = n(raw.market_change);
+        const div = n(raw.dividends);
+        const intr = n(raw.interest);
+        const dep = n(raw.deposits);
+        const wd = n(raw.withdrawals);
+        const fees = n(raw.net_advisory_fees);
+        const end = n(raw.ending_balance);
+
+        let smifRet = 0;
+        if (!raw.is_transition && beg > 0) {
+          const flows = dep - wd; // net external flows
+          const investmentGain = mc + div + intr - fees;
+          if (Math.abs(flows) < 1) {
+            smifRet = investmentGain / beg;
+          } else {
+            // Modified Dietz: assume mid-month flows
+            const denom = beg + 0.5 * flows;
+            smifRet = denom > 0 ? (end - beg - flows) / denom : 0;
+          }
+        }
+
+        const benchRow = benchMap.get(raw.month);
+        const benchRet = benchRow ? n(benchRow.return_pct) / 100 : 0;
+
+        smifGrowth *= 1 + smifRet;
+        benchGrowth *= 1 + benchRet;
+        if (smifGrowth > smifPeak) smifPeak = smifGrowth;
+        if (benchGrowth > benchPeak) benchPeak = benchGrowth;
+
+        series.push({
+          month: raw.month,
+          smif_return_pct: smifRet * 100,
+          bench_return_pct: benchRet * 100,
+          smif_growth: Number(smifGrowth.toFixed(4)),
+          bench_growth: Number(benchGrowth.toFixed(4)),
+          smif_drawdown_pct: Number((((smifGrowth - smifPeak) / smifPeak) * 100).toFixed(3)),
+          bench_drawdown_pct: Number((((benchGrowth - benchPeak) / benchPeak) * 100).toFixed(3)),
+          is_transition: !!raw.is_transition,
+        });
+      }
+
+      // KPIs
+      const last = series[series.length - 1];
+      const first = series[0];
+      const totalMonths = series.length;
+      const totalYears = totalMonths / 12;
+
+      const cumProd = (arr: MonthlyPoint[], pick: (p: MonthlyPoint) => number) =>
+        arr.reduce((acc, p) => acc * (1 + pick(p) / 100), 1);
+
+      const last12 = series.slice(-12);
+      const oneYearPct = (cumProd(last12, (p) => p.smif_return_pct) - 1) * 100;
+
+      const last60 = series.slice(-60);
+      const fiveYearAnnPct =
+        last60.length >= 12
+          ? (Math.pow(cumProd(last60, (p) => p.smif_return_pct), 12 / last60.length) - 1) * 100
+          : 0;
+
+      const inceptionAnnPct =
+        totalYears > 0 ? (Math.pow(last.smif_growth, 1 / totalYears) - 1) * 100 : 0;
+      const benchInceptionAnnPct =
+        totalYears > 0 ? (Math.pow(last.bench_growth, 1 / totalYears) - 1) * 100 : 0;
+
+      const maxDD = series.reduce((m, p) => Math.min(m, p.smif_drawdown_pct), 0);
+
+      return {
+        series,
+        inceptionMonth: first.month,
+        lastMonth: last.month,
+        benchSymbol: "SPY",
+        kpis: {
+          one_year_pct: oneYearPct,
+          five_year_annualized_pct: fiveYearAnnPct,
+          inception_annualized_pct: inceptionAnnPct,
+          bench_inception_annualized_pct: benchInceptionAnnPct,
+          max_drawdown_pct: maxDD,
+        },
+      };
+    } catch (e) {
+      console.error("[fund-monthly-history] fetch failed:", e);
+      return null;
+    }
+  },
+);

@@ -1,63 +1,59 @@
-## What's broken
+## Goal
 
-The live-quotes server function (`src/lib/quotes.functions.ts`) hits Alpha Vantage's free tier, which allows ~25 requests/day. The holdings page asks for 23 symbols sequentially per cold cache, so the daily quota is exhausted almost immediately. After that:
+Add a "Since Inception (Monthly)" growth chart to the Performance page driven by the uploaded balance history (Oct 2013 → present), with SPY total-return as a live S&P 500 benchmark refreshed daily by the existing 4 PM EST cron. Keep the existing annual chart and table.
 
-1. `fetchQuote` returns `null` for every symbol.
-2. `fetchAll` returns `{}`.
-3. The current cache guard `if (Object.keys(quotes).length > 0)` refuses to cache empty results — so every subsequent page load **re-hammers** the rate-limited API and keeps getting `{}`.
-4. `holdings.tsx` falls back to the static seed values in `src/data/holdings.ts` (last hand-edited prices). That's why the page looks "not updating."
+## Data sources
 
-Network capture confirms it: the most recent `_serverFn` response payload contains `quotes: {}`.
+**SMIF monthly history (static, seeded once from your spreadsheet):**
+- New table `fund_monthly_history(month date PK, beginning_balance, market_change, dividends, interest, deposits, withdrawals, net_advisory_fees, ending_balance)` — RLS on, public SELECT (page is public).
+- Seeded via migration with all 152 valid rows from `Portfolio History`.
+- **Monthly return formula:** `(market_change + dividends + interest − net_advisory_fees) / beginning_balance`, with Modified Dietz adjustment for any month with deposits/withdrawals: `(ending − beginning − net_flows) / (beginning + 0.5·net_flows)`.
+- **Account transition handling:** Nov 2024 ends at $0 and Mar 2025 starts at $0 (custodian transfer, not a market loss). These two months are flagged `is_transition=true` and excluded from the return series — the cumulative line bridges them (return = 0% for both).
 
-## Fix (no new API keys, no provider swap)
+**SPY total-return benchmark (live, monthly):**
+- New table `benchmark_monthly(month date PK, symbol text, close numeric, return_pct numeric)`.
+- Seeded for Oct 2013 → last completed month via Polygon `/v2/aggs/ticker/SPY/range/1/month/...` (adjusted=true → includes splits + reinvested dividends → true TR).
+- Daily refresh: extend the existing `refresh-quotes` server route to also upsert the current month's SPY close at the same 21:05 UTC cron call. No new cron job, no new secret — reuses `POLYGON_API_KEY` and the current `apikey` auth.
 
-Two-layer cache that keeps the page showing real recent prices even when Alpha Vantage is throttling us:
+## Server function
 
-### 1. Persistent last-good cache in the database
-
-New table `public.quote_cache`:
-
-```text
-symbol       text primary key
-price        numeric
-change_pct   numeric
-fetched_at   timestamptz
+New `getFundMonthlyHistory` in `src/lib/fund-performance.functions.ts` that joins both tables and returns:
+```ts
+{ months: [{ month, smif_return_pct, bench_return_pct, is_transition }], inceptionMonth, lastMonth }
 ```
+Computes growth-of-$1 series on the server so the client just renders.
 
-GRANTs: `select` to `anon`/`authenticated`, `all` to `service_role`. RLS on; public read policy (prices are not sensitive). Writes only from server fn using `supabaseAdmin`.
+## UI changes — `src/routes/performance.tsx`
 
-### 2. Rewrite `src/lib/quotes.functions.ts`
+1. **New section above the existing chart**, inside the Reveal pattern already used:
+   - Header: "Since Inception" with subtitle showing the inception date and last update.
+   - Mode toggle: **Growth of $1** (default) / **Drawdown** / **Rolling 1Y return**.
+   - Series toggle: Both / SMIF / SPY (matching current chart's styling).
+   - Recharts `AreaChart` for growth-of-$1, `LineChart` for the other modes. Reuses `SMIF_COLOR` / `BENCH_COLOR`.
+   - Hover tooltip shows month, both values, and spread.
+   - Mobile-safe x-axis: tick only Jan of each year.
+2. **KPI cards rebuilt from real data**: 1Y return, 5Y annualized, since-inception annualized (computed from monthly series), plus a fourth card for **Max Drawdown**. Values are now genuine, so the "illustrative" banner and footnotes are removed (`allAudited` logic stays for the annual rows you may still want to flag).
+3. Existing annual chart + table untouched.
 
-- On request: read existing rows from `quote_cache` first — that's the immediate response baseline.
-- If the newest `fetched_at` is older than 12h, try to refresh **in the background** (don't block the response): fetch symbols one at a time, upsert each into `quote_cache` as it succeeds. Partial success is fine — even one new quote gets persisted.
-- Negative-cache rate-limit responses: if Alpha Vantage returns the "Note"/"Information" rate-limit payload (no `Global Quote`), mark a short in-memory `cooldownUntil = now + 15min` and skip new fetches until then. This stops the hammering loop.
-- Keep the in-memory `inflight` dedupe so concurrent requests don't double-fetch.
-- Always return whatever is in `quote_cache` (possibly stale, but real), plus `cachedAt` and a new `stale: boolean` flag.
+## Cron refresh wiring
 
-### 3. `src/routes/holdings.tsx` — small UX tweak
-
-- If `stale: true` (most recent quote >24h old), show the existing "as of" line with a subtle "delayed" note. No layout change.
-- No other logic changes — the merge with `holdings` seed continues to work; whatever symbols are in `quote_cache` override seed prices, the rest fall back to seed.
-
-### 4. One-time seed of `quote_cache`
-
-The migration will insert the current `holdings.ts` price/change rows so the table is never empty on first deploy. From that point on, the server fn keeps it warm.
+`src/routes/api/public/hooks/refresh-quotes.ts` gets a small addition after the holdings refresh:
+```ts
+// Upsert current-month SPY close from latest cached SPY price
+await supabaseAdmin.from('benchmark_monthly').upsert({ month, symbol: 'SPY', close, return_pct }, { onConflict: 'month,symbol' });
+```
+On the 1st trading day of each new month, it inserts the new row; otherwise it updates the running month's value. Backfill from Oct 2013 runs once in the seeding migration via a one-shot Polygon fetch executed server-side (a separate one-time admin server function you trigger after deploy).
 
 ## Files touched
 
-- **new migration** — create `quote_cache` table + GRANTs + RLS + seed rows
-- **edit** `src/lib/quotes.functions.ts` — DB-backed cache, negative cooldown, background refresh, stale flag
-- **edit** `src/routes/holdings.tsx` — surface `stale` in the existing "as of" line (≤5 lines of JSX)
+- **New migration:** `fund_monthly_history` + `benchmark_monthly` tables, GRANTs, RLS, public SELECT policies, seed of all 152 SMIF monthly rows.
+- **New server fn:** `getFundMonthlyHistory` in `src/lib/fund-performance.functions.ts`.
+- **New server fn (one-shot, admin only):** `backfillSpyBenchmark` to populate `benchmark_monthly` from Polygon for Oct 2013 → present. Invoked once after deploy.
+- **Edit:** `src/routes/api/public/hooks/refresh-quotes.ts` — append SPY monthly upsert.
+- **Edit:** `src/routes/performance.tsx` — new chart + KPI rewrite, remove illustrative banner.
 
-No other files change. No new dependencies. No new secrets.
+## Out of scope
 
-## Why not switch providers right now
-
-Switching to Finnhub/Twelve Data is the right long-term move (their free tiers easily cover 23 symbols), but it requires a new API key from you and a rewrite of `fetchQuote`. The fix above makes the page reliable today with what's already configured. Once it's stable, swapping the actual fetch call to a different provider is a ~20-line follow-up — the cache layer stays identical.
-
-## Technical notes
-
-- `supabaseAdmin` is used inside the server fn for upserts (bypasses RLS, safe because it's server-only).
-- Background refresh uses `ctx.waitUntil`-style fire-and-forget (`refresh().catch(console.error)` without `await`) so the response returns instantly with cached data.
-- The 15-min cooldown is in-memory per worker — that's fine; worst case one extra wasted fetch after a cold start.
-- `stale` threshold: 24h (data refreshes daily after market close, so >24h means we missed a cycle).
+- Changing the annual table source (stays on `fund_performance` table).
+- Daily-granularity chart (monthly is sufficient given the source data is monthly).
+- Storing daily SPY history.

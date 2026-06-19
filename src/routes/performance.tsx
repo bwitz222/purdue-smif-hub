@@ -4,12 +4,18 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowUp, ArrowDown } from "lucide-react";
 import {
-  LineChart, Line, XAxis, YAxis, CartesianGrid,
+  LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid,
   Tooltip, Legend, ResponsiveContainer, ReferenceLine,
 } from "recharts";
 import { socialMeta, canonical } from "@/lib/seo";
 import { Reveal } from "@/components/Reveal";
-import { getFundPerformance, type PerfRow, type PerfKpis } from "@/lib/fund-performance.functions";
+import {
+  getFundPerformance,
+  getFundMonthlyHistory,
+  type PerfRow,
+  type PerfKpis,
+  type MonthlyPoint,
+} from "@/lib/fund-performance.functions";
 
 export const Route = createFileRoute("/performance")({
   component: Performance,
@@ -38,14 +44,21 @@ const FALLBACK_ROWS: PerfRow[] = [
 ];
 const FALLBACK_KPIS: PerfKpis = { one_year: 22.4, five_year_annualized: 15.6, inception_annualized: 12.8 };
 
-type Mode   = "cumulative" | "annual";
-type Series = "both" | "smif" | "bench";
+type Mode    = "cumulative" | "annual";
+type Series  = "both" | "smif" | "bench";
+type IncMode = "growth" | "drawdown" | "rolling";
 
 const fmtPct  = (v: number) => `${v > 0 ? "+" : ""}${v.toFixed(1)}%`;
 const fmtMult = (v: number) => `${v.toFixed(2)}×`;
 
 const SMIF_COLOR  = "#CFB991";
 const BENCH_COLOR = "#6B6860";
+
+const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+function formatMonth(iso: string): string {
+  const [y, m] = iso.split("-");
+  return `${MONTH_NAMES[Number(m) - 1]} ${y}`;
+}
 
 function ChartTooltip({ active, payload, label, mode }: {
   active?: boolean;
@@ -72,9 +85,38 @@ function ChartTooltip({ active, payload, label, mode }: {
   );
 }
 
+function MonthlyTooltip({ active, payload, label, mode }: {
+  active?: boolean;
+  payload?: Array<{ name: string; value: number; color: string; dataKey: string }>;
+  label?: string;
+  mode: IncMode;
+}) {
+  if (!active || !payload?.length) return null;
+  const fmt = (v: number) =>
+    mode === "growth" ? fmtMult(v) : `${v > 0 ? "+" : ""}${v.toFixed(2)}%`;
+  return (
+    <div className="border border-border bg-background px-4 py-3 shadow-elegant">
+      <div className="font-display text-sm font-bold text-ink">
+        {label ? formatMonth(label) : ""}
+      </div>
+      <div className="mt-2 space-y-1">
+        {payload.map((p) => (
+          <div key={p.dataKey} className="flex items-center gap-3 text-xs">
+            <span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: p.color }} />
+            <span className="text-muted-foreground">{p.name}</span>
+            <span className="ml-auto font-mono font-semibold text-ink">{fmt(p.value)}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function Performance() {
   const [mode,   setMode]   = useState<Mode>("cumulative");
   const [series, setSeries] = useState<Series>("both");
+  const [incMode,   setIncMode]   = useState<IncMode>("growth");
+  const [incSeries, setIncSeries] = useState<Series>("both");
 
   const fetchPerf = useServerFn(getFundPerformance);
   const { data: perfData } = useQuery({
@@ -83,17 +125,34 @@ function Performance() {
     staleTime: 60 * 60 * 1000,
   });
 
+  const fetchMonthly = useServerFn(getFundMonthlyHistory);
+  const { data: monthlyData } = useQuery({
+    queryKey: ["fund-monthly-history"],
+    queryFn: () => fetchMonthly(),
+    staleTime: 60 * 60 * 1000,
+  });
+
   const years: PerfRow[] = perfData?.rows && perfData.rows.length > 0 ? perfData.rows : FALLBACK_ROWS;
   const kpis: PerfKpis = perfData?.kpis ?? FALLBACK_KPIS;
-  // Hide the "work in progress / illustrative" banner once every displayed
-  // row is flagged as audited in the database.
   const allAudited = years.length > 0 && years.every((r) => r.is_audited);
 
-  const KPI_STATS = useMemo(() => [
-    { l: "1Y Return",            v: fmtPct(kpis.one_year),            pos: kpis.one_year >= 0 },
-    { l: "5Y Annualized",        v: fmtPct(kpis.five_year_annualized), pos: kpis.five_year_annualized >= 0 },
-    { l: "Inception Annualized", v: fmtPct(kpis.inception_annualized), pos: kpis.inception_annualized >= 0 },
-  ], [kpis]);
+  // Prefer real KPIs derived from the monthly series when available.
+  const KPI_STATS = useMemo(() => {
+    if (monthlyData) {
+      const k = monthlyData.kpis;
+      return [
+        { l: "1Y Return",            v: fmtPct(k.one_year_pct),             pos: k.one_year_pct >= 0 },
+        { l: "5Y Annualized",        v: fmtPct(k.five_year_annualized_pct), pos: k.five_year_annualized_pct >= 0 },
+        { l: "Inception Annualized", v: fmtPct(k.inception_annualized_pct), pos: k.inception_annualized_pct >= 0 },
+        { l: "Max Drawdown",         v: fmtPct(k.max_drawdown_pct),         pos: false },
+      ];
+    }
+    return [
+      { l: "1Y Return",            v: fmtPct(kpis.one_year),             pos: kpis.one_year >= 0 },
+      { l: "5Y Annualized",        v: fmtPct(kpis.five_year_annualized), pos: kpis.five_year_annualized >= 0 },
+      { l: "Inception Annualized", v: fmtPct(kpis.inception_annualized), pos: kpis.inception_annualized >= 0 },
+    ];
+  }, [monthlyData, kpis]);
 
   const { cumulative, annual, baseYear } = useMemo(() => {
     const chronological = [...years].sort((a, b) => a.year - b.year);
@@ -110,12 +169,51 @@ function Performance() {
     return { cumulative, annual, baseYear };
   }, [years]);
 
+  // Monthly chart series + rolling-1Y derived series.
+  const monthlySeries = useMemo(() => {
+    const pts: MonthlyPoint[] = monthlyData?.series ?? [];
+    if (incMode === "rolling") {
+      // 12-month trailing return at each point
+      const out: Array<{ month: string; smif: number; bench: number }> = [];
+      for (let i = 11; i < pts.length; i++) {
+        let s = 1, b = 1;
+        for (let j = i - 11; j <= i; j++) {
+          s *= 1 + pts[j].smif_return_pct / 100;
+          b *= 1 + pts[j].bench_return_pct / 100;
+        }
+        out.push({ month: pts[i].month, smif: (s - 1) * 100, bench: (b - 1) * 100 });
+      }
+      return out;
+    }
+    if (incMode === "drawdown") {
+      return pts.map((p) => ({ month: p.month, smif: p.smif_drawdown_pct, bench: p.bench_drawdown_pct }));
+    }
+    return pts.map((p) => ({ month: p.month, smif: p.smif_growth, bench: p.bench_growth }));
+  }, [monthlyData, incMode]);
+
+  // Only show January tick labels so the long axis stays readable.
+  const monthlyTickFormatter = (iso: string) => {
+    const [y, m] = iso.split("-");
+    return m === "01" ? y : "";
+  };
+
   const data       = mode === "cumulative" ? cumulative : annual;
   const showSmif   = series !== "bench";
   const showBench  = series !== "smif";
+  const showIncSmif  = incSeries !== "bench";
+  const showIncBench = incSeries !== "smif";
 
-  // Sort table rows most-recent first.
   const tableRows = useMemo(() => [...years].sort((a, b) => b.year - a.year), [years]);
+
+  const sinceInceptionTitle = useMemo(() => {
+    if (!monthlyData) return "Growth of $1 since inception";
+    const startYear = monthlyData.inceptionMonth.slice(0, 4);
+    return incMode === "growth"
+      ? `Growth of $1 since ${formatMonth(monthlyData.inceptionMonth)}`
+      : incMode === "drawdown"
+        ? `Peak-to-trough drawdown since ${startYear}`
+        : `Rolling 12-month return since ${startYear}`;
+  }, [monthlyData, incMode]);
 
   return (
     <>
@@ -137,14 +235,14 @@ function Performance() {
             <span className="text-gold/80">Quarterly.</span>
           </h1>
           <p className="mt-8 max-w-xl text-on-dark-secondary leading-relaxed text-lg">
-            Measured against the S&P 500 Total Return Index.
-            {allAudited ? "" : " Returns shown are illustrative."}
+            Measured against the S&P 500 Total Return Index (SPY).
+            {monthlyData ? "" : allAudited ? "" : " Returns shown are illustrative."}
           </p>
         </div>
         <div className="absolute bottom-0 left-0 right-0 h-px bg-white/10" />
       </section>
 
-      {!allAudited && (
+      {!monthlyData && !allAudited && (
         <div className="container-prose pt-10">
           <div className="border border-gold/40 bg-secondary/30 p-5 md:p-6 flex items-start gap-4">
             <span className="rule-gold mt-2 shrink-0" aria-hidden="true" />
@@ -163,7 +261,7 @@ function Performance() {
       <section className="container-prose py-10 space-y-12 pt-14">
 
         {/* ── KPI cards ─────────────────────────────────────────── */}
-        <Reveal className="grid gap-px bg-border md:grid-cols-3">
+        <Reveal className={`grid gap-px bg-border ${KPI_STATS.length === 4 ? "md:grid-cols-4" : "md:grid-cols-3"}`}>
           {KPI_STATS.map(({ l, v, pos }) => (
             <div key={l} className="bg-card p-8 flex flex-col gap-1 border border-border">
               <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">{l}</div>
@@ -175,11 +273,158 @@ function Performance() {
           ))}
         </Reveal>
 
-        {/* ── Chart ─────────────────────────────────────────────── */}
+        {/* ── Since Inception (monthly, live) ───────────────────── */}
+        {monthlyData && monthlyData.series.length > 0 && (
+          <Reveal className="border border-border bg-card p-6 md:p-10" delay={0.04}>
+            <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between mb-8">
+              <div>
+                <div className="text-xs uppercase tracking-[0.22em] text-muted-foreground mb-2">
+                  Since Inception · Monthly · updated {formatMonth(monthlyData.lastMonth)}
+                </div>
+                <h2 className="font-display text-2xl font-bold text-ink md:text-3xl">
+                  {sinceInceptionTitle}
+                </h2>
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                <div className="inline-flex border border-border" role="group">
+                  {([
+                    { k: "growth",   label: "Growth of $1" },
+                    { k: "drawdown", label: "Drawdown" },
+                    { k: "rolling",  label: "Rolling 1Y" },
+                  ] as { k: IncMode; label: string }[]).map((b) => (
+                    <button
+                      key={b.k}
+                      onClick={() => setIncMode(b.k)}
+                      className={`px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-colors duration-150 cursor-pointer ${
+                        incMode === b.k ? "bg-ink text-background" : "bg-background text-ink hover:bg-secondary"
+                      }`}
+                    >
+                      {b.label}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="inline-flex border border-border" role="group">
+                  {([{ k: "both", label: "Both" }, { k: "smif", label: "SMIF" }, { k: "bench", label: "SPY TR" }] as { k: Series; label: string }[]).map((b) => (
+                    <button
+                      key={b.k}
+                      onClick={() => setIncSeries(b.k)}
+                      className={`px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-colors duration-150 cursor-pointer ${
+                        incSeries === b.k ? "bg-gold-deep text-background" : "bg-background text-ink hover:bg-secondary"
+                      }`}
+                    >
+                      {b.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="h-[420px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                {incMode === "growth" ? (
+                  <AreaChart data={monthlySeries} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="smifGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor={SMIF_COLOR} stopOpacity={0.35} />
+                        <stop offset="100%" stopColor={SMIF_COLOR} stopOpacity={0} />
+                      </linearGradient>
+                      <linearGradient id="benchGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor={BENCH_COLOR} stopOpacity={0.18} />
+                        <stop offset="100%" stopColor={BENCH_COLOR} stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid stroke="#E0DDD5" strokeDasharray="3 3" vertical={false} />
+                    <XAxis
+                      dataKey="month"
+                      stroke="#6B6860"
+                      tick={{ fontSize: 11, fontFamily: "IBM Plex Mono" }}
+                      tickLine={false}
+                      axisLine={{ stroke: "#E0DDD5" }}
+                      tickFormatter={monthlyTickFormatter}
+                      interval={0}
+                      minTickGap={20}
+                    />
+                    <YAxis
+                      stroke="#6B6860"
+                      tick={{ fontSize: 11, fontFamily: "IBM Plex Mono" }}
+                      tickLine={false}
+                      axisLine={false}
+                      tickFormatter={(v) => `${v.toFixed(1)}×`}
+                    />
+                    <Tooltip
+                      cursor={{ stroke: "#CFB991", strokeDasharray: "4 4", strokeWidth: 1 }}
+                      content={<MonthlyTooltip mode={incMode} />}
+                    />
+                    <Legend
+                      iconType="circle"
+                      wrapperStyle={{ fontSize: 11, paddingTop: 16, fontFamily: "IBM Plex Mono" }}
+                    />
+                    {showIncSmif && (
+                      <Area type="monotone" dataKey="smif" name="SMIF"
+                        stroke={SMIF_COLOR} strokeWidth={2.5} fill="url(#smifGrad)" />
+                    )}
+                    {showIncBench && (
+                      <Area type="monotone" dataKey="bench" name="S&P 500 TR (SPY)"
+                        stroke={BENCH_COLOR} strokeWidth={2} strokeDasharray="6 4" fill="url(#benchGrad)" />
+                    )}
+                  </AreaChart>
+                ) : (
+                  <LineChart data={monthlySeries} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
+                    <CartesianGrid stroke="#E0DDD5" strokeDasharray="3 3" vertical={false} />
+                    <XAxis
+                      dataKey="month"
+                      stroke="#6B6860"
+                      tick={{ fontSize: 11, fontFamily: "IBM Plex Mono" }}
+                      tickLine={false}
+                      axisLine={{ stroke: "#E0DDD5" }}
+                      tickFormatter={monthlyTickFormatter}
+                      interval={0}
+                      minTickGap={20}
+                    />
+                    <YAxis
+                      stroke="#6B6860"
+                      tick={{ fontSize: 11, fontFamily: "IBM Plex Mono" }}
+                      tickLine={false}
+                      axisLine={false}
+                      tickFormatter={(v) => `${v.toFixed(0)}%`}
+                    />
+                    <ReferenceLine y={0} stroke="#E0DDD5" strokeWidth={1} />
+                    <Tooltip
+                      cursor={{ stroke: "#CFB991", strokeDasharray: "4 4", strokeWidth: 1 }}
+                      content={<MonthlyTooltip mode={incMode} />}
+                    />
+                    <Legend
+                      iconType="circle"
+                      wrapperStyle={{ fontSize: 11, paddingTop: 16, fontFamily: "IBM Plex Mono" }}
+                    />
+                    {showIncSmif && (
+                      <Line type="monotone" dataKey="smif" name="SMIF" dot={false}
+                        stroke={SMIF_COLOR} strokeWidth={2.5} />
+                    )}
+                    {showIncBench && (
+                      <Line type="monotone" dataKey="bench" name="S&P 500 TR (SPY)" dot={false}
+                        stroke={BENCH_COLOR} strokeWidth={2} strokeDasharray="6 4" />
+                    )}
+                  </LineChart>
+                )}
+              </ResponsiveContainer>
+            </div>
+
+            <p className="text-xs text-muted-foreground mt-6">
+              SMIF returns derived from monthly custodian statements (Modified Dietz for months with external cash flows).
+              S&P 500 benchmark is SPY adjusted close (total return, includes reinvested dividends).
+              Custodian-transition months (Nov 2024, Mar 2025) bridged at 0% return.
+            </p>
+          </Reveal>
+        )}
+
+        {/* ── Annual chart ─────────────────────────────────────── */}
         <Reveal className="border border-border bg-card p-6 md:p-10" delay={0.08}>
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between mb-8">
             <div>
-              <div className="text-xs uppercase tracking-[0.22em] text-muted-foreground mb-2">Interactive</div>
+              <div className="text-xs uppercase tracking-[0.22em] text-muted-foreground mb-2">Annual · Audited Years</div>
               <h2 className="font-display text-2xl font-bold text-ink md:text-3xl">
                 {mode === "cumulative" ? `Growth of $1 since ${baseYear}` : "Annual returns"}
               </h2>
@@ -308,7 +553,7 @@ function Performance() {
         </Reveal>
 
         <p className="text-xs text-muted-foreground max-w-3xl pb-8">
-          Past performance does not guarantee future results.{allAudited ? "" : " Figures shown for illustrative purposes;"} consult the latest annual report for audited returns.
+          Past performance does not guarantee future results.{monthlyData ? "" : allAudited ? "" : " Figures shown for illustrative purposes;"} consult the latest annual report for audited returns.
         </p>
       </section>
     </>
