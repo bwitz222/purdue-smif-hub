@@ -313,10 +313,16 @@ function Team() {
                     </div>
                     <span className="text-xs uppercase tracking-[0.18em] text-gold-deep">
                       {team.members.length} {team.members.length === 1 ? "member" : "members"}
+                      {team.openSeats > 0 && (
+                        <> · {team.openSeats} open</>
+                      )}
                     </span>
                   </div>
                   <RevealGroup className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" stagger={0.05}>
                     {team.members.map((m) => <RevealItem key={m.name} className="h-full [&>div]:h-full"><MemberCard m={m} onSelect={setSelected} /></RevealItem>)}
+                    {team.openSeats > 0 && !query && (
+                      <RevealItem className="h-full [&>a]:h-full"><OpenSeatsCard count={team.openSeats} role="Analyst" /></RevealItem>
+                    )}
                   </RevealGroup>
                 </div>
               ))}
@@ -358,15 +364,7 @@ function Team() {
 
 
 
-      <section className="bg-ink py-24 text-background">
-        <div className="container-prose">
-          <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold/80">Mentorship</span>
-          <h2 className="mt-3 font-display text-3xl font-bold">Faculty Advisor</h2>
-          <p className="mt-4 max-w-2xl text-background/70">
-            SMIF benefits from the mentorship of finance faculty at the Daniels School of Business, who provide guidance on strategy, governance, and professional development, and ensure continuity year over year.
-          </p>
-        </div>
-      </section>
+      {/* Faculty Advisor section removed pending real advisor data (F7 of audit). */}
 
       <MemberDetailSheet member={selected} onClose={() => setSelected(null)} />
     </>
