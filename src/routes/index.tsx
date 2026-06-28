@@ -126,15 +126,15 @@ function Index() {
           {/* Stats — CountUp carries the entrance; no double-animation */}
           <div className="mt-16 grid grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-10 max-w-5xl">
             {STATS.map((stat) => (
-              <div key={stat.label}>
-                <div className="font-display text-4xl lg:text-5xl font-bold text-gold leading-none">
+              <div key={stat.label} className="border-t border-gold/50 pt-4">
+                <div className="font-display text-5xl lg:text-6xl font-bold text-gold leading-none">
                   {stat.kind === "aum" ? (<>{aum.prefix && <span>{aum.prefix}</span>}<CountUp to={aum.value} duration={1.8} /><span>{aum.suffix}</span></>) :
                    stat.kind === "members" ? (<>{members.prefix && <span>{members.prefix}</span>}<CountUp to={members.value} duration={1.4} /><span>{members.suffix}</span></>) :
                    stat.kind === "track" ? (<><CountUp to={trackRecordYears} duration={1.2} /><span>Y+</span></>) :
                                            (<CountUp to={s.sector_teams} duration={1.0} />)}
                 </div>
-                <div className="mt-3 text-xs uppercase tracking-[0.16em] text-on-dark-primary font-medium">{stat.label}</div>
-                <div className="mt-1 text-xs text-on-dark-secondary font-mono">{stat.sub}</div>
+                <div className="mt-4 text-[10px] uppercase tracking-[0.24em] text-on-dark-secondary font-medium">{stat.label}</div>
+                <div className="mt-1 text-[10px] text-on-dark-dim font-mono uppercase tracking-[0.18em]">{stat.sub}</div>
               </div>
             ))}
           </div>
