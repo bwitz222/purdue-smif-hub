@@ -208,8 +208,9 @@ function Team() {
             The people behind the portfolio.
           </h1>
           <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
-            {totalMembers} students working together to manage real capital for Purdue. Executive board members also serve as sector leads or senior analysts across the eight sector teams, the Fixed Income &amp; Macro group, and the Portfolio + Risk Management team.
+            52 students and 2 faculty advisors working together to manage real capital for Purdue. Executive board members also serve as sector leads or senior analysts across the eight sector teams, the Fixed Income &amp; Macro group, and the Portfolio + Risk Management team.
           </p>
+
           <div className="mt-10 grid grid-cols-2 gap-6 md:grid-cols-4 max-w-3xl">
             {[
               ["7", "Executive Board"],
