@@ -8,7 +8,7 @@ import { getPublications, type PublicationRow } from "@/lib/publications.functio
 
 const SUBSTACK_URL = "https://purduesmif.substack.com";
 
-export const Route = createFileRoute("/publications")({
+export const Route = createFileRoute("/research")({
   // SSR loader — the publications list is fetched on the server so the
   // page renders fully-formed HTML (no client-side loading spinner, fully
   // indexable by crawlers). Client-side search/sort still operate on the
