@@ -140,11 +140,11 @@ export function MemberCard({
 export function OpenSeatsCard({
   count,
   role = "Analyst",
-  placement = "team-open-seats",
+  placement = "team-open-seats" as const,
 }: {
   count: number;
   role?: string;
-  placement?: string;
+  placement?: import("@/lib/apply-url").ApplyPlacement;
 }) {
   if (count <= 0) return null;
   const label = count === 1 ? "1 seat open" : `${count} seats open`;
