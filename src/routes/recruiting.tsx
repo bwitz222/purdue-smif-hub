@@ -54,16 +54,15 @@ function CountdownUnit({ value, label }: { value: number | string; label: string
   );
 }
 
-// SSR/no-JS fallback label — built from the first event in CALENDAR that
-// hasn't been deleted. Module load time is fine; this is just for the
-// resting text shown before hydration.
-function staticNextEventLabel(): { name: string; date: string; time: string } | null {
-  // We can't know "now" on the server vs. the client without a hydration
-  // mismatch, so we always show the first calendar item as the resting
-  // value. After hydration the live countdown takes over.
-  const first = CALENDAR[0];
-  if (!first) return null;
-  return { name: first.name, date: first.date, time: first.time };
+// SSR/no-JS fallback label — uses CALENDAR + build-time clock to name a
+// real upcoming event so the resting HTML matches the live ticker after
+// hydration. Falls back to the first event, then to a closed-cycle label.
+function staticNextEventLabel(): { name: string; date: string; time: string; expired: boolean } {
+  const nowMs = Date.now();
+  const next = nextUpcomingEvent(nowMs);
+  if (next) return { name: next.name, date: next.date, time: next.time, expired: false };
+  const last = CALENDAR[CALENDAR.length - 1];
+  return { name: last?.name ?? "", date: last?.date ?? "", time: last?.time ?? "", expired: true };
 }
 
 function Countdown() {
@@ -71,32 +70,41 @@ function Countdown() {
   const pad = (n: number) => n.toString().padStart(2, "0");
   const fallback = staticNextEventLabel();
 
-  // Expired — entire cycle has passed.
-  if (c?.expired) {
+  // Expired — entire cycle has passed. role="status" so AT announces it.
+  if (c?.expired || (c === null && fallback.expired)) {
     return (
-      <div className="mt-10 border border-gold/30 bg-ink/60 p-6 text-background md:p-8">
+      <div
+        role="status"
+        className="mt-10 border border-gold/30 bg-ink/60 p-6 text-background md:p-8"
+      >
         <div className="text-xs font-semibold uppercase tracking-[0.3em] text-gold">
           Applications Closed
         </div>
-        <div className="mt-2 text-sm text-on-dark-secondary">
-          Recruiting for this cycle has ended. Watch this page or follow us on Instagram for the next application window.
-        </div>
+        <p className="mt-2 text-sm text-on-dark-secondary">
+          Applications for the Fall 2026 cycle are closed. Watch this page or follow us on Instagram for the next application window.
+        </p>
       </div>
     );
   }
 
-  // Resting / hydrating state — show the next event by name + plain-text
-  // date so crawlers and no-JS users see real content (F8 + F16).
-  const headline = c?.event?.name ?? fallback?.name ?? "Next event";
-  const sub = c?.event ? `${c.event.date} · ${c.event.time} ET` : (fallback ? `${fallback.date} · ${fallback.time} ET` : "");
+  const headline = c?.event?.name ?? fallback.name;
+  const sub = c?.event
+    ? `${c.event.date} · ${c.event.time} ET`
+    : `${fallback.date} · ${fallback.time} ET`;
+  const srLabel = c
+    ? `${c.days} days, ${c.hours} hours, ${c.minutes} minutes until ${headline}.`
+    : `Next event: ${headline} on ${sub}.`;
 
   return (
-    <div className="mt-10 border border-gold/30 bg-ink/60 p-6 text-background md:p-8" aria-live="off" aria-atomic="true">
+    <div className="mt-10 border border-gold/30 bg-ink/60 p-6 text-background md:p-8">
       <div className="text-xs font-semibold uppercase tracking-[0.3em] text-gold">
         Next: {headline}
       </div>
-      <div className="mt-1 text-sm text-on-dark-secondary">{sub}</div>
-      <div className="mt-5 flex flex-wrap gap-3">
+      <p className="mt-1 text-sm text-on-dark-secondary">{sub}</p>
+      {/* Accessible plain-text countdown, hidden visually. Always present
+          so screen readers + no-JS users get a complete sentence. */}
+      <span className="sr-only" aria-live="polite">{srLabel}</span>
+      <div className="mt-5 flex flex-wrap gap-3" aria-hidden="true">
         <CountdownUnit value={c ? c.days : "--"} label="Days" />
         <CountdownUnit value={c ? pad(c.hours) : "--"} label="Hours" />
         <CountdownUnit value={c ? pad(c.minutes) : "--"} label="Minutes" />
@@ -105,6 +113,7 @@ function Countdown() {
     </div>
   );
 }
+
 
 
 type Event = {
