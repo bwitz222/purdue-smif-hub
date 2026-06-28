@@ -1,59 +1,71 @@
-## Goal
+## Goals
 
-Add a "Since Inception (Monthly)" growth chart to the Performance page driven by the uploaded balance history (Oct 2013 → present), with SPY total-return as a live S&P 500 benchmark refreshed daily by the existing 4 PM EST cron. Keep the existing annual chart and table.
+1. SSR/no-JS-safe countdown with explicit "applications closed" state.
+2. Mobile calendar rows = single ≥44px tap target with a visible add-to-calendar affordance.
+3. Restore the Faculty Advisor section on `/team` with the two professors.
+4. Sticky sector switcher on `/team` redesigned as chip controls (mobile + desktop) with anchor-jump filtering.
+5. Run SEO + accessibility audits after build.
 
-## Data sources
+---
 
-**SMIF monthly history (static, seeded once from your spreadsheet):**
-- New table `fund_monthly_history(month date PK, beginning_balance, market_change, dividends, interest, deposits, withdrawals, net_advisory_fees, ending_balance)` — RLS on, public SELECT (page is public).
-- Seeded via migration with all 152 valid rows from `Portfolio History`.
-- **Monthly return formula:** `(market_change + dividends + interest − net_advisory_fees) / beginning_balance`, with Modified Dietz adjustment for any month with deposits/withdrawals: `(ending − beginning − net_flows) / (beginning + 0.5·net_flows)`.
-- **Account transition handling:** Nov 2024 ends at $0 and Mar 2025 starts at $0 (custodian transfer, not a market loss). These two months are flagged `is_transition=true` and excluded from the return series — the cumulative line bridges them (return = 0% for both).
+## 1. Countdown — SSR / no-JS fallback
 
-**SPY total-return benchmark (live, monthly):**
-- New table `benchmark_monthly(month date PK, symbol text, close numeric, return_pct numeric)`.
-- Seeded for Oct 2013 → last completed month via Polygon `/v2/aggs/ticker/SPY/range/1/month/...` (adjusted=true → includes splits + reinvested dividends → true TR).
-- Daily refresh: extend the existing `refresh-quotes` server route to also upsert the current month's SPY close at the same 21:05 UTC cron call. No new cron job, no new secret — reuses `POLYGON_API_KEY` and the current `apikey` auth.
+File: `src/routes/recruiting.tsx`
 
-## Server function
+- Compute a deterministic "next event" at module scope using the build-time `Date.now()` so server-rendered HTML names a real upcoming event (not just `CALENDAR[0]`). Pass it into `<Countdown />` as a prop so SSR markup matches first client paint.
+- Render the resting headline + date/time inside a `<noscript>`-equivalent always-visible block (`<p className="...">`) and tag the live ticker `<span aria-hidden="true">` so screen readers and no-JS users get one clean sentence: "Applications for SMIF Callout 1 open Tue, Aug 25 · 7:30 PM ET."
+- If `nextUpcomingEvent === null` and the last event is in the past, render an `<p role="status">` "Applications are closed for the Fall 2026 cycle" block — replaces the current div, gains semantic role.
+- Keep ticker units but wrap in `aria-hidden`; expose plain-text countdown ("3 days, 4 hours") via `sr-only` updated on the second tick.
 
-New `getFundMonthlyHistory` in `src/lib/fund-performance.functions.ts` that joins both tables and returns:
-```ts
-{ months: [{ month, smif_return_pct, bench_return_pct, is_transition }], inceptionMonth, lastMonth }
-```
-Computes growth-of-$1 series on the server so the client just renders.
+## 2. Mobile calendar rows — single ≥44px tap block
 
-## UI changes — `src/routes/performance.tsx`
+File: `src/routes/recruiting.tsx` (the `CALENDAR.map` block).
 
-1. **New section above the existing chart**, inside the Reveal pattern already used:
-   - Header: "Since Inception" with subtitle showing the inception date and last update.
-   - Mode toggle: **Growth of $1** (default) / **Drawdown** / **Rolling 1Y return**.
-   - Series toggle: Both / SMIF / SPY (matching current chart's styling).
-   - Recharts `AreaChart` for growth-of-$1, `LineChart` for the other modes. Reuses `SMIF_COLOR` / `BENCH_COLOR`.
-   - Hover tooltip shows month, both values, and spread.
-   - Mobile-safe x-axis: tick only Jan of each year.
-2. **KPI cards rebuilt from real data**: 1Y return, 5Y annualized, since-inception annualized (computed from monthly series), plus a fourth card for **Max Drawdown**. Values are now genuine, so the "illustrative" banner and footnotes are removed (`allAudited` logic stays for the annual rows you may still want to flag).
-3. Existing annual chart + table untouched.
+- Collapse the 4-column grid to a stacked layout under `md`. Each row becomes a single `<a>` with `min-h-[64px]`, `p-4`, full-width tap surface, and a right-aligned `CalendarPlus` icon button affordance (label "Add to calendar") that's always visible on mobile rather than hover-only.
+- Date + name on row 1, time + location on row 2; the `CalendarPlus` icon sits at the right edge with `aria-hidden` (the link's `aria-label` already conveys intent).
+- Preserve the existing desktop 12-col grid at `md:` and up.
+- Add `focus-visible` ring tokens for keyboard users.
 
-## Cron refresh wiring
+## 3. Faculty Advisor section
 
-`src/routes/api/public/hooks/refresh-quotes.ts` gets a small addition after the holdings refresh:
-```ts
-// Upsert current-month SPY close from latest cached SPY price
-await supabaseAdmin.from('benchmark_monthly').upsert({ month, symbol: 'SPY', close, return_pct }, { onConflict: 'month,symbol' });
-```
-On the 1st trading day of each new month, it inserts the new row; otherwise it updates the running month's value. Backfill from Oct 2013 runs once in the seeding migration via a one-shot Polygon fetch executed server-side (a separate one-time admin server function you trigger after deploy).
+Files: `src/data/team.ts`, `src/routes/team.tsx`, two new headshot assets.
 
-## Files touched
+- Add a `facultyAdvisors` export to `src/data/team.ts`:
+  - Lulu Zeng — "Faculty Advisor" — "Teaches Fixed Income and Financial Modeling."
+  - Alexander Boquist — "Faculty Advisor" — "Teaches Honors Financial Management and Futures & Options."
+- Use Purdue Krannert faculty photos as placeholders via `imagegen` (neutral portrait-style illustrations) since real headshots weren't provided. **Confirm:** is generating stand-in portraits acceptable, or should I leave the photo slot as initials-only until you upload real headshots? I'll default to **initials-only avatar tiles** (no fabricated faces) unless you say otherwise.
+- Restore a `Faculty Advisors` section on `/team` placed between the FIM and PM blocks, using a compact 2-up `MemberCard`-style layout (no "Apply" CTA, no role chip).
+- Add to JSON-LD `ItemList` so the schema reflects the full roster.
 
-- **New migration:** `fund_monthly_history` + `benchmark_monthly` tables, GRANTs, RLS, public SELECT policies, seed of all 152 SMIF monthly rows.
-- **New server fn:** `getFundMonthlyHistory` in `src/lib/fund-performance.functions.ts`.
-- **New server fn (one-shot, admin only):** `backfillSpyBenchmark` to populate `benchmark_monthly` from Polygon for Oct 2013 → present. Invoked once after deploy.
-- **Edit:** `src/routes/api/public/hooks/refresh-quotes.ts` — append SPY monthly upsert.
-- **Edit:** `src/routes/performance.tsx` — new chart + KPI rewrite, remove illustrative banner.
+## 4. Sticky sector switcher — chips + anchor-jump
 
-## Out of scope
+File: `src/routes/team.tsx`.
 
-- Changing the annual table source (stays on `fund_performance` table).
-- Daily-granularity chart (monthly is sufficient given the source data is monthly).
-- Storing daily SPY history.
+Replace the current `<Select>` in the sticky filter bar with a horizontally scrollable chip row that works for both viewports:
+
+- Chips: `All`, `Leadership`, each sector name, `FI & Macro`, `PM + Risk`, `Faculty`.
+- Container: `flex gap-2 overflow-x-auto snap-x` on mobile, wraps onto one line `md:flex-wrap md:overflow-visible` on desktop. Each chip ≥36px tall, `min-w-max`, `rounded-full` border with active state using `bg-ink text-background`.
+- Clicking a chip does two things: sets the active filter (same state as today) AND smooth-scrolls to that section's anchor (`#leadership`, `#sectors-<slug>`, `#fim`, `#pm`, `#faculty`). Add matching `id="..."` to each section heading.
+- Keep the URL `?sector=` sync logic so deep links still work; chips read from / write to the same state.
+- Keep the search input above the chip row on mobile, side-by-side on `md+`.
+- Remove the old shadcn `Select` import if unused.
+
+## 5. Audits
+
+- After build passes, call `seo_chat--trigger_scan` and `security--run_security_scan`.
+- Read findings, fix anything actionable (missing alt text on the new advisor tiles, anchor labels, etc.), and report results.
+
+---
+
+## Technical notes
+
+- No DB changes. No new packages.
+- `Countdown` becomes a server-aware component: deterministic SSR text, client-only ticker enhancement.
+- All new tap targets verified ≥44px (mobile) per a11y skill.
+- Section anchors get `scroll-mt-28` so the sticky header doesn't cover them after jumping.
+
+---
+
+## Open question
+
+Confirm whether you want me to **generate placeholder portraits** for Profs. Zeng and Boquist, or render **initials-only avatar tiles** until you upload real headshots. Default: initials-only.
