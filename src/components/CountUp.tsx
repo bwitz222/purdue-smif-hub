@@ -29,11 +29,17 @@ export function CountUp({
 }: CountUpProps) {
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, margin: "-10% 0px" });
-  const mv = useMotionValue(from);
-  const [display, setDisplay] = useState(from);
+  const mv = useMotionValue(to);
+  // Initialize display at `to` so the server-rendered HTML (and any
+  // no-JS / reduced-motion / pre-hydration paint) shows the real resting
+  // value — never a misleading 0. On the client we snap back to `from`
+  // once and animate up to `to` when the element scrolls into view.
+  const [display, setDisplay] = useState(to);
+  const startedRef = useRef(false);
 
   useEffect(() => {
-    if (!inView) return;
+    if (!inView || startedRef.current) return;
+    startedRef.current = true;
     const reduce =
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -41,13 +47,15 @@ export function CountUp({
       setDisplay(to);
       return;
     }
+    mv.set(from);
+    setDisplay(from);
     const controls = animate(mv, to, {
       duration,
       ease: [0.22, 1, 0.36, 1],
       onUpdate: (v) => setDisplay(v),
     });
     return () => controls.stop();
-  }, [inView, to, duration, mv]);
+  }, [inView, to, from, duration, mv]);
 
   const formatted = format
     ? format(display)

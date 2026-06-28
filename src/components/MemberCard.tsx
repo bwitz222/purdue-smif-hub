@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Mail, Linkedin, UserPlus } from "lucide-react";
+import { Mail, Linkedin, UserPlus, ExternalLink } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
+import { applyUrl } from "@/lib/apply-url";
 
 export interface Member {
   name: string;
