@@ -301,7 +301,7 @@ function Team() {
 
 
       {showBoard && filteredBoard.length > 0 && (
-        <section className="container-prose py-20">
+        <section id="leadership" className="container-prose py-20 scroll-mt-40">
           <SectionHeader
             kicker="Leadership"
             title="Executive Board"
@@ -325,7 +325,7 @@ function Team() {
             />
             <div className="space-y-16">
               {filteredSectors.map((team) => (
-                <div key={team.name}>
+                <div key={team.name} id={`sector-${sectorSlug(team.name)}`} className="scroll-mt-40">
                   <div className="mb-8 flex flex-wrap items-end justify-between gap-4 border-b border-border pb-4">
                     <div>
                       <h3 className="font-display text-2xl font-bold">{team.name}</h3>
@@ -352,7 +352,7 @@ function Team() {
       )}
 
       {showFim && filteredFim.length > 0 && (
-        <section className="container-prose py-20">
+        <section id="fim" className="container-prose py-20 scroll-mt-40">
           <SectionHeader
             kicker="Cross-Asset"
             title="Fixed Income & Macro Team"
@@ -366,7 +366,7 @@ function Team() {
       )}
 
       {showPm && filteredPm.length > 0 && (
-        <section className="border-t border-border bg-secondary/30 py-20">
+        <section id="pm" className="border-t border-border bg-secondary/30 py-20 scroll-mt-40">
           <div className="container-prose">
             <SectionHeader
               kicker="Portfolio + Risk Management"
@@ -380,13 +380,26 @@ function Team() {
           </div>
         </section>
       )}
+
+      {showFaculty && filteredFaculty.length > 0 && (
+        <section id="faculty" className="border-t border-border py-20 scroll-mt-40">
+          <div className="container-prose">
+            <SectionHeader
+              kicker="Faculty"
+              title="Faculty Advisors"
+              blurb="Daniels School of Business faculty who advise SMIF on curriculum, risk, and investment process."
+              count={hasFilter ? filteredFaculty.length : undefined}
+            />
+            <RevealGroup className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" stagger={0.06}>
+              {filteredFaculty.map((m) => <RevealItem key={m.name} className="h-full [&>div]:h-full"><MemberCard m={m} onSelect={setSelected} /></RevealItem>)}
+            </RevealGroup>
+          </div>
+        </section>
+      )}
       </div>
-
-
-
-      {/* Faculty Advisor section removed pending real advisor data (F7 of audit). */}
 
       <MemberDetailSheet member={selected} onClose={() => setSelected(null)} />
     </>
   );
 }
+
