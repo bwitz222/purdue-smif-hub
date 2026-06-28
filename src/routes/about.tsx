@@ -210,6 +210,7 @@ function About() {
               Ready to put our process to work?
             </h2>
             <p className="mt-3 max-w-md text-sm text-background/65">Apply to be part of the research process — from pitch to portfolio decision.</p>
+          </div>
           <div className="flex gap-4 shrink-0">
             <a
               href={applyUrl("about-cta")}
