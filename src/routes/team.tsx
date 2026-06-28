@@ -5,21 +5,17 @@ import { Search, X } from "lucide-react";
 import { MemberCard, OpenSeatsCard, type Member } from "@/components/MemberCard";
 import { MemberDetailSheet } from "@/components/MemberDetailSheet";
 import { RevealGroup, RevealItem } from "@/components/Reveal";
-import { board, sectorTeams, fixedIncomeMacro, portfolioManagers } from "@/data/team";
+import { board, sectorTeams, fixedIncomeMacro, portfolioManagers, facultyAdvisors } from "@/data/team";
 import { socialMeta, canonical, OG_TEAM } from "@/lib/seo";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-} from "@/components/ui/select";
 
 const allMembers = [
   ...board,
   ...sectorTeams.flatMap((t) => t.members),
   ...fixedIncomeMacro,
   ...portfolioManagers,
+  ...facultyAdvisors,
 ].filter((m) => !m.placeholder);
+
 
 type TeamSearch = { sector?: string };
 
