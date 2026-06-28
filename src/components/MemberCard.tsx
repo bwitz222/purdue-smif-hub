@@ -130,3 +130,47 @@ export function MemberCard({
     </div>
   );
 }
+
+/**
+ * Collapses all open analyst seats for a team into a single tile that links
+ * directly to the Qualtrics application form (F3 + F10 of the audit). Use
+ * one of these per team instead of padding the grid with N "Open Position"
+ * placeholders.
+ */
+export function OpenSeatsCard({
+  count,
+  role = "Analyst",
+  placement = "team-open-seats",
+}: {
+  count: number;
+  role?: string;
+  placement?: string;
+}) {
+  if (count <= 0) return null;
+  const label = count === 1 ? "1 seat open" : `${count} seats open`;
+  return (
+    <a
+      href={applyUrl(placement)}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={`${label} — apply (opens application form in new tab)`}
+      className="group flex flex-col border border-dashed border-border bg-card/50 transition-[border-color,box-shadow] duration-200 hover:border-gold hover:shadow-elegant focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+    >
+      <div className="grid aspect-square w-full place-items-center overflow-hidden border-b border-dashed border-border bg-secondary/40">
+        <UserPlus className="h-10 w-10 text-gold-deep" />
+      </div>
+      <div className="flex flex-1 flex-col p-6">
+        <div className="text-xs font-semibold uppercase tracking-[0.18em] text-gold-deep">
+          {role}
+        </div>
+        <div className="mt-1 font-display text-2xl font-bold leading-tight">+{label}</div>
+        <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+          We're recruiting analysts for this team. Apply through our form — applications open each fall and spring semester.
+        </p>
+        <div className="mt-auto flex items-center gap-2 border-t border-border pt-4 text-xs font-semibold text-ink group-hover:text-gold-deep transition-colors">
+          Apply <ExternalLink className="h-3.5 w-3.5" />
+        </div>
+      </div>
+    </a>
+  );
+}
