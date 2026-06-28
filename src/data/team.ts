@@ -178,6 +178,24 @@ export const portfolioManagers: Member[] = make("Portfolio + Risk Management", [
   ["", "Portfolio Management Associate"],
 ]);
 
+// Faculty Advisors — Daniels School professors who advise SMIF. Real
+// headshots not yet provided, so cards render initials-only tiles.
+export const facultyAdvisors: Member[] = [
+  {
+    name: "Lulu Zeng",
+    role: "Faculty Advisor",
+    year: "Daniels School of Business",
+    bio: "Teaches Fixed Income and Financial Modeling.",
+  },
+  {
+    name: "Alexander Boquist",
+    role: "Faculty Advisor",
+    year: "Daniels School of Business",
+    bio: "Teaches Honors Financial Management and Futures & Options.",
+  },
+];
+
+
 // LinkedIn profiles, keyed by name, applied across board, sector teams, FIM, and PM groups.
 const LINKEDIN_BY_NAME: Record<string, string> = {
   "Gabriel Fridman": "https://www.linkedin.com/in/gabriel-fridman-a5732b242",

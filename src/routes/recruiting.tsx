@@ -54,16 +54,15 @@ function CountdownUnit({ value, label }: { value: number | string; label: string
   );
 }
 
-// SSR/no-JS fallback label — built from the first event in CALENDAR that
-// hasn't been deleted. Module load time is fine; this is just for the
-// resting text shown before hydration.
-function staticNextEventLabel(): { name: string; date: string; time: string } | null {
-  // We can't know "now" on the server vs. the client without a hydration
-  // mismatch, so we always show the first calendar item as the resting
-  // value. After hydration the live countdown takes over.
-  const first = CALENDAR[0];
-  if (!first) return null;
-  return { name: first.name, date: first.date, time: first.time };
+// SSR/no-JS fallback label — uses CALENDAR + build-time clock to name a
+// real upcoming event so the resting HTML matches the live ticker after
+// hydration. Falls back to the first event, then to a closed-cycle label.
+function staticNextEventLabel(): { name: string; date: string; time: string; expired: boolean } {
+  const nowMs = Date.now();
+  const next = nextUpcomingEvent(nowMs);
+  if (next) return { name: next.name, date: next.date, time: next.time, expired: false };
+  const last = CALENDAR[CALENDAR.length - 1];
+  return { name: last?.name ?? "", date: last?.date ?? "", time: last?.time ?? "", expired: true };
 }
 
 function Countdown() {
@@ -71,32 +70,41 @@ function Countdown() {
   const pad = (n: number) => n.toString().padStart(2, "0");
   const fallback = staticNextEventLabel();
 
-  // Expired — entire cycle has passed.
-  if (c?.expired) {
+  // Expired — entire cycle has passed. role="status" so AT announces it.
+  if (c?.expired || (c === null && fallback.expired)) {
     return (
-      <div className="mt-10 border border-gold/30 bg-ink/60 p-6 text-background md:p-8">
+      <div
+        role="status"
+        className="mt-10 border border-gold/30 bg-ink/60 p-6 text-background md:p-8"
+      >
         <div className="text-xs font-semibold uppercase tracking-[0.3em] text-gold">
           Applications Closed
         </div>
-        <div className="mt-2 text-sm text-on-dark-secondary">
-          Recruiting for this cycle has ended. Watch this page or follow us on Instagram for the next application window.
-        </div>
+        <p className="mt-2 text-sm text-on-dark-secondary">
+          Applications for the Fall 2026 cycle are closed. Watch this page or follow us on Instagram for the next application window.
+        </p>
       </div>
     );
   }
 
-  // Resting / hydrating state — show the next event by name + plain-text
-  // date so crawlers and no-JS users see real content (F8 + F16).
-  const headline = c?.event?.name ?? fallback?.name ?? "Next event";
-  const sub = c?.event ? `${c.event.date} · ${c.event.time} ET` : (fallback ? `${fallback.date} · ${fallback.time} ET` : "");
+  const headline = c?.event?.name ?? fallback.name;
+  const sub = c?.event
+    ? `${c.event.date} · ${c.event.time} ET`
+    : `${fallback.date} · ${fallback.time} ET`;
+  const srLabel = c
+    ? `${c.days} days, ${c.hours} hours, ${c.minutes} minutes until ${headline}.`
+    : `Next event: ${headline} on ${sub}.`;
 
   return (
-    <div className="mt-10 border border-gold/30 bg-ink/60 p-6 text-background md:p-8" aria-live="off" aria-atomic="true">
+    <div className="mt-10 border border-gold/30 bg-ink/60 p-6 text-background md:p-8">
       <div className="text-xs font-semibold uppercase tracking-[0.3em] text-gold">
         Next: {headline}
       </div>
-      <div className="mt-1 text-sm text-on-dark-secondary">{sub}</div>
-      <div className="mt-5 flex flex-wrap gap-3">
+      <p className="mt-1 text-sm text-on-dark-secondary">{sub}</p>
+      {/* Accessible plain-text countdown, hidden visually. Always present
+          so screen readers + no-JS users get a complete sentence. */}
+      <span className="sr-only" aria-live="polite">{srLabel}</span>
+      <div className="mt-5 flex flex-wrap gap-3" aria-hidden="true">
         <CountdownUnit value={c ? c.days : "--"} label="Days" />
         <CountdownUnit value={c ? pad(c.hours) : "--"} label="Hours" />
         <CountdownUnit value={c ? pad(c.minutes) : "--"} label="Minutes" />
@@ -105,6 +113,7 @@ function Countdown() {
     </div>
   );
 }
+
 
 
 type Event = {
@@ -371,39 +380,69 @@ function Recruiting() {
                 href={toGoogleCalendarLink(e)}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label={`Add ${e.name} on ${e.date} to Google Calendar (opens in new tab)`}
-                className={`group w-full text-left grid grid-cols-12 gap-4 py-5 transition hover:bg-secondary/40 px-2 -mx-2 cursor-pointer ${isPast ? "opacity-50" : ""}`}
+                aria-label={`Add ${e.name} on ${e.date} at ${e.time} to Google Calendar (opens in new tab)`}
+                className={`group block w-full text-left transition hover:bg-secondary/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 px-2 -mx-2 cursor-pointer ${isPast ? "opacity-50" : ""}`}
               >
-                <div className="col-span-12 md:col-span-2 flex items-center gap-2 text-sm font-semibold text-foreground">
-                  <Calendar className="h-3.5 w-3.5 text-gold-deep" />
-                  {e.date}
-                </div>
-                <div className="col-span-12 md:col-span-5 font-display text-lg font-bold">
-                  <span className="inline-flex items-center gap-2">
-                    {e.name}
-                    <CalendarPlus
-                      aria-hidden="true"
-                      className="h-4 w-4 shrink-0 text-muted-foreground/60 transition-colors duration-200 group-hover:text-gold-deep"
-                    />
+                {/* Mobile: single ≥44px stacked tap block with right-aligned add-to-cal affordance. */}
+                <div className="md:hidden flex items-start gap-3 py-4 min-h-[64px]">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 text-[11px] font-mono uppercase tracking-[0.16em] text-gold-deep">
+                      <Calendar className="h-3.5 w-3.5 shrink-0" />
+                      <span className="truncate">{e.date}</span>
+                      {isPast && (
+                        <span className="ml-1 inline-block px-1.5 py-0.5 text-[10px] font-mono uppercase tracking-wider bg-muted text-muted-foreground border border-border">
+                          Past
+                        </span>
+                      )}
+                    </div>
+                    <div className="mt-1 font-display text-base font-bold leading-tight">{e.name}</div>
+                    <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-muted-foreground">
+                      <span className="inline-flex items-center gap-1"><Clock className="h-3 w-3" />{e.time}</span>
+                      <span className="inline-flex items-center gap-1"><MapPin className="h-3 w-3" />{e.location}</span>
+                    </div>
+                  </div>
+                  <span
+                    aria-hidden="true"
+                    className="mt-0.5 inline-flex h-11 w-11 shrink-0 items-center justify-center border border-border text-gold-deep group-hover:border-gold-deep group-active:bg-secondary/60"
+                  >
+                    <CalendarPlus className="h-4 w-4" />
                   </span>
-                  {isPast && (
-                    <span className="ml-2 inline-block px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider bg-muted text-muted-foreground border border-border">
-                      Past
+                </div>
+
+                {/* Desktop: existing 12-col grid. */}
+                <div className="hidden md:grid grid-cols-12 gap-4 py-5">
+                  <div className="col-span-2 flex items-center gap-2 text-sm font-semibold text-foreground">
+                    <Calendar className="h-3.5 w-3.5 text-gold-deep" />
+                    {e.date}
+                  </div>
+                  <div className="col-span-5 font-display text-lg font-bold">
+                    <span className="inline-flex items-center gap-2">
+                      {e.name}
+                      <CalendarPlus
+                        aria-hidden="true"
+                        className="h-4 w-4 shrink-0 text-muted-foreground/60 transition-colors duration-200 group-hover:text-gold-deep"
+                      />
                     </span>
-                  )}
-                </div>
-                <div className="col-span-6 md:col-span-2 flex items-center gap-2 text-sm text-muted-foreground">
-                  <Clock className="h-3.5 w-3.5" />
-                  {e.time}
-                </div>
-                <div className="col-span-6 md:col-span-3 flex items-center gap-2 text-sm text-muted-foreground">
-                  <MapPin className="h-3.5 w-3.5" />
-                  {e.location}
+                    {isPast && (
+                      <span className="ml-2 inline-block px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider bg-muted text-muted-foreground border border-border">
+                        Past
+                      </span>
+                    )}
+                  </div>
+                  <div className="col-span-2 flex items-center gap-2 text-sm text-muted-foreground">
+                    <Clock className="h-3.5 w-3.5" />
+                    {e.time}
+                  </div>
+                  <div className="col-span-3 flex items-center gap-2 text-sm text-muted-foreground">
+                    <MapPin className="h-3.5 w-3.5" />
+                    {e.location}
+                  </div>
                 </div>
               </a>
             );
           })}
         </div>
+
 
         <p className="mt-6 text-sm text-muted-foreground">
           Locations and times subject to change. Email{" "}
