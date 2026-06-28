@@ -14,18 +14,18 @@ export const Route = createFileRoute("/research")({
   // indexable by crawlers). Client-side search/sort still operate on the
   // returned array.
   loader: async (): Promise<{ pubs: PublicationRow[] }> => ({ pubs: await getPublications() }),
-  component: Publications,
+  component: Research,
   head: () => ({
     meta: [
-      { title: "Publications & Reports | Purdue SMIF" },
+      { title: "Research | Purdue SMIF" },
       { name: "description", content: "Equity research reports, semester reports, and annual reports from the Purdue Student Managed Investment Fund." },
       ...socialMeta({
         title: "Equity Research & Reports | Purdue SMIF",
         description: "Read SMIF's equity research pitches, semester performance reviews, and annual reports.",
-        url: canonical("/publications"),
+        url: canonical("/research"),
       }),
     ],
-    links: [{ rel: "canonical", href: canonical("/publications") }],
+    links: [{ rel: "canonical", href: canonical("/research") }],
   }),
 });
 
