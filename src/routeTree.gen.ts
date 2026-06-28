@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TeamRouteImport } from './routes/team'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SectorsRouteImport } from './routes/sectors'
+import { Route as ResearchRouteImport } from './routes/research'
 import { Route as RecruitingRouteImport } from './routes/recruiting'
 import { Route as PublicationsRouteImport } from './routes/publications'
 import { Route as PerformanceRouteImport } from './routes/performance'
@@ -37,6 +38,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const SectorsRoute = SectorsRouteImport.update({
   id: '/sectors',
   path: '/sectors',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResearchRoute = ResearchRouteImport.update({
+  id: '/research',
+  path: '/research',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RecruitingRoute = RecruitingRouteImport.update({
@@ -107,6 +113,7 @@ export interface FileRoutesByFullPath {
   '/performance': typeof PerformanceRoute
   '/publications': typeof PublicationsRoute
   '/recruiting': typeof RecruitingRoute
+  '/research': typeof ResearchRoute
   '/sectors': typeof SectorsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/team': typeof TeamRoute
@@ -123,6 +130,7 @@ export interface FileRoutesByTo {
   '/performance': typeof PerformanceRoute
   '/publications': typeof PublicationsRoute
   '/recruiting': typeof RecruitingRoute
+  '/research': typeof ResearchRoute
   '/sectors': typeof SectorsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/team': typeof TeamRoute
@@ -140,6 +148,7 @@ export interface FileRoutesById {
   '/performance': typeof PerformanceRoute
   '/publications': typeof PublicationsRoute
   '/recruiting': typeof RecruitingRoute
+  '/research': typeof ResearchRoute
   '/sectors': typeof SectorsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/team': typeof TeamRoute
@@ -158,6 +167,7 @@ export interface FileRouteTypes {
     | '/performance'
     | '/publications'
     | '/recruiting'
+    | '/research'
     | '/sectors'
     | '/sitemap.xml'
     | '/team'
@@ -174,6 +184,7 @@ export interface FileRouteTypes {
     | '/performance'
     | '/publications'
     | '/recruiting'
+    | '/research'
     | '/sectors'
     | '/sitemap.xml'
     | '/team'
@@ -190,6 +201,7 @@ export interface FileRouteTypes {
     | '/performance'
     | '/publications'
     | '/recruiting'
+    | '/research'
     | '/sectors'
     | '/sitemap.xml'
     | '/team'
@@ -207,6 +219,7 @@ export interface RootRouteChildren {
   PerformanceRoute: typeof PerformanceRoute
   PublicationsRoute: typeof PublicationsRoute
   RecruitingRoute: typeof RecruitingRoute
+  ResearchRoute: typeof ResearchRoute
   SectorsRoute: typeof SectorsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TeamRoute: typeof TeamRoute
@@ -234,6 +247,13 @@ declare module '@tanstack/react-router' {
       path: '/sectors'
       fullPath: '/sectors'
       preLoaderRoute: typeof SectorsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/research': {
+      id: '/research'
+      path: '/research'
+      fullPath: '/research'
+      preLoaderRoute: typeof ResearchRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/recruiting': {
@@ -327,6 +347,7 @@ const rootRouteChildren: RootRouteChildren = {
   PerformanceRoute: PerformanceRoute,
   PublicationsRoute: PublicationsRoute,
   RecruitingRoute: RecruitingRoute,
+  ResearchRoute: ResearchRoute,
   SectorsRoute: SectorsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TeamRoute: TeamRoute,

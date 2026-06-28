@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useReducedMotion } from "framer-motion";
 import { Search, X } from "lucide-react";
-import { MemberCard, type Member } from "@/components/MemberCard";
+import { MemberCard, OpenSeatsCard, type Member } from "@/components/MemberCard";
 import { MemberDetailSheet } from "@/components/MemberDetailSheet";
 import { RevealGroup, RevealItem } from "@/components/Reveal";
 import { board, sectorTeams, fixedIncomeMacro, portfolioManagers } from "@/data/team";
@@ -143,14 +143,20 @@ function Team() {
 
   const filteredBoard = useMemo(() => board.filter((m) => matches(m, query)), [query]);
   const filteredSectors = useMemo(() => {
+    // Real members are rendered full-size. Placeholders for that team are
+    // collapsed into a single "+N seats open" tile (F10 of the audit).
     const teams = sectorTeams
       .filter((t) => sectorFilter === "all" || t.name === sectorFilter)
-      .map((t) => ({ ...t, members: t.members.filter((m) => matches(m, query)) }))
-      .filter((t) => t.members.length > 0);
+      .map((t) => {
+        const real = t.members.filter((m) => !m.placeholder && matches(m, query));
+        const openSeats = t.members.filter((m) => m.placeholder).length;
+        return { ...t, members: real, openSeats };
+      })
+      .filter((t) => t.members.length > 0 || t.openSeats > 0);
     return teams;
   }, [query, sectorFilter]);
-  const filteredFim = useMemo(() => fixedIncomeMacro.filter((m) => matches(m, query)), [query]);
-  const filteredPm = useMemo(() => portfolioManagers.filter((m) => matches(m, query)), [query]);
+  const filteredFim = useMemo(() => fixedIncomeMacro.filter((m) => !m.placeholder && matches(m, query)), [query]);
+  const filteredPm = useMemo(() => portfolioManagers.filter((m) => !m.placeholder && matches(m, query)), [query]);
 
   const totalResults =
     (showBoard ? filteredBoard.length : 0) +
@@ -307,10 +313,16 @@ function Team() {
                     </div>
                     <span className="text-xs uppercase tracking-[0.18em] text-gold-deep">
                       {team.members.length} {team.members.length === 1 ? "member" : "members"}
+                      {team.openSeats > 0 && (
+                        <> · {team.openSeats} open</>
+                      )}
                     </span>
                   </div>
                   <RevealGroup className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" stagger={0.05}>
                     {team.members.map((m) => <RevealItem key={m.name} className="h-full [&>div]:h-full"><MemberCard m={m} onSelect={setSelected} /></RevealItem>)}
+                    {team.openSeats > 0 && !query && (
+                      <RevealItem className="h-full [&>a]:h-full"><OpenSeatsCard count={team.openSeats} role="Analyst" /></RevealItem>
+                    )}
                   </RevealGroup>
                 </div>
               ))}
@@ -352,15 +364,7 @@ function Team() {
 
 
 
-      <section className="bg-ink py-24 text-background">
-        <div className="container-prose">
-          <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold/80">Mentorship</span>
-          <h2 className="mt-3 font-display text-3xl font-bold">Faculty Advisor</h2>
-          <p className="mt-4 max-w-2xl text-background/70">
-            SMIF benefits from the mentorship of finance faculty at the Daniels School of Business, who provide guidance on strategy, governance, and professional development, and ensure continuity year over year.
-          </p>
-        </div>
-      </section>
+      {/* Faculty Advisor section removed pending real advisor data (F7 of audit). */}
 
       <MemberDetailSheet member={selected} onClose={() => setSelected(null)} />
     </>

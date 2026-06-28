@@ -6,15 +6,7 @@ import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/compone
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import smifLogo from "@/assets/smif-logo-mark.png";
 import { applyUrl } from "@/lib/apply-url";
-
-const NAV = [
-  { to: "/about",        label: "About"      },
-  { to: "/team",         label: "Team"       },
-  { to: "/holdings",     label: "Holdings"   },
-  { to: "/publications", label: "Research"   },
-  { to: "/learn",        label: "Learn"      },
-  { to: "/recruiting",   label: "Recruiting" },
-] as const;
+import { NAV } from "@/lib/nav";
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
@@ -49,7 +41,7 @@ export function SiteHeader() {
           <Link to="/" className="group flex items-center gap-2.5 shrink-0">
             <img src={smifLogo} alt="Purdue SMIF" width={28} height={28} decoding="async" className="h-7 w-7 object-contain select-none" />
             <span className="font-mono text-xs uppercase tracking-[0.18em] text-on-dark-secondary group-hover:text-gold transition-colors duration-300">
-              SMIF
+              Purdue SMIF
             </span>
           </Link>
           <nav aria-label="Primary" className="hidden lg:flex items-center gap-5 xl:gap-7">
@@ -95,7 +87,7 @@ export function SiteHeader() {
             <DialogDescription>Site navigation links</DialogDescription>
           </VisuallyHidden>
           <div className="container-prose flex h-14 items-center justify-between border-b border-white/10 shrink-0">
-            <span className="font-mono text-xs uppercase tracking-[0.18em] text-on-dark-secondary">SMIF</span>
+            <span className="font-mono text-xs uppercase tracking-[0.18em] text-on-dark-secondary">Purdue SMIF</span>
             <button
               onClick={() => setOpen(false)}
               className="inline-flex items-center justify-center min-h-11 min-w-11 -mr-2 text-background/70 hover:text-background transition-colors duration-150"

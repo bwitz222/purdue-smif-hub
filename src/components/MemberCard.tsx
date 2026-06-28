@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Mail, Linkedin, UserPlus } from "lucide-react";
+import { Mail, Linkedin, UserPlus, ExternalLink } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
+import { applyUrl } from "@/lib/apply-url";
 
 export interface Member {
   name: string;
@@ -50,31 +51,9 @@ export function MemberCard({
   const [triedPng, setTriedPng] = useState(false);
 
   if (m.placeholder) {
-    return (
-      <div className="group flex flex-col border border-dashed border-border bg-card/50 transition-[border-color,box-shadow] duration-200 hover:border-gold hover:shadow-elegant">
-        <div className="grid aspect-square w-full place-items-center overflow-hidden border-b border-dashed border-border bg-secondary/40">
-          <UserPlus className="h-10 w-10 text-gold-deep" />
-        </div>
-        <div className="flex flex-1 flex-col p-6">
-          <div className="text-xs font-semibold uppercase tracking-[0.18em] text-gold-deep">
-            {m.role}
-          </div>
-          <div className="mt-1 font-display text-lg font-bold leading-tight">Open Position</div>
-          <div className="text-xs text-muted-foreground">Recruiting</div>
-          <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-            We&rsquo;re recruiting for this seat. Interested in joining SMIF? Reach out &mdash; we&rsquo;d love to hear from you.
-          </p>
-          <div className="mt-auto flex items-center gap-4 border-t border-border pt-4 text-xs">
-            <Link to="/contact" className="inline-flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-gold-deep">
-              <UserPlus className="h-3.5 w-3.5" /> Apply
-            </Link>
-            <a href="mailto:smif26@purdue.edu" className="inline-flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-gold-deep">
-              <Mail className="h-3.5 w-3.5" /> Contact
-            </a>
-          </div>
-        </div>
-      </div>
-    );
+    // Legacy single-seat placeholder — now points at the Qualtrics
+    // application instead of the generic /contact route.
+    return <OpenSeatsCard count={1} role={m.role} />;
   }
 
   const interactive = !!onSelect;
@@ -149,5 +128,49 @@ export function MemberCard({
         </div>
       </div>
     </div>
+  );
+}
+
+/**
+ * Collapses all open analyst seats for a team into a single tile that links
+ * directly to the Qualtrics application form (F3 + F10 of the audit). Use
+ * one of these per team instead of padding the grid with N "Open Position"
+ * placeholders.
+ */
+export function OpenSeatsCard({
+  count,
+  role = "Analyst",
+  placement = "team-open-seats" as const,
+}: {
+  count: number;
+  role?: string;
+  placement?: import("@/lib/apply-url").ApplyPlacement;
+}) {
+  if (count <= 0) return null;
+  const label = count === 1 ? "1 seat open" : `${count} seats open`;
+  return (
+    <a
+      href={applyUrl(placement)}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={`${label} — apply (opens application form in new tab)`}
+      className="group flex flex-col border border-dashed border-border bg-card/50 transition-[border-color,box-shadow] duration-200 hover:border-gold hover:shadow-elegant focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+    >
+      <div className="grid aspect-square w-full place-items-center overflow-hidden border-b border-dashed border-border bg-secondary/40">
+        <UserPlus className="h-10 w-10 text-gold-deep" />
+      </div>
+      <div className="flex flex-1 flex-col p-6">
+        <div className="text-xs font-semibold uppercase tracking-[0.18em] text-gold-deep">
+          {role}
+        </div>
+        <div className="mt-1 font-display text-2xl font-bold leading-tight">+{label}</div>
+        <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+          We're recruiting analysts for this team. Apply through our form — applications open each fall and spring semester.
+        </p>
+        <div className="mt-auto flex items-center gap-2 border-t border-border pt-4 text-xs font-semibold text-ink group-hover:text-gold-deep transition-colors">
+          Apply <ExternalLink className="h-3.5 w-3.5" />
+        </div>
+      </div>
+    </a>
   );
 }

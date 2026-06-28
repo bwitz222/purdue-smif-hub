@@ -13,7 +13,8 @@ export type ApplyPlacement =
   | "about-cta"
   | "recruiting-hero"
   | "learn-cta"
-  | "apply-page-primary";
+  | "apply-page-primary"
+  | "team-open-seats";
 
 export function applyUrl(placement: ApplyPlacement): string {
   const params = new URLSearchParams({

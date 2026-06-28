@@ -5,8 +5,23 @@ import { socialMeta, canonical, OG_RECRUITING } from "@/lib/seo";
 
 import { applyUrl } from "@/lib/apply-url";
 
-const APPLICATION_URL = applyUrl("recruiting-hero");
-const DEADLINE = new Date("2026-09-04T23:59:00-04:00").getTime();
+// Countdown is data-driven from the CALENDAR (defined below) — we pick
+// the next upcoming event and count down to its start. When all events
+// have passed, we render an "Applications closed / next cycle" message
+// instead of a stale date. A plain-text fallback always renders for
+// no-JS / SSR.
+
+function parseEventStartMs(event: Event): number {
+  const { start } = parseEventTimes(event.time);
+  // Eastern offset for the Aug–Sep recruiting window is EDT (-04:00).
+  const iso = `${event.iso}T${pad2(start.h)}:${pad2(start.m)}:00-04:00`;
+  return new Date(iso).getTime();
+}
+
+function nextUpcomingEvent(nowMs: number): Event | null {
+  // CALENDAR is module-scoped (defined below this fn) — read it lazily.
+  return CALENDAR.find((e) => parseEventStartMs(e) > nowMs) ?? null;
+}
 
 function useCountdown() {
   const [now, setNow] = useState<number | null>(null);
@@ -16,39 +31,76 @@ function useCountdown() {
     return () => clearInterval(id);
   }, []);
   if (now === null) return null;
-  const diff = Math.max(0, DEADLINE - now);
+  const next = nextUpcomingEvent(now);
+  if (!next) return { expired: true as const };
+  const deadline = parseEventStartMs(next);
+  const diff = Math.max(0, deadline - now);
   return {
+    expired: false as const,
+    event: next,
     days: Math.floor(diff / 86_400_000),
     hours: Math.floor((diff % 86_400_000) / 3_600_000),
     minutes: Math.floor((diff % 3_600_000) / 60_000),
     seconds: Math.floor((diff % 60_000) / 1000),
-    expired: diff === 0,
   };
 }
 
 function CountdownUnit({ value, label }: { value: number | string; label: string }) {
   return (
-    <div className="flex flex-col items-center border border-gold/30 bg-ink/40 px-4 py-3 min-w-[72px]">
+    <div className="flex flex-1 sm:flex-none flex-col items-center border border-gold/30 bg-ink/40 px-4 py-3 min-w-[72px]">
       <span className="font-display text-3xl font-bold text-gold tabular-nums md:text-4xl">{value}</span>
       <span className="mt-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-on-dark-secondary">{label}</span>
     </div>
   );
 }
 
+// SSR/no-JS fallback label — built from the first event in CALENDAR that
+// hasn't been deleted. Module load time is fine; this is just for the
+// resting text shown before hydration.
+function staticNextEventLabel(): { name: string; date: string; time: string } | null {
+  // We can't know "now" on the server vs. the client without a hydration
+  // mismatch, so we always show the first calendar item as the resting
+  // value. After hydration the live countdown takes over.
+  const first = CALENDAR[0];
+  if (!first) return null;
+  return { name: first.name, date: first.date, time: first.time };
+}
+
 function Countdown() {
   const c = useCountdown();
   const pad = (n: number) => n.toString().padStart(2, "0");
+  const fallback = staticNextEventLabel();
+
+  // Expired — entire cycle has passed.
+  if (c?.expired) {
+    return (
+      <div className="mt-10 border border-gold/30 bg-ink/60 p-6 text-background md:p-8">
+        <div className="text-xs font-semibold uppercase tracking-[0.3em] text-gold">
+          Applications Closed
+        </div>
+        <div className="mt-2 text-sm text-on-dark-secondary">
+          Recruiting for this cycle has ended. Watch this page or follow us on Instagram for the next application window.
+        </div>
+      </div>
+    );
+  }
+
+  // Resting / hydrating state — show the next event by name + plain-text
+  // date so crawlers and no-JS users see real content (F8 + F16).
+  const headline = c?.event?.name ?? fallback?.name ?? "Next event";
+  const sub = c?.event ? `${c.event.date} · ${c.event.time} ET` : (fallback ? `${fallback.date} · ${fallback.time} ET` : "");
+
   return (
     <div className="mt-10 border border-gold/30 bg-ink/60 p-6 text-background md:p-8" aria-live="off" aria-atomic="true">
       <div className="text-xs font-semibold uppercase tracking-[0.3em] text-gold">
-        {c?.expired ? "Applications Closed" : "Deadline Countdown"}
+        Next: {headline}
       </div>
-      <div className="mt-1 text-sm text-on-dark-secondary">September 4th, 2026 · 11:59 PM ET</div>
+      <div className="mt-1 text-sm text-on-dark-secondary">{sub}</div>
       <div className="mt-5 flex flex-wrap gap-3">
-        <CountdownUnit value={c ? c.days : "00"} label="Days" />
-        <CountdownUnit value={c ? pad(c.hours) : "00"} label="Hours" />
-        <CountdownUnit value={c ? pad(c.minutes) : "00"} label="Minutes" />
-        <CountdownUnit value={c ? pad(c.seconds) : "00"} label="Seconds" />
+        <CountdownUnit value={c ? c.days : "--"} label="Days" />
+        <CountdownUnit value={c ? pad(c.hours) : "--"} label="Hours" />
+        <CountdownUnit value={c ? pad(c.minutes) : "--"} label="Minutes" />
+        <CountdownUnit value={c ? pad(c.seconds) : "--"} label="Seconds" />
       </div>
     </div>
   );
@@ -263,7 +315,7 @@ function Recruiting() {
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <a
-              href={APPLICATION_URL}
+              href={applyUrl("recruiting-hero")}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 bg-gold px-6 py-3 text-sm font-semibold text-ink transition hover:bg-gold-mid"
