@@ -51,7 +51,7 @@ function formatBytes(bytes: number | null) {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-function Publications() {
+function Research() {
   const { pubs } = Route.useLoaderData();
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<SortKey>("newest");
@@ -98,7 +98,7 @@ function Publications() {
       )}
       <section className="border-b border-border bg-secondary/40">
         <div className="container-prose py-24">
-          <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">Publications</span>
+          <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">Research</span>
           <h1 className="mt-4 font-display text-5xl font-bold md:text-6xl max-w-3xl">Reports & research from the fund.</h1>
           <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
             Browse equity research, semester performance reviews, and annual reports authored by SMIF members. This library is view-only and curated by fund leadership.
