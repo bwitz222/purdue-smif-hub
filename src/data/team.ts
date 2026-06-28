@@ -60,11 +60,15 @@ const make = (team: string, members: Entry[]): Member[] =>
     photo: name ? PHOTO_BY_NAME[name] : undefined,
     photoPosition: name ? PHOTO_POSITION_BY_NAME[name] : undefined,
     photoScale: name ? PHOTO_SCALE_BY_NAME[name] : undefined,
+    // Personal bios only — we no longer ship the copy-paste analyst
+    // boilerplate. Sector leads keep their generic leadership line when
+    // they don't have a personal bio; everyone else shows name · role ·
+    // class year · links cleanly. (F9 of the audit.)
     bio: (name && BIO_BY_NAME[name] && !BOARD_NAMES.has(name))
       ? BIO_BY_NAME[name]
-      : i === 0
+      : i === 0 && name
         ? `Leads the ${team} team, driving sector strategy, idea generation, and final pitch review.`
-        : `Covers names within the ${team} mandate. Builds full operating models, valuation, and pitches new ideas to the investment committee.`,
+        : "",
   }));
 
 export const sectorTeams = [
