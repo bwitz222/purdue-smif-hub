@@ -380,39 +380,69 @@ function Recruiting() {
                 href={toGoogleCalendarLink(e)}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label={`Add ${e.name} on ${e.date} to Google Calendar (opens in new tab)`}
-                className={`group w-full text-left grid grid-cols-12 gap-4 py-5 transition hover:bg-secondary/40 px-2 -mx-2 cursor-pointer ${isPast ? "opacity-50" : ""}`}
+                aria-label={`Add ${e.name} on ${e.date} at ${e.time} to Google Calendar (opens in new tab)`}
+                className={`group block w-full text-left transition hover:bg-secondary/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 px-2 -mx-2 cursor-pointer ${isPast ? "opacity-50" : ""}`}
               >
-                <div className="col-span-12 md:col-span-2 flex items-center gap-2 text-sm font-semibold text-foreground">
-                  <Calendar className="h-3.5 w-3.5 text-gold-deep" />
-                  {e.date}
-                </div>
-                <div className="col-span-12 md:col-span-5 font-display text-lg font-bold">
-                  <span className="inline-flex items-center gap-2">
-                    {e.name}
-                    <CalendarPlus
-                      aria-hidden="true"
-                      className="h-4 w-4 shrink-0 text-muted-foreground/60 transition-colors duration-200 group-hover:text-gold-deep"
-                    />
+                {/* Mobile: single ≥44px stacked tap block with right-aligned add-to-cal affordance. */}
+                <div className="md:hidden flex items-start gap-3 py-4 min-h-[64px]">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 text-[11px] font-mono uppercase tracking-[0.16em] text-gold-deep">
+                      <Calendar className="h-3.5 w-3.5 shrink-0" />
+                      <span className="truncate">{e.date}</span>
+                      {isPast && (
+                        <span className="ml-1 inline-block px-1.5 py-0.5 text-[10px] font-mono uppercase tracking-wider bg-muted text-muted-foreground border border-border">
+                          Past
+                        </span>
+                      )}
+                    </div>
+                    <div className="mt-1 font-display text-base font-bold leading-tight">{e.name}</div>
+                    <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-muted-foreground">
+                      <span className="inline-flex items-center gap-1"><Clock className="h-3 w-3" />{e.time}</span>
+                      <span className="inline-flex items-center gap-1"><MapPin className="h-3 w-3" />{e.location}</span>
+                    </div>
+                  </div>
+                  <span
+                    aria-hidden="true"
+                    className="mt-0.5 inline-flex h-11 w-11 shrink-0 items-center justify-center border border-border text-gold-deep group-hover:border-gold-deep group-active:bg-secondary/60"
+                  >
+                    <CalendarPlus className="h-4 w-4" />
                   </span>
-                  {isPast && (
-                    <span className="ml-2 inline-block px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider bg-muted text-muted-foreground border border-border">
-                      Past
+                </div>
+
+                {/* Desktop: existing 12-col grid. */}
+                <div className="hidden md:grid grid-cols-12 gap-4 py-5">
+                  <div className="col-span-2 flex items-center gap-2 text-sm font-semibold text-foreground">
+                    <Calendar className="h-3.5 w-3.5 text-gold-deep" />
+                    {e.date}
+                  </div>
+                  <div className="col-span-5 font-display text-lg font-bold">
+                    <span className="inline-flex items-center gap-2">
+                      {e.name}
+                      <CalendarPlus
+                        aria-hidden="true"
+                        className="h-4 w-4 shrink-0 text-muted-foreground/60 transition-colors duration-200 group-hover:text-gold-deep"
+                      />
                     </span>
-                  )}
-                </div>
-                <div className="col-span-6 md:col-span-2 flex items-center gap-2 text-sm text-muted-foreground">
-                  <Clock className="h-3.5 w-3.5" />
-                  {e.time}
-                </div>
-                <div className="col-span-6 md:col-span-3 flex items-center gap-2 text-sm text-muted-foreground">
-                  <MapPin className="h-3.5 w-3.5" />
-                  {e.location}
+                    {isPast && (
+                      <span className="ml-2 inline-block px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider bg-muted text-muted-foreground border border-border">
+                        Past
+                      </span>
+                    )}
+                  </div>
+                  <div className="col-span-2 flex items-center gap-2 text-sm text-muted-foreground">
+                    <Clock className="h-3.5 w-3.5" />
+                    {e.time}
+                  </div>
+                  <div className="col-span-3 flex items-center gap-2 text-sm text-muted-foreground">
+                    <MapPin className="h-3.5 w-3.5" />
+                    {e.location}
+                  </div>
                 </div>
               </a>
             );
           })}
         </div>
+
 
         <p className="mt-6 text-sm text-muted-foreground">
           Locations and times subject to change. Email{" "}
