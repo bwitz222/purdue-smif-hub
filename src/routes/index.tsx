@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import tradingImg from "@/assets/nyc-skyline.webp";
+import campusImg from "@/assets/hero-campus.webp";
 import { applyUrl } from "@/lib/apply-url";
 import { ArrowRight, TrendingUp, Users, Award, BarChart3, ChevronRight, ExternalLink } from "lucide-react";
 import { CountUp } from "@/components/CountUp";
@@ -165,8 +166,8 @@ function Index() {
             </Reveal>
             <Reveal className="md:col-span-2 relative" delay={0.2}>
               <img
-                src={tradingImg}
-                alt="New York City skyline"
+                src={campusImg}
+                alt="Purdue's Daniels School of Business campus"
                 loading="lazy"
                 width={1600}
                 height={1200}

@@ -207,9 +207,9 @@ function About() {
         <Reveal className="container-prose flex flex-col md:flex-row items-center justify-between gap-8">
           <div>
             <h2 className="font-display text-3xl font-bold text-background">
-              Ready to invest in your future?
+              Ready to put our process to work?
             </h2>
-          </div>
+            <p className="mt-3 max-w-md text-sm text-background/65">Apply to be part of the research process — from pitch to portfolio decision.</p>
           <div className="flex gap-4 shrink-0">
             <a
               href={applyUrl("about-cta")}
