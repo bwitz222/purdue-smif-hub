@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useReducedMotion } from "framer-motion";
 import { Search, X } from "lucide-react";
-import { MemberCard, type Member } from "@/components/MemberCard";
+import { MemberCard, OpenSeatsCard, type Member } from "@/components/MemberCard";
 import { MemberDetailSheet } from "@/components/MemberDetailSheet";
 import { RevealGroup, RevealItem } from "@/components/Reveal";
 import { board, sectorTeams, fixedIncomeMacro, portfolioManagers } from "@/data/team";
@@ -143,14 +143,20 @@ function Team() {
 
   const filteredBoard = useMemo(() => board.filter((m) => matches(m, query)), [query]);
   const filteredSectors = useMemo(() => {
+    // Real members are rendered full-size. Placeholders for that team are
+    // collapsed into a single "+N seats open" tile (F10 of the audit).
     const teams = sectorTeams
       .filter((t) => sectorFilter === "all" || t.name === sectorFilter)
-      .map((t) => ({ ...t, members: t.members.filter((m) => matches(m, query)) }))
-      .filter((t) => t.members.length > 0);
+      .map((t) => {
+        const real = t.members.filter((m) => !m.placeholder && matches(m, query));
+        const openSeats = t.members.filter((m) => m.placeholder).length;
+        return { ...t, members: real, openSeats };
+      })
+      .filter((t) => t.members.length > 0 || t.openSeats > 0);
     return teams;
   }, [query, sectorFilter]);
-  const filteredFim = useMemo(() => fixedIncomeMacro.filter((m) => matches(m, query)), [query]);
-  const filteredPm = useMemo(() => portfolioManagers.filter((m) => matches(m, query)), [query]);
+  const filteredFim = useMemo(() => fixedIncomeMacro.filter((m) => !m.placeholder && matches(m, query)), [query]);
+  const filteredPm = useMemo(() => portfolioManagers.filter((m) => !m.placeholder && matches(m, query)), [query]);
 
   const totalResults =
     (showBoard ? filteredBoard.length : 0) +
