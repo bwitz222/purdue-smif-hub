@@ -226,57 +226,65 @@ function Team() {
         </div>
       </section>
 
-      {/* Sticky filter bar */}
+      {/* Sticky filter bar — chip row works on mobile and desktop. */}
       <div className="sticky top-14 z-30 border-b border-border bg-background/95 backdrop-blur-md">
-        <div className="container-prose py-3 md:py-4 flex flex-col gap-3 md:flex-row md:items-center md:gap-4">
-          <div className="relative flex-1 md:max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <input
-              type="search"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search by name, role, year…"
-              className="w-full border border-border bg-background pl-10 pr-9 py-2 text-sm font-mono placeholder:text-muted-foreground/60 focus:outline-none focus:border-ink transition-colors"
-              aria-label="Search team members"
-            />
-            {query && (
-              <button
-                onClick={() => setQuery("")}
-                className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-ink transition-colors"
-                aria-label="Clear search"
-              >
-                <X className="h-3.5 w-3.5" />
-              </button>
-            )}
+        <div className="container-prose py-3 md:py-4 flex flex-col gap-3">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-4">
+            <div className="relative flex-1 md:max-w-md">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <input
+                type="search"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search by name, role, year…"
+                className="w-full border border-border bg-background pl-10 pr-9 py-2 text-sm font-mono placeholder:text-muted-foreground/60 focus:outline-none focus:border-ink transition-colors min-h-11"
+                aria-label="Search team members"
+              />
+              {query && (
+                <button
+                  onClick={() => setQuery("")}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-ink transition-colors min-h-11 min-w-11"
+                  aria-label="Clear search"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </div>
+            <div className="text-[11px] font-mono uppercase tracking-[0.2em] text-muted-foreground whitespace-nowrap md:ml-auto md:text-right">
+              {hasFilter
+                ? `${totalResults} ${totalResults === 1 ? "match" : "matches"}`
+                : `${totalMembers} members`}
+            </div>
           </div>
-          <Select value={currentScopeValue} onValueChange={handleScopeChange}>
-            <SelectTrigger
-              aria-label="Filter team by scope"
-              className="h-9 w-full md:w-56 rounded-none border-border bg-background text-[11px] font-semibold uppercase tracking-[0.14em] focus:ring-0 focus:ring-offset-0 focus:border-ink"
-            >
-              <span className="truncate text-left">
-                {SCOPE_OPTIONS.find((o) => o.value === currentScopeValue)?.label ?? "All Sectors"}
-              </span>
-            </SelectTrigger>
-            <SelectContent className="rounded-none border-border bg-background">
-              {SCOPE_OPTIONS.map((o) => (
-                <SelectItem
+          {/* Chip row: horizontal scroll on mobile, wraps on desktop. */}
+          <div
+            role="tablist"
+            aria-label="Filter team by group"
+            className="-mx-4 flex gap-2 overflow-x-auto px-4 snap-x scrollbar-hide md:mx-0 md:flex-wrap md:overflow-visible md:px-0"
+          >
+            {SCOPE_OPTIONS.map((o) => {
+              const active = currentScopeValue === o.value;
+              return (
+                <button
                   key={o.value}
-                  value={o.value}
-                  className="text-[11px] font-semibold uppercase tracking-[0.14em] focus:bg-secondary focus:text-foreground"
+                  type="button"
+                  role="tab"
+                  aria-selected={active}
+                  onClick={() => handleScopeChange(o.value)}
+                  className={`shrink-0 snap-start min-h-9 rounded-full border px-3.5 text-[11px] font-semibold uppercase tracking-[0.14em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-1 ${
+                    active
+                      ? "border-ink bg-ink text-background"
+                      : "border-border bg-background text-muted-foreground hover:border-ink hover:text-foreground"
+                  }`}
                 >
                   {o.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <div className="text-[11px] font-mono uppercase tracking-[0.2em] text-muted-foreground whitespace-nowrap md:ml-auto text-right">
-            {hasFilter
-              ? `${totalResults} ${totalResults === 1 ? "match" : "matches"}`
-              : `${totalMembers} members`}
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
+
 
       <div ref={gridRef}>
       {totalResults === 0 && (
