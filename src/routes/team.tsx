@@ -73,7 +73,7 @@ function SectionHeader({ kicker, title, blurb, count }: { kicker: string; title:
   );
 }
 
-type Group = "all" | "board" | "sectors" | "fim" | "pm";
+type Group = "all" | "board" | "sectors" | "fim" | "pm" | "faculty";
 
 const matches = (m: Member, q: string) => {
   if (!q) return true;
@@ -86,24 +86,28 @@ const matches = (m: Member, q: string) => {
   );
 };
 
-// Unified scope options: drives both group and sector state from a single Select.
-type ScopeOption = { value: string; label: string; group: Group; sector: string };
+// Unified scope options: drives both group + sector state and anchor jumps
+// from a single chip row. `anchor` is the DOM id of the section heading.
+type ScopeOption = { value: string; label: string; group: Group; sector: string; anchor: string };
+const sectorSlug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 const SCOPE_OPTIONS: ScopeOption[] = [
-  { value: "all", label: "All Sectors", group: "all", sector: "all" },
-  { value: "leadership", label: "Leadership", group: "board", sector: "all" },
+  { value: "all", label: "All", group: "all", sector: "all", anchor: "leadership" },
+  { value: "leadership", label: "Leadership", group: "board", sector: "all", anchor: "leadership" },
   ...sectorTeams.map((t) => ({
     value: t.name,
     label: t.name,
     group: "sectors" as Group,
     sector: t.name,
+    anchor: `sector-${sectorSlug(t.name)}`,
   })),
-  { value: "fim", label: "Fixed Income & Macro", group: "fim", sector: "all" },
-  { value: "pm", label: "Portfolio + Risk Management", group: "pm", sector: "all" },
+  { value: "fim", label: "FI & Macro", group: "fim", sector: "all", anchor: "fim" },
+  { value: "pm", label: "PM + Risk", group: "pm", sector: "all", anchor: "pm" },
+  { value: "faculty", label: "Faculty", group: "faculty", sector: "all", anchor: "faculty" },
 ];
 
 
 function Team() {
-  const totalMembers = 52;
+  const totalMembers = 54;
   const search = Route.useSearch();
   const navigate = useNavigate({ from: "/team" });
   const reduce = useReducedMotion();
@@ -124,7 +128,8 @@ function Team() {
     setSectorFilter(opt.sector);
     // Defer scroll until layout settles after state update.
     const id = requestAnimationFrame(() => {
-      gridRef.current?.scrollIntoView({
+      const target = document.getElementById(opt.anchor) ?? gridRef.current;
+      target?.scrollIntoView({
         behavior: reduce ? "auto" : "smooth",
         block: "start",
       });
@@ -136,11 +141,10 @@ function Team() {
   const showSectors = group === "all" || group === "sectors";
   const showFim = group === "all" || group === "fim";
   const showPm = group === "all" || group === "pm";
+  const showFaculty = group === "all" || group === "faculty";
 
   const filteredBoard = useMemo(() => board.filter((m) => matches(m, query)), [query]);
   const filteredSectors = useMemo(() => {
-    // Real members are rendered full-size. Placeholders for that team are
-    // collapsed into a single "+N seats open" tile (F10 of the audit).
     const teams = sectorTeams
       .filter((t) => sectorFilter === "all" || t.name === sectorFilter)
       .map((t) => {
@@ -153,12 +157,14 @@ function Team() {
   }, [query, sectorFilter]);
   const filteredFim = useMemo(() => fixedIncomeMacro.filter((m) => !m.placeholder && matches(m, query)), [query]);
   const filteredPm = useMemo(() => portfolioManagers.filter((m) => !m.placeholder && matches(m, query)), [query]);
+  const filteredFaculty = useMemo(() => facultyAdvisors.filter((m) => matches(m, query)), [query]);
 
   const totalResults =
     (showBoard ? filteredBoard.length : 0) +
     (showSectors ? filteredSectors.reduce((s, t) => s + t.members.length, 0) : 0) +
     (showFim ? filteredFim.length : 0) +
-    (showPm ? filteredPm.length : 0);
+    (showPm ? filteredPm.length : 0) +
+    (showFaculty ? filteredFaculty.length : 0);
 
   const hasFilter = query.length > 0 || group !== "all" || sectorFilter !== "all";
 
@@ -166,6 +172,7 @@ function Team() {
     if (group === "board") return "leadership";
     if (group === "fim") return "fim";
     if (group === "pm") return "pm";
+    if (group === "faculty") return "faculty";
     if (group === "sectors" && sectorFilter !== "all") return sectorFilter;
     return "all";
   }, [group, sectorFilter]);
@@ -179,7 +186,16 @@ function Team() {
       search: () => (val === "all" ? {} : { sector: opt.label }),
       replace: true,
     });
+    // Anchor-jump filtering: scroll to the matching section after render.
+    requestAnimationFrame(() => {
+      const target = document.getElementById(opt.anchor) ?? gridRef.current;
+      target?.scrollIntoView({
+        behavior: reduce ? "auto" : "smooth",
+        block: "start",
+      });
+    });
   };
+
 
 
 
