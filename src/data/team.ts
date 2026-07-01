@@ -14,7 +14,7 @@ const BIO_BY_NAME: Record<string, string> = {
   "Andrew Lacambra": "Andrew Lacambra is a senior in the Daniels School of Business, majoring in Finance and General Management. He previously interned at State Farm as a Fixed Income Investments Intern. In his free time, he enjoys visiting National Parks, going to the gym, and watching soccer & basketball.",
   "Ian Teh": "Ian Teh is a senior in the Daniels School of Business, majoring in Finance with a minor in Real Estate Finance. He has previously interned at CenterPoint Properties as a Capital Markets Summer Analyst. In his free time, he enjoys hiking, going to the gym, and cooking new cuisines.",
   "Mikhail Bilokin": "Michael Bilokin is a sophomore in the Daniels School of Business, majoring in Finance and Accounting. In his free time, he enjoys playing chess, poker, and following financial markets.",
-  "Balthazar Schmit": "Balthazar Schmitt is a junior majoring in Mathematics and Economics. He has previously interned at CBRE and Turner and Townsend, working within project management. Outside of classes and work, he enjoys taking long drives in the countryside, hiking mountains, skiing, and making music.",
+  "Balthazar Schmitt": "Balthazar Schmitt is a junior majoring in Mathematics and Economics. He has previously interned at CBRE and Turner and Townsend, working within project management. Outside of classes and work, he enjoys taking long drives in the countryside, hiking mountains, skiing, and making music.",
   "Augustus Matushek": "Augustus Matushek is a sophomore in the Daniels School of Business, majoring in Finance and Accounting. Augie previously interned at Centier Bank, where he worked as a Business Planning & Analysis Intern. In his free time, he enjoys reading, going to the gym, and working on his golf game.",
   "Jacob George": "Jacob George is a sophomore in the Daniels School of Business, majoring in Finance and Business Analytics Information Management. Outside of SMIF, he is a Capital Markets Intern with Simon Property Group. In his free time, he enjoys going to the gym, DJing diverse styles of music, and all things Purdue sports.",
   "Dallas White": "Dallas White is a sophomore in the Daniels School of Business, majoring in Finance and Accounting with a minor in Business Economics. He is running KNA Autocare this summer, honing his entrepreneurial and sales skills. In his free time, he enjoys traveling, exercise, and listening to music.",
@@ -173,7 +173,7 @@ export const fixedIncomeMacro: Member[] = make("Fixed Income & Macro", [
   ["Andrew Lacambra", "Head, Fixed Income & Macro", "alacambr@purdue.edu", "2027"],
   ["Keren Wadhwani", "Senior Analyst, Rates", "kwadhwan@purdue.edu", "2028"],
   ["Aditya Balaji", "Analyst, Credit", "balaji57@purdue.edu", "2028"],
-  ["Balthazar Schmit", "Analyst, FX & Macro", "bschm@purdue.edu", "2028"],
+  ["Balthazar Schmitt", "Analyst, FX & Macro", "bschm@purdue.edu", "2028"],
 ]).map((m) => (m.name === "Andrew Lacambra" ? { ...m, photo: andrewLacambraPhoto } : m));
 
 export const portfolioManagers: Member[] = make("Portfolio + Risk Management", [
@@ -216,7 +216,7 @@ const LINKEDIN_BY_NAME: Record<string, string> = {
   "Alex Belanger": "https://www.linkedin.com/in/belangeralexander",
   "Daniel Friedman": "https://www.linkedin.com/in/daniel-friedman-7072aa292",
   "Aditya Balaji": "https://www.linkedin.com/in/aditya-balaji-a5452b22a",
-  "Balthazar Schmit": "https://www.linkedin.com/in/balthazarschmitt",
+  "Balthazar Schmitt": "https://www.linkedin.com/in/balthazarschmitt",
   "Andrew Lacambra": "https://www.linkedin.com/in/andrew-lacambra-241a96314",
   "Keren Wadhwani": "https://www.linkedin.com/in/keren-wadhwani",
   "Brock Heller": "https://www.linkedin.com/in/brock-heller",
