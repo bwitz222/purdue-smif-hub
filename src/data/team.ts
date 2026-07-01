@@ -60,6 +60,15 @@ const PHOTO_BY_NAME: Record<string, string> = {
   "Yashita Pujari": yashitaPujariPhoto,
   "Chris Andreou": chrisAndreouPhoto,
   "Parth Dama": parthDamaPhoto,
+  "Mikhail Bilokin": mikhailBilokinPhoto,
+  "Balthazar Schmitt": balthazarSchmittPhoto,
+  "Augustus Matushek": augustusMatushekPhoto,
+  "Jacob George": jacobGeorgePhoto,
+  "Dallas White": dallasWhitePhoto,
+  "Keren Wadhwani": kerenWadhwaniPhoto,
+  "Logan Friedman": loganFriedmanPhoto,
+  "Evan Wright": evanWrightPhoto,
+  "Sid Voona": sidVoonaPhoto,
 };
 
 const PHOTO_POSITION_BY_NAME: Record<string, string> = {
