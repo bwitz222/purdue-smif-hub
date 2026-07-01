@@ -39,6 +39,7 @@ const BIO_BY_NAME: Record<string, string> = {
   "Dallas White": "Dallas White is a sophomore in the Daniels School of Business, majoring in Finance and Accounting with a minor in Business Economics. He is running KNA Autocare this summer, honing his entrepreneurial and sales skills. In his free time, he enjoys traveling, exercise, and listening to music.",
   "Keren Wadhwani": "Keren Wadhwani is a junior in the Daniels School of Business, majoring in Quantitative Economics and Finance with a minor in Art History. She previously interned at energyRe as an M&A and Investments Intern and is a Girls Who Invest Scholar. Outside of SMIF, she is a competitive triathlete with a passion for fine art. In her free time, she enjoys running, swimming, visiting museums, and painting.",
   "Logan Friedman": "Logan Friedman is a junior in the College of Engineering, majoring in Mechanical Engineering with a minor in Finance. He is currently working as a Mechanical Engineering Intern at Northrop Grumman. In his free time, he enjoys hiking, surfing, and pickleball.",
+  "Sid Voona": "Siddharth Voona is a sophomore in the Daniels School of Business, majoring in Finance and Accounting. He has previously interned at MD Global Partners as an Investment Banking Analyst and is the President of Purdue's Banking and Markets Club. In his free time, he enjoys playing guitar, poker, and cooking.",
 };
 
 export const board: Member[] = [
