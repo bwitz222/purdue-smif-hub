@@ -100,7 +100,7 @@ export const sectorTeams = [
     members: make("Financials", [
       ["Alex Belanger", "Head, Sector", "belangea@purdue.edu", "2027"],
       ["Daniel Friedman", "Senior Analyst", "friedmd@purdue.edu", "Dec 2026"],
-      ["", "Analyst"],
+      ["Mikhail Bilokin", "Analyst", "mbilokin@purdue.edu", "2029"],
       ["", "Analyst"],
       ["", "Analyst"],
     ]),
@@ -111,7 +111,7 @@ export const sectorTeams = [
     members: make("Consumer Staples", [
       ["Evan Wright", "Head, Sector", "wrigh712@purdue.edu", "2027"],
       ["Logan Friedman", "Senior Analyst", "friedml@purdue.edu", "2028"],
-      ["Mikhail Bilokin", "Analyst", "mbilokin@purdue.edu", "2029"],
+      ["", "Analyst"],
       ["", "Analyst"],
       ["", "Analyst"],
     ]),
