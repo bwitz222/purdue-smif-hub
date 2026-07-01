@@ -5,6 +5,25 @@ import landonHaffnerPhoto from "@/assets/team/landon-haffner.jpg";
 import yashitaPujariPhoto from "@/assets/team/yashita-pujari.jpg";
 import chrisAndreouPhoto from "@/assets/team/chris-andreou.jpg";
 import parthDamaPhoto from "@/assets/team/parth-dama.png";
+import mikhailBilokinAsset from "@/assets/team/mikhail-bilokin.png.asset.json";
+import balthazarSchmittAsset from "@/assets/team/balthazar-schmitt.jpg.asset.json";
+import augustusMatushekAsset from "@/assets/team/augustus-matushek.jpg.asset.json";
+import jacobGeorgeAsset from "@/assets/team/jacob-george.png.asset.json";
+import dallasWhiteAsset from "@/assets/team/dallas-white.jpg.asset.json";
+import kerenWadhwaniAsset from "@/assets/team/keren-wadhwani.jpg.asset.json";
+import loganFriedmanAsset from "@/assets/team/logan-friedman.jpg.asset.json";
+import evanWrightAsset from "@/assets/team/evan-wright.jpg.asset.json";
+import sidVoonaAsset from "@/assets/team/sid-voona.jpg.asset.json";
+
+const mikhailBilokinPhoto = mikhailBilokinAsset.url;
+const balthazarSchmittPhoto = balthazarSchmittAsset.url;
+const augustusMatushekPhoto = augustusMatushekAsset.url;
+const jacobGeorgePhoto = jacobGeorgeAsset.url;
+const dallasWhitePhoto = dallasWhiteAsset.url;
+const kerenWadhwaniPhoto = kerenWadhwaniAsset.url;
+const loganFriedmanPhoto = loganFriedmanAsset.url;
+const evanWrightPhoto = evanWrightAsset.url;
+const sidVoonaPhoto = sidVoonaAsset.url;
 
 const BIO_BY_NAME: Record<string, string> = {
   "Landon Haffner": "Landon Haffner is a sophomore in the Daniels School of Business, majoring in Finance with a minor in Real Estate Finance, Management Consulting and Entrepreneurship. He is interning at Lennar this summer in sales and land acquisition. In his free time, he enjoys going to the gym, golfing and playing rocket league with friends.",
