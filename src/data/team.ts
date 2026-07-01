@@ -79,7 +79,6 @@ const PHOTO_POSITION_BY_NAME: Record<string, string> = {
 
 const PHOTO_SCALE_BY_NAME: Record<string, number> = {
   "Landon Haffner": 1.45,
-  "Dallas White": 0.9,
 };
 
 // Members listed on the executive board — for these, sector/PM team entries
