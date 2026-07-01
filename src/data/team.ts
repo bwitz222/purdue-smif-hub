@@ -40,6 +40,7 @@ const BIO_BY_NAME: Record<string, string> = {
   "Keren Wadhwani": "Keren Wadhwani is a junior in the Daniels School of Business, majoring in Quantitative Economics and Finance with a minor in Art History. She previously interned at energyRe as an M&A and Investments Intern and is a Girls Who Invest Scholar. Outside of SMIF, she is a competitive triathlete with a passion for fine art. In her free time, she enjoys running, swimming, visiting museums, and painting.",
   "Logan Friedman": "Logan Friedman is a junior in the College of Engineering, majoring in Mechanical Engineering with a minor in Finance. He is currently working as a Mechanical Engineering Intern at Northrop Grumman. In his free time, he enjoys hiking, surfing, and pickleball.",
   "Sid Voona": "Siddharth Voona is a sophomore in the Daniels School of Business, majoring in Finance and Accounting. He has previously interned at MD Global Partners as an Investment Banking Analyst and is the President of Purdue's Banking and Markets Club. In his free time, he enjoys playing guitar, poker, and cooking.",
+  "Evan Wright": "Evan Wright is a senior in the Daniels School of Business, pursuing dual degrees in Accounting and Finance with a concentration in Management Consulting. Outside of SMIF, he is currently working as an Audit & Assurance Intern at Deloitte, having previously interned in audit and assurance at Crowe. Raised in central Indiana with roots in agriculture, he brings a ground-level perspective to his equity research and a genuine interest in agribusiness as an investment theme. In his free time, he enjoys playing golf, following the markets, and spending time outdoors.",
 };
 
 export const board: Member[] = [
@@ -78,6 +79,7 @@ const PHOTO_POSITION_BY_NAME: Record<string, string> = {
 
 const PHOTO_SCALE_BY_NAME: Record<string, number> = {
   "Landon Haffner": 1.45,
+  "Dallas White": 0.9,
 };
 
 // Members listed on the executive board — for these, sector/PM team entries
