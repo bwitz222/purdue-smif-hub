@@ -5,6 +5,25 @@ import landonHaffnerPhoto from "@/assets/team/landon-haffner.jpg";
 import yashitaPujariPhoto from "@/assets/team/yashita-pujari.jpg";
 import chrisAndreouPhoto from "@/assets/team/chris-andreou.jpg";
 import parthDamaPhoto from "@/assets/team/parth-dama.png";
+import mikhailBilokinAsset from "@/assets/team/mikhail-bilokin.png.asset.json";
+import balthazarSchmittAsset from "@/assets/team/balthazar-schmitt.jpg.asset.json";
+import augustusMatushekAsset from "@/assets/team/augustus-matushek.jpg.asset.json";
+import jacobGeorgeAsset from "@/assets/team/jacob-george.png.asset.json";
+import dallasWhiteAsset from "@/assets/team/dallas-white.jpg.asset.json";
+import kerenWadhwaniAsset from "@/assets/team/keren-wadhwani.jpg.asset.json";
+import loganFriedmanAsset from "@/assets/team/logan-friedman.jpg.asset.json";
+import evanWrightAsset from "@/assets/team/evan-wright.jpg.asset.json";
+import sidVoonaAsset from "@/assets/team/sid-voona.jpg.asset.json";
+
+const mikhailBilokinPhoto = mikhailBilokinAsset.url;
+const balthazarSchmittPhoto = balthazarSchmittAsset.url;
+const augustusMatushekPhoto = augustusMatushekAsset.url;
+const jacobGeorgePhoto = jacobGeorgeAsset.url;
+const dallasWhitePhoto = dallasWhiteAsset.url;
+const kerenWadhwaniPhoto = kerenWadhwaniAsset.url;
+const loganFriedmanPhoto = loganFriedmanAsset.url;
+const evanWrightPhoto = evanWrightAsset.url;
+const sidVoonaPhoto = sidVoonaAsset.url;
 
 const BIO_BY_NAME: Record<string, string> = {
   "Landon Haffner": "Landon Haffner is a sophomore in the Daniels School of Business, majoring in Finance with a minor in Real Estate Finance, Management Consulting and Entrepreneurship. He is interning at Lennar this summer in sales and land acquisition. In his free time, he enjoys going to the gym, golfing and playing rocket league with friends.",
@@ -20,6 +39,7 @@ const BIO_BY_NAME: Record<string, string> = {
   "Dallas White": "Dallas White is a sophomore in the Daniels School of Business, majoring in Finance and Accounting with a minor in Business Economics. He is running KNA Autocare this summer, honing his entrepreneurial and sales skills. In his free time, he enjoys traveling, exercise, and listening to music.",
   "Keren Wadhwani": "Keren Wadhwani is a junior in the Daniels School of Business, majoring in Quantitative Economics and Finance with a minor in Art History. She previously interned at energyRe as an M&A and Investments Intern and is a Girls Who Invest Scholar. Outside of SMIF, she is a competitive triathlete with a passion for fine art. In her free time, she enjoys running, swimming, visiting museums, and painting.",
   "Logan Friedman": "Logan Friedman is a junior in the College of Engineering, majoring in Mechanical Engineering with a minor in Finance. He is currently working as a Mechanical Engineering Intern at Northrop Grumman. In his free time, he enjoys hiking, surfing, and pickleball.",
+  "Sid Voona": "Siddharth Voona is a sophomore in the Daniels School of Business, majoring in Finance and Accounting. He has previously interned at MD Global Partners as an Investment Banking Analyst and is the President of Purdue's Banking and Markets Club. In his free time, he enjoys playing guitar, poker, and cooking.",
 };
 
 export const board: Member[] = [
@@ -27,7 +47,7 @@ export const board: Member[] = [
   { name: "Ian Teh", role: "Co-President", year: "Class of 2027", email: "iteh@purdue.edu", photo: ianTehPhoto, bio: BIO_BY_NAME["Ian Teh"] },
   { name: "Hunter Specht", role: "Co-CIO & Co-Head of Education", year: "Class of 2027", email: "hspecht@purdue.edu", bio: "Drives portfolio strategy and final investment decisions across all sectors, and co-leads the analyst education curriculum." },
   { name: "Sandhya Gopinath", role: "Co-CIO & Co-Head of Education", year: "Class of 2028", email: "gopinas@purdue.edu", bio: "Drives portfolio strategy and final investment decisions across all sectors, and co-leads the analyst education curriculum." },
-  { name: "Keren Wadhwani", role: "Treasurer and Director of Fundraising", year: "Class of 2028", email: "kwadhwan@purdue.edu", bio: BIO_BY_NAME["Keren Wadhwani"] },
+  { name: "Keren Wadhwani", role: "Treasurer and Director of Fundraising", year: "Class of 2028", email: "kwadhwan@purdue.edu", photo: kerenWadhwaniPhoto, bio: BIO_BY_NAME["Keren Wadhwani"] },
   { name: "Chris Andreou", role: "Director of Talent and Operations", year: "Class of 2028", email: "andreou@purdue.edu", photo: chrisAndreouPhoto, bio: BIO_BY_NAME["Chris Andreou"] },
   { name: "Shaheera Ali", role: "Director of Marketing and Outreach", year: "Class of 2028", email: "ali251@purdue.edu", bio: "Leads marketing, branding, and external outreach for the fund." },
 ];
@@ -40,6 +60,15 @@ const PHOTO_BY_NAME: Record<string, string> = {
   "Yashita Pujari": yashitaPujariPhoto,
   "Chris Andreou": chrisAndreouPhoto,
   "Parth Dama": parthDamaPhoto,
+  "Mikhail Bilokin": mikhailBilokinPhoto,
+  "Balthazar Schmitt": balthazarSchmittPhoto,
+  "Augustus Matushek": augustusMatushekPhoto,
+  "Jacob George": jacobGeorgePhoto,
+  "Dallas White": dallasWhitePhoto,
+  "Keren Wadhwani": kerenWadhwaniPhoto,
+  "Logan Friedman": loganFriedmanPhoto,
+  "Evan Wright": evanWrightPhoto,
+  "Sid Voona": sidVoonaPhoto,
 };
 
 const PHOTO_POSITION_BY_NAME: Record<string, string> = {
