@@ -472,7 +472,10 @@ function Performance() {
                   tick={{ fontSize: 11, fontFamily: "IBM Plex Mono" }}
                   tickLine={false}
                   axisLine={{ stroke: "#E0DDD5" }}
+                  minTickGap={24}
+                  interval="preserveStartEnd"
                 />
+
                 <YAxis
                   stroke="#6B6860"
                   tick={{ fontSize: 11, fontFamily: "IBM Plex Mono" }}
