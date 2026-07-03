@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ExternalLink, BookOpen, Users, TrendingUp } from "lucide-react";
-import { socialMeta, canonical, OG_RECRUITING } from "@/lib/seo";
+import { socialMeta, canonical, OG_APPLY } from "@/lib/seo";
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import {
   Accordion,
@@ -23,7 +23,7 @@ export const Route = createFileRoute("/apply")({
         title: "Apply to Join Purdue SMIF",
         description: "Application portal, what we look for, timeline, and FAQ for joining the Purdue Student Managed Investment Fund.",
         url: canonical("/apply"),
-        image: OG_RECRUITING,
+        image: OG_APPLY,
       }),
     ],
     links: [{ rel: "canonical", href: canonical("/apply") }],

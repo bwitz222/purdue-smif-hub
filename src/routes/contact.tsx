@@ -3,7 +3,7 @@ import { Mail, MapPin, Linkedin, Send } from "lucide-react";
 import { useState } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
-import { socialMeta, canonical } from "@/lib/seo";
+import { socialMeta, canonical, OG_CONTACT } from "@/lib/seo";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -27,6 +27,7 @@ export const Route = createFileRoute("/contact")({
         title: "Contact Purdue SMIF",
         description: "Reach the Purdue Student Managed Investment Fund: for prospective members, alumni, sponsors, and recruiters.",
         url: canonical("/contact"),
+        image: OG_CONTACT,
       }),
     ],
     links: [{ rel: "canonical", href: canonical("/contact") }],
