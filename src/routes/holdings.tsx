@@ -246,16 +246,21 @@ function HoldingsPage() {
             className="mt-5 inline-flex items-center gap-2 border border-border bg-background/60 px-3 py-1.5 text-xs font-mono text-muted-foreground"
           >
             {isFetching ? (
-              <><RefreshCw className="h-3 w-3 animate-spin text-gold" /> Refreshing prices…</>
+              <><RefreshCw className="h-3 w-3 animate-spin text-gold" /> Refreshing quotes…</>
             ) : quoteData?.cachedAt ? (
               <>
-                <span className="h-1.5 w-1.5 rounded-full bg-gain animate-pulse" aria-hidden="true" />
-                Live snapshot · {new Date(quoteData.cachedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                <span className="h-1.5 w-1.5 rounded-full bg-gold" aria-hidden="true" />
+                As of {new Date(quoteData.cachedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })} close
               </>
             ) : (
               <>Last reported snapshot</>
             )}
           </div>
+          {quoteData?.cachedAt && (
+            <div className="mt-1.5 text-[10px] font-mono uppercase tracking-[0.18em] text-muted-foreground/70">
+              Updated {new Date(quoteData.cachedAt).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZoneName: "short" })}
+            </div>
+          )}
           {quoteData?.cachedAt && (Date.now() - new Date(quoteData.cachedAt).getTime()) > 24 * 60 * 60 * 1000 && (
             <div className="mt-2 text-xs text-muted-foreground italic" role="status">
               Snapshot is more than 24 hours old; prices may have changed.
