@@ -188,12 +188,16 @@ function Research() {
 }
 
 function PublicationCard({ pub }: { pub: PublicationRow }) {
+  const isSample = /sample/i.test(pub.title);
   return (
     <div className="group flex flex-col border border-border bg-card transition hover:border-gold hover:shadow-elegant">
-      {/* Lightweight thumbnail — never load PDFs in the card.
-          Category label + FileText icon + gold accent rule. */}
       <div className="relative aspect-[3/4] overflow-hidden border-b border-border bg-secondary/40">
         <div className="absolute inset-x-0 top-0 h-0.5 bg-gradient-gold" aria-hidden="true" />
+        {isSample && (
+          <span className="absolute right-3 top-3 z-10 border border-gold/60 bg-background/90 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.2em] text-gold-deep">
+            Sample
+          </span>
+        )}
         <div className="flex h-full flex-col items-center justify-center gap-4 p-6 text-center">
           <FileText className="h-12 w-12 text-gold-deep/70" aria-hidden="true" />
           <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
@@ -218,3 +222,56 @@ function PublicationCard({ pub }: { pub: PublicationRow }) {
     </div>
   );
 }
+
+function EmptyState({ category, label, query }: { category: Category; label: string; query: string }) {
+  if (query) {
+    return (
+      <div className="col-span-full border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
+        No {label.toLowerCase()} match "{query}".
+      </div>
+    );
+  }
+  const copy: Record<Category, { blurb: string; links: { href: string; text: string; external?: boolean }[] }> = {
+    equity_research: {
+      blurb: "Analyst pitches and single-name deep dives will be published here as each cycle wraps.",
+      links: [
+        { href: SUBSTACK_URL, text: "Read our latest writeups on Substack →", external: true },
+        { href: "/learn", text: "See sample models on the Learn page →" },
+      ],
+    },
+    semester: {
+      blurb: "End-of-semester performance and attribution reviews will land here after each term closes.",
+      links: [
+        { href: "/performance", text: "See performance to date →" },
+        { href: SUBSTACK_URL, text: "Follow updates on Substack →", external: true },
+      ],
+    },
+    annual: {
+      blurb: "Full annual reports to the Daniels School and stakeholders will be posted after each audited fiscal year.",
+      links: [
+        { href: "/performance", text: "See performance to date →" },
+        { href: SUBSTACK_URL, text: "Follow updates on Substack →", external: true },
+      ],
+    },
+  };
+  const c = copy[category];
+  return (
+    <div className="col-span-full border border-dashed border-border p-8 text-sm">
+      <p className="text-muted-foreground">{c.blurb}</p>
+      <ul className="mt-4 space-y-1.5">
+        {c.links.map((l) => (
+          <li key={l.href}>
+            <a
+              href={l.href}
+              {...(l.external ? { target: "_blank", rel: "noreferrer" } : {})}
+              className="text-gold-deep hover:underline"
+            >
+              {l.text}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
