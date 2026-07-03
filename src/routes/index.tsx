@@ -10,6 +10,7 @@ import { getFundStats } from "@/lib/fund-stats.functions";
 
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import { socialMeta, canonical } from "@/lib/seo";
+import { PerformanceSparkline } from "@/components/PerformanceSparkline";
 
 const HOME_TITLE = "Purdue SMIF — Student Managed Investment Fund";
 const HOME_DESCRIPTION = "Purdue SMIF is the university's student-managed investment fund and finance club, managing real capital at the Daniels School of Business.";
@@ -219,21 +220,24 @@ function Index() {
 
       {/* Performance teaser */}
       <section className="bg-secondary/60 border-t border-border py-20">
-        <Reveal className="container-prose flex flex-col md:flex-row items-center justify-between gap-8">
+        <Reveal className="container-prose flex flex-col md:flex-row items-start md:items-center justify-between gap-10">
           <div>
             <h2 className="font-display text-3xl md:text-4xl font-bold text-ink">
               Benchmarked against the S&amp;P 500.<br className="hidden md:block" />
               Reported every quarter.
             </h2>
           </div>
-          <div className="flex gap-4 flex-shrink-0">
-            <Link to="/performance" className="group inline-flex items-center gap-2 bg-ink px-7 py-3.5 text-sm font-semibold text-background hover:bg-ink/85 transition-colors duration-200 cursor-pointer">
-              Performance
-              <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
-            </Link>
-            <Link to="/holdings" className="inline-flex items-center gap-2 border border-ink px-7 py-3.5 text-sm font-semibold text-ink hover:bg-ink hover:text-background transition-colors duration-200 cursor-pointer">
-              Holdings
-            </Link>
+          <div className="flex flex-col md:flex-row items-start md:items-center gap-8 md:gap-10 flex-shrink-0 w-full md:w-auto">
+            <PerformanceSparkline />
+            <div className="flex gap-4 flex-shrink-0">
+              <Link to="/performance" className="group inline-flex items-center gap-2 bg-ink px-7 py-3.5 text-sm font-semibold text-background hover:bg-ink/85 transition-colors duration-200 cursor-pointer">
+                Performance
+                <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
+              </Link>
+              <Link to="/holdings" className="inline-flex items-center gap-2 border border-ink px-7 py-3.5 text-sm font-semibold text-ink hover:bg-ink hover:text-background transition-colors duration-200 cursor-pointer">
+                Holdings
+              </Link>
+            </div>
           </div>
         </Reveal>
       </section>

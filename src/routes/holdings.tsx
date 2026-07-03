@@ -10,6 +10,7 @@ import { getFundStats } from "@/lib/fund-stats.functions";
 import { CountUp } from "@/components/CountUp";
 import { Reveal } from "@/components/Reveal";
 import { socialMeta, canonical, OG_HOLDINGS } from "@/lib/seo";
+import { applyQuotes, sectorPercentBreakdown } from "@/lib/portfolio";
 
 export const Route = createFileRoute("/holdings")({
   component: HoldingsPage,
@@ -56,7 +57,7 @@ const fmtNum = (n: number, d = 2) => n.toLocaleString("en-US", { minimumFraction
 
 type SortKey = keyof Holding;
 
-const ETF_SECTOR_WEIGHTS: Record<string, Record<string, number>> = { SPY: { Technology: 33.5, Financials: 13.5, "Consumer Cyclical": 10.5, Healthcare: 10.0, "Communication Services": 9.5, Industrials: 8.5, "Consumer Defensive": 5.5, Energy: 3.0, Utilities: 2.5, "Real Estate": 2.0, Materials: 1.5 } };
+// (ETF_SECTOR_WEIGHTS lives in @/lib/portfolio so /sectors reuses the same map)
 
 function KpiCard({
   label,
@@ -186,7 +187,7 @@ function HoldingsPage() {
     return { holdings: withAlloc, portfolioSummary: { investedCapital: portfolioValue - cashHoldings, cashHoldings, portfolioValue, totalDayGain, totalDayChange, totalReturn, totalReturnPct, weightedBeta } };
   }, [quoteData, cashHoldings]);
 
-  const sectorBreakdown = useMemo(() => { const investedValue = holdings.reduce((s, h) => s + h.value, 0); const map = new Map<string, number>(); holdings.forEach((h) => { const weights = ETF_SECTOR_WEIGHTS[h.symbol]; if (weights) { const totalWeight = Object.values(weights).reduce((s, w) => s + w, 0); Object.entries(weights).forEach(([sec, w]) => { const attributed = h.value * (w / totalWeight); map.set(sec, (map.get(sec) || 0) + attributed); }); } else { map.set(h.industry, (map.get(h.industry) || 0) + h.value); } }); return Array.from(map.entries()).map(([s, v]) => [s, investedValue > 0 ? (v / investedValue) * 100 : 0] as [string, number]).sort((a, b) => b[1] - a[1]); }, [holdings]);
+  const sectorBreakdown = useMemo(() => sectorPercentBreakdown(holdings), [holdings]);
 
   const sectors = useMemo<string[]>(() => ["All", ...Array.from(new Set(holdings.map((h) => h.industry)))], [holdings]);
   const rows = useMemo(() => {

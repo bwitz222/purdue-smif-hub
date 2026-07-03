@@ -1,3 +1,9 @@
+// Static portfolio scaffold: shares, cost basis, industry, and beta are
+// maintained by the fund and should be refreshed each quarter alongside the
+// custody statement. Live prices, day-change, value, and returns are
+// overwritten at render time by quote_cache (Polygon end-of-day close via
+// getLiveQuotes). The numbers hardcoded below are legacy fallbacks used only
+// when no quote is available for a symbol.
 export interface Holding {
   company: string;
   symbol: string;
