@@ -57,7 +57,7 @@ export const Route = createFileRoute("/learn")({
         description:
           "Analyst training, course companion material, reading list, tools, and a glossary for serious students of investing.",
         url: canonical("/learn"),
-        image: OG_RECRUITING,
+        image: OG_LEARN,
       }),
     ],
     links: [{ rel: "canonical", href: canonical("/learn") }],
