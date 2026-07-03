@@ -57,7 +57,7 @@ const fmtNum = (n: number, d = 2) => n.toLocaleString("en-US", { minimumFraction
 
 type SortKey = keyof Holding;
 
-const ETF_SECTOR_WEIGHTS: Record<string, Record<string, number>> = { SPY: { Technology: 33.5, Financials: 13.5, "Consumer Cyclical": 10.5, Healthcare: 10.0, "Communication Services": 9.5, Industrials: 8.5, "Consumer Defensive": 5.5, Energy: 3.0, Utilities: 2.5, "Real Estate": 2.0, Materials: 1.5 } };
+// (ETF_SECTOR_WEIGHTS lives in @/lib/portfolio so /sectors reuses the same map)
 
 function KpiCard({
   label,
