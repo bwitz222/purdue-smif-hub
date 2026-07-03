@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ExternalLink, Download } from "lucide-react";
-import { socialMeta, canonical, OG_RECRUITING } from "@/lib/seo";
+import { socialMeta, canonical, OG_LEARN } from "@/lib/seo";
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import { applyUrl } from "@/lib/apply-url";
 import dcfAmzn from "@/assets/dcf-model-amzn.xlsx.asset.json";
