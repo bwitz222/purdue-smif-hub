@@ -168,11 +168,7 @@ function Research() {
 
                 <RevealGroup className="grid gap-4 md:grid-cols-2" stagger={0.06}>
                   {items.length === 0 ? (
-                    <div className="col-span-full border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
-                      {query
-                        ? `No ${c.label.toLowerCase()} match "${query}".`
-                        : `No ${c.label.toLowerCase()} available yet.`}
-                    </div>
+                    <EmptyState category={c.value} label={c.label} query={query} />
                   ) : (
                     items.map((p) => (
                       <RevealItem key={p.id} className="h-full [&>div]:h-full">
@@ -181,6 +177,7 @@ function Research() {
                     ))
                   )}
                 </RevealGroup>
+
               </TabsContent>
             );
           })}
