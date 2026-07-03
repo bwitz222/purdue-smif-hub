@@ -274,7 +274,7 @@ function HoldingsPage() {
           <div role="alert" className="border border-loss/40 bg-loss/5 p-4 flex items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-sm text-foreground">
               <AlertCircle className="h-4 w-4 text-loss shrink-0" aria-hidden="true" />
-              <span>Couldn't refresh live prices. Showing the last reported snapshot.</span>
+              <span>Couldn't refresh quotes. Showing the last reported snapshot.</span>
             </div>
             <button
               onClick={() => refetch()}
