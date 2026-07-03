@@ -19,7 +19,7 @@ export const Route = createFileRoute("/holdings")({
       { name: "description", content: "Current portfolio holdings of the Purdue Student Managed Investment Fund, including positions, allocations, and returns." },
       ...socialMeta({
         title: "Portfolio Holdings | Purdue SMIF",
-        description: "Live view of SMIF's positions, sector allocations, and returns across the real-money portfolio.",
+        description: "End-of-day snapshot of SMIF's positions, sector allocations, and returns across the real-money portfolio.",
         url: canonical("/holdings"),
         image: OG_HOLDINGS,
       }),
@@ -154,14 +154,33 @@ function HoldingsPage() {
 
   const { holdings, portfolioSummary } = useMemo(() => {
     const quotes = quoteData?.quotes ?? {};
-    const updated: Holding[] = baseHoldings.map((h) => { const q = quotes[h.symbol]; if (!q) return h; const price = q.price; const value = price * h.shares; const totalReturn = value - h.costBasis; const returnPct = h.costBasis > 0 ? (totalReturn / h.costBasis) * 100 : 0; const dayChange = q.changePct; const dayGain = (dayChange / 100) * value; return { ...h, price, value, totalReturn, returnPct, dayChange, dayGain }; });
+    // Day P&L math: derive priorValue per position from (value / (1 + pct/100))
+    // so the aggregate day-change dollar and percent are computed off the SAME
+    // prior-day base and their signs always agree.
+    const updated: Holding[] = baseHoldings.map((h) => {
+      const q = quotes[h.symbol];
+      if (!q) return h;
+      const price = q.price;
+      const value = price * h.shares;
+      const totalReturn = value - h.costBasis;
+      const returnPct = h.costBasis > 0 ? (totalReturn / h.costBasis) * 100 : 0;
+      const dayChange = q.changePct;
+      const priorValue = 1 + dayChange / 100 !== 0 ? value / (1 + dayChange / 100) : value;
+      const dayGain = value - priorValue;
+      return { ...h, price, value, totalReturn, returnPct, dayChange, dayGain };
+    });
     const investedValue = updated.reduce((s, r) => s + r.value, 0);
-    const totalDayGain = updated.reduce((s, r) => s + r.dayGain, 0);
+    const priorInvested = updated.reduce((s, r) => {
+      const q = quotes[r.symbol];
+      if (!q) return s + r.value; // no quote: treat as unchanged
+      return s + (1 + q.changePct / 100 !== 0 ? r.value / (1 + q.changePct / 100) : r.value);
+    }, 0);
+    const totalDayGain = investedValue - priorInvested;
     const portfolioValue = investedValue + cashHoldings;
     const costBasisTotal = updated.reduce((s, r) => s + r.costBasis, 0);
     const totalReturn = investedValue - costBasisTotal;
     const totalReturnPct = costBasisTotal > 0 ? (totalReturn / costBasisTotal) * 100 : 0;
-    const totalDayChange = investedValue > 0 ? (totalDayGain / investedValue) * 100 : 0;
+    const totalDayChange = priorInvested > 0 ? (totalDayGain / priorInvested) * 100 : 0;
     const weightedBeta = investedValue > 0 ? updated.reduce((s, r) => s + r.beta * r.value, 0) / investedValue : baseSummary.weightedBeta;
     const withAlloc = updated.map((r) => ({ ...r, allocation: portfolioValue > 0 ? (r.value / portfolioValue) * 100 : r.allocation }));
     return { holdings: withAlloc, portfolioSummary: { investedCapital: portfolioValue - cashHoldings, cashHoldings, portfolioValue, totalDayGain, totalDayChange, totalReturn, totalReturnPct, weightedBeta } };
@@ -227,16 +246,21 @@ function HoldingsPage() {
             className="mt-5 inline-flex items-center gap-2 border border-border bg-background/60 px-3 py-1.5 text-xs font-mono text-muted-foreground"
           >
             {isFetching ? (
-              <><RefreshCw className="h-3 w-3 animate-spin text-gold" /> Refreshing prices…</>
+              <><RefreshCw className="h-3 w-3 animate-spin text-gold" /> Refreshing quotes…</>
             ) : quoteData?.cachedAt ? (
               <>
-                <span className="h-1.5 w-1.5 rounded-full bg-gain animate-pulse" aria-hidden="true" />
-                Live snapshot · {new Date(quoteData.cachedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                <span className="h-1.5 w-1.5 rounded-full bg-gold" aria-hidden="true" />
+                As of {new Date(quoteData.cachedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })} close
               </>
             ) : (
               <>Last reported snapshot</>
             )}
           </div>
+          {quoteData?.cachedAt && (
+            <div className="mt-1.5 text-[10px] font-mono uppercase tracking-[0.18em] text-muted-foreground/70">
+              Updated {new Date(quoteData.cachedAt).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZoneName: "short" })}
+            </div>
+          )}
           {quoteData?.cachedAt && (Date.now() - new Date(quoteData.cachedAt).getTime()) > 24 * 60 * 60 * 1000 && (
             <div className="mt-2 text-xs text-muted-foreground italic" role="status">
               Snapshot is more than 24 hours old; prices may have changed.
@@ -250,7 +274,7 @@ function HoldingsPage() {
           <div role="alert" className="border border-loss/40 bg-loss/5 p-4 flex items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-sm text-foreground">
               <AlertCircle className="h-4 w-4 text-loss shrink-0" aria-hidden="true" />
-              <span>Couldn't refresh live prices. Showing the last reported snapshot.</span>
+              <span>Couldn't refresh quotes. Showing the last reported snapshot.</span>
             </div>
             <button
               onClick={() => refetch()}
