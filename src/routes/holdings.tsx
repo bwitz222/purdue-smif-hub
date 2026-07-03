@@ -19,7 +19,7 @@ export const Route = createFileRoute("/holdings")({
       { name: "description", content: "Current portfolio holdings of the Purdue Student Managed Investment Fund, including positions, allocations, and returns." },
       ...socialMeta({
         title: "Portfolio Holdings | Purdue SMIF",
-        description: "Live view of SMIF's positions, sector allocations, and returns across the real-money portfolio.",
+        description: "End-of-day snapshot of SMIF's positions, sector allocations, and returns across the real-money portfolio.",
         url: canonical("/holdings"),
         image: OG_HOLDINGS,
       }),
