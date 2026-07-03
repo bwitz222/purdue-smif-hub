@@ -525,7 +525,7 @@ function Performance() {
 
         {/* ── Annual returns table ───────────────────────────────── */}
         <Reveal className="overflow-x-auto border border-border">
-          <table className="w-full min-w-[420px] text-left">
+          <table className="w-full min-w-[520px] text-left">
             <thead className="bg-ink text-background">
               <tr>
                 <th className="px-3 py-3 md:px-6 md:py-4 text-xs font-semibold uppercase tracking-wider">Year</th>
