@@ -41,7 +41,7 @@ export const Route = createFileRoute("/")({
 // move materially so a failed fetch still shows a reasonable approximation.
 const FALLBACK_STATS = {
   aum_display: "$638K",
-  active_members: "49+",
+  active_members: "50+",
   founded_year: 2009,
   sector_teams: 10,
 };
