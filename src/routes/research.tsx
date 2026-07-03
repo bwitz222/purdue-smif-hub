@@ -212,7 +212,8 @@ function PublicationCard({ pub }: { pub: PublicationRow }) {
           <p className="mt-2 text-sm text-muted-foreground">{pub.description}</p>
         )}
         <div className="mt-2 text-xs text-muted-foreground">
-          {new Date(pub.created_at).toLocaleDateString()} · {formatBytes(pub.file_size)}
+          {isSample ? "Spring 2026" : new Date(pub.created_at).toLocaleDateString()}
+          {formatBytes(pub.file_size) && ` · ${formatBytes(pub.file_size)}`}
         </div>
         <div className="mt-4 flex items-center gap-3 border-t border-border pt-3 text-xs">
           <a href={pub.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-muted-foreground transition hover:text-gold-deep">
@@ -232,46 +233,33 @@ function EmptyState({ category, label, query }: { category: Category; label: str
       </div>
     );
   }
-  const copy: Record<Category, { blurb: string; links: { href: string; text: string; external?: boolean }[] }> = {
+  const copy: Record<Category, { headline: string; support: string }> = {
     equity_research: {
-      blurb: "Analyst pitches and single-name deep dives will be published here as each cycle wraps.",
-      links: [
-        { href: SUBSTACK_URL, text: "Read our latest writeups on Substack →", external: true },
-        { href: "/learn", text: "See sample models on the Learn page →" },
-      ],
+      headline: "Analyst pitches publish here after each research cycle.",
+      support: "Follow interim writeups on Substack while the next cycle wraps.",
     },
     semester: {
-      blurb: "End-of-semester performance and attribution reviews will land here after each term closes.",
-      links: [
-        { href: "/performance", text: "See performance to date →" },
-        { href: SUBSTACK_URL, text: "Follow updates on Substack →", external: true },
-      ],
+      headline: "First semester report publishes December 2026.",
+      support: "End-of-term performance and attribution reviews will land here after each semester closes.",
     },
     annual: {
-      blurb: "Full annual reports to the Daniels School and stakeholders will be posted after each audited fiscal year.",
-      links: [
-        { href: "/performance", text: "See performance to date →" },
-        { href: SUBSTACK_URL, text: "Follow updates on Substack →", external: true },
-      ],
+      headline: "The next annual report will be published here after the fiscal-year audit.",
+      support: "Full reports to the Daniels School and stakeholders are posted once audited each year.",
     },
   };
   const c = copy[category];
   return (
-    <div className="col-span-full border border-dashed border-border p-8 text-sm">
-      <p className="text-muted-foreground">{c.blurb}</p>
-      <ul className="mt-4 space-y-1.5">
-        {c.links.map((l) => (
-          <li key={l.href}>
-            <a
-              href={l.href}
-              {...(l.external ? { target: "_blank", rel: "noreferrer" } : {})}
-              className="text-gold-deep hover:underline"
-            >
-              {l.text}
-            </a>
-          </li>
-        ))}
-      </ul>
+    <div className="col-span-full relative border border-border bg-secondary/30 p-12 md:p-16 text-center">
+      <span aria-hidden="true" className="absolute inset-x-0 top-0 h-0.5 bg-gradient-gold" />
+      <span className="text-[10px] font-semibold uppercase tracking-[0.28em] text-gold-deep">
+        {label} · Coming soon
+      </span>
+      <h3 className="mt-4 font-display text-2xl md:text-3xl font-bold text-ink max-w-xl mx-auto leading-tight">
+        {c.headline}
+      </h3>
+      <p className="mt-4 text-sm text-muted-foreground max-w-md mx-auto leading-relaxed">
+        {c.support}
+      </p>
     </div>
   );
 }

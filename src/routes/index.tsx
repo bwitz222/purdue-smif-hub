@@ -34,10 +34,13 @@ export const Route = createFileRoute("/")({
   }),
 });
 
-// Hardcoded fallback values — used if the fund_stats table fetch fails.
+// Last-resort fallback used ONLY when the fund_stats table fetch fails.
+// The live values come from the DB (computed server-side from holdings ×
+// latest quotes + cash). Refresh these numbers whenever the fund's stats
+// move materially so a failed fetch still shows a reasonable approximation.
 const FALLBACK_STATS = {
-  aum_display: "$600K",
-  active_members: "50+",
+  aum_display: "$638K",
+  active_members: "49+",
   founded_year: 2009,
   sector_teams: 10,
 };
