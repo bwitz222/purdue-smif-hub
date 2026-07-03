@@ -10,6 +10,7 @@ import { getFundStats } from "@/lib/fund-stats.functions";
 import { CountUp } from "@/components/CountUp";
 import { Reveal } from "@/components/Reveal";
 import { socialMeta, canonical, OG_HOLDINGS } from "@/lib/seo";
+import { applyQuotes, sectorPercentBreakdown } from "@/lib/portfolio";
 
 export const Route = createFileRoute("/holdings")({
   component: HoldingsPage,
