@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ExternalLink, Download } from "lucide-react";
-import { socialMeta, canonical, OG_RECRUITING } from "@/lib/seo";
+import { socialMeta, canonical, OG_LEARN } from "@/lib/seo";
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import { applyUrl } from "@/lib/apply-url";
 import dcfAmzn from "@/assets/dcf-model-amzn.xlsx.asset.json";
@@ -57,7 +57,7 @@ export const Route = createFileRoute("/learn")({
         description:
           "Analyst training, course companion material, reading list, tools, and a glossary for serious students of investing.",
         url: canonical("/learn"),
-        image: OG_RECRUITING,
+        image: OG_LEARN,
       }),
     ],
     links: [{ rel: "canonical", href: canonical("/learn") }],

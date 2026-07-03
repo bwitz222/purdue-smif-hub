@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { FileText, Download, ExternalLink, Rss, Search } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RevealGroup, RevealItem } from "@/components/Reveal";
-import { socialMeta, canonical } from "@/lib/seo";
+import { socialMeta, canonical, OG_RESEARCH } from "@/lib/seo";
 import { getPublications, type PublicationRow } from "@/lib/publications.functions";
 
 const SUBSTACK_URL = "https://purduesmif.substack.com";
@@ -23,6 +23,7 @@ export const Route = createFileRoute("/research")({
         title: "Equity Research & Reports | Purdue SMIF",
         description: "Read SMIF's equity research pitches, semester performance reviews, and annual reports.",
         url: canonical("/research"),
+        image: OG_RESEARCH,
       }),
     ],
     links: [{ rel: "canonical", href: canonical("/research") }],

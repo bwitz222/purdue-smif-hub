@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Cpu, HeartPulse, Banknote, Factory, ShoppingBag, Zap, Wifi, Home, LineChart, Briefcase } from "lucide-react";
-import { socialMeta, canonical } from "@/lib/seo";
+import { socialMeta, canonical, OG_SECTORS } from "@/lib/seo";
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 
 export const Route = createFileRoute("/sectors")({
@@ -13,6 +13,7 @@ export const Route = createFileRoute("/sectors")({
         title: "Coverage Teams | Purdue SMIF",
         description: "Eight equity sector teams plus Fixed Income & Macro and Portfolio + Risk Management cover the SMIF investment universe.",
         url: canonical("/sectors"),
+        image: OG_SECTORS,
       }),
     ],
     links: [{ rel: "canonical", href: canonical("/sectors") }],

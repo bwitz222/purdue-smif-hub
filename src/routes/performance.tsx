@@ -7,7 +7,7 @@ import {
   LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid,
   Tooltip, Legend, ResponsiveContainer, ReferenceLine,
 } from "recharts";
-import { socialMeta, canonical } from "@/lib/seo";
+import { socialMeta, canonical, OG_PERFORMANCE } from "@/lib/seo";
 import { Reveal } from "@/components/Reveal";
 import {
   getFundPerformance,
@@ -27,6 +27,7 @@ export const Route = createFileRoute("/performance")({
         title: "Performance & Track Record | Purdue SMIF",
         description: "Annual and cumulative returns of the Purdue SMIF benchmarked against the S&P 500.",
         url: canonical("/performance"),
+        image: OG_PERFORMANCE,
       }),
     ],
     links: [{ rel: "canonical", href: canonical("/performance") }],
@@ -472,7 +473,10 @@ function Performance() {
                   tick={{ fontSize: 11, fontFamily: "IBM Plex Mono" }}
                   tickLine={false}
                   axisLine={{ stroke: "#E0DDD5" }}
+                  minTickGap={24}
+                  interval="preserveStartEnd"
                 />
+
                 <YAxis
                   stroke="#6B6860"
                   tick={{ fontSize: 11, fontFamily: "IBM Plex Mono" }}
@@ -520,14 +524,14 @@ function Performance() {
         </Reveal>
 
         {/* ── Annual returns table ───────────────────────────────── */}
-        <Reveal className="overflow-hidden border border-border">
-          <table className="w-full text-left">
+        <Reveal className="overflow-x-auto border border-border">
+          <table className="w-full min-w-[520px] text-left">
             <thead className="bg-ink text-background">
               <tr>
-                <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider">Year</th>
-                <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-right">SMIF</th>
-                <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-right">S&P 500 TR</th>
-                <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-right">Spread</th>
+                <th className="px-3 py-3 md:px-6 md:py-4 text-xs font-semibold uppercase tracking-wider">Year</th>
+                <th className="px-3 py-3 md:px-6 md:py-4 text-xs font-semibold uppercase tracking-wider text-right">SMIF</th>
+                <th className="px-3 py-3 md:px-6 md:py-4 text-xs font-semibold uppercase tracking-wider text-right">S&P 500 TR</th>
+                <th className="px-3 py-3 md:px-6 md:py-4 text-xs font-semibold uppercase tracking-wider text-right">Spread</th>
               </tr>
             </thead>
             <tbody>
@@ -535,15 +539,15 @@ function Performance() {
                 const spread = r.smif_return - r.bench_return;
                 return (
                   <tr key={r.year} className={`border-t border-border hover:bg-secondary/50 transition-colors duration-150 ${idx % 2 !== 0 ? "bg-secondary/20" : ""}`}>
-                    <td className="px-6 py-5 font-display font-bold text-ink">{r.year}</td>
-                    <td className={`px-6 py-5 font-mono text-right font-medium ${r.smif_return >= 0 ? "text-gain" : "text-loss"}`}>
+                    <td className="px-3 py-4 md:px-6 md:py-5 font-display font-bold text-ink">{r.year}</td>
+                    <td className={`px-3 py-4 md:px-6 md:py-5 font-mono text-right font-medium ${r.smif_return >= 0 ? "text-gain" : "text-loss"}`}>
                       <span className="inline-flex items-center justify-end gap-1">
                         {r.smif_return >= 0 ? <ArrowUp className="h-3.5 w-3.5" aria-hidden="true" /> : <ArrowDown className="h-3.5 w-3.5" aria-hidden="true" />}
                         {fmtPct(r.smif_return)}
                       </span>
                     </td>
-                    <td className="px-6 py-5 font-mono text-right text-muted-foreground">{fmtPct(r.bench_return)}</td>
-                    <td className={`px-6 py-5 font-mono text-right font-semibold ${spread >= 0 ? "text-gain" : "text-loss"}`}>
+                    <td className="px-3 py-4 md:px-6 md:py-5 font-mono text-right text-muted-foreground">{fmtPct(r.bench_return)}</td>
+                    <td className={`px-3 py-4 md:px-6 md:py-5 font-mono text-right font-semibold ${spread >= 0 ? "text-gain" : "text-loss"}`}>
                       {fmtPct(spread)}
                     </td>
                   </tr>
@@ -552,6 +556,7 @@ function Performance() {
             </tbody>
           </table>
         </Reveal>
+
 
         <div className="border-t border-border pt-6 pb-8 mt-4 space-y-2 text-xs text-muted-foreground max-w-3xl">
           <div className="text-[10px] font-mono font-semibold uppercase tracking-[0.28em] text-muted-foreground/80">Methodology &amp; disclaimer</div>
