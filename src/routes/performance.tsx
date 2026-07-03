@@ -7,7 +7,7 @@ import {
   LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid,
   Tooltip, Legend, ResponsiveContainer, ReferenceLine,
 } from "recharts";
-import { socialMeta, canonical } from "@/lib/seo";
+import { socialMeta, canonical, OG_PERFORMANCE } from "@/lib/seo";
 import { Reveal } from "@/components/Reveal";
 import {
   getFundPerformance,
@@ -27,6 +27,7 @@ export const Route = createFileRoute("/performance")({
         title: "Performance & Track Record | Purdue SMIF",
         description: "Annual and cumulative returns of the Purdue SMIF benchmarked against the S&P 500.",
         url: canonical("/performance"),
+        image: OG_PERFORMANCE,
       }),
     ],
     links: [{ rel: "canonical", href: canonical("/performance") }],
