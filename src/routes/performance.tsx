@@ -235,9 +235,10 @@ function Performance() {
             <span className="text-gold/80">Quarterly.</span>
           </h1>
           <p className="mt-8 max-w-xl text-on-dark-secondary leading-relaxed text-lg">
-            Measured against the S&P 500 Total Return Index (SPY).
+            Measured against the S&amp;P 500 Total Return Index (SPY). The fund was established in 2009; audited monthly performance is tracked since October 2013.
             {monthlyData ? "" : allAudited ? "" : " Returns shown are illustrative."}
           </p>
+
         </div>
         <div className="absolute bottom-0 left-0 right-0 h-px bg-white/10" />
       </section>
@@ -552,10 +553,14 @@ function Performance() {
           </table>
         </Reveal>
 
-        <p className="text-xs text-muted-foreground max-w-3xl pb-8">
-          Past performance does not guarantee future results.{monthlyData ? "" : allAudited ? "" : " Figures shown for illustrative purposes;"} consult the latest annual report for audited returns.
-        </p>
+        <div className="border-t border-border pt-6 pb-8 mt-4 space-y-2 text-xs text-muted-foreground max-w-3xl">
+          <div className="text-[10px] font-mono font-semibold uppercase tracking-[0.28em] text-muted-foreground/80">Methodology &amp; disclaimer</div>
+          <p><span className="font-semibold text-foreground">Data source:</span> monthly NAV series maintained by the fund. Daily quotes on the Holdings page are Polygon.io end-of-day closes, refreshed roughly every 6 hours.</p>
+          <p><span className="font-semibold text-foreground">Methodology:</span> monthly returns are computed on a Modified Dietz basis to account for intra-month contributions and withdrawals. The benchmark is the S&amp;P 500 Total Return (SPY, dividends reinvested).</p>
+          <p>Past performance does not guarantee future results.{monthlyData ? "" : allAudited ? "" : " Figures shown for illustrative purposes;"} see the latest annual report for audited figures.</p>
+        </div>
       </section>
     </>
   );
 }
+

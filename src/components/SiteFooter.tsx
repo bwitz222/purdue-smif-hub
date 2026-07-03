@@ -27,8 +27,12 @@ export function SiteFooter() {
                 <Link to={to} className="hover:text-gold transition-colors duration-200">{label}</Link>
               </li>
             ))}
+            <li>
+              <Link to="/alumni" className="hover:text-gold transition-colors duration-200">Alumni</Link>
+            </li>
           </ul>
         </nav>
+
         <div>
           <h2 className="text-sm font-medium text-gold mb-4 uppercase tracking-[0.14em]">Contact</h2>
           <ul className="space-y-2 text-sm text-on-dark-secondary">
