@@ -235,9 +235,10 @@ function Performance() {
             <span className="text-gold/80">Quarterly.</span>
           </h1>
           <p className="mt-8 max-w-xl text-on-dark-secondary leading-relaxed text-lg">
-            Measured against the S&P 500 Total Return Index (SPY).
+            Measured against the S&amp;P 500 Total Return Index (SPY). The fund was established in 2009; audited monthly performance is tracked since October 2013.
             {monthlyData ? "" : allAudited ? "" : " Returns shown are illustrative."}
           </p>
+
         </div>
         <div className="absolute bottom-0 left-0 right-0 h-px bg-white/10" />
       </section>
