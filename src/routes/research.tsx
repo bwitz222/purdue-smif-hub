@@ -23,6 +23,7 @@ export const Route = createFileRoute("/research")({
         title: "Equity Research & Reports | Purdue SMIF",
         description: "Read SMIF's equity research pitches, semester performance reviews, and annual reports.",
         url: canonical("/research"),
+        image: OG_RESEARCH,
       }),
     ],
     links: [{ rel: "canonical", href: canonical("/research") }],
