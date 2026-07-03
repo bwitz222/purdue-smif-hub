@@ -13,6 +13,7 @@ export const Route = createFileRoute("/sectors")({
         title: "Coverage Teams | Purdue SMIF",
         description: "Eight equity sector teams plus Fixed Income & Macro and Portfolio + Risk Management cover the SMIF investment universe.",
         url: canonical("/sectors"),
+        image: OG_SECTORS,
       }),
     ],
     links: [{ rel: "canonical", href: canonical("/sectors") }],
