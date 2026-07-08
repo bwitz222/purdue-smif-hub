@@ -15,7 +15,11 @@ async function fetchTwoDaysGroupedBars(
 ): Promise<{ latest: Map<string, PolygonBar> | null; prior: Map<string, PolygonBar> | null }> {
   const found: Array<Map<string, PolygonBar>> = [];
   const today = new Date();
-  for (let back = 1; back <= 10 && found.length < 2; back++) {
+  // Start at back=0 (today): Polygon publishes the grouped end-of-day bar a few
+  // hours after the close, so as soon as it exists we capture the *latest*
+  // session. If today's bar isn't out yet (or it's a weekend/holiday) the day
+  // returns 0 results and we fall through to the prior trading days.
+  for (let back = 0; back <= 10 && found.length < 2; back++) {
     const d = new Date(today);
     d.setUTCDate(d.getUTCDate() - back);
     const url = `https://api.polygon.io/v2/aggs/grouped/locale/us/market/stocks/${toYmd(

@@ -96,29 +96,17 @@ function HoldingsPage() {
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const fetchQuotes = useServerFn(getLiveQuotes);
   const symbols = useMemo(() => baseHoldings.map((h) => h.symbol), []);
-  // Quote cache is refreshed by a pg_cron job at 21:00 UTC weekdays
-  // (4:00 PM EST, just after market close). Align the client query to that
-  // exact wall clock — staleTime/refetchInterval are the time until the
-  // *next* 21:05 UTC (5-minute buffer for the cron + Polygon round trip),
-  // so every derived value on the page (KPIs, sector breakdown,
-  // leaders/laggards, table) recomputes on the same schedule as the backend.
-  const CRON_HOUR_UTC = 21;
-  const CRON_BUFFER_MS = 5 * 60 * 1000;
-  const msUntilNextCron = () => {
-    const now = new Date();
-    const next = new Date(now);
-    next.setUTCHours(CRON_HOUR_UTC, 0, 0, 0);
-    next.setTime(next.getTime() + CRON_BUFFER_MS);
-    if (next.getTime() <= now.getTime()) {
-      next.setUTCDate(next.getUTCDate() + 1);
-    }
-    return next.getTime() - now.getTime();
-  };
+  // The server serves the end-of-day cache and self-heals it when stale, so the
+  // client just needs to poll on a sensible cadence rather than track the
+  // backend's exact wall clock: refetch on mount, on focus/reconnect, and every
+  // 30 minutes while the tab is open. Each fetch recomputes every derived value
+  // on the page (KPIs, sector breakdown, leaders/laggards, table).
+  const REFETCH_MS = 30 * 60 * 1000;
   const { data: quoteData, isFetching, error, refetch } = useQuery({
     queryKey: ["live-quotes", symbols],
     queryFn: () => fetchQuotes({ data: { symbols } }),
-    staleTime: msUntilNextCron(),
-    refetchInterval: () => msUntilNextCron(),
+    staleTime: REFETCH_MS,
+    refetchInterval: REFETCH_MS,
     refetchIntervalInBackground: false,
     refetchOnWindowFocus: true,
     refetchOnReconnect: true,

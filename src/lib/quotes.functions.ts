@@ -8,6 +8,10 @@ type Quote = { symbol: string; price: number; changePct: number };
 // so the day-change reflects the real overnight gap, not just intraday.
 const COOLDOWN_MS = 5 * 60 * 1000;
 const REFRESH_AFTER_MS = 6 * 60 * 60 * 1000;
+// When the cache is stale, the visitor's own request refreshes it, but we cap
+// the wait so a slow provider never blocks the response — if the timeout wins,
+// the refresh still finishes in the background and the next request is fresh.
+const REFRESH_TIMEOUT_MS = 6000;
 const COOLDOWN_KEY = "polygon_cooldown_until";
 
 type PolygonBar = {
@@ -43,7 +47,11 @@ async function fetchTwoDaysGroupedBars(
 }> {
   const found: Array<Map<string, PolygonBar>> = [];
   const today = new Date();
-  for (let back = 1; back <= 10 && found.length < 2; back++) {
+  // Start at back=0 (today): Polygon publishes the grouped end-of-day bar a few
+  // hours after the close, so as soon as it exists we capture the *latest*
+  // session. If today's bar isn't out yet (or it's a weekend/holiday) the day
+  // returns 0 results and we fall through to the prior trading days.
+  for (let back = 0; back <= 10 && found.length < 2; back++) {
     const d = new Date(today);
     d.setUTCDate(d.getUTCDate() - back);
     const date = toYmd(d);
@@ -156,26 +164,31 @@ export const getLiveQuotes = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    // Always serve persistent cache first — never block on the network.
-    const { data: rows } = await supabaseAdmin
-      .from("quote_cache")
-      .select("symbol, price, change_pct, fetched_at")
-      .in("symbol", data.symbols);
+    // Read the persistent cache. We always have this to serve immediately, and
+    // re-read it after a successful refresh so the same request returns fresh data.
+    const readCache = async () => {
+      const { data: rows } = await supabaseAdmin
+        .from("quote_cache")
+        .select("symbol, price, change_pct, fetched_at")
+        .in("symbol", data.symbols);
+      const quotes: Record<string, Quote> = {};
+      let newest = 0;
+      for (const r of rows ?? []) {
+        quotes[r.symbol] = {
+          symbol: r.symbol,
+          price: Number(r.price),
+          changePct: Number(r.change_pct),
+        };
+        const ts = new Date(r.fetched_at).getTime();
+        if (ts > newest) newest = ts;
+      }
+      return { quotes, newest };
+    };
 
-    const quotes: Record<string, Quote> = {};
-    let newest = 0;
-    for (const r of rows ?? []) {
-      quotes[r.symbol] = {
-        symbol: r.symbol,
-        price: Number(r.price),
-        changePct: Number(r.change_pct),
-      };
-      const ts = new Date(r.fetched_at).getTime();
-      if (ts > newest) newest = ts;
-    }
+    let { quotes, newest } = await readCache();
 
     const now = Date.now();
-    const ageMs = newest > 0 ? now - newest : Infinity;
+    let ageMs = newest > 0 ? now - newest : Infinity;
     // Trim defensively — pasted secrets sometimes carry stray whitespace,
     // which makes the constructed URL throw "Malformed input to a URL function".
     const apiKey = process.env.POLYGON_API_KEY?.trim();
@@ -183,11 +196,23 @@ export const getLiveQuotes = createServerFn({ method: "POST" })
     if (apiKey && ageMs > REFRESH_AFTER_MS) {
       const cooldownUntil = await getCooldownUntil(supabaseAdmin);
       if (now >= cooldownUntil) {
-        // Fire-and-forget — do NOT block the response on the Polygon round trip.
-        // The pg_cron scheduled job is the primary refresh path; this is a fallback.
-        refreshFromPolygon(supabaseAdmin, data.symbols, apiKey).catch((e) => {
-          console.error("[quotes] background refresh failed:", e);
+        // Self-heal: the pg_cron job is the primary refresh path, but we no
+        // longer depend on it firing. When the cache is stale, this visit
+        // refreshes it — awaited so the visitor gets fresh prices — but capped
+        // by REFRESH_TIMEOUT_MS. If the provider is slow and the timeout wins,
+        // the refresh still completes in the background (its own .catch keeps it
+        // from becoming an unhandled rejection) and the next request is fresh.
+        const refresh = refreshFromPolygon(supabaseAdmin, data.symbols, apiKey).catch((e) => {
+          console.error("[quotes] refresh failed:", e);
         });
+        const refreshed = await Promise.race([
+          refresh.then(() => true),
+          new Promise<boolean>((resolve) => setTimeout(() => resolve(false), REFRESH_TIMEOUT_MS)),
+        ]);
+        if (refreshed) {
+          ({ quotes, newest } = await readCache());
+          ageMs = newest > 0 ? Date.now() - newest : Infinity;
+        }
       }
     }
 

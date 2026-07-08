@@ -51,6 +51,8 @@ type IncMode = "growth" | "drawdown" | "rolling";
 
 const fmtPct  = (v: number) => `${v > 0 ? "+" : ""}${v.toFixed(1)}%`;
 const fmtMult = (v: number) => `${v.toFixed(2)}×`;
+const fmtPctPlain = (v: number) => `${v.toFixed(1)}%`; // no leading + (vol, tracking error…)
+const fmtRatio    = (v: number) => v.toFixed(2);       // Sharpe, beta, correlation…
 
 const SMIF_COLOR  = "#CFB991";
 const BENCH_COLOR = "#6B6860";
@@ -154,6 +156,31 @@ function Performance() {
       { l: "Inception Annualized", v: fmtPct(kpis.inception_annualized), pos: kpis.inception_annualized >= 0 },
     ];
   }, [monthlyData, kpis]);
+
+  // Risk & return analytics — derived server-side from the monthly series.
+  type Tone = "pos" | "neg" | "neutral";
+  const toneClass = (t: Tone) => (t === "pos" ? "text-gain" : t === "neg" ? "text-loss" : "text-ink");
+  const a = monthlyData?.analytics;
+  const analyticsPrimary: { l: string; v: string; tone: Tone; sub: string }[] = a
+    ? [
+        { l: "Cumulative Return",     v: fmtPct(a.cumulative_return_pct),      tone: a.cumulative_return_pct >= 0 ? "pos" : "neg", sub: "Since inception" },
+        { l: "Annualized Volatility", v: fmtPctPlain(a.annualized_vol_pct),    tone: "neutral", sub: "Std. dev × √12" },
+        { l: "Sharpe Ratio",          v: fmtRatio(a.sharpe),                   tone: a.sharpe >= 0 ? "pos" : "neg", sub: "rf 0%" },
+        { l: "Sortino Ratio",         v: fmtRatio(a.sortino),                  tone: a.sortino >= 0 ? "pos" : "neg", sub: "Downside, rf 0%" },
+        { l: "Beta vs S&P 500",       v: fmtRatio(a.beta),                     tone: "neutral", sub: "Monthly" },
+        { l: "Annualized Alpha",      v: fmtPct(a.annualized_alpha_pct),       tone: a.annualized_alpha_pct >= 0 ? "pos" : "neg", sub: "vs SPY, rf 0%" },
+        { l: "Tracking Error",        v: fmtPctPlain(a.tracking_error_pct),    tone: "neutral", sub: "Annualized" },
+        { l: "Information Ratio",     v: fmtRatio(a.information_ratio),         tone: a.information_ratio >= 0 ? "pos" : "neg", sub: "Active return / TE" },
+      ]
+    : [];
+  const analyticsSecondary: { l: string; v: string; tone: Tone }[] = a
+    ? [
+        { l: "Best Month",             v: fmtPct(a.best_month_pct),          tone: "pos" },
+        { l: "Worst Month",            v: fmtPct(a.worst_month_pct),         tone: "neg" },
+        { l: "Positive Months",        v: fmtPctPlain(a.positive_months_pct), tone: "neutral" },
+        { l: "Correlation to S&P 500", v: fmtRatio(a.correlation),           tone: "neutral" },
+      ]
+    : [];
 
   const { cumulative, annual, baseYear } = useMemo(() => {
     const chronological = [...years].sort((a, b) => a.year - b.year);
@@ -274,6 +301,38 @@ function Performance() {
             </div>
           ))}
         </Reveal>
+
+        {/* ── Risk & return analytics ───────────────────────────── */}
+        {a && a.observations >= 12 && (
+          <Reveal className="space-y-4" delay={0.02}>
+            <div className="flex items-baseline justify-between gap-4">
+              <h2 className="font-display text-2xl font-bold text-ink md:text-3xl">Risk &amp; return analytics</h2>
+              <span className="text-[10px] font-mono uppercase tracking-[0.22em] text-muted-foreground whitespace-nowrap">
+                {a.observations} mo · monthly basis
+              </span>
+            </div>
+            <div className="grid gap-px bg-border sm:grid-cols-2 lg:grid-cols-4">
+              {analyticsPrimary.map(({ l, v, tone, sub }) => (
+                <div key={l} className="bg-card p-6 flex flex-col gap-1 border border-border">
+                  <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">{l}</div>
+                  <div className={`font-display text-3xl font-bold mt-1 ${toneClass(tone)}`}>{v}</div>
+                  <div className="text-[11px] text-muted-foreground font-mono">{sub}</div>
+                </div>
+              ))}
+            </div>
+            <div className="grid gap-px bg-border grid-cols-2 lg:grid-cols-4">
+              {analyticsSecondary.map(({ l, v, tone }) => (
+                <div key={l} className="bg-card px-6 py-5 flex flex-col gap-0.5 border border-border">
+                  <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{l}</div>
+                  <div className={`font-display text-xl font-bold ${toneClass(tone)}`}>{v}</div>
+                </div>
+              ))}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Computed from monthly SMIF and S&amp;P 500 total-return (SPY) returns since {formatMonth(monthlyData!.inceptionMonth)}, excluding custodian-transition bridge months. Sharpe and Sortino assume a 0% risk-free rate; alpha, beta, and correlation are measured against the S&amp;P 500 total-return index.
+            </p>
+          </Reveal>
+        )}
 
         {/* ── Since Inception (monthly, live) ───────────────────── */}
         {monthlyData && monthlyData.series.length > 0 && (
