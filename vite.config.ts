@@ -12,4 +12,7 @@ export default defineConfig({
   tanstackStart: {
     server: { entry: "server" },
   },
+  // Build for Vercel (Nitro Vercel preset → .vercel/output, Build Output API v3).
+  // Was Cloudflare on Lovable; migrated off Lovable hosting.
+  nitro: { preset: "vercel" },
 });
