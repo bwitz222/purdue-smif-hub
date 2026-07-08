@@ -31,16 +31,18 @@ const BIO_BY_NAME: Record<string, string> = {
   "Logan Friedman": "Logan Friedman is a junior in the College of Engineering, majoring in Mechanical Engineering with a minor in Finance. He is currently working as a Mechanical Engineering Intern at Northrop Grumman. In his free time, he enjoys hiking, surfing, and pickleball.",
   "Sid Voona": "Siddharth Voona is a sophomore in the Daniels School of Business, majoring in Finance and Accounting. He has previously interned at MD Global Partners as an Investment Banking Analyst and is the President of Purdue's Banking and Markets Club. In his free time, he enjoys playing guitar, poker, and cooking.",
   "Evan Wright": "Evan Wright is a senior in the Daniels School of Business, pursuing dual degrees in Accounting and Finance with a concentration in Management Consulting. Outside of SMIF, he is currently working as an Audit & Assurance Intern at Deloitte, having previously interned in audit and assurance at Crowe. Raised in central Indiana with roots in agriculture, he brings a ground-level perspective to his equity research and a genuine interest in agribusiness as an investment theme. In his free time, he enjoys playing golf, following the markets, and spending time outdoors.",
+  "Shaheera Ali": "Shaheera Ali is a junior in the Daniels School of Business, majoring in Finance and Business Analytics & Information Management. She is currently interning as an Audit & Assurance Technology Controls Discovery Intern at Deloitte. In her free time, she enjoys film theory, kayaking, and exploring new places.",
+  "Sandhya Gopinath": "Sandhya Gopinath is a Junior in the Daniels School of Business, majoring in Finance and Business Analytics & Information Management. She has previously interned at NextGear Capital by Cox Automotive as a Financial Analyst Intern. In her free time, she enjoys playing table tennis, pickleball, going to the gym and watching thriller shows.",
 };
 
 export const board: Member[] = [
   { name: "Andrew Lacambra", role: "Co-President", year: "Class of 2027", email: "alacambr@purdue.edu", photo: andrewLacambraPhoto, bio: BIO_BY_NAME["Andrew Lacambra"] },
   { name: "Ian Teh", role: "Co-President", year: "Class of 2027", email: "iteh@purdue.edu", photo: ianTehPhoto, bio: BIO_BY_NAME["Ian Teh"] },
   { name: "Hunter Specht", role: "Co-CIO & Co-Head of Education", year: "Class of 2027", email: "hspecht@purdue.edu", bio: "Drives portfolio strategy and final investment decisions across all sectors, and co-leads the analyst education curriculum." },
-  { name: "Sandhya Gopinath", role: "Co-CIO & Co-Head of Education", year: "Class of 2028", email: "gopinas@purdue.edu", bio: "Drives portfolio strategy and final investment decisions across all sectors, and co-leads the analyst education curriculum." },
+  { name: "Sandhya Gopinath", role: "Co-CIO & Co-Head of Education", year: "Class of 2028", email: "gopinas@purdue.edu", bio: BIO_BY_NAME["Sandhya Gopinath"] },
   { name: "Keren Wadhwani", role: "Treasurer and Director of Fundraising", year: "Class of 2028", email: "kwadhwan@purdue.edu", photo: kerenWadhwaniPhoto, bio: BIO_BY_NAME["Keren Wadhwani"] },
   { name: "Chris Andreou", role: "Director of Talent and Operations", year: "Class of 2028", email: "andreou@purdue.edu", photo: chrisAndreouPhoto, bio: BIO_BY_NAME["Chris Andreou"] },
-  { name: "Shaheera Ali", role: "Director of Marketing and Outreach", year: "Class of 2028", email: "ali251@purdue.edu", bio: "Leads marketing, branding, and external outreach for the fund." },
+  { name: "Shaheera Ali", role: "Director of Marketing and Outreach", year: "Class of 2028", email: "ali251@purdue.edu", bio: BIO_BY_NAME["Shaheera Ali"] },
 ];
 
 
