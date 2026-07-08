@@ -14,6 +14,8 @@ import kerenWadhwaniPhoto from "@/assets/team/keren-wadhwani.jpg";
 import loganFriedmanPhoto from "@/assets/team/logan-friedman.jpg";
 import evanWrightPhoto from "@/assets/team/evan-wright.jpg";
 import sidVoonaPhoto from "@/assets/team/sid-voona.jpg";
+import shaheeraAliPhoto from "@/assets/team/shaheera-ali.jpg";
+import sandhyaGopinathPhoto from "@/assets/team/sandhya-gopinath.jpg";
 
 const BIO_BY_NAME: Record<string, string> = {
   "Landon Haffner": "Landon Haffner is a sophomore in the Daniels School of Business, majoring in Finance with a minor in Real Estate Finance, Management Consulting and Entrepreneurship. He is interning at Lennar this summer in sales and land acquisition. In his free time, he enjoys going to the gym, golfing and playing rocket league with friends.",
@@ -39,10 +41,10 @@ export const board: Member[] = [
   { name: "Andrew Lacambra", role: "Co-President", year: "Class of 2027", email: "alacambr@purdue.edu", photo: andrewLacambraPhoto, bio: BIO_BY_NAME["Andrew Lacambra"] },
   { name: "Ian Teh", role: "Co-President", year: "Class of 2027", email: "iteh@purdue.edu", photo: ianTehPhoto, bio: BIO_BY_NAME["Ian Teh"] },
   { name: "Hunter Specht", role: "Co-CIO & Co-Head of Education", year: "Class of 2027", email: "hspecht@purdue.edu", bio: "Drives portfolio strategy and final investment decisions across all sectors, and co-leads the analyst education curriculum." },
-  { name: "Sandhya Gopinath", role: "Co-CIO & Co-Head of Education", year: "Class of 2028", email: "gopinas@purdue.edu", bio: BIO_BY_NAME["Sandhya Gopinath"] },
+  { name: "Sandhya Gopinath", role: "Co-CIO & Co-Head of Education", year: "Class of 2028", email: "gopinas@purdue.edu", photo: sandhyaGopinathPhoto, bio: BIO_BY_NAME["Sandhya Gopinath"] },
   { name: "Keren Wadhwani", role: "Treasurer and Director of Fundraising", year: "Class of 2028", email: "kwadhwan@purdue.edu", photo: kerenWadhwaniPhoto, bio: BIO_BY_NAME["Keren Wadhwani"] },
   { name: "Chris Andreou", role: "Director of Talent and Operations", year: "Class of 2028", email: "andreou@purdue.edu", photo: chrisAndreouPhoto, bio: BIO_BY_NAME["Chris Andreou"] },
-  { name: "Shaheera Ali", role: "Director of Marketing and Outreach", year: "Class of 2028", email: "ali251@purdue.edu", bio: BIO_BY_NAME["Shaheera Ali"] },
+  { name: "Shaheera Ali", role: "Director of Marketing and Outreach", year: "Class of 2028", email: "ali251@purdue.edu", photo: shaheeraAliPhoto, bio: BIO_BY_NAME["Shaheera Ali"] },
 ];
 
 
@@ -62,6 +64,8 @@ const PHOTO_BY_NAME: Record<string, string> = {
   "Logan Friedman": loganFriedmanPhoto,
   "Evan Wright": evanWrightPhoto,
   "Sid Voona": sidVoonaPhoto,
+  "Shaheera Ali": shaheeraAliPhoto,
+  "Sandhya Gopinath": sandhyaGopinathPhoto,
 };
 
 const PHOTO_POSITION_BY_NAME: Record<string, string> = {
