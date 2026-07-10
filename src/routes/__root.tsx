@@ -70,7 +70,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "dns-prefetch", href: "https://gnmwcihxtytlaesuvuqg.supabase.co" },
+      { rel: "dns-prefetch", href: "https://mxjrtmratusuxhpxtwmg.supabase.co" },
       // Body font — must render fast
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&display=swap" },
       // Display + mono — decorative, can wait for the real face

@@ -1,5 +1,5 @@
 -- Repoint the quote-refresh cron job off Lovable and onto Vercel.
--- Run in the Supabase SQL Editor (project gnmwcihxtytlaesuvuqg).
+-- Run in the Supabase SQL Editor (project mxjrtmratusuxhpxtwmg).
 --
 -- Requires the pg_cron and pg_net extensions (already in use by the old job).
 -- The `apikey` header MUST equal the SUPABASE_PUBLISHABLE_KEY set in Vercel's
