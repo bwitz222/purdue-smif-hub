@@ -23,6 +23,7 @@ import { Route as ApplyRouteImport } from './routes/apply'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiPublicHooksRefreshQuotesRouteImport } from './routes/api/public/hooks/refresh-quotes'
+import { Route as ApiPublicHooksComputeRiskRouteImport } from './routes/api/public/hooks/compute-risk'
 
 const TeamRoute = TeamRouteImport.update({
   id: '/team',
@@ -95,6 +96,12 @@ const ApiPublicHooksRefreshQuotesRoute =
     path: '/api/public/hooks/refresh-quotes',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksComputeRiskRoute =
+  ApiPublicHooksComputeRiskRouteImport.update({
+    id: '/api/public/hooks/compute-risk',
+    path: '/api/public/hooks/compute-risk',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -110,6 +117,7 @@ export interface FileRoutesByFullPath {
   '/sectors': typeof SectorsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/team': typeof TeamRoute
+  '/api/public/hooks/compute-risk': typeof ApiPublicHooksComputeRiskRoute
   '/api/public/hooks/refresh-quotes': typeof ApiPublicHooksRefreshQuotesRoute
 }
 export interface FileRoutesByTo {
@@ -126,6 +134,7 @@ export interface FileRoutesByTo {
   '/sectors': typeof SectorsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/team': typeof TeamRoute
+  '/api/public/hooks/compute-risk': typeof ApiPublicHooksComputeRiskRoute
   '/api/public/hooks/refresh-quotes': typeof ApiPublicHooksRefreshQuotesRoute
 }
 export interface FileRoutesById {
@@ -143,6 +152,7 @@ export interface FileRoutesById {
   '/sectors': typeof SectorsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/team': typeof TeamRoute
+  '/api/public/hooks/compute-risk': typeof ApiPublicHooksComputeRiskRoute
   '/api/public/hooks/refresh-quotes': typeof ApiPublicHooksRefreshQuotesRoute
 }
 export interface FileRouteTypes {
@@ -161,6 +171,7 @@ export interface FileRouteTypes {
     | '/sectors'
     | '/sitemap.xml'
     | '/team'
+    | '/api/public/hooks/compute-risk'
     | '/api/public/hooks/refresh-quotes'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -177,6 +188,7 @@ export interface FileRouteTypes {
     | '/sectors'
     | '/sitemap.xml'
     | '/team'
+    | '/api/public/hooks/compute-risk'
     | '/api/public/hooks/refresh-quotes'
   id:
     | '__root__'
@@ -193,6 +205,7 @@ export interface FileRouteTypes {
     | '/sectors'
     | '/sitemap.xml'
     | '/team'
+    | '/api/public/hooks/compute-risk'
     | '/api/public/hooks/refresh-quotes'
   fileRoutesById: FileRoutesById
 }
@@ -210,6 +223,7 @@ export interface RootRouteChildren {
   SectorsRoute: typeof SectorsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TeamRoute: typeof TeamRoute
+  ApiPublicHooksComputeRiskRoute: typeof ApiPublicHooksComputeRiskRoute
   ApiPublicHooksRefreshQuotesRoute: typeof ApiPublicHooksRefreshQuotesRoute
 }
 
@@ -313,6 +327,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksRefreshQuotesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/compute-risk': {
+      id: '/api/public/hooks/compute-risk'
+      path: '/api/public/hooks/compute-risk'
+      fullPath: '/api/public/hooks/compute-risk'
+      preLoaderRoute: typeof ApiPublicHooksComputeRiskRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -330,6 +351,7 @@ const rootRouteChildren: RootRouteChildren = {
   SectorsRoute: SectorsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TeamRoute: TeamRoute,
+  ApiPublicHooksComputeRiskRoute: ApiPublicHooksComputeRiskRoute,
   ApiPublicHooksRefreshQuotesRoute: ApiPublicHooksRefreshQuotesRoute,
 }
 export const routeTree = rootRouteImport

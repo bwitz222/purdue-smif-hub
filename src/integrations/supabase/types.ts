@@ -224,6 +224,90 @@ export type Database = {
         }
         Relationships: []
       }
+      portfolio_risk_metrics: {
+        Row: {
+          annualized_return_pct: number | null
+          annualized_vol_pct: number | null
+          as_of: string
+          computed_at: string
+          full_year: boolean
+          gross_exposure_pct: number | null
+          lookback_days: number
+          net_exposure_pct: number | null
+          portfolio_value: number | null
+          rf_source: string | null
+          risk_free_rate_pct: number | null
+          sharpe: number | null
+          sufficient: boolean
+          symbols_priced: number | null
+          var95_dollar: number | null
+          var95_pct: number | null
+          var99_dollar: number | null
+          var99_pct: number | null
+        }
+        Insert: {
+          annualized_return_pct?: number | null
+          annualized_vol_pct?: number | null
+          as_of: string
+          computed_at?: string
+          full_year?: boolean
+          gross_exposure_pct?: number | null
+          lookback_days: number
+          net_exposure_pct?: number | null
+          portfolio_value?: number | null
+          rf_source?: string | null
+          risk_free_rate_pct?: number | null
+          sharpe?: number | null
+          sufficient?: boolean
+          symbols_priced?: number | null
+          var95_dollar?: number | null
+          var95_pct?: number | null
+          var99_dollar?: number | null
+          var99_pct?: number | null
+        }
+        Update: {
+          annualized_return_pct?: number | null
+          annualized_vol_pct?: number | null
+          as_of?: string
+          computed_at?: string
+          full_year?: boolean
+          gross_exposure_pct?: number | null
+          lookback_days?: number
+          net_exposure_pct?: number | null
+          portfolio_value?: number | null
+          rf_source?: string | null
+          risk_free_rate_pct?: number | null
+          sharpe?: number | null
+          sufficient?: boolean
+          symbols_priced?: number | null
+          var95_dollar?: number | null
+          var95_pct?: number | null
+          var99_dollar?: number | null
+          var99_pct?: number | null
+        }
+        Relationships: []
+      }
+      price_history: {
+        Row: {
+          close: number
+          date: string
+          symbol: string
+          updated_at: string
+        }
+        Insert: {
+          close: number
+          date: string
+          symbol: string
+          updated_at?: string
+        }
+        Update: {
+          close?: number
+          date?: string
+          symbol?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       publications: {
         Row: {
           category: Database["public"]["Enums"]["publication_category"]
