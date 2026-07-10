@@ -75,7 +75,7 @@ function Research() {
 
   const jsonLd = useMemo(() => {
     if (pubs.length === 0) return null;
-    return JSON.stringify({
+    const ld = JSON.stringify({
       "@context": "https://schema.org",
       "@type": "ItemList",
       itemListElement: pubs.map((p: PublicationRow, i: number) => ({
@@ -90,6 +90,10 @@ function Research() {
         },
       })),
     });
+    // Escape "<" so a "</script>" sequence inside any title/description can't
+    // break out of the ld+json <script> block (defense-in-depth; publication
+    // content is admin-curated, but writes could be re-opened in future).
+    return ld.replace(/</g, "\\u003c");
   }, [pubs]);
 
   return (

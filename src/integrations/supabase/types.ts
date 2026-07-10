@@ -68,39 +68,6 @@ export type Database = {
         }
         Relationships: []
       }
-      contact_submissions: {
-        Row: {
-          created_at: string
-          delivered: boolean
-          email: string
-          first_name: string
-          id: string
-          last_name: string
-          message: string
-          subject: string
-        }
-        Insert: {
-          created_at?: string
-          delivered?: boolean
-          email: string
-          first_name: string
-          id?: string
-          last_name: string
-          message: string
-          subject: string
-        }
-        Update: {
-          created_at?: string
-          delivered?: boolean
-          email?: string
-          first_name?: string
-          id?: string
-          last_name?: string
-          message?: string
-          subject?: string
-        }
-        Relationships: []
-      }
       fund_monthly_history: {
         Row: {
           beginning_balance: number

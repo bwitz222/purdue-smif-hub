@@ -50,9 +50,12 @@ export const Route = createFileRoute("/api/public/hooks/refresh-quotes")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const expectedKey = process.env.SUPABASE_PUBLISHABLE_KEY?.trim();
-        const provided = request.headers.get("apikey")?.trim();
-        if (!expectedKey || !provided || provided !== expectedKey) {
+        // Auth gate: a dedicated server-only secret (NOT the Supabase publishable
+        // key, which is shipped to the browser and therefore public). The caller
+        // (pg_cron) must send this exact value in the `x-refresh-secret` header.
+        const expectedSecret = process.env.REFRESH_HOOK_SECRET?.trim();
+        const provided = request.headers.get("x-refresh-secret")?.trim();
+        if (!expectedSecret || !provided || provided !== expectedSecret) {
           return new Response(
             JSON.stringify({ ok: false, error: "Unauthorized" }),
             { status: 401, headers: { "Content-Type": "application/json" } },
