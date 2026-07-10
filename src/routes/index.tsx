@@ -7,6 +7,7 @@ import { CountUp } from "@/components/CountUp";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getFundStats } from "@/lib/fund-stats.functions";
+import { liveQueryOptions } from "@/lib/live-query";
 
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import { socialMeta, canonical } from "@/lib/seo";
@@ -65,7 +66,7 @@ function Index() {
   const { data: fundStats } = useQuery({
     queryKey: ["fund-stats"],
     queryFn: () => fetchStats(),
-    staleTime: 60 * 60 * 1000,
+    ...liveQueryOptions,
   });
   const s = fundStats ?? FALLBACK_STATS;
   const currentYear = new Date().getFullYear();

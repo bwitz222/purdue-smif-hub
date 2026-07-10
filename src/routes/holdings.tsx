@@ -11,6 +11,7 @@ import { CountUp } from "@/components/CountUp";
 import { Reveal } from "@/components/Reveal";
 import { socialMeta, canonical, OG_HOLDINGS } from "@/lib/seo";
 import { applyQuotes, sectorPercentBreakdown } from "@/lib/portfolio";
+import { liveQueryOptions } from "@/lib/live-query";
 
 export const Route = createFileRoute("/holdings")({
   component: HoldingsPage,
@@ -96,27 +97,22 @@ function HoldingsPage() {
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const fetchQuotes = useServerFn(getLiveQuotes);
   const symbols = useMemo(() => baseHoldings.map((h) => h.symbol), []);
-  // The server serves the end-of-day cache and self-heals it when stale, so the
-  // client just needs to poll on a sensible cadence rather than track the
-  // backend's exact wall clock: refetch on mount, on focus/reconnect, and every
-  // 30 minutes while the tab is open. Each fetch recomputes every derived value
-  // on the page (KPIs, sector breakdown, leaders/laggards, table).
-  const REFETCH_MS = 30 * 60 * 1000;
+  // The server serves the end-of-day cache and self-heals it when stale; the
+  // client polls on the shared live-data cadence (see liveQueryOptions) so
+  // /holdings, /sectors and / stay on the same update logic. Each fetch
+  // recomputes every derived value here (KPIs, weighted beta, sector
+  // breakdown, leaders/laggards, table).
   const { data: quoteData, isFetching, error, refetch } = useQuery({
     queryKey: ["live-quotes", symbols],
     queryFn: () => fetchQuotes({ data: { symbols } }),
-    staleTime: REFETCH_MS,
-    refetchInterval: REFETCH_MS,
-    refetchIntervalInBackground: false,
-    refetchOnWindowFocus: true,
-    refetchOnReconnect: true,
+    ...liveQueryOptions,
   });
 
   const fetchFundStats = useServerFn(getFundStats);
   const { data: fundStats } = useQuery({
     queryKey: ["fund-stats"],
     queryFn: () => fetchFundStats(),
-    staleTime: 60 * 60 * 1000,
+    ...liveQueryOptions,
   });
   const cashHoldings = fundStats?.cash_holdings ?? baseSummary.cashHoldings;
 

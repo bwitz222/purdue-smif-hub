@@ -20,6 +20,7 @@ import { socialMeta, canonical, OG_SECTORS } from "@/lib/seo";
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import { getLiveQuotes } from "@/lib/quotes.functions";
 import { applyQuotes, teamAllocations, baseHoldings } from "@/lib/portfolio";
+import { liveQueryOptions } from "@/lib/live-query";
 import { sectorTeams, fixedIncomeMacro, portfolioManagers } from "@/data/team";
 
 type EquityTeam = {
@@ -116,8 +117,7 @@ function Sectors() {
   const { data: quoteData, isFetching } = useQuery({
     queryKey: ["live-quotes", symbols],
     queryFn: () => fetchQuotes({ data: { symbols } }),
-    staleTime: 60 * 60 * 1000,
-    refetchOnWindowFocus: false,
+    ...liveQueryOptions,
   });
 
   const teams = useMemo(() => {
