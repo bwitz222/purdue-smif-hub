@@ -19,6 +19,7 @@ import {
 import { socialMeta, canonical, OG_SECTORS } from "@/lib/seo";
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import { getLiveQuotes } from "@/lib/quotes.functions";
+import { getRiskMetrics } from "@/lib/risk.functions";
 import { applyQuotes, teamAllocations, baseHoldings } from "@/lib/portfolio";
 import { liveQueryOptions } from "@/lib/live-query";
 import { sectorTeams, fixedIncomeMacro, portfolioManagers } from "@/data/team";
@@ -120,14 +121,25 @@ function Sectors() {
     ...liveQueryOptions,
   });
 
+  // Only used for the true market-session date on the banner; shares the
+  // ["risk-metrics"] cache with /holdings so it's a deduped, near-free read.
+  const fetchRisk = useServerFn(getRiskMetrics);
+  const { data: risk } = useQuery({
+    queryKey: ["risk-metrics"],
+    queryFn: () => fetchRisk(),
+    ...liveQueryOptions,
+  });
+
   const teams = useMemo(() => {
     const updated = applyQuotes(baseHoldings, quoteData?.quotes ?? {});
     const allocations = teamAllocations(updated);
     return new Map(allocations.map((a) => [a.team, a]));
   }, [quoteData]);
 
-  const asOf = quoteData?.cachedAt
-    ? new Date(quoteData.cachedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+  // True session date of the quotes (Polygon's latest completed close), from
+  // the risk metrics' as_of — not quoteData.cachedAt, which is the fetch time.
+  const asOf = risk?.asOf
+    ? new Date(risk.asOf + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
     : null;
 
   return (
@@ -151,6 +163,11 @@ function Sectors() {
                 <>
                   <span className="h-1.5 w-1.5 rounded-full bg-gold" aria-hidden="true" />
                   Allocations as of {asOf} close
+                </>
+              ) : quoteData?.cachedAt ? (
+                <>
+                  <span className="h-1.5 w-1.5 rounded-full bg-gold" aria-hidden="true" />
+                  Allocations · latest end-of-day close
                 </>
               ) : (
                 <>Last reported snapshot</>

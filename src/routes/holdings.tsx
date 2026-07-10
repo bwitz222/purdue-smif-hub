@@ -278,10 +278,17 @@ function HoldingsPage() {
           >
             {isFetching ? (
               <><RefreshCw className="h-3 w-3 animate-spin text-gold" /> Refreshing quotes…</>
+            ) : riskAsOf ? (
+              <>
+                <span className="h-1.5 w-1.5 rounded-full bg-gold" aria-hidden="true" />
+                {/* Session date of the data (Polygon's latest completed close),
+                    NOT the fetch time — cachedAt is shown as "Updated" below. */}
+                As of {riskAsOf} close
+              </>
             ) : quoteData?.cachedAt ? (
               <>
                 <span className="h-1.5 w-1.5 rounded-full bg-gold" aria-hidden="true" />
-                As of {new Date(quoteData.cachedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })} close
+                Latest end-of-day close
               </>
             ) : (
               <>Last reported snapshot</>
