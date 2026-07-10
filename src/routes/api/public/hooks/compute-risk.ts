@@ -327,6 +327,22 @@ export const Route = createFileRoute("/api/public/hooks/compute-risk")({
         if (!expectedSecret || !provided || provided !== expectedSecret) {
           return json({ ok: false, error: "Unauthorized" }, 401);
         }
+
+        // TEMP diagnostic (auth-gated, no secrets): fingerprint the env this
+        // deployment actually sees, to pinpoint an env misconfiguration.
+        if (new URL(request.url).searchParams.get("diag") === "1") {
+          const u = process.env.SUPABASE_URL ?? "";
+          const sk = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
+          return json({
+            ok: true,
+            diag: true,
+            supabaseUrl: u,
+            urlPresent: u.length > 0,
+            serviceKeyPrefix: sk.slice(0, 12),
+            serviceKeyLen: sk.length,
+          });
+        }
+
         const apiKey = process.env.POLYGON_API_KEY?.trim();
         if (!apiKey) return json({ ok: false, error: "POLYGON_API_KEY not configured" }, 500);
         const avKey = process.env.ALPHA_VANTAGE_API_KEY?.trim();
