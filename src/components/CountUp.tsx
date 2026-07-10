@@ -44,25 +44,30 @@ export function CountUp({
   const startedRef = useRef(false);
 
   useEffect(() => {
-    if (!inView || startedRef.current) return;
-    startedRef.current = true;
-
     const reduce =
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) {
-      // Respect reduced-motion: leave the final value in place.
+
+    // Before the count-up runs (not in view yet) or when reduced-motion is on,
+    // always show the current final value. This keeps late/updated `to` values
+    // (e.g. a live-quote refresh changing a KPI) in sync instead of leaving the
+    // first-paint number frozen on screen.
+    if (!inView || reduce) {
+      setDisplay(to);
       return;
     }
 
     // Defer to the next animation frame so the first paint keeps the
-    // final value; only then do we jump back to `from` and animate up.
-    // This guarantees we never commit a wrong value to the DOM *before*
-    // paint, only as part of the post-hydration visual flourish.
+    // final value; only then do we jump back to the start and animate up.
+    // First time in view we count up from `from`; on subsequent `to` changes
+    // we animate from the current value so the headline tracks the new data.
+    const start = startedRef.current ? mv.get() : from;
+    startedRef.current = true;
+
     let stop: (() => void) | undefined;
     const raf = requestAnimationFrame(() => {
-      mv.set(from);
-      setDisplay(from);
+      mv.set(start);
+      setDisplay(start);
       const controls = animate(mv, to, {
         duration,
         ease: [0.22, 1, 0.36, 1],
