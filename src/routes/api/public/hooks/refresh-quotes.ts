@@ -27,7 +27,11 @@ async function fetchTwoDaysGroupedBars(
     )}?adjusted=true&apiKey=${apiKey}`;
     try {
       const res = await fetch(url);
-      if (res.status === 429 || res.status === 401 || res.status === 403) break;
+      if (res.status === 429 || res.status === 401) break;
+      // 403 NOT_AUTHORIZED means this particular (too-recent) day isn't available
+      // on the current Polygon plan — skip it and fall through to the most recent
+      // authorized session instead of aborting the whole refresh.
+      if (res.status === 403) continue;
       if (!res.ok) continue;
       const json = (await res.json()) as PolygonGroupedResponse;
       if (json.results && json.results.length > 0) {
