@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { holdings as baseHoldings, portfolioSummary as baseSummary, type Holding } from "@/data/holdings";
 import { getLiveQuotes } from "@/lib/quotes.functions";
 import { getFundStats } from "@/lib/fund-stats.functions";
+import { getRiskMetrics } from "@/lib/risk.functions";
 import { CountUp } from "@/components/CountUp";
 import { Reveal } from "@/components/Reveal";
 import { socialMeta, canonical, OG_HOLDINGS } from "@/lib/seo";
@@ -66,19 +67,34 @@ function KpiCard({
   sub,
   accent,
   animatedValue,
+  asOf,
+  hint,
+  muted,
 }: {
   label: string;
   value: string;
   sub?: string;
   accent?: "positive" | "negative" | "neutral";
   animatedValue?: React.ReactNode;
+  asOf?: string;
+  hint?: string;
+  muted?: boolean;
 }) {
   const valueColor = accent === "positive" ? "text-gain" : accent === "negative" ? "text-loss" : "text-ink";
   return (
-    <div className="border border-border bg-card p-6 flex flex-col gap-1">
+    <div className="border border-border bg-card p-6 flex flex-col gap-1" title={hint}>
       <div className="text-xs uppercase tracking-[0.22em] text-muted-foreground">{label}</div>
-      <div className={`font-display text-3xl font-bold ${valueColor} mt-1`}>{animatedValue ?? value}</div>
+      {muted ? (
+        <div className="text-lg font-semibold text-muted-foreground mt-2">{value}</div>
+      ) : (
+        <div className={`font-display text-3xl font-bold ${valueColor} mt-1`}>{animatedValue ?? value}</div>
+      )}
       {sub && <div className="text-xs text-muted-foreground font-mono mt-0.5">{sub}</div>}
+      {asOf && (
+        <div className="text-[10px] font-mono uppercase tracking-[0.18em] text-muted-foreground/70 mt-1">
+          As of {asOf}
+        </div>
+      )}
     </div>
   );
 }
@@ -115,6 +131,15 @@ function HoldingsPage() {
     ...liveQueryOptions,
   });
   const cashHoldings = fundStats?.cash_holdings ?? baseSummary.cashHoldings;
+
+  // Pre-computed daily risk metrics (Volatility, Sharpe, VaR, Exposure). Computed
+  // by the daily compute-risk job; the page only reads and formats them.
+  const fetchRisk = useServerFn(getRiskMetrics);
+  const { data: risk } = useQuery({
+    queryKey: ["risk-metrics"],
+    queryFn: () => fetchRisk(),
+    ...liveQueryOptions,
+  });
 
   useEffect(() => {
     const id = setTimeout(() => setDebouncedQuery(query), 200);
@@ -194,6 +219,27 @@ function HoldingsPage() {
   const toggleSort = (k: SortKey) => { if (k === sortKey) setSortDir(sortDir === "asc" ? "desc" : "asc"); else { setSortKey(k); setSortDir(typeof holdings[0]?.[k] === "number" ? "desc" : "asc"); } };
   const cols: { k: SortKey; label: string; align?: "right" }[] = [{ k: "company", label: "Company" },{ k: "symbol", label: "Ticker" },{ k: "industry", label: "Industry" },{ k: "price", label: "Price", align: "right" },{ k: "beta", label: "Beta", align: "right" },{ k: "shares", label: "Shares", align: "right" },{ k: "value", label: "Value", align: "right" },{ k: "dayChange", label: "Day", align: "right" },{ k: "totalReturn", label: "Return $", align: "right" },{ k: "returnPct", label: "Return %", align: "right" },{ k: "allocation", label: "Weight", align: "right" }];
   const dayAccent = portfolioSummary.totalDayGain >= 0 ? "positive" : "negative";
+
+  // Risk-card display strings. Volatility/Sharpe/VaR need >=60 obs of history;
+  // exposure needs none, so it renders even when history is insufficient.
+  const riskAsOf = risk?.asOf
+    ? new Date(risk.asOf + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+    : undefined;
+  const noRisk = !risk;
+  const insufficient = !!risk && !risk.sufficient;
+  const volDisplay = noRisk ? "Not yet computed" : insufficient ? "Insufficient history" : `${risk!.annualizedVolPct!.toFixed(1)}%`;
+  const sharpeDisplay = noRisk
+    ? "Not yet computed"
+    : insufficient
+    ? "Insufficient history"
+    : risk!.sharpe == null
+    ? "Rate unavailable"
+    : risk!.sharpe.toFixed(2);
+  const varDisplay = noRisk ? "Not yet computed" : insufficient ? "Insufficient history" : fmtUSD(risk!.var95Dollar!, { maximumFractionDigits: 0 });
+  const exposureDisplay = noRisk || risk!.grossExposurePct == null ? "Not yet computed" : `${risk!.grossExposurePct.toFixed(1)}%`;
+  const varLookbackNote = risk?.sufficient
+    ? `${risk.var95Pct!.toFixed(2)}% · trailing ${risk.lookbackDays} trading days${risk.fullYear ? "" : " (<1yr)"}`
+    : "95% confidence, 1-day horizon";
 
   return (
     <>
@@ -295,6 +341,48 @@ function HoldingsPage() {
             sub={fmtPct(portfolioSummary.totalDayChange) + " today"}
             accent={dayAccent}
             animatedValue={<CountUp to={portfolioSummary.totalDayGain} duration={1.4} format={(n) => fmtUSD(n)} />}
+          />
+          <KpiCard
+            label="Annualized Volatility"
+            value={volDisplay}
+            muted={noRisk || insufficient}
+            sub={risk?.sufficient ? "Std. dev of daily returns × √252" : undefined}
+            asOf={risk?.sufficient ? riskAsOf : undefined}
+            hint="How much the portfolio's value swings, annualized. Higher means more variable."
+          />
+          <KpiCard
+            label="Sharpe Ratio"
+            value={sharpeDisplay}
+            muted={noRisk || insufficient || risk?.sharpe == null}
+            sub={
+              risk?.sufficient && risk?.riskFreeRatePct != null
+                ? `Excess return per unit risk · rf ${risk.riskFreeRatePct.toFixed(2)}%`
+                : risk?.sufficient
+                ? "Excess return per unit of risk"
+                : undefined
+            }
+            asOf={risk?.sufficient ? riskAsOf : undefined}
+            hint="Return earned above the risk-free rate per unit of volatility. Higher is better."
+          />
+          <KpiCard
+            label="95% 1-Day VaR"
+            value={varDisplay}
+            muted={noRisk || insufficient}
+            sub={varLookbackNote}
+            asOf={risk?.sufficient ? riskAsOf : undefined}
+            hint="On a typical bad day (the worst 5% of days in the lookback window), the portfolio could lose about this much."
+          />
+          <KpiCard
+            label="Gross / Net Exposure"
+            value={exposureDisplay}
+            muted={noRisk || risk?.grossExposurePct == null}
+            sub={
+              risk?.netExposurePct != null
+                ? `Net ${risk.netExposurePct >= 0 ? "+" : ""}${risk.netExposurePct.toFixed(1)}% · long-only book`
+                : undefined
+            }
+            asOf={risk?.grossExposurePct != null ? riskAsOf : undefined}
+            hint="Share of NAV invested in the market. Gross counts all positions, net is longs minus shorts — equal here because the fund is long-only."
           />
         </Reveal>
 
