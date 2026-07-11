@@ -84,7 +84,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "@graph": [
             {
               "@type": "Organization",
-              "@id": "https://purduesmif.org/#organization",
+              "@id": "https://www.purduesmif.org/#organization",
               name: "Purdue Student Managed Investment Fund",
               alternateName: [
                 "Purdue SMIF",
@@ -92,7 +92,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
                 "Purdue Investment Club",
                 "Purdue Finance Club",
               ],
-              url: "https://purduesmif.org",
+              url: "https://www.purduesmif.org",
               email: "smif26@purdue.edu",
               foundingDate: "2009",
               slogan: "Real capital. Real research. Real outcomes.",
@@ -117,10 +117,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
             },
             {
               "@type": "WebSite",
-              "@id": "https://purduesmif.org/#website",
-              url: "https://purduesmif.org",
+              "@id": "https://www.purduesmif.org/#website",
+              url: "https://www.purduesmif.org",
               name: "Purdue SMIF",
-              publisher: { "@id": "https://purduesmif.org/#organization" },
+              publisher: { "@id": "https://www.purduesmif.org/#organization" },
             },
           ],
         }),

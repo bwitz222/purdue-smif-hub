@@ -86,7 +86,7 @@ function Research() {
           headline: p.title,
           description: p.description ?? "",
           datePublished: p.created_at,
-          publisher: { "@id": "https://purduesmif.org/#organization" },
+          publisher: { "@id": "https://www.purduesmif.org/#organization" },
         },
       })),
     });

@@ -1,21 +1,21 @@
 import type { Member } from "@/components/MemberCard";
-import andrewLacambraPhoto from "@/assets/team/andrew-lacambra.jpg";
-import ianTehPhoto from "@/assets/team/ian-teh.jpg";
-import landonHaffnerPhoto from "@/assets/team/landon-haffner.jpg";
-import yashitaPujariPhoto from "@/assets/team/yashita-pujari.jpg";
-import chrisAndreouPhoto from "@/assets/team/chris-andreou.jpg";
-import parthDamaPhoto from "@/assets/team/parth-dama.png";
-import mikhailBilokinPhoto from "@/assets/team/mikhail-bilokin.png";
-import balthazarSchmittPhoto from "@/assets/team/balthazar-schmitt.jpg";
-import augustusMatushekPhoto from "@/assets/team/augustus-matushek.jpg";
-import jacobGeorgePhoto from "@/assets/team/jacob-george.png";
-import dallasWhitePhoto from "@/assets/team/dallas-white.jpg";
-import kerenWadhwaniPhoto from "@/assets/team/keren-wadhwani.jpg";
-import loganFriedmanPhoto from "@/assets/team/logan-friedman.jpg";
-import evanWrightPhoto from "@/assets/team/evan-wright.jpg";
-import sidVoonaPhoto from "@/assets/team/sid-voona.jpg";
-import shaheeraAliPhoto from "@/assets/team/shaheera-ali.jpg";
-import sandhyaGopinathPhoto from "@/assets/team/sandhya-gopinath.jpg";
+import andrewLacambraPhoto from "@/assets/team/andrew-lacambra.webp";
+import ianTehPhoto from "@/assets/team/ian-teh.webp";
+import landonHaffnerPhoto from "@/assets/team/landon-haffner.webp";
+import yashitaPujariPhoto from "@/assets/team/yashita-pujari.webp";
+import chrisAndreouPhoto from "@/assets/team/chris-andreou.webp";
+import parthDamaPhoto from "@/assets/team/parth-dama.webp";
+import mikhailBilokinPhoto from "@/assets/team/mikhail-bilokin.webp";
+import balthazarSchmittPhoto from "@/assets/team/balthazar-schmitt.webp";
+import augustusMatushekPhoto from "@/assets/team/augustus-matushek.webp";
+import jacobGeorgePhoto from "@/assets/team/jacob-george.webp";
+import dallasWhitePhoto from "@/assets/team/dallas-white.webp";
+import kerenWadhwaniPhoto from "@/assets/team/keren-wadhwani.webp";
+import loganFriedmanPhoto from "@/assets/team/logan-friedman.webp";
+import evanWrightPhoto from "@/assets/team/evan-wright.webp";
+import sidVoonaPhoto from "@/assets/team/sid-voona.webp";
+import shaheeraAliPhoto from "@/assets/team/shaheera-ali.webp";
+import sandhyaGopinathPhoto from "@/assets/team/sandhya-gopinath.webp";
 
 const BIO_BY_NAME: Record<string, string> = {
   "Landon Haffner": "Landon Haffner is a sophomore in the Daniels School of Business, majoring in Finance with a minor in Real Estate Finance, Management Consulting and Entrepreneurship. He is interning at Lennar this summer in sales and land acquisition. In his free time, he enjoys going to the gym, golfing and playing rocket league with friends.",

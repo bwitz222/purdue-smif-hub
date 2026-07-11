@@ -1,7 +1,7 @@
 // Site-wide SEO constants and helpers for TanStack Start head() blocks.
 // Keep canonical/og:url builders here so leaf routes never hardcode the host.
 
-export const SITE_URL = "https://purduesmif.org";
+export const SITE_URL = "https://www.purduesmif.org";
 export const OG_IMAGE = `${SITE_URL}/og-share.jpg`;
 export const OG_HOLDINGS = `${SITE_URL}/og-holdings.jpg`;
 export const OG_TEAM = `${SITE_URL}/og-team.jpg`;

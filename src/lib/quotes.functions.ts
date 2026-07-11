@@ -157,6 +157,36 @@ async function refreshFromPolygon(
   }
 }
 
+// Read-only snapshot of quote_cache for SSR loaders. Never touches the
+// provider (no self-heal, no timeout risk on the SSR path) — the client-side
+// getLiveQuotes query takes over after hydration and owns refreshing.
+export const getCachedQuotes = createServerFn({ method: "GET" }).handler(
+  async () => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: rows } = await supabaseAdmin
+      .from("quote_cache")
+      .select("symbol, price, change_pct, fetched_at");
+    const quotes: Record<string, Quote> = {};
+    let newest = 0;
+    for (const r of rows ?? []) {
+      quotes[r.symbol] = {
+        symbol: r.symbol,
+        price: Number(r.price),
+        changePct: Number(r.change_pct),
+      };
+      const ts = new Date(r.fetched_at).getTime();
+      if (ts > newest) newest = ts;
+    }
+    const ageMs = newest > 0 ? Date.now() - newest : Infinity;
+    return {
+      quotes,
+      cachedAt: newest > 0 ? newest : Date.now(),
+      fresh: ageMs <= REFRESH_AFTER_MS,
+      stale: ageMs > 24 * 60 * 60 * 1000,
+    };
+  },
+);
+
 export const getLiveQuotes = createServerFn({ method: "POST" })
   .inputValidator((data: { symbols: string[] }) => {
     if (!data || !Array.isArray(data.symbols)) throw new Error("symbols required");

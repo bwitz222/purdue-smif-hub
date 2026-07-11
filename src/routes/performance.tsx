@@ -19,6 +19,17 @@ import {
 
 export const Route = createFileRoute("/performance")({
   component: Performance,
+  // SSR loader — fetch both series server-side so crawlers, link previews,
+  // and no-JS visitors get the real figures instead of the illustrative
+  // fallbacks (the client useQuery calls below seed from this and own
+  // refreshing thereafter).
+  loader: async () => {
+    const [perf, monthly] = await Promise.all([
+      getFundPerformance(),
+      getFundMonthlyHistory(),
+    ]);
+    return { perf, monthly };
+  },
   head: () => ({
     meta: [
       { title: "Performance | Purdue SMIF" },
@@ -54,7 +65,7 @@ const fmtMult = (v: number) => `${v.toFixed(2)}×`;
 const fmtPctPlain = (v: number) => `${v.toFixed(1)}%`; // no leading + (vol, tracking error…)
 const fmtRatio    = (v: number) => v.toFixed(2);       // Sharpe, beta, correlation…
 
-const SMIF_COLOR  = "#CFB991";
+const SMIF_COLOR  = "#CEB888";
 const BENCH_COLOR = "#6B6860";
 
 const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -121,11 +132,16 @@ function Performance() {
   const [incMode,   setIncMode]   = useState<IncMode>("growth");
   const [incSeries, setIncSeries] = useState<Series>("both");
 
+  const initial = Route.useLoaderData();
+
   const fetchPerf = useServerFn(getFundPerformance);
   const { data: perfData } = useQuery({
     queryKey: ["fund-performance"],
     queryFn: () => fetchPerf(),
     staleTime: 60 * 60 * 1000,
+    // null = the SSR fetch failed; pass undefined so the client refetches
+    // immediately instead of treating null as fresh data for staleTime.
+    initialData: initial.perf ?? undefined,
   });
 
   const fetchMonthly = useServerFn(getFundMonthlyHistory);
@@ -133,6 +149,7 @@ function Performance() {
     queryKey: ["fund-monthly-history"],
     queryFn: () => fetchMonthly(),
     staleTime: 60 * 60 * 1000,
+    initialData: initial.monthly ?? undefined,
   });
 
   const years: PerfRow[] = perfData?.rows && perfData.rows.length > 0 ? perfData.rows : FALLBACK_ROWS;
@@ -415,7 +432,7 @@ function Performance() {
                       tickFormatter={(v) => `${v.toFixed(1)}×`}
                     />
                     <Tooltip
-                      cursor={{ stroke: "#CFB991", strokeDasharray: "4 4", strokeWidth: 1 }}
+                      cursor={{ stroke: "#CEB888", strokeDasharray: "4 4", strokeWidth: 1 }}
                       content={<MonthlyTooltip mode={incMode} />}
                     />
                     <Legend
@@ -453,7 +470,7 @@ function Performance() {
                     />
                     <ReferenceLine y={0} stroke="#E0DDD5" strokeWidth={1} />
                     <Tooltip
-                      cursor={{ stroke: "#CFB991", strokeDasharray: "4 4", strokeWidth: 1 }}
+                      cursor={{ stroke: "#CEB888", strokeDasharray: "4 4", strokeWidth: 1 }}
                       content={<MonthlyTooltip mode={incMode} />}
                     />
                     <Legend
@@ -547,7 +564,7 @@ function Performance() {
                   <ReferenceLine y={0} stroke="#E0DDD5" strokeWidth={1} />
                 )}
                 <Tooltip
-                  cursor={{ stroke: "#CFB991", strokeDasharray: "4 4", strokeWidth: 1 }}
+                  cursor={{ stroke: "#CEB888", strokeDasharray: "4 4", strokeWidth: 1 }}
                   content={<ChartTooltip mode={mode} />}
                 />
                 <Legend
@@ -619,7 +636,7 @@ function Performance() {
 
         <div className="border-t border-border pt-6 pb-8 mt-4 space-y-2 text-xs text-muted-foreground max-w-3xl">
           <div className="text-[10px] font-mono font-semibold uppercase tracking-[0.28em] text-muted-foreground/80">Methodology &amp; disclaimer</div>
-          <p><span className="font-semibold text-foreground">Data source:</span> monthly NAV series maintained by the fund. Daily quotes on the Holdings page are Polygon.io end-of-day closes, refreshed roughly every 6 hours.</p>
+          <p><span className="font-semibold text-foreground">Data source:</span> monthly NAV series maintained by the fund. Daily quotes on the Holdings page are Polygon.io end-of-day closes, refreshed daily after the market close.</p>
           <p><span className="font-semibold text-foreground">Methodology:</span> monthly returns are computed on a Modified Dietz basis to account for intra-month contributions and withdrawals. The benchmark is the S&amp;P 500 Total Return (SPY, dividends reinvested).</p>
           <p>Past performance does not guarantee future results.{monthlyData ? "" : allAudited ? "" : " Figures shown for illustrative purposes;"} see the latest annual report for audited figures.</p>
         </div>

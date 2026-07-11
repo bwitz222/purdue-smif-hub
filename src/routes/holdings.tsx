@@ -5,7 +5,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { ArrowUpDown, ArrowUp, ArrowDown, RefreshCw, AlertCircle, Filter, Search } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { holdings as baseHoldings, portfolioSummary as baseSummary, type Holding } from "@/data/holdings";
-import { getLiveQuotes } from "@/lib/quotes.functions";
+import { getLiveQuotes, getCachedQuotes } from "@/lib/quotes.functions";
 import { getFundStats } from "@/lib/fund-stats.functions";
 import { getRiskMetrics } from "@/lib/risk.functions";
 import { CountUp } from "@/components/CountUp";
@@ -16,6 +16,12 @@ import { liveQueryOptions } from "@/lib/live-query";
 
 export const Route = createFileRoute("/holdings")({
   component: HoldingsPage,
+  // SSR loader — seed the quote table from quote_cache (read-only, no
+  // provider round-trip) so crawlers and no-JS visitors see real prices and
+  // a real Day P&L instead of the static baseline / $0. The client-side
+  // getLiveQuotes query takes over after hydration (initialDataUpdatedAt
+  // keeps it stale-aware, so the self-heal still fires when the cache is old).
+  loader: async () => ({ cachedQuotes: await getCachedQuotes() }),
   head: () => ({
     meta: [
       { title: "Portfolio Holdings | Purdue SMIF" },
@@ -118,10 +124,16 @@ function HoldingsPage() {
   // /holdings, /sectors and / stay on the same update logic. Each fetch
   // recomputes every derived value here (KPIs, weighted beta, sector
   // breakdown, leaders/laggards, table).
+  const initial = Route.useLoaderData();
   const { data: quoteData, isFetching, error, refetch } = useQuery({
     queryKey: ["live-quotes", symbols],
     queryFn: () => fetchQuotes({ data: { symbols } }),
     ...liveQueryOptions,
+    // SSR seed from quote_cache; initialDataUpdatedAt anchors staleness to the
+    // cache's real age so a >30-min-old cache still refetches (and self-heals)
+    // immediately on mount.
+    initialData: initial.cachedQuotes ?? undefined,
+    initialDataUpdatedAt: initial.cachedQuotes?.cachedAt,
   });
 
   const fetchFundStats = useServerFn(getFundStats);
@@ -344,10 +356,10 @@ function HoldingsPage() {
           />
           <KpiCard
             label="Day P&L"
-            value={fmtUSD(portfolioSummary.totalDayGain)}
+            value={fmtUSD(portfolioSummary.totalDayGain, { maximumFractionDigits: 0 })}
             sub={fmtPct(portfolioSummary.totalDayChange) + " today"}
             accent={dayAccent}
-            animatedValue={<CountUp to={portfolioSummary.totalDayGain} duration={1.4} format={(n) => fmtUSD(n)} />}
+            animatedValue={<CountUp to={portfolioSummary.totalDayGain} duration={1.4} format={(n) => fmtUSD(n, { maximumFractionDigits: 0 })} />}
           />
           <KpiCard
             label="Annualized Volatility"
@@ -585,7 +597,7 @@ function HoldingsPage() {
 
         <div className="border-t border-border pt-6 mt-10 space-y-2 text-xs text-muted-foreground max-w-3xl">
           <div className="text-[10px] font-mono font-semibold uppercase tracking-[0.28em] text-muted-foreground/80">Methodology &amp; disclaimer</div>
-          <p><span className="font-semibold text-foreground">Data source:</span> quotes are Polygon.io end-of-day closes, refreshed roughly every 6 hours. Share counts and cost basis are maintained by the fund.</p>
+          <p><span className="font-semibold text-foreground">Data source:</span> quotes are Polygon.io end-of-day closes, refreshed daily after the market close (and on page visits when the cache is stale). Share counts and cost basis are maintained by the fund.</p>
           <p><span className="font-semibold text-foreground">Methodology:</span> position value = shares × latest close. Portfolio total includes uninvested cash. Aggregate day P&amp;L dollar and percent are computed against the same prior-day total.</p>
           <p>Past performance does not guarantee future results. See the latest annual report for audited figures.</p>
         </div>

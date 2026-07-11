@@ -69,6 +69,8 @@ export function SiteHeader() {
               className="lg:hidden inline-flex items-center justify-center min-h-11 min-w-11 -mr-2 text-background/70 hover:text-background transition-colors duration-150"
               onClick={() => setOpen(true)}
               aria-label="Open menu"
+              aria-haspopup="dialog"
+              aria-expanded={open}
             >
               <Menu className="h-5 w-5" />
             </button>

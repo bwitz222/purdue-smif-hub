@@ -10,7 +10,8 @@
 - [Sectors](/sectors): Coverage teams across equities, fixed income & macro, and portfolio + risk management.
 - [Holdings](/holdings): Current portfolio positions, allocations, and returns.
 - [Performance](/performance): Annual and cumulative returns vs. the S&P 500.
-- [Publications](/publications): Equity research reports, semester reports, and annual reports.
+- [Research](/research): Equity research reports, semester reports, and annual reports.
+- [Learn](/learn): Curriculum, valuation resources, and analyst training materials.
 - [Recruiting](/recruiting): Recruiting calendar plus technical and behavioral interview prep guide.
 - [Apply](/apply): Application timeline and how to join.
 - [Contact](/contact): Email, address, and LinkedIn.

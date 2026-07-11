@@ -176,7 +176,7 @@ function buildEventBody(event: Event): string {
   const prefix = event.time === "TBD"
     ? "Note: time TBD. Your specific interview slot will be communicated by email. Update this event when you receive your slot.\n\n"
     : "";
-  return `${prefix}Purdue SMIF recruiting event.\n\nLocation: ${event.location}\nRecruiting page: https://purduesmif.org/recruiting\nQuestions: smif26@purdue.edu`;
+  return `${prefix}Purdue SMIF recruiting event.\n\nLocation: ${event.location}\nRecruiting page: https://www.purduesmif.org/recruiting\nQuestions: smif26@purdue.edu`;
 }
 
 function slugify(s: string): string {
@@ -296,8 +296,8 @@ export const Route = createFileRoute("/recruiting")({
                   addressCountry: "US",
                 },
               },
-              organizer: { "@id": "https://purduesmif.org/#organization" },
-              url: "https://purduesmif.org/recruiting",
+              organizer: { "@id": "https://www.purduesmif.org/#organization" },
+              url: "https://www.purduesmif.org/recruiting",
             };
           }),
         ),

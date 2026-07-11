@@ -49,7 +49,7 @@ export const Route = createFileRoute("/team")({
               "@type": "Person",
               name: m.name,
               jobTitle: m.role,
-              affiliation: { "@id": "https://purduesmif.org/#organization" },
+              affiliation: { "@id": "https://www.purduesmif.org/#organization" },
             },
           })),
         }),
