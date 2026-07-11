@@ -191,7 +191,7 @@ function Research() {
 function PublicationCard({ pub }: { pub: PublicationRow }) {
   const isSample = /sample/i.test(pub.title);
   return (
-    <div className="group flex flex-col border border-border bg-card transition hover:border-gold hover:shadow-elegant">
+    <div className="group flex flex-col border border-border bg-card hover-lift">
       <div className="relative aspect-[3/4] overflow-hidden border-b border-border bg-secondary/40">
         <div className="absolute inset-x-0 top-0 h-0.5 bg-gradient-gold" aria-hidden="true" />
         {isSample && (

@@ -14,7 +14,7 @@ export function PrepCard({
 }) {
   const bg = background === "card" ? "bg-card" : "bg-background";
   return (
-    <div className={`border border-border ${bg} p-6 transition hover:border-gold/40`}>
+    <div className={`border border-border ${bg} p-6 hover-lift-sm hover:border-gold/50`}>
       <h3 className="font-display text-lg font-bold">{title}</h3>
       <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
         {items.map((item) => (

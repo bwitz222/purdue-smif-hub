@@ -105,6 +105,13 @@
     outline: 2px solid var(--gold);
     outline-offset: 3px;
   }
+  /* Smooth every interactive hover/focus state site-wide. Deliberately does NOT
+     include transform/opacity so it never fights framer-motion (which animates
+     those inline per-frame); transform effects are opt-in via .press/.hover-lift. */
+  a, button, [role="button"], summary, label, input, select, textarea {
+    transition: color 0.18s ease, background-color 0.18s ease,
+                border-color 0.18s ease, box-shadow 0.18s ease;
+  }
   /* Pause the ticker when any keyboard focus lands inside it */
   .ticker-wrap:focus-within .ticker-inner { animation-play-state: paused; }
 }
@@ -146,6 +153,54 @@
     height: 2px;
     background: var(--gradient-gold);
   }
+
+  /* ── Interactive motion vocabulary ─────────────────────────────────────────
+     Opt-in classes so every clickable/hoverable surface shares one feel. */
+
+  /* Tactile press for buttons, chips, and clickable rows. */
+  .press {
+    transition: transform 0.12s cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 0.2s ease, background-color 0.2s ease,
+                border-color 0.2s ease, color 0.2s ease;
+  }
+  .press:active { transform: scale(0.97); }
+
+  /* Card elevation on hover — gold border + elegant shadow, matches MemberCard. */
+  .hover-lift,
+  .hover-lift-sm {
+    transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 0.22s ease, border-color 0.22s ease;
+  }
+  .hover-lift:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-elegant);
+    border-color: var(--gold);
+  }
+  .hover-lift-sm:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-elegant);
+  }
+
+  /* Left-anchored underline that wipes in on hover/focus (for text links). */
+  .link-underline { position: relative; }
+  .link-underline::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -1px;
+    height: 1.5px;
+    width: 100%;
+    background: var(--gradient-gold);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .link-underline:hover::after,
+  .link-underline:focus-visible::after { transform: scaleX(1); }
+
+  /* Arrow/icon that nudges forward when its .group parent is hovered. */
+  .arrow-slide { transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1); }
+  .group:hover .arrow-slide { transform: translateX(4px); }
   .ticker-wrap  { overflow: hidden; white-space: nowrap; }
   .ticker-inner {
     display: inline-flex;
@@ -193,5 +248,14 @@
     .animate-expand-x,
     .animate-ken-burns,
     .ticker-inner { animation: none !important; opacity: 1 !important; }
+    .press,
+    .hover-lift,
+    .hover-lift-sm,
+    .arrow-slide,
+    .link-underline::after { transition: none !important; }
+    .press:active,
+    .hover-lift:hover,
+    .hover-lift-sm:hover,
+    .group:hover .arrow-slide { transform: none !important; }
   }
 }

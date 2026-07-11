@@ -82,7 +82,7 @@ function KpiCard({
 }) {
   const valueColor = accent === "positive" ? "text-gain" : accent === "negative" ? "text-loss" : "text-ink";
   return (
-    <div className="border border-border bg-card p-6 flex flex-col gap-1" title={hint}>
+    <div className="border border-border bg-card p-6 flex flex-col gap-1 hover-lift-sm" title={hint}>
       <div className="text-xs uppercase tracking-[0.22em] text-muted-foreground">{label}</div>
       {muted ? (
         <div className="text-lg font-semibold text-muted-foreground mt-2">{value}</div>
@@ -316,7 +316,7 @@ function HoldingsPage() {
             </div>
             <button
               onClick={() => refetch()}
-              className="border border-ink px-3 py-1.5 text-xs uppercase tracking-wider hover:bg-ink hover:text-background transition-colors cursor-pointer shrink-0"
+              className="border border-ink px-3 py-1.5 text-xs uppercase tracking-wider hover:bg-ink hover:text-background press cursor-pointer shrink-0"
             >
               Retry
             </button>
@@ -456,7 +456,7 @@ function HoldingsPage() {
                         <button
                           type="button"
                           onClick={() => setSector(h.industry)}
-                          className="w-full flex items-center gap-3 px-2 py-2 -mx-2 text-left hover:bg-secondary/40 cursor-pointer transition-colors"
+                          className="group w-full flex items-center gap-3 px-2 py-2 -mx-2 text-left hover:bg-secondary/40 cursor-pointer press"
                           aria-label={`Filter by ${h.industry} (${h.symbol})`}
                         >
                           <span className="font-mono font-bold text-gold-deep tracking-wider w-16">{h.symbol}</span>
@@ -515,7 +515,7 @@ function HoldingsPage() {
                     // min-h-11 keeps the touch target ≥44px; py-2.5 makes the
                     // visual block match that height so the hit area and the
                     // rendered chip share the same bounds (no offset clicks).
-                    className={`inline-flex min-h-11 items-center px-3 py-2.5 text-xs font-semibold uppercase tracking-wider border transition-colors duration-150 cursor-pointer ${active ? "bg-ink text-background border-ink" : "bg-background text-foreground border-border hover:border-ink hover:bg-secondary"}`}
+                    className={`inline-flex min-h-11 items-center px-3 py-2.5 text-xs font-semibold uppercase tracking-wider border press cursor-pointer ${active ? "bg-ink text-background border-ink" : "bg-background text-foreground border-border hover:border-ink hover:bg-secondary"}`}
                   >
                     {s}
                   </button>
@@ -532,7 +532,7 @@ function HoldingsPage() {
             <p className="text-sm text-muted-foreground mt-2">Try a different sector or clear the filter.</p>
             <button
               onClick={() => { setSector("All"); setQuery(""); }}
-              className="inline-flex items-center gap-2 mt-5 border border-ink px-4 py-2 text-xs uppercase tracking-wider hover:bg-ink hover:text-background transition-colors cursor-pointer"
+              className="inline-flex items-center gap-2 mt-5 border border-ink px-4 py-2 text-xs uppercase tracking-wider hover:bg-ink hover:text-background press cursor-pointer"
             >
               Clear filter
             </button>
