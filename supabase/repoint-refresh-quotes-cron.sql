@@ -6,10 +6,12 @@
 --   CREATE EXTENSION IF NOT EXISTS pg_cron;
 --   CREATE EXTENSION IF NOT EXISTS pg_net;
 --
--- The `apikey` header MUST equal the SUPABASE_PUBLISHABLE_KEY set in Vercel's
--- env — that is the value the refresh-quotes hook checks. A mismatch returns
--- 401 and prices never refresh, regardless of the Polygon/Alpha Vantage keys.
--- The hook itself writes with SUPABASE_SERVICE_ROLE_KEY (also set in Vercel).
+-- The `x-refresh-secret` header MUST equal the REFRESH_HOOK_SECRET set in
+-- Vercel's env — that is the value the refresh-quotes hook checks. A mismatch
+-- returns 401 and prices never refresh, regardless of the Polygon/Alpha Vantage
+-- keys. Do NOT use the publishable/anon key here: it is public and would let
+-- anyone trigger the hook. The hook itself writes with SUPABASE_SERVICE_ROLE_KEY
+-- (also set in Vercel).
 
 -- 1) Inspect the current job(s) first (optional, for your records):
 --    SELECT jobid, jobname, schedule, command FROM cron.job ORDER BY jobid;
@@ -35,8 +37,8 @@ end $$;
 --    upsert is idempotent.
 --    Note: on the current Polygon plan the *current* day's bar is 403 until it
 --    settles, so the freshest data available is the latest completed session.
---    >>> Replace <VERCEL_SUPABASE_PUBLISHABLE_KEY> with the exact value from
---        Vercel → Settings → Environment Variables → SUPABASE_PUBLISHABLE_KEY.
+--    >>> Replace <VERCEL_REFRESH_HOOK_SECRET> with the exact value from
+--        Vercel → Settings → Environment Variables → REFRESH_HOOK_SECRET.
 select cron.schedule(
   'refresh-quotes',
   '0 1 * * *',
@@ -45,7 +47,7 @@ select cron.schedule(
     url     := 'https://www.purduesmif.org/api/public/hooks/refresh-quotes',
     headers := jsonb_build_object(
                  'Content-Type', 'application/json',
-                 'apikey', '<VERCEL_SUPABASE_PUBLISHABLE_KEY>'
+                 'x-refresh-secret', '<VERCEL_REFRESH_HOOK_SECRET>'
                ),
     body    := '{}'::jsonb
   );
