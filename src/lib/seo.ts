@@ -20,6 +20,24 @@ export const OG_IMAGE_ALT = "Purdue SMIF | Student Managed Investment Fund";
 export const canonical = (path: string) => `${SITE_URL}${path}`;
 
 /**
+ * BreadcrumbList JSON-LD for a top-level subpage (Home > name).
+ * Return value plugs directly into a route head()'s `scripts` array.
+ */
+export function breadcrumbLd(name: string, path: string) {
+  return {
+    type: "application/ld+json",
+    children: JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` },
+        { "@type": "ListItem", position: 2, name, item: `${SITE_URL}${path}` },
+      ],
+    }),
+  };
+}
+
+/**
  * Build a complete social-card meta block for a leaf route.
  * Always emits Open Graph + Twitter title/description/image so previews
  * are correct on every platform regardless of which tags they prefer.

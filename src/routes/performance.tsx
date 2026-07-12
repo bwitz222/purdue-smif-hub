@@ -7,7 +7,7 @@ import {
   LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid,
   Tooltip, Legend, ResponsiveContainer, ReferenceLine,
 } from "recharts";
-import { socialMeta, canonical, OG_PERFORMANCE } from "@/lib/seo";
+import { socialMeta, canonical, breadcrumbLd, OG_PERFORMANCE } from "@/lib/seo";
 import { Reveal } from "@/components/Reveal";
 import {
   getFundPerformance,
@@ -32,8 +32,8 @@ export const Route = createFileRoute("/performance")({
   },
   head: () => ({
     meta: [
-      { title: "Performance | Purdue SMIF" },
-      { name: "description", content: "Annual and cumulative returns of the Purdue Student Managed Investment Fund benchmarked against the S&P 500." },
+      { title: "Performance & Track Record vs. the S&P 500 | Purdue SMIF" },
+      { name: "description", content: "Annual and cumulative returns of Purdue SMIF benchmarked against the S&P 500 Total Return Index, with Sharpe, alpha, beta, and drawdown analytics since 2013." },
       ...socialMeta({
         title: "Performance & Track Record | Purdue SMIF",
         description: "Annual and cumulative returns of the Purdue SMIF benchmarked against the S&P 500.",
@@ -42,6 +42,7 @@ export const Route = createFileRoute("/performance")({
       }),
     ],
     links: [{ rel: "canonical", href: canonical("/performance") }],
+    scripts: [breadcrumbLd("Performance", "/performance")],
   }),
 });
 

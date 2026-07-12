@@ -6,7 +6,7 @@ import { MemberCard, OpenSeatsCard, type Member } from "@/components/MemberCard"
 import { MemberDetailSheet } from "@/components/MemberDetailSheet";
 import { RevealGroup, RevealItem } from "@/components/Reveal";
 import { board, sectorTeams, fixedIncomeMacro, portfolioManagers, facultyAdvisors } from "@/data/team";
-import { socialMeta, canonical, OG_TEAM } from "@/lib/seo";
+import { socialMeta, canonical, breadcrumbLd, OG_TEAM } from "@/lib/seo";
 
 const allMembers = [
   ...board,
@@ -26,7 +26,7 @@ export const Route = createFileRoute("/team")({
   }),
   head: () => ({
     meta: [
-      { title: "Team | Purdue SMIF" },
+      { title: "Meet the Team — Purdue Student Managed Investment Fund" },
       { name: "description", content: "Meet the executive board, sector teams, fixed income & macro team, and portfolio managers of the Purdue Student Managed Investment Fund." },
       ...socialMeta({
         title: "Meet the Team | Purdue SMIF",
@@ -54,6 +54,7 @@ export const Route = createFileRoute("/team")({
           })),
         }),
       },
+      breadcrumbLd("Team", "/team"),
     ],
   }),
 });

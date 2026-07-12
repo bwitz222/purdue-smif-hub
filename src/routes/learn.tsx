@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ExternalLink, Download } from "lucide-react";
-import { socialMeta, canonical, OG_LEARN } from "@/lib/seo";
+import { socialMeta, canonical, breadcrumbLd, OG_LEARN } from "@/lib/seo";
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import { applyUrl } from "@/lib/apply-url";
 import dcfAmzn from "@/assets/dcf-model-amzn.xlsx?url";
@@ -46,14 +46,14 @@ export const Route = createFileRoute("/learn")({
   component: Learn,
   head: () => ({
     meta: [
-      { title: "Learn | Purdue SMIF" },
+      { title: "Learn Investing: Equity Research & Valuation | Purdue SMIF" },
       {
         name: "description",
         content:
           "The Purdue SMIF education hub: analyst training curriculum, reading list, research tools, and a glossary of investing terms.",
       },
       ...socialMeta({
-        title: "Learn | Purdue SMIF",
+        title: "Learn Investing: Equity Research & Valuation | Purdue SMIF",
         description:
           "Analyst training, course companion material, reading list, tools, and a glossary for serious students of investing.",
         url: canonical("/learn"),
@@ -61,6 +61,7 @@ export const Route = createFileRoute("/learn")({
       }),
     ],
     links: [{ rel: "canonical", href: canonical("/learn") }],
+    scripts: [breadcrumbLd("Learn", "/learn")],
   }),
 });
 

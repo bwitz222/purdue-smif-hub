@@ -16,7 +16,7 @@ import {
   Briefcase,
   RefreshCw,
 } from "lucide-react";
-import { socialMeta, canonical, OG_SECTORS } from "@/lib/seo";
+import { socialMeta, canonical, breadcrumbLd, OG_SECTORS } from "@/lib/seo";
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import { getLiveQuotes } from "@/lib/quotes.functions";
 import { getRiskMetrics } from "@/lib/risk.functions";
@@ -53,8 +53,8 @@ export const Route = createFileRoute("/sectors")({
   component: Sectors,
   head: () => ({
     meta: [
-      { title: "Coverage Teams | Purdue SMIF" },
-      { name: "description", content: "SMIF coverage spans eight equity sector teams, Fixed Income & Macro, and Portfolio + Risk Management." },
+      { title: "Sector Coverage Teams & Equity Research | Purdue SMIF" },
+      { name: "description", content: "Purdue SMIF covers the market bottom-up: eight equity sector teams plus Fixed Income & Macro and Portfolio + Risk Management, each led by a student PM." },
       ...socialMeta({
         title: "Coverage Teams | Purdue SMIF",
         description: "Eight equity sector teams plus Fixed Income & Macro and Portfolio + Risk Management cover the SMIF investment universe.",
@@ -79,6 +79,7 @@ export const Route = createFileRoute("/sectors")({
           })),
         }),
       },
+      breadcrumbLd("Coverage Teams", "/sectors"),
     ],
   }),
 });

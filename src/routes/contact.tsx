@@ -3,7 +3,7 @@ import { Mail, MapPin, Linkedin, Send } from "lucide-react";
 import { useState } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
-import { socialMeta, canonical, OG_CONTACT } from "@/lib/seo";
+import { socialMeta, canonical, breadcrumbLd, OG_CONTACT } from "@/lib/seo";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -21,16 +21,17 @@ export const Route = createFileRoute("/contact")({
   component: Contact,
   head: () => ({
     meta: [
-      { title: "Contact | Purdue SMIF" },
-      { name: "description", content: "Reach the Purdue Student Managed Investment Fund: for prospective members, alumni, sponsors, and recruiters." },
+      { title: "Contact Purdue SMIF — Student Managed Investment Fund" },
+      { name: "description", content: "Get in touch with the Purdue Student Managed Investment Fund — prospective members, alumni, sponsors, and recruiters. We reply within two business days." },
       ...socialMeta({
         title: "Contact Purdue SMIF",
-        description: "Reach the Purdue Student Managed Investment Fund: for prospective members, alumni, sponsors, and recruiters.",
+        description: "Get in touch with the Purdue Student Managed Investment Fund — prospective members, alumni, sponsors, and recruiters. We reply within two business days.",
         url: canonical("/contact"),
         image: OG_CONTACT,
       }),
     ],
     links: [{ rel: "canonical", href: canonical("/contact") }],
+    scripts: [breadcrumbLd("Contact", "/contact")],
   }),
 });
 

@@ -1,10 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
-import { socialMeta, canonical, OG_ABOUT } from "@/lib/seo";
+import { socialMeta, canonical, breadcrumbLd, OG_ABOUT } from "@/lib/seo";
 import { applyUrl } from "@/lib/apply-url";
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 
-const PAGE_TITLE = "About | Purdue SMIF";
+const PAGE_TITLE = "About Purdue SMIF — Student Managed Investment Fund";
 const PAGE_DESCRIPTION = "How the Purdue Student Managed Investment Fund researches, debates, and votes on every real-money position: our history, philosophy, and process.";
 
 export const Route = createFileRoute("/about")({
@@ -32,6 +32,7 @@ export const Route = createFileRoute("/about")({
           about: { "@id": "https://www.purduesmif.org/#organization" },
         }),
       },
+      breadcrumbLd("About", "/about"),
     ],
   }),
 });

@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowRight, Calendar, CalendarPlus, MapPin, Clock, Download } from "lucide-react";
 import { useEffect, useState } from "react";
-import { socialMeta, canonical, OG_RECRUITING } from "@/lib/seo";
+import { socialMeta, canonical, breadcrumbLd, OG_RECRUITING } from "@/lib/seo";
 
 import { applyUrl } from "@/lib/apply-url";
 
@@ -262,7 +262,7 @@ export const Route = createFileRoute("/recruiting")({
   component: Recruiting,
   head: () => ({
     meta: [
-      { title: "Recruiting | Purdue SMIF" },
+      { title: "Recruiting Calendar & Interview Prep | Purdue SMIF" },
       { name: "description", content: "Recruiting calendar and interview prep guide for the Purdue Student Managed Investment Fund: callouts, coffee chats, and interviews." },
       ...socialMeta({
         title: "Recruiting Calendar & Interview Prep | Purdue SMIF",
@@ -302,6 +302,7 @@ export const Route = createFileRoute("/recruiting")({
           }),
         ),
       },
+      breadcrumbLd("Recruiting", "/recruiting"),
     ],
   }),
 });

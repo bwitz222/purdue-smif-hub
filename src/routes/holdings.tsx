@@ -10,7 +10,7 @@ import { getFundStats } from "@/lib/fund-stats.functions";
 import { getRiskMetrics } from "@/lib/risk.functions";
 import { CountUp } from "@/components/CountUp";
 import { Reveal } from "@/components/Reveal";
-import { socialMeta, canonical, OG_HOLDINGS } from "@/lib/seo";
+import { socialMeta, canonical, breadcrumbLd, OG_HOLDINGS } from "@/lib/seo";
 import { applyQuotes, sectorPercentBreakdown } from "@/lib/portfolio";
 import { liveQueryOptions } from "@/lib/live-query";
 
@@ -24,7 +24,7 @@ export const Route = createFileRoute("/holdings")({
   loader: async () => ({ cachedQuotes: await getCachedQuotes() }),
   head: () => ({
     meta: [
-      { title: "Portfolio Holdings | Purdue SMIF" },
+      { title: "Portfolio Holdings — Purdue Student Managed Investment Fund" },
       { name: "description", content: "Current portfolio holdings of the Purdue Student Managed Investment Fund, including positions, allocations, and returns." },
       ...socialMeta({
         title: "Portfolio Holdings | Purdue SMIF",
@@ -55,6 +55,7 @@ export const Route = createFileRoute("/holdings")({
           })),
         }),
       },
+      breadcrumbLd("Portfolio Holdings", "/holdings"),
     ],
   }),
 });
