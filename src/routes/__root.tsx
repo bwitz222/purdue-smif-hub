@@ -93,6 +93,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
                 "Purdue Finance Club",
               ],
               url: "https://www.purduesmif.org",
+              logo: {
+                "@type": "ImageObject",
+                url: "https://www.purduesmif.org/smif-logo.png",
+                width: "512",
+                height: "512",
+              },
               email: "smif26@purdue.edu",
               foundingDate: "2009",
               slogan: "Real capital. Real research. Real outcomes.",
