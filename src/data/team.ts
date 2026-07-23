@@ -58,6 +58,13 @@ const BIO_BY_NAME: Record<string, string> = {
   "Fabian Segura Vargas": "Fabian Segura Vargas is a junior in the Daniels School of Business, majoring in Finance and Business Analytics & Information Management (BAIM). He previously interned at Cummins as a Finance Systems Intern. In his free time, he enjoys playing and watching sports, and filmmaking.",
 };
 
+// Secondary bios — a short role line for a board member's second appearance
+// on a sector/FIM/PM team, where the personal bio is otherwise deduped out
+// (their full bio shows on the executive board card). See make() below.
+const SECONDARY_BIO_BY_NAME: Record<string, string> = {
+  "Keren Wadhwani": "Covers interest rates on the Fixed Income & Macro team, tracking Fed policy and the yield curve that frame the fund's macro view.",
+};
+
 export const board: Member[] = [
   { name: "Andrew Lacambra", role: "Co-President", year: "Class of 2027", email: "alacambr@purdue.edu", photo: andrewLacambraPhoto, bio: BIO_BY_NAME["Andrew Lacambra"] },
   { name: "Ian Teh", role: "Co-President", year: "Class of 2027", email: "iteh@purdue.edu", photo: ianTehPhoto, bio: BIO_BY_NAME["Ian Teh"] },
@@ -135,9 +142,11 @@ const make = (team: string, members: Entry[]): Member[] =>
     // class year · links cleanly. (F9 of the audit.)
     bio: (name && BIO_BY_NAME[name] && !BOARD_NAMES.has(name))
       ? BIO_BY_NAME[name]
-      : i === 0 && name
-        ? `Leads the ${team} team, driving sector strategy, idea generation, and final pitch review.`
-        : "",
+      : name && SECONDARY_BIO_BY_NAME[name]
+        ? SECONDARY_BIO_BY_NAME[name]
+        : i === 0 && name
+          ? `Leads the ${team} team, driving sector strategy, idea generation, and final pitch review.`
+          : "",
   }));
 
 export const sectorTeams = [
