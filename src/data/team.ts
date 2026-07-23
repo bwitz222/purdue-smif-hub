@@ -16,6 +16,9 @@ import evanWrightPhoto from "@/assets/team/evan-wright.webp";
 import sidVoonaPhoto from "@/assets/team/sid-voona.webp";
 import shaheeraAliPhoto from "@/assets/team/shaheera-ali.webp";
 import sandhyaGopinathPhoto from "@/assets/team/sandhya-gopinath.webp";
+import karanvirSinghPhoto from "@/assets/team/karanvir-singh.webp";
+import aydenWongPhoto from "@/assets/team/ayden-wong.webp";
+import gauthamSanthanamPhoto from "@/assets/team/gautham-santhanam.webp";
 
 const BIO_BY_NAME: Record<string, string> = {
   "Landon Haffner": "Landon Haffner is a sophomore in the Daniels School of Business, majoring in Finance with a minor in Real Estate Finance, Management Consulting and Entrepreneurship. He is interning at Lennar this summer in sales and land acquisition. In his free time, he enjoys going to the gym, golfing and playing rocket league with friends.",
@@ -77,11 +80,17 @@ const PHOTO_BY_NAME: Record<string, string> = {
   "Sid Voona": sidVoonaPhoto,
   "Shaheera Ali": shaheeraAliPhoto,
   "Sandhya Gopinath": sandhyaGopinathPhoto,
+  "Karanvir Singh": karanvirSinghPhoto,
+  "Ayden Wong": aydenWongPhoto,
+  "Gautham Santhanam": gauthamSanthanamPhoto,
 };
 
 const PHOTO_POSITION_BY_NAME: Record<string, string> = {
   "Landon Haffner": "62% 37%",
   "Yashita Pujari": "center 22%",
+  // Tall portrait crops — bias the square toward the face near the top.
+  "Ayden Wong": "center 20%",
+  "Gautham Santhanam": "center 20%",
 };
 
 const PHOTO_SCALE_BY_NAME: Record<string, number> = {
