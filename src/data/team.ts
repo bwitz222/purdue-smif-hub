@@ -19,6 +19,13 @@ import sandhyaGopinathPhoto from "@/assets/team/sandhya-gopinath.webp";
 import karanvirSinghPhoto from "@/assets/team/karanvir-singh.webp";
 import aydenWongPhoto from "@/assets/team/ayden-wong.webp";
 import gauthamSanthanamPhoto from "@/assets/team/gautham-santhanam.webp";
+import fabianSeguraVargasPhoto from "@/assets/team/fabian-segura-vargas.webp";
+import abhipsaPrajapatiPhoto from "@/assets/team/abhipsa-prajapati.webp";
+import anushkaPatelPhoto from "@/assets/team/anushka-patel.webp";
+import veerSanyalPhoto from "@/assets/team/veer-sanyal.webp";
+import cooperWeissPhoto from "@/assets/team/cooper-weiss.webp";
+import danielFriedmanPhoto from "@/assets/team/daniel-friedman.webp";
+import alexBelangerPhoto from "@/assets/team/alex-belanger.webp";
 
 const BIO_BY_NAME: Record<string, string> = {
   "Landon Haffner": "Landon Haffner is a sophomore in the Daniels School of Business, majoring in Finance with a minor in Real Estate Finance, Management Consulting and Entrepreneurship. He is interning at Lennar this summer in sales and land acquisition. In his free time, he enjoys going to the gym, golfing and playing rocket league with friends.",
@@ -83,6 +90,13 @@ const PHOTO_BY_NAME: Record<string, string> = {
   "Karanvir Singh": karanvirSinghPhoto,
   "Ayden Wong": aydenWongPhoto,
   "Gautham Santhanam": gauthamSanthanamPhoto,
+  "Fabian Segura Vargas": fabianSeguraVargasPhoto,
+  "Abhipsa Prajapati": abhipsaPrajapatiPhoto,
+  "Anushka Patel": anushkaPatelPhoto,
+  "Veer Sanyal": veerSanyalPhoto,
+  "Cooper Weiss": cooperWeissPhoto,
+  "Daniel Friedman": danielFriedmanPhoto,
+  "Alex Belanger": alexBelangerPhoto,
 };
 
 const PHOTO_POSITION_BY_NAME: Record<string, string> = {
@@ -91,6 +105,8 @@ const PHOTO_POSITION_BY_NAME: Record<string, string> = {
   // Tall portrait crops — bias the square toward the face near the top.
   "Ayden Wong": "center 20%",
   "Gautham Santhanam": "center 20%",
+  "Abhipsa Prajapati": "center 25%",
+  "Alex Belanger": "center 20%",
 };
 
 const PHOTO_SCALE_BY_NAME: Record<string, number> = {
