@@ -105,7 +105,7 @@ const PHOTO_POSITION_BY_NAME: Record<string, string> = {
   // Tall portrait crops — bias the square toward the face near the top.
   "Ayden Wong": "center 20%",
   "Gautham Santhanam": "center 20%",
-  "Abhipsa Prajapati": "center 25%",
+  "Abhipsa Prajapati": "center 35%",
   "Alex Belanger": "center 20%",
 };
 
