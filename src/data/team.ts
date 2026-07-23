@@ -63,6 +63,10 @@ const BIO_BY_NAME: Record<string, string> = {
 // (their full bio shows on the executive board card). See make() below.
 const SECONDARY_BIO_BY_NAME: Record<string, string> = {
   "Keren Wadhwani": "Covers interest rates on the Fixed Income & Macro team, tracking Fed policy and the yield curve that frame the fund's macro view.",
+  "Andrew Lacambra": "Leads the Fixed Income & Macro team, framing the rates, credit, FX, and macro backdrop that informs the fund's equity positioning.",
+  "Hunter Specht": "Leads the Portfolio + Risk Management team, overseeing allocation, position sizing, risk monitoring, and performance attribution.",
+  "Sandhya Gopinath": "On the Portfolio + Risk Management team, turns approved pitches into sized positions and helps monitor portfolio risk and performance.",
+  "Shaheera Ali": "Covers technology equities on the Information Technology team — software, semiconductors, and IT services — from the bottom up.",
 };
 
 export const board: Member[] = [
