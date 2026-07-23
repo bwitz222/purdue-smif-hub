@@ -26,6 +26,8 @@ import veerSanyalPhoto from "@/assets/team/veer-sanyal.webp";
 import cooperWeissPhoto from "@/assets/team/cooper-weiss.webp";
 import danielFriedmanPhoto from "@/assets/team/daniel-friedman.webp";
 import alexBelangerPhoto from "@/assets/team/alex-belanger.webp";
+import alexanderBoquistPhoto from "@/assets/team/alexander-boquist.webp";
+import luluZengPhoto from "@/assets/team/lulu-zeng.webp";
 
 const BIO_BY_NAME: Record<string, string> = {
   "Landon Haffner": "Landon Haffner is a sophomore in the Daniels School of Business, majoring in Finance with a minor in Real Estate Finance, Management Consulting and Entrepreneurship. He is interning at Lennar this summer in sales and land acquisition. In his free time, he enjoys going to the gym, golfing and playing rocket league with friends.",
@@ -260,19 +262,24 @@ export const portfolioManagers: Member[] = make("Portfolio + Risk Management", [
   ["", "Portfolio Management Associate"],
 ]);
 
-// Faculty Advisors — Daniels School professors who advise SMIF. Real
-// headshots not yet provided, so cards render initials-only tiles.
+// Faculty Advisors — Daniels School professors who advise SMIF. Photos are
+// set explicitly here (this list isn't built by make(), so it doesn't read
+// PHOTO_BY_NAME); the 3:2 portraits get a top-biased crop like the students'.
 export const facultyAdvisors: Member[] = [
   {
     name: "Lulu Zeng",
     role: "Faculty Advisor",
     year: "Daniels School of Business",
+    photo: luluZengPhoto,
+    photoPosition: "center 15%",
     bio: "Teaches Fixed Income and Financial Modeling.",
   },
   {
     name: "Alexander Boquist",
     role: "Faculty Advisor",
     year: "Daniels School of Business",
+    photo: alexanderBoquistPhoto,
+    photoPosition: "center 15%",
     bio: "Teaches Honors Financial Management and Futures & Options.",
   },
 ];
