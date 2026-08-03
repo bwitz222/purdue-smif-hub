@@ -215,10 +215,10 @@ export const sectorTeams = [
     name: "Healthcare & Utilities",
     description: "Pharma, biotech, med-tech, managed care, and regulated utilities.",
     members: make("Healthcare & Utilities", [
-      ["", "Head, Sector"],
+      ["Sid Voona", "Head, Sector", "voona@purdue.edu", "2028"],
       ["Gautham Santhanam", "Senior Analyst", "gsanthan@purdue.edu", "2028"],
       ["Brock Heller", "Senior Analyst", "baheller@purdue.edu", "2027"],
-      ["Sid Voona", "Senior Analyst", "voona@purdue.edu", "2028"],
+      ["", "Analyst"],
       ["", "Analyst"],
     ]),
   },
