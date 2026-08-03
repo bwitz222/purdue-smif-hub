@@ -201,6 +201,34 @@
   /* Arrow/icon that nudges forward when its .group parent is hovered. */
   .arrow-slide { transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1); }
   .group:hover .arrow-slide { transform: translateX(4px); }
+
+  /* Icon that swells slightly with its .group parent — for links whose
+     affordance is the glyph (social, download, external) rather than an arrow. */
+  .icon-pop { transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1); }
+  .group:hover .icon-pop { transform: scale(1.12); }
+
+  /* Numeric/stat surfaces: a restrained lift with no border recolor, so dense
+     data grids don't strobe gold on every pointer move. */
+  .hover-raise { transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.22s ease; }
+  .hover-raise:hover { transform: translateY(-2px); box-shadow: var(--shadow-gold); }
+
+  /* Row hover for tabular/list data — a gold rail wipes down the left edge
+     instead of a transform, which would misalign columns mid-scan. */
+  .row-rail { position: relative; }
+  .row-rail::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--gradient-gold);
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .row-rail:hover::before,
+  .row-rail:focus-visible::before { transform: scaleY(1); }
   .ticker-wrap  { overflow: hidden; white-space: nowrap; }
   .ticker-inner {
     display: inline-flex;
@@ -251,11 +279,20 @@
     .press,
     .hover-lift,
     .hover-lift-sm,
+    .hover-raise,
     .arrow-slide,
+    .icon-pop,
+    .row-rail::before,
     .link-underline::after { transition: none !important; }
     .press:active,
     .hover-lift:hover,
     .hover-lift-sm:hover,
-    .group:hover .arrow-slide { transform: none !important; }
+    .hover-raise:hover,
+    .group:hover .arrow-slide,
+    .group:hover .icon-pop { transform: none !important; }
+    /* The rail stays a hover affordance under reduced motion — it just
+       appears instead of wiping in. */
+    .row-rail:hover::before,
+    .row-rail:focus-visible::before { transform: scaleY(1) !important; }
   }
 }

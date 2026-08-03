@@ -458,7 +458,7 @@ function HoldingsPage() {
                 { title: "Today's Leaders", items: movers.gainers },
                 { title: "Today's Laggards", items: movers.losers },
               ].map((panel) => (
-                <div key={panel.title} className="bg-card border border-border p-6">
+                <div key={panel.title} className="bg-card border border-border p-6 hover-lift-sm">
                   <div className="flex items-baseline justify-between mb-4 gap-3">
                     <span className="text-xs uppercase tracking-[0.22em] text-muted-foreground">{panel.title}</span>
                     <span className="text-[10px] font-mono uppercase tracking-[0.18em] text-muted-foreground/70">By day change %</span>
@@ -469,7 +469,7 @@ function HoldingsPage() {
                         <button
                           type="button"
                           onClick={() => setSector(h.industry)}
-                          className="group w-full flex items-center gap-3 px-2 py-2 -mx-2 text-left hover:bg-secondary/40 cursor-pointer press"
+                          className="group row-rail w-full flex items-center gap-3 px-2 py-2 -mx-2 text-left hover:bg-secondary/40 cursor-pointer press"
                           aria-label={`Filter by ${h.industry} (${h.symbol})`}
                         >
                           <span className="font-mono font-bold text-gold-deep tracking-wider w-16">{h.symbol}</span>
@@ -555,7 +555,7 @@ function HoldingsPage() {
             {/* Mobile: stacked cards */}
             <div className="md:hidden space-y-3">
               {rows.map((h) => (
-                <div key={h.symbol} className="border border-border bg-card p-4">
+                <div key={h.symbol} className="border border-border bg-card p-4 hover-lift-sm">
                   <div className="flex items-baseline justify-between gap-3">
                     <div className="min-w-0">
                       <div className="font-mono text-sm font-bold text-gold-deep tracking-wider">{h.symbol}</div>

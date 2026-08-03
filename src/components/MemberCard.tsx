@@ -75,8 +75,10 @@ export function MemberCard({
             }
           : undefined
       }
-      className={`group flex flex-col border border-border bg-card transition-[border-color,box-shadow,transform] duration-200 hover:border-gold hover:shadow-elegant ${
-        interactive ? "cursor-pointer hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold" : ""
+      className={`group flex flex-col border border-border bg-card ${
+        interactive
+          ? "hover-lift cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+          : "transition-[border-color,box-shadow] duration-200 hover:border-gold hover:shadow-elegant"
       }`}
     >
       <div className="aspect-square w-full overflow-hidden bg-gradient-gold">
@@ -84,7 +86,10 @@ export function MemberCard({
           <img
             src={src}
             alt={`${m.name} headshot`}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+            width={640}
+            height={640}
+            decoding="async"
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
             style={{
               objectPosition: m.photoPosition ?? "center",
               transform: m.photoScale ? `scale(${m.photoScale})` : undefined,
@@ -116,12 +121,12 @@ export function MemberCard({
           style={{ marginTop: m.bio ? undefined : "1.25rem" }}
         >
           {email && (
-            <a href={`mailto:${email}`} onClick={stop} className="inline-flex items-center gap-1.5 min-h-11 text-muted-foreground transition-colors hover:text-gold-deep">
+            <a href={`mailto:${email}`} onClick={stop} className="link-underline inline-flex items-center gap-1.5 min-h-11 text-muted-foreground transition-colors hover:text-gold-deep">
               <Mail className="h-3.5 w-3.5" /> Email
             </a>
           )}
           {m.linkedin && (
-            <a href={m.linkedin} onClick={stop} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 min-h-11 text-muted-foreground transition-colors hover:text-gold-deep">
+            <a href={m.linkedin} onClick={stop} target="_blank" rel="noopener noreferrer" className="link-underline inline-flex items-center gap-1.5 min-h-11 text-muted-foreground transition-colors hover:text-gold-deep">
               <Linkedin className="h-3.5 w-3.5" /> LinkedIn
             </a>
           )}
@@ -154,10 +159,10 @@ export function OpenSeatsCard({
       target="_blank"
       rel="noopener noreferrer"
       aria-label={`${label} — apply (opens application form in new tab)`}
-      className="group flex flex-col border border-dashed border-border bg-card/50 transition-[border-color,box-shadow] duration-200 hover:border-gold hover:shadow-elegant focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+      className="group hover-lift flex flex-col border border-dashed border-border bg-card/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
     >
       <div className="grid aspect-square w-full place-items-center overflow-hidden border-b border-dashed border-border bg-secondary/40">
-        <UserPlus className="h-10 w-10 text-gold-deep" />
+        <UserPlus className="h-10 w-10 text-gold-deep icon-pop" />
       </div>
       <div className="flex flex-1 flex-col p-6">
         <div className="text-xs font-semibold uppercase tracking-[0.18em] text-gold-deep">
@@ -168,7 +173,7 @@ export function OpenSeatsCard({
           We're recruiting analysts for this team. Apply through our form — applications open each fall and spring semester.
         </p>
         <div className="mt-auto flex items-center gap-2 border-t border-border pt-4 text-xs font-semibold text-ink group-hover:text-gold-deep transition-colors">
-          Apply <ExternalLink className="h-3.5 w-3.5" />
+          Apply <ExternalLink className="h-3.5 w-3.5 arrow-slide" />
         </div>
       </div>
     </a>

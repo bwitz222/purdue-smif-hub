@@ -113,7 +113,7 @@ function Research() {
             href={SUBSTACK_URL}
             target="_blank"
             rel="noreferrer"
-            className="mt-8 inline-flex items-center gap-2 border border-ink bg-ink px-5 py-2.5 text-sm font-semibold text-background transition hover:bg-ink/90"
+            className="press mt-8 inline-flex items-center gap-2 border border-ink bg-ink px-5 py-2.5 text-sm font-semibold text-background hover:bg-ink/90"
           >
             <Rss className="h-4 w-4" /> Read us on Substack
             <ExternalLink className="h-3.5 w-3.5 opacity-70" />

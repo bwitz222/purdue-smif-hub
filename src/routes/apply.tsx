@@ -18,7 +18,7 @@ export const Route = createFileRoute("/apply")({
   head: () => ({
     meta: [
       { title: "Apply to Join — Purdue Student Managed Investment Fund" },
-      { name: "description", content: "Apply to join the Purdue Student Managed Investment Fund: application portal, what we look for, timeline, and FAQ." },
+      { name: "description", content: "Apply to join the Purdue Student Managed Investment Fund. Application portal, what we look for in analysts, the recruiting timeline, and answers to the questions we get most." },
       ...socialMeta({
         title: "Apply to Join Purdue SMIF",
         description: "Application portal, what we look for, timeline, and FAQ for joining the Purdue Student Managed Investment Fund.",
@@ -208,7 +208,7 @@ function Apply() {
               href={APPLICATION_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2.5 bg-gold px-9 py-4 text-sm font-semibold text-ink hover:bg-gold-mid transition-colors duration-200"
+              className="press inline-flex items-center justify-center gap-2.5 bg-gold px-9 py-4 text-sm font-semibold text-ink hover:bg-gold-mid"
             >
               Open Application Portal
               <ExternalLink className="h-4 w-4" aria-hidden="true" />
@@ -216,7 +216,7 @@ function Apply() {
             </a>
             <Link
               to="/recruiting"
-              className="inline-flex items-center justify-center gap-2 border border-background/30 px-9 py-4 text-sm font-semibold text-background hover:border-gold hover:text-gold transition-colors duration-200"
+              className="press inline-flex items-center justify-center gap-2 border border-background/30 px-9 py-4 text-sm font-semibold text-background hover:border-gold hover:text-gold"
             >
               Recruiting calendar & prep guide
             </Link>

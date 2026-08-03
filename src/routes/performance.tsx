@@ -310,7 +310,7 @@ function Performance() {
         {/* ── KPI cards ─────────────────────────────────────────── */}
         <Reveal className={`grid gap-px bg-border ${KPI_STATS.length === 4 ? "md:grid-cols-4" : "md:grid-cols-3"}`}>
           {KPI_STATS.map(({ l, v, pos }) => (
-            <div key={l} className="bg-card p-8 flex flex-col gap-1 border border-border">
+            <div key={l} className="bg-card p-8 flex flex-col gap-1 border border-border hover-raise">
               <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">{l}</div>
               <div className={`font-display text-4xl font-bold mt-1 inline-flex items-baseline gap-1.5 ${pos ? "text-gain" : "text-loss"}`}>
                 {pos ? <ArrowUp className="h-6 w-6" aria-hidden="true" /> : <ArrowDown className="h-6 w-6" aria-hidden="true" />}
@@ -331,7 +331,7 @@ function Performance() {
             </div>
             <div className="grid gap-px bg-border sm:grid-cols-2 lg:grid-cols-4">
               {analyticsPrimary.map(({ l, v, tone, sub }) => (
-                <div key={l} className="bg-card p-6 flex flex-col gap-1 border border-border">
+                <div key={l} className="bg-card p-6 flex flex-col gap-1 border border-border hover-raise">
                   <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">{l}</div>
                   <div className={`font-display text-3xl font-bold mt-1 ${toneClass(tone)}`}>{v}</div>
                   <div className="text-[11px] text-muted-foreground font-mono">{sub}</div>
@@ -340,7 +340,7 @@ function Performance() {
             </div>
             <div className="grid gap-px bg-border grid-cols-2 lg:grid-cols-4">
               {analyticsSecondary.map(({ l, v, tone }) => (
-                <div key={l} className="bg-card px-6 py-5 flex flex-col gap-0.5 border border-border">
+                <div key={l} className="bg-card px-6 py-5 flex flex-col gap-0.5 border border-border hover-raise">
                   <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{l}</div>
                   <div className={`font-display text-xl font-bold ${toneClass(tone)}`}>{v}</div>
                 </div>
@@ -375,7 +375,7 @@ function Performance() {
                     <button
                       key={b.k}
                       onClick={() => setIncMode(b.k)}
-                      className={`px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-colors duration-150 cursor-pointer ${
+                      className={`press px-4 py-2 text-xs font-semibold uppercase tracking-wider cursor-pointer ${
                         incMode === b.k ? "bg-ink text-background" : "bg-background text-ink hover:bg-secondary"
                       }`}
                     >
@@ -389,7 +389,7 @@ function Performance() {
                     <button
                       key={b.k}
                       onClick={() => setIncSeries(b.k)}
-                      className={`px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-colors duration-150 cursor-pointer ${
+                      className={`press px-4 py-2 text-xs font-semibold uppercase tracking-wider cursor-pointer ${
                         incSeries === b.k ? "bg-gold-deep text-background" : "bg-background text-ink hover:bg-secondary"
                       }`}
                     >
@@ -515,7 +515,7 @@ function Performance() {
                   <button
                     key={b.k}
                     onClick={() => setMode(b.k)}
-                    className={`px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-colors duration-150 cursor-pointer ${
+                    className={`press px-4 py-2 text-xs font-semibold uppercase tracking-wider cursor-pointer ${
                       mode === b.k ? "bg-ink text-background" : "bg-background text-ink hover:bg-secondary"
                     }`}
                   >
@@ -529,7 +529,7 @@ function Performance() {
                   <button
                     key={b.k}
                     onClick={() => setSeries(b.k)}
-                    className={`px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-colors duration-150 cursor-pointer ${
+                    className={`press px-4 py-2 text-xs font-semibold uppercase tracking-wider cursor-pointer ${
                       series === b.k ? "bg-gold-deep text-background" : "bg-background text-ink hover:bg-secondary"
                     }`}
                   >

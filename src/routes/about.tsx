@@ -217,14 +217,14 @@ function About() {
               href={applyUrl("about-cta")}
               target="_blank"
               rel="noopener noreferrer"
-              className="group inline-flex items-center gap-2 bg-gold px-7 py-3.5 text-sm font-semibold text-ink hover:bg-gold-mid transition-colors duration-200"
+              className="press group inline-flex items-center gap-2 bg-gold px-7 py-3.5 text-sm font-semibold text-ink hover:bg-gold-mid"
             >
               Apply to Join
-              <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
+              <ArrowRight className="h-4 w-4 arrow-slide" />
             </a>
             <Link
               to="/team"
-              className="inline-flex items-center gap-2 border border-background/20 px-7 py-3.5 text-sm font-semibold text-background hover:border-gold hover:text-gold transition-colors duration-200"
+              className="press inline-flex items-center gap-2 border border-background/20 px-7 py-3.5 text-sm font-semibold text-background hover:border-gold hover:text-gold"
             >
               Meet the Team
             </Link>

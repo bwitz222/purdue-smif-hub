@@ -39,7 +39,7 @@ export function SiteHeader() {
       >
         <div className="container-prose flex h-14 items-center justify-between gap-4">
           <Link to="/" className="group flex items-center gap-2.5 shrink-0">
-            <img src={smifLogo} alt="Purdue SMIF" width={28} height={28} decoding="async" className="h-7 w-7 object-contain select-none" />
+            <img src={smifLogo} alt="Purdue SMIF" width={28} height={28} decoding="async" className="h-7 w-7 object-contain select-none icon-pop" />
             <span className="font-mono text-xs uppercase tracking-[0.18em] text-on-dark-secondary group-hover:text-gold transition-colors duration-300">
               Purdue SMIF
             </span>
@@ -66,7 +66,7 @@ export function SiteHeader() {
               Apply
             </a>
             <button
-              className="lg:hidden inline-flex items-center justify-center min-h-11 min-w-11 -mr-2 text-background/70 hover:text-background transition-colors duration-150"
+              className="press lg:hidden inline-flex items-center justify-center min-h-11 min-w-11 -mr-2 text-background/70 hover:text-background"
               onClick={() => setOpen(true)}
               aria-label="Open menu"
               aria-haspopup="dialog"
@@ -92,7 +92,7 @@ export function SiteHeader() {
             <span className="font-mono text-xs uppercase tracking-[0.18em] text-on-dark-secondary">Purdue SMIF</span>
             <button
               onClick={() => setOpen(false)}
-              className="inline-flex items-center justify-center min-h-11 min-w-11 -mr-2 text-background/70 hover:text-background transition-colors duration-150"
+              className="press inline-flex items-center justify-center min-h-11 min-w-11 -mr-2 text-background/70 hover:text-background"
               aria-label="Close menu"
             >
               <X className="h-5 w-5" />

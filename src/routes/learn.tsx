@@ -315,7 +315,7 @@ function Learn() {
               href={APPLICATION_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2.5 bg-gold px-9 py-4 text-sm font-semibold text-ink hover:bg-gold-mid transition-colors duration-200"
+              className="press inline-flex items-center justify-center gap-2.5 bg-gold px-9 py-4 text-sm font-semibold text-ink hover:bg-gold-mid"
             >
               Apply to Join
               <ExternalLink className="h-4 w-4" aria-hidden="true" />
@@ -323,7 +323,7 @@ function Learn() {
             </a>
             <Link
               to="/recruiting"
-              className="inline-flex items-center justify-center gap-2 border border-background/30 px-9 py-4 text-sm font-semibold text-background hover:border-gold hover:text-gold transition-colors duration-200"
+              className="press inline-flex items-center justify-center gap-2 border border-background/30 px-9 py-4 text-sm font-semibold text-background hover:border-gold hover:text-gold"
             >
               Recruiting & prep guide
             </Link>

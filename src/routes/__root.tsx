@@ -57,7 +57,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "description", content: "Purdue SMIF — the student-managed investment fund at Purdue's Daniels School of Business, managing real capital since 2009." },
       { name: "keywords", content: "Purdue SMIF, Purdue Student Managed Investment Fund, Purdue Investment Fund, Purdue Investment Club, Purdue Finance Club, Purdue investing club, Purdue finance organization, Daniels School of Business, student investment fund" },
       { name: "author", content: "Purdue SMIF" },
-      { name: "theme-color", content: "#0E0E0E" },
+      { name: "theme-color", content: "#0A0A0A" },
       { property: "og:site_name", content: "Purdue SMIF" },
       { property: "og:type", content: "website" },
       { property: "og:locale", content: "en_US" },

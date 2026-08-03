@@ -191,10 +191,10 @@ function Sectors() {
             const pms = pmsForEquityTeam(name);
             return (
               <RevealItem key={name} className="bg-background">
-                <article className="flex h-full flex-col p-8">
+                <article className="group flex h-full flex-col p-8 transition-colors duration-200 hover:bg-secondary/30">
                   <div className="flex items-start justify-between gap-6">
                     <div className="flex items-start gap-4">
-                      <Icon className="mt-1 h-6 w-6 shrink-0 text-gold-deep" />
+                      <Icon className="mt-1 h-6 w-6 shrink-0 text-gold-deep icon-pop" />
                       <div>
                         <h3 className="font-display text-xl font-bold text-ink">{name}</h3>
                         <p className="mt-1.5 text-sm text-muted-foreground">{lead}</p>
@@ -242,10 +242,10 @@ function Sectors() {
                     <Link
                       to="/team"
                       search={{ sector: name }}
-                      className="group inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-gold-deep hover:text-ink transition-colors"
+                      className="link-underline inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-gold-deep hover:text-ink transition-colors"
                     >
                       View team
-                      <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5" />
+                      <ArrowRight className="h-3.5 w-3.5 arrow-slide" />
                     </Link>
                   </div>
                 </article>
@@ -262,9 +262,9 @@ function Sectors() {
             const pms = pmsForProcessTeam(name);
             return (
               <RevealItem key={name} className="bg-background">
-                <article className="flex h-full flex-col p-8">
+                <article className="group flex h-full flex-col p-8 transition-colors duration-200 hover:bg-secondary/30">
                   <div className="flex items-start gap-4">
-                    <Icon className="mt-1 h-6 w-6 shrink-0 text-gold-deep" />
+                    <Icon className="mt-1 h-6 w-6 shrink-0 text-gold-deep icon-pop" />
                     <div>
                       <h3 className="font-display text-xl font-bold text-ink">{name}</h3>
                       <p className="mt-1.5 text-sm text-muted-foreground">{lead}</p>
@@ -282,10 +282,10 @@ function Sectors() {
                     <Link
                       to="/team"
                       search={{ sector: name }}
-                      className="group inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-gold-deep hover:text-ink transition-colors"
+                      className="link-underline inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-gold-deep hover:text-ink transition-colors"
                     >
                       View team
-                      <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5" />
+                      <ArrowRight className="h-3.5 w-3.5 arrow-slide" />
                     </Link>
                   </div>
                 </article>
