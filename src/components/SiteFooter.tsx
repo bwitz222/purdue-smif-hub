@@ -24,7 +24,7 @@ export function SiteFooter() {
           <ul className="space-y-2 text-sm text-on-dark-secondary">
             {NAV.map(({ to, label }) => (
               <li key={to}>
-                <Link to={to} className="hover:text-gold transition-colors duration-200">{label}</Link>
+                <Link to={to} className="link-underline inline-block hover:text-gold transition-colors duration-200">{label}</Link>
               </li>
             ))}
           </ul>
@@ -36,27 +36,31 @@ export function SiteFooter() {
             <li>Daniels School of Business</li>
             <li>403 Mitch Daniels Blvd</li>
             <li>West Lafayette, IN 47907</li>
-            <li><Link to="/contact" className="hover:text-gold transition-colors duration-200">Get in touch →</Link></li>
+            <li>
+                <Link to="/contact" className="group link-underline inline-flex items-center gap-1 hover:text-gold transition-colors duration-200">
+                  Get in touch <span aria-hidden="true" className="arrow-slide">→</span>
+                </Link>
+              </li>
           </ul>
         </div>
         <div>
           <h2 className="text-sm font-medium text-gold mb-4 uppercase tracking-[0.14em]">Social</h2>
           <ul className="space-y-2 text-sm text-on-dark-secondary">
             <li>
-              <a href="https://www.instagram.com/smif_purdue/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 hover:text-gold transition-colors duration-200">
-                <Instagram className="h-4 w-4" />
+              <a href="https://www.instagram.com/smif_purdue/" target="_blank" rel="noopener noreferrer" className="group link-underline inline-flex items-center gap-2 hover:text-gold transition-colors duration-200">
+                <Instagram className="h-4 w-4 icon-pop" />
                 Instagram
               </a>
             </li>
             <li>
-              <a href="https://www.linkedin.com/company/purdue-smif/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 hover:text-gold transition-colors duration-200">
-                <Linkedin className="h-4 w-4" />
+              <a href="https://www.linkedin.com/company/purdue-smif/" target="_blank" rel="noopener noreferrer" className="group link-underline inline-flex items-center gap-2 hover:text-gold transition-colors duration-200">
+                <Linkedin className="h-4 w-4 icon-pop" />
                 LinkedIn
               </a>
             </li>
             <li>
-              <a href="https://purduesmif.substack.com/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 hover:text-gold transition-colors duration-200">
-                <Newspaper className="h-4 w-4" />
+              <a href="https://purduesmif.substack.com/" target="_blank" rel="noopener noreferrer" className="group link-underline inline-flex items-center gap-2 hover:text-gold transition-colors duration-200">
+                <Newspaper className="h-4 w-4 icon-pop" />
                 Substack
               </a>
             </li>

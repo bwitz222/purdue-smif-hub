@@ -15,7 +15,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import { Reveal } from "@/components/Reveal";
+import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 
 export const Route = createFileRoute("/contact")({
   component: Contact,
@@ -132,40 +132,42 @@ function Contact() {
       </section>
 
       <section className="container-prose py-24">
-        <h2 className="font-display text-3xl font-bold">Reach the Fund</h2>
-        <div className="mt-10 grid gap-10 md:grid-cols-3">
-          <div className="flex gap-5">
-            <Mail className="h-6 w-6 text-gold-deep flex-shrink-0 mt-1" />
+        <Reveal>
+          <h2 className="font-display text-3xl font-bold">Reach the Fund</h2>
+        </Reveal>
+        <RevealGroup className="mt-10 grid gap-10 md:grid-cols-3">
+          <RevealItem className="flex gap-5">
+            <Mail className="h-6 w-6 text-gold-deep flex-shrink-0 mt-1 icon-pop" />
             <div>
               <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Email</div>
-              <a href="mailto:smif26@purdue.edu" className="mt-1 block font-display text-lg font-semibold hover:text-gold-deep">
+              <a href="mailto:smif26@purdue.edu" className="link-underline mt-1 inline-block font-display text-lg font-semibold hover:text-gold-deep">
                 smif26@purdue.edu
               </a>
             </div>
-          </div>
-          <div className="flex gap-5">
-            <MapPin className="h-6 w-6 text-gold-deep flex-shrink-0 mt-1" />
+          </RevealItem>
+          <RevealItem className="flex gap-5">
+            <MapPin className="h-6 w-6 text-gold-deep flex-shrink-0 mt-1 icon-pop" />
             <div>
               <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Address</div>
               <div className="mt-1 font-display text-lg font-semibold">Daniels School of Business</div>
               <div className="text-muted-foreground">403 Mitch Daniels Blvd<br />West Lafayette, IN 47907</div>
             </div>
-          </div>
-          <div className="flex gap-5">
-            <Linkedin className="h-6 w-6 text-gold-deep flex-shrink-0 mt-1" />
+          </RevealItem>
+          <RevealItem className="flex gap-5">
+            <Linkedin className="h-6 w-6 text-gold-deep flex-shrink-0 mt-1 icon-pop" />
             <div>
               <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">LinkedIn</div>
               <a
                 href="https://www.linkedin.com/company/purdue-smif/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-1 block font-display text-lg font-semibold hover:text-gold-deep"
+                className="link-underline mt-1 inline-block font-display text-lg font-semibold hover:text-gold-deep"
               >
                 Purdue SMIF
               </a>
             </div>
-          </div>
-        </div>
+          </RevealItem>
+        </RevealGroup>
       </section>
 
       {/* Send a note */}
@@ -286,10 +288,10 @@ function Contact() {
                 type="submit"
                 disabled={submitting}
                 aria-busy={submitting}
-                className="group inline-flex items-center gap-2.5 bg-ink px-7 py-3.5 text-sm font-semibold text-background hover:bg-ink/85 transition-colors duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
+                className="press group inline-flex items-center gap-2.5 bg-ink px-7 py-3.5 text-sm font-semibold text-background hover:bg-ink/85 disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 {submitting ? "Sending…" : "Send message"}
-                <Send className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
+                <Send className="h-4 w-4 arrow-slide" />
               </button>
             </form>
           </Reveal>

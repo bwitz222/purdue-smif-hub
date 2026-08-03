@@ -39,6 +39,9 @@ function MemberDetail({ m }: { m: Member }) {
           <img
             src={src}
             alt={`${m.name} headshot`}
+            width={640}
+            height={800}
+            decoding="async"
             className="h-full w-full object-cover"
             style={{
               objectPosition: m.photoPosition ?? "center",
@@ -80,15 +83,15 @@ function MemberDetail({ m }: { m: Member }) {
           <div className="border-t border-border pt-5 space-y-3">
             <div className="text-[10px] font-semibold uppercase tracking-[0.28em] text-gold-deep">Contact</div>
             {email && (
-              <a href={`mailto:${email}`} className="flex items-center gap-3 text-sm text-foreground hover:text-gold-deep transition-colors">
-                <Mail className="h-4 w-4" />
-                <span className="font-mono">{email}</span>
+              <a href={`mailto:${email}`} className="group flex items-center gap-3 text-sm text-foreground hover:text-gold-deep transition-colors">
+                <Mail className="h-4 w-4 icon-pop" />
+                <span className="link-underline font-mono">{email}</span>
               </a>
             )}
             {m.linkedin && (
-              <a href={m.linkedin} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm text-foreground hover:text-gold-deep transition-colors">
-                <Linkedin className="h-4 w-4" />
-                <span className="font-mono truncate">LinkedIn profile</span>
+              <a href={m.linkedin} target="_blank" rel="noopener noreferrer" className="group flex items-center gap-3 text-sm text-foreground hover:text-gold-deep transition-colors">
+                <Linkedin className="h-4 w-4 icon-pop" />
+                <span className="link-underline font-mono truncate">LinkedIn profile</span>
               </a>
             )}
           </div>

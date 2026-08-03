@@ -117,13 +117,13 @@ function Index() {
                 href={applyUrl("home-hero")}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group inline-flex items-center gap-2.5 bg-gold px-8 py-3.5 text-sm font-semibold text-ink hover:bg-gold-mid transition-colors duration-200"
+                className="press group inline-flex items-center gap-2.5 bg-gold px-8 py-3.5 text-sm font-semibold text-ink hover:bg-gold-mid"
               >
                 Apply to Join
                 <ExternalLink className="h-4 w-4" aria-hidden="true" />
                 <span className="sr-only">(opens application form in new tab)</span>
               </a>
-              <Link to="/holdings" className="inline-flex items-center gap-2.5 border border-background/25 px-8 py-3.5 text-sm font-semibold text-background hover:border-gold hover:text-gold transition-colors duration-200">
+              <Link to="/holdings" className="press inline-flex items-center gap-2.5 border border-background/25 px-8 py-3.5 text-sm font-semibold text-background hover:border-gold hover:text-gold">
                 View Portfolio
               </Link>
             </div>
@@ -167,7 +167,7 @@ function Index() {
               </p>
               <Link to="/about" className="group inline-flex items-center gap-2 text-sm font-semibold text-gold hover:text-gold-mid transition-colors duration-200 mt-2 cursor-pointer">
                 Learn about our process
-                <ChevronRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
+                <ChevronRight className="h-4 w-4 arrow-slide" />
               </Link>
             </Reveal>
             <Reveal className="md:col-span-2 relative" delay={0.2}>
@@ -199,7 +199,7 @@ function Index() {
             </div>
             <Link to="/apply" className="group hidden md:inline-flex items-center gap-2 text-sm font-semibold text-ink border-b-2 border-gold pb-1 hover:text-gold-deep transition-colors duration-200 cursor-pointer">
               Apply to join
-              <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
+              <ArrowRight className="h-4 w-4 arrow-slide" />
             </Link>
           </Reveal>
           <RevealGroup className="grid md:grid-cols-3 border-t border-border" stagger={0.12}>
@@ -231,11 +231,11 @@ function Index() {
           <div className="flex flex-col md:flex-row items-start md:items-center gap-8 md:gap-10 flex-shrink-0 w-full md:w-auto">
             <PerformanceSparkline />
             <div className="flex gap-4 flex-shrink-0">
-              <Link to="/performance" className="group inline-flex items-center gap-2 bg-ink px-7 py-3.5 text-sm font-semibold text-background hover:bg-ink/85 transition-colors duration-200 cursor-pointer">
+              <Link to="/performance" className="press group inline-flex items-center gap-2 bg-ink px-7 py-3.5 text-sm font-semibold text-background hover:bg-ink/85 cursor-pointer">
                 Performance
-                <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
+                <ArrowRight className="h-4 w-4 arrow-slide" />
               </Link>
-              <Link to="/holdings" className="inline-flex items-center gap-2 border border-ink px-7 py-3.5 text-sm font-semibold text-ink hover:bg-ink hover:text-background transition-colors duration-200 cursor-pointer">
+              <Link to="/holdings" className="press inline-flex items-center gap-2 border border-ink px-7 py-3.5 text-sm font-semibold text-ink hover:bg-ink hover:text-background cursor-pointer">
                 Holdings
               </Link>
             </div>
@@ -266,13 +266,13 @@ function Index() {
               href={applyUrl("home-cta")}
               target="_blank"
               rel="noopener noreferrer"
-              className="group inline-flex items-center justify-center gap-2.5 bg-gold px-9 py-4 text-sm font-semibold text-ink hover:bg-gold-mid transition-colors duration-200 cursor-pointer"
+              className="press group inline-flex items-center justify-center gap-2.5 bg-gold px-9 py-4 text-sm font-semibold text-ink hover:bg-gold-mid cursor-pointer"
             >
               Apply to Join
               <ExternalLink className="h-4 w-4" aria-hidden="true" />
               <span className="sr-only">(opens application form in new tab)</span>
             </a>
-            <Link to="/team" className="inline-flex items-center justify-center gap-2 border border-background/20 px-9 py-4 text-sm font-semibold text-background hover:border-gold hover:text-gold transition-colors duration-200 cursor-pointer">
+            <Link to="/team" className="press inline-flex items-center justify-center gap-2 border border-background/20 px-9 py-4 text-sm font-semibold text-background hover:border-gold hover:text-gold cursor-pointer">
               Meet the Team
             </Link>
           </div>

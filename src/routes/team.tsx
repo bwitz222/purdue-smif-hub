@@ -273,7 +273,7 @@ function Team() {
                   role="tab"
                   aria-selected={active}
                   onClick={() => handleScopeChange(o.value)}
-                  className={`shrink-0 snap-start min-h-9 rounded-full border px-3.5 text-[11px] font-semibold uppercase tracking-[0.14em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-1 ${
+                  className={`press shrink-0 snap-start min-h-9 rounded-full border px-3.5 text-[11px] font-semibold uppercase tracking-[0.14em] focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-1 ${
                     active
                       ? "border-ink bg-ink text-background"
                       : "border-border bg-background text-muted-foreground hover:border-ink hover:text-foreground"
@@ -294,7 +294,7 @@ function Team() {
           <p className="font-display text-2xl text-muted-foreground">No members match your search.</p>
           <button
             onClick={() => { setQuery(""); setGroup("all"); setSectorFilter("all"); navigate({ search: () => ({}), replace: true }); }}
-            className="mt-6 inline-flex items-center px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] border border-ink hover:bg-ink hover:text-background transition-colors cursor-pointer"
+            className="press mt-6 inline-flex items-center px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] border border-ink hover:bg-ink hover:text-background cursor-pointer"
           >
             Reset filters
           </button>
