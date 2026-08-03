@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Instagram, Linkedin, Newspaper } from "lucide-react";
+import { GraduationCap, Instagram, Linkedin, Newspaper } from "lucide-react";
 import smifLogo from "@/assets/smif-logo-mark.png";
 import { NAV } from "@/lib/nav";
 
@@ -37,15 +37,21 @@ export function SiteFooter() {
             <li>403 Mitch Daniels Blvd</li>
             <li>West Lafayette, IN 47907</li>
             <li>
-                <Link to="/contact" className="group link-underline inline-flex items-center gap-1 hover:text-gold transition-colors duration-200">
-                  Get in touch <span aria-hidden="true" className="arrow-slide">→</span>
-                </Link>
-              </li>
+              <Link to="/contact" className="group link-underline inline-flex items-center gap-1 hover:text-gold transition-colors duration-200">
+                Get in touch <span aria-hidden="true" className="arrow-slide">→</span>
+              </Link>
+            </li>
           </ul>
         </div>
         <div>
-          <h2 className="text-sm font-medium text-gold mb-4 uppercase tracking-[0.14em]">Social</h2>
+          <h2 className="text-sm font-medium text-gold mb-4 uppercase tracking-[0.14em]">Find Us</h2>
           <ul className="space-y-2 text-sm text-on-dark-secondary">
+            <li>
+              <a href="https://boilerlink.purdue.edu/organization/smif" target="_blank" rel="noopener noreferrer" className="group link-underline inline-flex items-center gap-2 hover:text-gold transition-colors duration-200">
+                <GraduationCap className="h-4 w-4 icon-pop" />
+                BoilerLink
+              </a>
+            </li>
             <li>
               <a href="https://www.instagram.com/smif_purdue/" target="_blank" rel="noopener noreferrer" className="group link-underline inline-flex items-center gap-2 hover:text-gold transition-colors duration-200">
                 <Instagram className="h-4 w-4 icon-pop" />
