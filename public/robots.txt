@@ -1,4 +1,8 @@
 User-agent: *
 Allow: /
 
+# Server-only webhook endpoints (secret-gated, POST-only). Nothing here is
+# indexable content — crawling them only burns crawl budget on 405s.
+Disallow: /api/
+
 Sitemap: https://www.purduesmif.org/sitemap.xml

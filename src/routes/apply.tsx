@@ -18,7 +18,7 @@ export const Route = createFileRoute("/apply")({
   head: () => ({
     meta: [
       { title: "Apply to Join — Purdue Student Managed Investment Fund" },
-      { name: "description", content: "Apply to join the Purdue Student Managed Investment Fund: application portal, what we look for, timeline, and FAQ." },
+      { name: "description", content: "Apply to join the Purdue Student Managed Investment Fund. Application portal, what we look for in analysts, the recruiting timeline, and answers to the questions we get most." },
       ...socialMeta({
         title: "Apply to Join Purdue SMIF",
         description: "Application portal, what we look for, timeline, and FAQ for joining the Purdue Student Managed Investment Fund.",

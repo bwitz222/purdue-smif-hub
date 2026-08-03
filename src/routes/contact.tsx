@@ -31,7 +31,31 @@ export const Route = createFileRoute("/contact")({
       }),
     ],
     links: [{ rel: "canonical", href: canonical("/contact") }],
-    scripts: [breadcrumbLd("Contact", "/contact")],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "ContactPage",
+          "@id": `${canonical("/contact")}#contactpage`,
+          url: canonical("/contact"),
+          name: "Contact Purdue SMIF",
+          // Ties the page to the Organization declared in the root graph so the
+          // reply channel and address are attributed to the fund, not orphaned.
+          mainEntity: {
+            "@id": "https://www.purduesmif.org/#organization",
+            contactPoint: {
+              "@type": "ContactPoint",
+              contactType: "General inquiries",
+              email: "smif26@purdue.edu",
+              areaServed: "US",
+              availableLanguage: "English",
+            },
+          },
+        }),
+      },
+      breadcrumbLd("Contact", "/contact"),
+    ],
   }),
 });
 

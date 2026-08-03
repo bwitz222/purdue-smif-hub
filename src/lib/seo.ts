@@ -13,9 +13,26 @@ export const OG_LEARN = `${SITE_URL}/og-learn.jpg`;
 export const OG_SECTORS = `${SITE_URL}/og-sectors.jpg`;
 export const OG_APPLY = `${SITE_URL}/og-apply.jpg`;
 export const OG_CONTACT = `${SITE_URL}/og-contact.jpg`;
-export const OG_IMAGE_WIDTH = "1216";
-export const OG_IMAGE_HEIGHT = "640";
 export const OG_IMAGE_ALT = "Purdue SMIF | Student Managed Investment Fund";
+
+/**
+ * Intrinsic pixel size of each social card, keyed by URL.
+ *
+ * These MUST match the file on disk. Declaring a size the image doesn't have
+ * makes crawlers reserve the wrong box — Facebook and LinkedIn size the
+ * preview from these tags before they finish fetching the image, so a wrong
+ * value renders a stretched or letterboxed card. Only /apply and /contact
+ * were ever actually 1216x640; the other nine cards are 1536x1024.
+ */
+const OG_SIZE_1216 = { width: "1216", height: "640" } as const;
+const OG_SIZE_1536 = { width: "1536", height: "1024" } as const;
+
+const OG_SIZE_BY_URL: Record<string, { width: string; height: string }> = {
+  [`${SITE_URL}/og-apply.jpg`]: OG_SIZE_1216,
+  [`${SITE_URL}/og-contact.jpg`]: OG_SIZE_1216,
+};
+
+const ogSize = (image: string) => OG_SIZE_BY_URL[image] ?? OG_SIZE_1536;
 
 export const canonical = (path: string) => `${SITE_URL}${path}`;
 
@@ -55,14 +72,15 @@ export function socialMeta({
   type?: "website" | "article" | "profile";
   image?: string;
 }) {
+  const { width, height } = ogSize(image);
   return [
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:url", content: url },
     { property: "og:type", content: type },
     { property: "og:image", content: image },
-    { property: "og:image:width", content: OG_IMAGE_WIDTH },
-    { property: "og:image:height", content: OG_IMAGE_HEIGHT },
+    { property: "og:image:width", content: width },
+    { property: "og:image:height", content: height },
     { property: "og:image:alt", content: OG_IMAGE_ALT },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
