@@ -4,8 +4,8 @@ import { socialMeta, canonical, breadcrumbLd, OG_ABOUT } from "@/lib/seo";
 import { applyUrl } from "@/lib/apply-url";
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 
-const PAGE_TITLE = "About Purdue SMIF — Student Managed Investment Fund";
-const PAGE_DESCRIPTION = "How the Purdue Student Managed Investment Fund researches, debates, and votes on every real-money position: our history, philosophy, and process.";
+const PAGE_TITLE = "About Purdue SMIF — Student Investment Club & Fund";
+const PAGE_DESCRIPTION = "How Purdue's student investment club works: the history, philosophy, and process behind every real-money position, and what sets it apart from other clubs.";
 
 export const Route = createFileRoute("/about")({
   component: About,
@@ -126,6 +126,55 @@ function About() {
                 </RevealItem>
               ))}
             </RevealGroup>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Where SMIF fits ───────────────────────────────────────────
+          Answers the question prospective members actually arrive with —
+          "which finance club should I join?" — in the words they search. */}
+      <section className="border-t border-border bg-secondary/40">
+        <div className="container-prose py-24 grid gap-16 md:grid-cols-3">
+          <Reveal className="md:col-span-1">
+            <span className="rule-gold block mb-5" />
+            <h2 className="font-display text-2xl font-bold">
+              An investment club that manages real money
+            </h2>
+          </Reveal>
+          <div className="md:col-span-2 space-y-6 text-lg text-muted-foreground">
+            <Reveal delay={0.1}>
+              <p>
+                Purdue has a number of student finance and investment organizations, and most
+                students find several worth joining. What separates SMIF from the other finance
+                clubs at Purdue is the capital: the portfolio holds real university money, not a
+                simulated book. Every holding and every quarter of performance is published on
+                this site.
+              </p>
+              <p className="mt-6">
+                That one difference shapes the rest. Analysts join a sector team rather than a
+                general meeting. Positions are governed by a written investment policy statement.
+                Nothing enters the portfolio without a researched thesis and a committee vote. The
+                path runs analyst, senior analyst, sector head, executive board — and the work at
+                each step is the work an investment professional actually does.
+              </p>
+              <p className="mt-6">
+                If you're comparing investment clubs at Purdue, the{" "}
+                <Link
+                  to="/recruiting"
+                  className="link-underline font-medium text-gold-deep hover:text-gold"
+                >
+                  recruiting calendar
+                </Link>{" "}
+                lists every callout, coffee chat, and interview date this cycle, and the{" "}
+                <Link
+                  to="/holdings"
+                  className="link-underline font-medium text-gold-deep hover:text-gold"
+                >
+                  live portfolio
+                </Link>{" "}
+                shows exactly what our analysts decided to own.
+              </p>
+            </Reveal>
           </div>
         </div>
       </section>

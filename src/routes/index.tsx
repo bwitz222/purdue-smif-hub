@@ -14,7 +14,7 @@ import { socialMeta, canonical } from "@/lib/seo";
 import { PerformanceSparkline } from "@/components/PerformanceSparkline";
 
 const HOME_TITLE = "Purdue SMIF — Student Managed Investment Fund";
-const HOME_DESCRIPTION = "Purdue SMIF is the university's student-managed investment fund and finance club, managing real capital at the Daniels School of Business.";
+const HOME_DESCRIPTION = "Purdue SMIF is the student investment club at the Daniels School of Business: the university's student-managed fund, where analysts invest real capital.";
 
 
 export const Route = createFileRoute("/")({
@@ -160,7 +160,7 @@ function Index() {
           <div className="grid md:grid-cols-5 gap-16 items-start">
             <Reveal className="md:col-span-3 space-y-5" delay={0.1}>
               <p className="text-background/85 text-lg leading-relaxed">
-                SMIF gives Purdue students the rare opportunity to manage actual investment capital under faculty mentorship. Our analysts apply institutional-grade frameworks to fundamental equity research, building skills that translate directly to careers in asset management, investment banking, and equity research.
+                SMIF is Purdue's student investment club with a real portfolio: it gives students the rare opportunity to manage actual investment capital under faculty mentorship. Our analysts apply institutional-grade frameworks to fundamental equity research, building skills that translate directly to careers in asset management, investment banking, and equity research.
               </p>
               <p className="text-background/75 leading-relaxed">
                 Every semester, analysts pitch positions to the full fund. Accepted ideas enter the real portfolio. Rejected ideas come with feedback that sharpens the next pitch. This is the closest an undergraduate education gets to the actual job.
