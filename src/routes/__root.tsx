@@ -116,6 +116,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
                 addressCountry: "US",
               },
               sameAs: [
+                // BoilerLink is Purdue's official student-organization directory.
+                // Listing it first ties this site to the university's own record of
+                // the org — the strongest available signal that the "Purdue
+                // investment club" entity and purduesmif.org are the same thing.
+                "https://boilerlink.purdue.edu/organization/smif",
                 "https://www.linkedin.com/company/purdue-smif/",
                 "https://www.instagram.com/smif_purdue/",
                 "https://purduesmif.substack.com/",

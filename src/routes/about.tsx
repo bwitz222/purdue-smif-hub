@@ -158,7 +158,17 @@ function About() {
                 each step is the work an investment professional actually does.
               </p>
               <p className="mt-6">
-                If you're comparing investment clubs at Purdue, the{" "}
+                SMIF is a registered student organization, listed in{" "}
+                <a
+                  href="https://boilerlink.purdue.edu/organization/smif"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="link-underline font-medium text-gold-deep hover:text-gold"
+                >
+                  BoilerLink
+                </a>
+                , Purdue's official student organization directory. If you're comparing
+                investment clubs at Purdue, the{" "}
                 <Link
                   to="/recruiting"
                   className="link-underline font-medium text-gold-deep hover:text-gold"
