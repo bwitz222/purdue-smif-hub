@@ -18,7 +18,7 @@ export const Route = createFileRoute("/apply")({
   head: () => ({
     meta: [
       { title: "Apply to Join — Purdue Student Managed Investment Fund" },
-      { name: "description", content: "Apply to join the Purdue Student Managed Investment Fund. Application portal, what we look for in analysts, the recruiting timeline, and answers to the questions we get most." },
+      { name: "description", content: "Apply to join Purdue's student investment club: the application portal, what we look for, the timeline, and how SMIF differs from other finance clubs at Purdue." },
       ...socialMeta({
         title: "Apply to Join Purdue SMIF",
         description: "Application portal, what we look for, timeline, and FAQ for joining the Purdue Student Managed Investment Fund.",
@@ -71,6 +71,18 @@ const TIMELINE = [
 ];
 
 const FAQ = [
+  {
+    q: "Is SMIF a finance club or an investment club?",
+    a: "Both, in the sense students usually mean: SMIF is a student organization at the Daniels School of Business that recruits by application each semester. The difference from most finance clubs at Purdue is that the portfolio holds real university capital rather than a simulated book, so every position is researched, debated, and voted on before it is entered.",
+  },
+  {
+    q: "How is SMIF different from other finance clubs at Purdue?",
+    a: "Real money and a formal process. Analysts join a sector team, publish written research, and defend pitches before a committee vote. Current holdings and performance against the S&P 500 are published on this site. Members progress from analyst to senior analyst to sector head and the executive board.",
+  },
+  {
+    q: "Can I be in SMIF and other clubs at the same time?",
+    a: "Yes, and most analysts are. Plan on about six hours a week for SMIF between the full fund meeting, your sector team meeting, and independent research, then budget your other commitments around that.",
+  },
   {
     q: "Do I need finance experience to apply?",
     a: "No. We train every analyst from scratch on financial statement analysis, valuation, and pitch construction. About a third of our analysts come from non-business majors.",

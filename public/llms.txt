@@ -1,11 +1,11 @@
 # Purdue SMIF
 
-> The Purdue Student Managed Investment Fund — a premier student-run investment fund at the Daniels School of Business, Purdue University. Members manage real capital across U.S. equities and fixed income, benchmarked against the S&P 500.
+> The Purdue Student Managed Investment Fund (SMIF) — the student investment club at the Daniels School of Business, Purdue University, and a student-run investment fund. Unlike most finance clubs at Purdue, SMIF manages real university capital across U.S. equities and fixed income, benchmarked against the S&P 500. Members join as analysts on sector teams and progress to senior analyst, sector head, and the executive board.
 
 ## Pages
 
 - [Home](/): Overview of the fund, AUM, and pillars.
-- [About](/about): History, philosophy, investment process, and IPS.
+- [About](/about): History, philosophy, investment process, IPS, and how SMIF compares to other investment and finance clubs at Purdue.
 - [Team](/team): Executive board, sector teams, fixed income & macro, and portfolio managers.
 - [Sectors](/sectors): Coverage teams across equities, fixed income & macro, and portfolio + risk management.
 - [Holdings](/holdings): Current portfolio positions, allocations, and returns.
@@ -13,5 +13,5 @@
 - [Research](/research): Equity research reports, semester reports, and annual reports.
 - [Learn](/learn): Curriculum, valuation resources, and analyst training materials.
 - [Recruiting](/recruiting): Recruiting calendar plus technical and behavioral interview prep guide.
-- [Apply](/apply): Application timeline and how to join.
+- [Apply](/apply): Application timeline, how to join, and FAQ (including whether SMIF is a finance club or an investment club).
 - [Contact](/contact): Email, address, and LinkedIn.
