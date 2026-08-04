@@ -66,7 +66,7 @@ const fmtNum = (n: number, d = 2) => n.toLocaleString("en-US", { minimumFraction
 
 type SortKey = keyof Holding;
 
-// (ETF_SECTOR_WEIGHTS lives in @/lib/portfolio so /sectors reuses the same map)
+// (the ETF look-through weights live in @/lib/portfolio, so /sectors reuses the same math)
 
 function KpiCard({
   label,

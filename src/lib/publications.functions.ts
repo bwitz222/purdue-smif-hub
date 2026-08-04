@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 
-export type PublicationCategory = "equity_research" | "semester" | "annual";
+type PublicationCategory = "equity_research" | "semester" | "annual";
 
 export interface PublicationRow {
   id: string;
@@ -18,19 +18,27 @@ export interface PublicationRow {
 
 export const getPublications = createServerFn({ method: "GET" }).handler(
   async (): Promise<PublicationRow[]> => {
-    const { data, error } = await supabase
-      .from("publications")
-      .select("*")
-      .order("created_at", { ascending: false });
-    if (error) {
-      console.error("[publications] fetch error:", error);
-      throw new Error("Failed to load publications.");
+    // Degrade, never throw. This runs in the /research route loader, so a
+    // rejection here 500s the whole page — including the header, nav, and
+    // Substack link that don't depend on this data at all. The page already
+    // renders a "coming soon" empty state per category, which is a far better
+    // outcome for a reader (and for a crawler) than an error page when the
+    // database is briefly unreachable or a key has rotated.
+    try {
+      const { data, error } = await supabase
+        .from("publications")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      const rows = (data ?? []) as Omit<PublicationRow, "url">[];
+      return rows.map((p) => ({
+        ...p,
+        url: supabase.storage.from("publications").getPublicUrl(p.file_path).data
+          .publicUrl,
+      }));
+    } catch (err) {
+      console.error("[publications] fetch failed, serving empty list:", err);
+      return [];
     }
-    const rows = (data ?? []) as Omit<PublicationRow, "url">[];
-    return rows.map((p) => ({
-      ...p,
-      url: supabase.storage.from("publications").getPublicUrl(p.file_path).data
-        .publicUrl,
-    }));
   },
 );

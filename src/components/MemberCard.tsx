@@ -17,7 +17,7 @@ export interface Member {
   placeholder?: boolean;
 }
 
-export const memberSlug = (name: string) =>
+const memberSlug = (name: string) =>
   name
     .toLowerCase()
     .normalize("NFD")
@@ -27,11 +27,20 @@ export const memberSlug = (name: string) =>
 
 export const memberEmail = (m: Member) => m.email;
 
+/**
+ * Remote headshot fallbacks for members with no bundled photo.
+ *
+ * Only called when `m.photo` is absent. Building these eagerly for every
+ * member touched the Supabase client on render, which (a) made /team fail
+ * outright when the env vars weren't set, and (b) meant the 7 members
+ * without a bundled photo each fired a 404 for the .jpg and then the .png
+ * before falling back to initials. Bundled photos never needed either URL.
+ */
 export const memberPhotoCandidates = (m: Member) => {
   const slug = memberSlug(m.name);
   const jpg = supabase.storage.from("team-headshots").getPublicUrl(`${slug}.jpg`).data.publicUrl;
   const png = supabase.storage.from("team-headshots").getPublicUrl(`${slug}.png`).data.publicUrl;
-  return { jpg, png, initial: m.photo ?? jpg };
+  return { jpg, png };
 };
 
 export function MemberCard({
@@ -45,8 +54,9 @@ export function MemberCard({
 }) {
   const initials = m.name.split(" ").map((p) => p[0]).slice(0, 2).join("");
   const email = memberEmail(m);
-  const { jpg, png } = memberPhotoCandidates(m);
-  const initialSrc = m.placeholder ? null : (m.photo ?? jpg);
+  // Bundled photo wins outright; only members without one consult storage.
+  const remote = m.placeholder || m.photo ? null : memberPhotoCandidates(m);
+  const initialSrc = m.placeholder ? null : (m.photo ?? remote?.jpg ?? null);
   const [src, setSrc] = useState<string | null>(initialSrc);
   const [triedPng, setTriedPng] = useState(false);
 
@@ -97,9 +107,9 @@ export function MemberCard({
             }}
             loading="lazy"
             onError={() => {
-              if (!m.photo && !triedPng) {
+              if (!m.photo && !triedPng && remote) {
                 setTriedPng(true);
-                setSrc(png);
+                setSrc(remote.png);
               } else {
                 setSrc(null);
               }

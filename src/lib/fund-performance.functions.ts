@@ -75,7 +75,7 @@ export type MonthlyPoint = {
   is_transition: boolean;
 };
 
-export type MonthlyHistoryKpis = {
+type MonthlyHistoryKpis = {
   one_year_pct: number;
   five_year_annualized_pct: number;
   inception_annualized_pct: number;
@@ -86,7 +86,7 @@ export type MonthlyHistoryKpis = {
 // Risk & return analytics derived from the monthly return series. All percent
 // figures are annualized where noted; ratios are dimensionless. Sharpe/Sortino
 // assume a 0% risk-free rate; beta/alpha/correlation are vs the SPY total return.
-export type PerfAnalytics = {
+type PerfAnalytics = {
   cumulative_return_pct: number;
   annualized_return_pct: number;
   annualized_vol_pct: number;

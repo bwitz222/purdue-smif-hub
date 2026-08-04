@@ -13,7 +13,7 @@ export const OG_LEARN = `${SITE_URL}/og-learn.jpg`;
 export const OG_SECTORS = `${SITE_URL}/og-sectors.jpg`;
 export const OG_APPLY = `${SITE_URL}/og-apply.jpg`;
 export const OG_CONTACT = `${SITE_URL}/og-contact.jpg`;
-export const OG_IMAGE_ALT = "Purdue SMIF | Student Managed Investment Fund";
+const OG_IMAGE_ALT = "Purdue SMIF | Student Managed Investment Fund";
 
 /**
  * Intrinsic pixel size of each social card, keyed by URL.

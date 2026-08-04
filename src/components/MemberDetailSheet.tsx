@@ -21,16 +21,17 @@ export function MemberDetailSheet({
 }
 
 function MemberDetail({ m }: { m: Member }) {
-  const { jpg, png } = memberPhotoCandidates(m);
-  const [src, setSrc] = useState<string | null>(m.photo ?? jpg);
+  // Same rule as MemberCard: a bundled photo never needs the storage lookup.
+  const remote = m.photo ? null : memberPhotoCandidates(m);
+  const [src, setSrc] = useState<string | null>(m.photo ?? remote?.jpg ?? null);
   const [triedPng, setTriedPng] = useState(false);
   const email = memberEmail(m);
   const initials = m.name.split(" ").map((p) => p[0]).slice(0, 2).join("");
 
   useEffect(() => {
-    setSrc(m.photo ?? jpg);
+    setSrc(m.photo ?? remote?.jpg ?? null);
     setTriedPng(false);
-  }, [m.name, m.photo, jpg]);
+  }, [m.name, m.photo, remote?.jpg]);
 
   return (
     <div className="flex flex-col">
@@ -49,9 +50,9 @@ function MemberDetail({ m }: { m: Member }) {
               transformOrigin: m.photoPosition ?? "center",
             }}
             onError={() => {
-              if (!m.photo && !triedPng) {
+              if (!m.photo && !triedPng && remote) {
                 setTriedPng(true);
-                setSrc(png);
+                setSrc(remote.png);
               } else {
                 setSrc(null);
               }

@@ -162,13 +162,26 @@ async function refreshFromPolygon(
 // getLiveQuotes query takes over after hydration and owns refreshing.
 export const getCachedQuotes = createServerFn({ method: "GET" }).handler(
   async () => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: rows } = await supabaseAdmin
-      .from("quote_cache")
-      .select("symbol, price, change_pct, fetched_at");
+    // Degrade, never throw. This runs in the /holdings route loader, so a
+    // rejection here 500s the entire page — even though the page ships a
+    // static baseline (shares and cost basis from src/data/holdings.ts) that
+    // renders perfectly well without live prices. A stale or missing
+    // service-role key has taken this path in production before; the right
+    // outcome is the baseline table, not an error page.
+    let rows: Array<{ symbol: string; price: number; change_pct: number; fetched_at: string }> = [];
+    try {
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const res = await supabaseAdmin
+        .from("quote_cache")
+        .select("symbol, price, change_pct, fetched_at");
+      if (res.error) throw res.error;
+      rows = res.data ?? [];
+    } catch (err) {
+      console.error("[quotes] cached-quote read failed, serving baseline:", err);
+    }
     const quotes: Record<string, Quote> = {};
     let newest = 0;
-    for (const r of rows ?? []) {
+    for (const r of rows) {
       quotes[r.symbol] = {
         symbol: r.symbol,
         price: Number(r.price),
