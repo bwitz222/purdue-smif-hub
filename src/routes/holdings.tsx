@@ -98,7 +98,7 @@ function KpiCard({
       )}
       {sub && <div className="text-xs text-muted-foreground font-mono mt-0.5">{sub}</div>}
       {asOf && (
-        <div className="text-[10px] font-mono uppercase tracking-[0.18em] text-muted-foreground/70 mt-1">
+        <div className="text-[10px] font-mono uppercase tracking-[0.18em] text-muted-foreground mt-1">
           As of {asOf}
         </div>
       )}
@@ -308,7 +308,7 @@ function HoldingsPage() {
             )}
           </div>
           {quoteData?.cachedAt && (
-            <div className="mt-1.5 text-[10px] font-mono uppercase tracking-[0.18em] text-muted-foreground/70">
+            <div className="mt-1.5 text-[10px] font-mono uppercase tracking-[0.18em] text-muted-foreground">
               Updated {new Date(quoteData.cachedAt).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZoneName: "short" })}
             </div>
           )}
@@ -411,7 +411,7 @@ function HoldingsPage() {
           <div className="md:col-span-2 bg-card border border-border p-6">
             <div className="flex items-baseline justify-between mb-5 gap-3">
               <div className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Sector Allocation</div>
-              <div className="text-[10px] font-mono uppercase tracking-[0.18em] text-muted-foreground/70">% of invested capital</div>
+              <div className="text-[10px] font-mono uppercase tracking-[0.18em] text-muted-foreground">% of invested capital</div>
             </div>
             <div className="space-y-2.5">
               {sectorBreakdown.map(([s, pct], i) => (
@@ -461,7 +461,7 @@ function HoldingsPage() {
                 <div key={panel.title} className="bg-card border border-border p-6 hover-lift-sm">
                   <div className="flex items-baseline justify-between mb-4 gap-3">
                     <span className="text-xs uppercase tracking-[0.22em] text-muted-foreground">{panel.title}</span>
-                    <span className="text-[10px] font-mono uppercase tracking-[0.18em] text-muted-foreground/70">By day change %</span>
+                    <span className="text-[10px] font-mono uppercase tracking-[0.18em] text-muted-foreground">By day change %</span>
                   </div>
                   <ul className="space-y-1">
                     {panel.items.map((h) => (
@@ -597,7 +597,7 @@ function HoldingsPage() {
         )}
 
         <div className="border-t border-border pt-6 mt-10 space-y-2 text-xs text-muted-foreground max-w-3xl">
-          <div className="text-[10px] font-mono font-semibold uppercase tracking-[0.28em] text-muted-foreground/80">Methodology &amp; disclaimer</div>
+          <div className="text-[10px] font-mono font-semibold uppercase tracking-[0.28em] text-muted-foreground">Methodology &amp; disclaimer</div>
           <p><span className="font-semibold text-foreground">Data source:</span> quotes are Polygon.io end-of-day closes, refreshed daily after the market close (and on page visits when the cache is stale). Share counts and cost basis are maintained by the fund.</p>
           <p><span className="font-semibold text-foreground">Methodology:</span> position value = shares × latest close. Portfolio total includes uninvested cash. Aggregate day P&amp;L dollar and percent are computed against the same prior-day total.</p>
           <p>Past performance does not guarantee future results. See the latest annual report for audited figures.</p>

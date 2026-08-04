@@ -70,24 +70,18 @@ export function MemberCard({
   const handleActivate = () => onSelect?.(m);
   const stop = (e: React.MouseEvent) => e.stopPropagation();
 
+  // The card is NOT role="button". It used to be, which nested the email and
+  // LinkedIn anchors inside a control — a WCAG "nested-interactive" violation
+  // (41 nodes on /team) that leaves screen readers announcing a button whose
+  // own children are separately focusable. The name below is the real control;
+  // the wrapper keeps a click handler purely as a larger mouse target, which
+  // is not exposed to assistive tech.
   return (
     <div
-      role={interactive ? "button" : undefined}
-      tabIndex={interactive ? 0 : undefined}
       onClick={interactive ? handleActivate : undefined}
-      onKeyDown={
-        interactive
-          ? (e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                handleActivate();
-              }
-            }
-          : undefined
-      }
       className={`group flex flex-col border border-border bg-card ${
         interactive
-          ? "hover-lift cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+          ? "hover-lift cursor-pointer focus-within:ring-2 focus-within:ring-gold"
           : "transition-[border-color,box-shadow] duration-200 hover:border-gold hover:shadow-elegant"
       }`}
     >
@@ -123,7 +117,18 @@ export function MemberCard({
       </div>
       <div className="flex flex-1 flex-col p-6">
         <div className="text-xs font-semibold uppercase tracking-[0.18em] text-gold-deep">{m.role}</div>
-        <div className="mt-1 font-display text-lg font-bold leading-tight">{m.name}</div>
+        {interactive ? (
+          <button
+            type="button"
+            onClick={(e) => { e.stopPropagation(); handleActivate(); }}
+            aria-label={`View profile for ${m.name}`}
+            className="mt-1 text-left font-display text-lg font-bold leading-tight focus:outline-none focus-visible:underline"
+          >
+            {m.name}
+          </button>
+        ) : (
+          <div className="mt-1 font-display text-lg font-bold leading-tight">{m.name}</div>
+        )}
         <div className="text-xs text-muted-foreground">{m.year}</div>
         {m.bio && <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{m.bio}</p>}
         <div

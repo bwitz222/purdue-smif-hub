@@ -636,7 +636,7 @@ function Performance() {
 
 
         <div className="border-t border-border pt-6 pb-8 mt-4 space-y-2 text-xs text-muted-foreground max-w-3xl">
-          <div className="text-[10px] font-mono font-semibold uppercase tracking-[0.28em] text-muted-foreground/80">Methodology &amp; disclaimer</div>
+          <div className="text-[10px] font-mono font-semibold uppercase tracking-[0.28em] text-muted-foreground">Methodology &amp; disclaimer</div>
           <p><span className="font-semibold text-foreground">Data source:</span> monthly NAV series maintained by the fund. Daily quotes on the Holdings page are Polygon.io end-of-day closes, refreshed daily after the market close.</p>
           <p><span className="font-semibold text-foreground">Methodology:</span> monthly returns are computed on a Modified Dietz basis to account for intra-month contributions and withdrawals. The benchmark is the S&amp;P 500 Total Return (SPY, dividends reinvested).</p>
           <p>Past performance does not guarantee future results.{monthlyData ? "" : allAudited ? "" : " Figures shown for illustrative purposes;"} see the latest annual report for audited figures.</p>
