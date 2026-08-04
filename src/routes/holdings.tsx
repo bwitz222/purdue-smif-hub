@@ -2,14 +2,17 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState, useMemo, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowUpDown, ArrowUp, ArrowDown, RefreshCw, AlertCircle, Filter, Search } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { ArrowUpDown, ArrowUp, ArrowDown, AlertCircle, Filter, Search } from "lucide-react";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { holdings as baseHoldings, portfolioSummary as baseSummary, type Holding } from "@/data/holdings";
 import { getLiveQuotes, getCachedQuotes } from "@/lib/quotes.functions";
 import { getFundStats } from "@/lib/fund-stats.functions";
 import { getRiskMetrics } from "@/lib/risk.functions";
 import { CountUp } from "@/components/CountUp";
 import { Reveal } from "@/components/Reveal";
+import { MetricTile } from "@/components/MetricTile";
+import { PendingMetric } from "@/components/PendingMetric";
+import { PortfolioTape } from "@/components/PortfolioTape";
 import { socialMeta, canonical, breadcrumbLd, OG_HOLDINGS } from "@/lib/seo";
 import { applyQuotes, sectorPercentBreakdown } from "@/lib/portfolio";
 import { liveQueryOptions } from "@/lib/live-query";
@@ -68,42 +71,107 @@ type SortKey = keyof Holding;
 
 // (the ETF look-through weights live in @/lib/portfolio, so /sectors reuses the same math)
 
-function KpiCard({
-  label,
-  value,
-  sub,
-  accent,
-  animatedValue,
-  asOf,
-  hint,
-  muted,
-}: {
-  label: string;
-  value: string;
-  sub?: string;
-  accent?: "positive" | "negative" | "neutral";
-  animatedValue?: React.ReactNode;
-  asOf?: string;
-  hint?: string;
-  muted?: boolean;
-}) {
-  const valueColor = accent === "positive" ? "text-gain" : accent === "negative" ? "text-loss" : "text-ink";
-  return (
-    <div className="border border-border bg-card p-6 flex flex-col gap-1 hover-lift-sm" title={hint}>
-      <div className="text-xs uppercase tracking-[0.22em] text-muted-foreground">{label}</div>
-      {muted ? (
-        <div className="text-lg font-semibold text-muted-foreground mt-2">{value}</div>
+// KpiCard was replaced by MetricTile (three weights) and PendingMetric (the
+// designed no-value-yet state). Both live in src/components.
+
+// A beta above this is a materially different kind of position from the rest
+// of a long-only equity book, and deserves to be visible rather than buried in
+// a column of similar-looking decimals.
+const HIGH_BETA_THRESHOLD = 2;
+
+function cellClass(k: SortKey, h: Holding): string {
+  const base = "px-4 py-3";
+  switch (k) {
+    case "company":
+      return `${base} font-medium whitespace-nowrap`;
+    case "symbol":
+      return `${base} font-mono font-bold text-gold-deep tracking-wider`;
+    case "industry":
+      return `${base} text-xs text-muted-foreground whitespace-nowrap`;
+    case "beta":
+      return `${base} text-right font-mono ${h.beta >= HIGH_BETA_THRESHOLD ? "text-ink font-semibold" : "text-muted-foreground"}`;
+    case "dayChange":
+      return `${base} text-right font-mono font-medium ${h.dayChange >= 0 ? "text-gain" : "text-loss"}`;
+    case "totalReturn":
+      return `${base} text-right font-mono ${h.totalReturn >= 0 ? "text-gain" : "text-loss"}`;
+    case "returnPct":
+      return `${base} text-right font-mono font-semibold ${h.returnPct >= 0 ? "text-gain" : "text-loss"}`;
+    case "allocation":
+      return `${base} text-right font-mono`;
+    default:
+      return `${base} text-right font-mono`;
+  }
+}
+
+function renderCell(k: SortKey, h: Holding, maxAllocation: number) {
+  switch (k) {
+    case "company":
+      return h.company;
+    case "symbol":
+      return h.symbol;
+    case "industry":
+      return h.industry;
+    case "price":
+      return fmtUSD(h.price);
+    case "beta":
+      return h.beta >= HIGH_BETA_THRESHOLD ? (
+        <span
+          className="inline-flex items-center justify-end gap-1.5"
+          title={`Beta ${fmtNum(h.beta)} — this position moves roughly ${fmtNum(h.beta)}× the index.`}
+        >
+          <span aria-hidden="true" className="inline-block h-1.5 w-1.5 bg-gold-deep" />
+          {fmtNum(h.beta)}
+          <span className="sr-only">(high beta)</span>
+        </span>
       ) : (
-        <div className={`font-display text-3xl font-bold ${valueColor} mt-1`}>{animatedValue ?? value}</div>
-      )}
-      {sub && <div className="text-xs text-muted-foreground font-mono mt-0.5">{sub}</div>}
-      {asOf && (
-        <div className="text-[10px] font-mono uppercase tracking-[0.18em] text-muted-foreground mt-1">
-          As of {asOf}
-        </div>
-      )}
-    </div>
-  );
+        fmtNum(h.beta)
+      );
+    case "shares":
+      return h.shares.toLocaleString();
+    case "value":
+      return fmtUSD(h.value, { maximumFractionDigits: 0 });
+    case "dayChange":
+      return (
+        <span className="inline-flex items-center justify-end gap-0.5">
+          {h.dayChange >= 0 ? (
+            <ArrowUp className="h-3 w-3" aria-hidden="true" />
+          ) : (
+            <ArrowDown className="h-3 w-3" aria-hidden="true" />
+          )}
+          {fmtPct(h.dayChange)}
+        </span>
+      );
+    case "totalReturn":
+      return fmtUSD(h.totalReturn, { maximumFractionDigits: 0 });
+    case "returnPct":
+      return (
+        <span className="inline-flex items-center justify-end gap-0.5">
+          {h.returnPct >= 0 ? (
+            <ArrowUp className="h-3 w-3" aria-hidden="true" />
+          ) : (
+            <ArrowDown className="h-3 w-3" aria-hidden="true" />
+          )}
+          {fmtPct(h.returnPct)}
+        </span>
+      );
+    case "allocation":
+      // The number alone made 41.53% and 5.14% look like near neighbours. The
+      // bar is scaled to the largest position so the shape of the book reads
+      // without doing arithmetic.
+      return (
+        <span className="flex items-center justify-end gap-2.5">
+          <span aria-hidden="true" className="relative hidden h-1 w-16 bg-muted lg:block">
+            <span
+              className="absolute inset-y-0 left-0 bg-gradient-gold"
+              style={{ width: `${Math.min(100, (h.allocation / maxAllocation) * 100)}%` }}
+            />
+          </span>
+          <span className="w-14 text-right tabular-nums">{h.allocation.toFixed(2)}%</span>
+        </span>
+      );
+    default:
+      return null;
+  }
 }
 
 function SortIcon({ active, dir }: { active: boolean; dir: "asc" | "desc" }) {
@@ -112,9 +180,11 @@ function SortIcon({ active, dir }: { active: boolean; dir: "asc" | "desc" }) {
 }
 
 function HoldingsPage() {
+  const reduce = useReducedMotion();
   const [sortKey, setSortKey] = useState<SortKey>("allocation");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const [sector, setSector] = useState<string>("All");
+  const [showAllCols, setShowAllCols] = useState(false);
   const [showSticky, setShowSticky] = useState(false);
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
@@ -230,8 +300,16 @@ function HoldingsPage() {
     ? `No positions match "${debouncedQuery}"`
     : `No positions in ${sector}`;
   const toggleSort = (k: SortKey) => { if (k === sortKey) setSortDir(sortDir === "asc" ? "desc" : "asc"); else { setSortKey(k); setSortDir(typeof holdings[0]?.[k] === "number" ? "desc" : "asc"); } };
-  const cols: { k: SortKey; label: string; align?: "right" }[] = [{ k: "company", label: "Company" },{ k: "symbol", label: "Ticker" },{ k: "industry", label: "Industry" },{ k: "price", label: "Price", align: "right" },{ k: "beta", label: "Beta", align: "right" },{ k: "shares", label: "Shares", align: "right" },{ k: "value", label: "Value", align: "right" },{ k: "dayChange", label: "Day", align: "right" },{ k: "totalReturn", label: "Return $", align: "right" },{ k: "returnPct", label: "Return %", align: "right" },{ k: "allocation", label: "Weight", align: "right" }];
+  // Eleven columns is a spreadsheet. Eight is a table you can read; the other
+  // three stay one click away rather than being dropped, because a reader who
+  // wants share counts genuinely wants them.
+  const SECONDARY_COLS: SortKey[] = ["industry", "shares", "totalReturn"];
+  const allCols: { k: SortKey; label: string; align?: "right" }[] = [{ k: "company", label: "Company" },{ k: "symbol", label: "Ticker" },{ k: "industry", label: "Industry" },{ k: "price", label: "Price", align: "right" },{ k: "beta", label: "Beta", align: "right" },{ k: "shares", label: "Shares", align: "right" },{ k: "value", label: "Value", align: "right" },{ k: "dayChange", label: "Day", align: "right" },{ k: "totalReturn", label: "Return $", align: "right" },{ k: "returnPct", label: "Return %", align: "right" },{ k: "allocation", label: "Weight", align: "right" }];
+  const cols = showAllCols ? allCols : allCols.filter((c) => !SECONDARY_COLS.includes(c.k));
   const dayAccent = portfolioSummary.totalDayGain >= 0 ? "positive" : "negative";
+  // Weight bars scale against the largest position rather than 100%, so the
+  // gap between a 41% position and a 5% one is visible at a glance.
+  const maxAllocation = Math.max(...rows.map((r) => r.allocation), 1);
 
   // Risk-card display strings. Volatility/Sharpe/VaR need >=60 obs of history;
   // exposure needs none, so it renders even when history is insufficient.
@@ -253,6 +331,34 @@ function HoldingsPage() {
   const varLookbackNote = risk?.sufficient
     ? `${risk.var95Pct!.toFixed(2)}% · trailing ${risk.lookbackDays} trading days${risk.fullYear ? "" : " (<1yr)"}`
     : "95% confidence, 1-day horizon";
+
+  // Volatility, Sharpe and VaR all need the same history window. Rather than
+  // print "Not yet computed" three times where figures should be, say once
+  // what has to happen before they exist.
+  const riskPending = noRisk || insufficient;
+  const pendingReason = noRisk
+    ? "Computed nightly from daily closes. The first run publishes here once the job has a full history window."
+    : "Needs at least 60 trading sessions of daily history before the figure means anything.";
+  const pendingEta =
+    insufficient && risk
+      ? `${risk.lookbackDays} session${risk.lookbackDays === 1 ? "" : "s"} recorded so far`
+      : undefined;
+
+  // Concentration. The single largest weight, how far clear of the next
+  // position it is, and what the top five add up to — all derived from the
+  // live book so these sentences can never contradict the table below them.
+  const concentration = useMemo(() => {
+    const ranked = [...holdings].sort((a, b) => b.allocation - a.allocation);
+    const [first, second] = ranked;
+    if (!first) return null;
+    return {
+      symbol: first.symbol,
+      pct: first.allocation,
+      runnerUp: second?.symbol ?? "",
+      multiple: second && second.allocation > 0 ? first.allocation / second.allocation : 0,
+      topFivePct: ranked.slice(0, 5).reduce((s, r) => s + r.allocation, 0),
+    };
+  }, [holdings]);
 
   return (
     <>
@@ -279,45 +385,70 @@ function HoldingsPage() {
         )}
       </AnimatePresence>
 
-      <section className="border-b border-border bg-secondary/30">
-        <div className="container-prose py-20">
-          <span className="rule-gold mb-5 block" />
-          <span className="text-xs font-semibold uppercase tracking-[0.32em] text-gold-deep block mb-4">Portfolio Holdings</span>
-          <h1 className="font-display font-bold text-ink" style={{ fontSize: "clamp(2.5rem, 6vw, 5rem)" }}>Current portfolio.</h1>
-          <div
-            aria-live="polite"
-            aria-atomic="true"
-            className="mt-5 inline-flex items-center gap-2 border border-border bg-background/60 px-3 py-1.5 text-xs font-mono text-muted-foreground"
-          >
-            {isFetching ? (
-              <><RefreshCw className="h-3 w-3 animate-spin text-gold" /> Refreshing quotes…</>
-            ) : riskAsOf ? (
-              <>
-                <span className="h-1.5 w-1.5 rounded-full bg-gold" aria-hidden="true" />
-                {/* Session date of the data (Polygon's latest completed close),
-                    NOT the fetch time — cachedAt is shown as "Updated" below. */}
-                As of {riskAsOf} close
-              </>
-            ) : quoteData?.cachedAt ? (
-              <>
-                <span className="h-1.5 w-1.5 rounded-full bg-gold" aria-hidden="true" />
-                Latest end-of-day close
-              </>
-            ) : (
-              <>Last reported snapshot</>
-            )}
+      {/* Masthead — a trading desk, not a reading page. The tape sits directly
+          under the site header, then the title, then the state of the data. */}
+      <section className="bg-ink text-background">
+        <PortfolioTape className="border-t-0" />
+        <div className="container-prose py-14">
+          <span className="text-xs font-semibold uppercase tracking-[0.32em] text-gold block mb-4">
+            Portfolio Holdings
+          </span>
+          <div className="flex flex-wrap items-end justify-between gap-6">
+            <h1
+              className="font-display font-bold text-background"
+              style={{ fontSize: "clamp(2.4rem, 5.5vw, 4.5rem)", lineHeight: "1.02" }}
+            >
+              Current portfolio.
+            </h1>
+            {/* The resting state is always the as-of line. A refresh in flight
+                shows a 2px indeterminate hairline rather than swapping the
+                text out from under the reader — the old "Refreshing quotes…"
+                sat under the H1 and made a working page look unfinished. */}
+            <div className="min-w-[14rem]">
+              <div
+                aria-live="polite"
+                aria-atomic="true"
+                className="font-mono text-xs text-on-dark-secondary"
+              >
+                {riskAsOf ? (
+                  <>As of {riskAsOf} close</>
+                ) : quoteData?.cachedAt ? (
+                  <>Latest end-of-day close</>
+                ) : (
+                  <>Last reported snapshot</>
+                )}
+              </div>
+              <div className="mt-2 h-0.5 w-full overflow-hidden bg-white/10">
+                <span
+                  aria-hidden="true"
+                  className={`block h-full bg-gradient-gold transition-transform duration-500 ${
+                    isFetching ? "animate-fade-in w-1/3" : "w-full"
+                  }`}
+                />
+              </div>
+              {quoteData?.cachedAt && (
+                <div className="mt-2 font-mono text-[10px] uppercase tracking-[0.18em] text-on-dark-muted">
+                  Updated{" "}
+                  {new Date(quoteData.cachedAt).toLocaleString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    hour: "numeric",
+                    minute: "2-digit",
+                    timeZoneName: "short",
+                  })}
+                </div>
+              )}
+            </div>
           </div>
-          {quoteData?.cachedAt && (
-            <div className="mt-1.5 text-[10px] font-mono uppercase tracking-[0.18em] text-muted-foreground">
-              Updated {new Date(quoteData.cachedAt).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZoneName: "short" })}
-            </div>
-          )}
-          {quoteData?.cachedAt && (Date.now() - new Date(quoteData.cachedAt).getTime()) > 24 * 60 * 60 * 1000 && (
-            <div className="mt-2 text-xs text-muted-foreground italic" role="status">
-              Snapshot is more than 24 hours old; prices may have changed.
-            </div>
-          )}
-          <p className="mt-5 max-w-2xl text-muted-foreground leading-relaxed">A snapshot of every position held by the Purdue Student Managed Investment Fund, with cost basis, returns, and portfolio weighting.</p>
+          {quoteData?.cachedAt &&
+            Date.now() - new Date(quoteData.cachedAt).getTime() > 24 * 60 * 60 * 1000 && (
+              <div className="mt-4 text-xs italic text-on-dark-secondary" role="status">
+                Snapshot is more than 24 hours old; prices may have changed.
+              </div>
+            )}
+          <p className="mt-6 max-w-2xl leading-relaxed text-on-dark-secondary">
+            Every position the fund holds, with cost basis, returns, and portfolio weighting.
+          </p>
         </div>
       </section>
       <section className="container-prose py-14 space-y-10">
@@ -336,75 +467,138 @@ function HoldingsPage() {
           </div>
         )}
         <h2 className="sr-only">Portfolio Summary</h2>
-        <Reveal className="grid gap-px bg-border sm:grid-cols-2 lg:grid-cols-4">
-          <KpiCard
+
+        {/* Lead figures — what the page is actually about. */}
+        <div className="grid gap-px bg-border md:grid-cols-3">
+          <MetricTile
             label="Portfolio Value"
-            value={fmtUSD(portfolioSummary.portfolioValue, { maximumFractionDigits: 0 })}
-            animatedValue={<CountUp to={portfolioSummary.portfolioValue} duration={1.8} format={(n) => fmtUSD(n, { maximumFractionDigits: 0 })} />}
-          />
-          <KpiCard
-            label="Cash Holdings"
-            value={fmtUSD(portfolioSummary.cashHoldings, { maximumFractionDigits: 0 })}
-            sub={`${((portfolioSummary.cashHoldings / portfolioSummary.portfolioValue) * 100).toFixed(1)}% of portfolio`}
-            animatedValue={<CountUp to={portfolioSummary.cashHoldings} duration={1.4} format={(n) => fmtUSD(n, { maximumFractionDigits: 0 })} />}
-          />
-          <KpiCard
+            tier="lead"
+            sub={`${fmtUSD(portfolioSummary.cashHoldings, { maximumFractionDigits: 0 })} in cash · ${((portfolioSummary.cashHoldings / portfolioSummary.portfolioValue) * 100).toFixed(1)}%`}
+          >
+            <CountUp
+              to={portfolioSummary.portfolioValue}
+              rollId="holdings-value"
+              format={(n) => fmtUSD(n, { maximumFractionDigits: 0 })}
+            />
+          </MetricTile>
+          <MetricTile
             label="Total Return"
-            value={fmtPct(portfolioSummary.totalReturnPct)}
+            tier="lead"
+            tone={portfolioSummary.totalReturnPct >= 0 ? "positive" : "negative"}
             sub={fmtUSD(portfolioSummary.totalReturn, { maximumFractionDigits: 0 })}
-            accent={portfolioSummary.totalReturnPct >= 0 ? "positive" : "negative"}
-            animatedValue={<CountUp to={portfolioSummary.totalReturnPct} duration={1.6} format={(n) => fmtPct(n)} />}
-          />
-          <KpiCard
+          >
+            <CountUp to={portfolioSummary.totalReturnPct} rollId="holdings-return" format={fmtPct} />
+          </MetricTile>
+          <MetricTile
             label="Day P&L"
-            value={fmtUSD(portfolioSummary.totalDayGain, { maximumFractionDigits: 0 })}
-            sub={fmtPct(portfolioSummary.totalDayChange) + " today"}
-            accent={dayAccent}
-            animatedValue={<CountUp to={portfolioSummary.totalDayGain} duration={1.4} format={(n) => fmtUSD(n, { maximumFractionDigits: 0 })} />}
-          />
-          <KpiCard
-            label="Annualized Volatility"
-            value={volDisplay}
-            muted={noRisk || insufficient}
-            sub={risk?.sufficient ? "Std. dev of daily returns × √252" : undefined}
-            asOf={risk?.sufficient ? riskAsOf : undefined}
-            hint="How much the portfolio's value swings, annualized. Higher means more variable."
-          />
-          <KpiCard
-            label="Sharpe Ratio"
-            value={sharpeDisplay}
-            muted={noRisk || insufficient || risk?.sharpe == null}
-            sub={
-              risk?.sufficient && risk?.riskFreeRatePct != null
-                ? `Excess return per unit risk · rf ${risk.riskFreeRatePct.toFixed(2)}%`
-                : risk?.sufficient
-                ? "Excess return per unit of risk"
-                : undefined
-            }
-            asOf={risk?.sufficient ? riskAsOf : undefined}
-            hint="Return earned above the risk-free rate per unit of volatility. Higher is better."
-          />
-          <KpiCard
-            label="95% 1-Day VaR"
-            value={varDisplay}
-            muted={noRisk || insufficient}
-            sub={varLookbackNote}
-            asOf={risk?.sufficient ? riskAsOf : undefined}
-            hint="On a typical bad day (the worst 5% of days in the lookback window), the portfolio could lose about this much."
-          />
-          <KpiCard
-            label="Gross / Net Exposure"
-            value={exposureDisplay}
-            muted={noRisk || risk?.grossExposurePct == null}
-            sub={
-              risk?.netExposurePct != null
-                ? `Net ${risk.netExposurePct >= 0 ? "+" : ""}${risk.netExposurePct.toFixed(1)}% · long-only book`
-                : undefined
-            }
-            asOf={risk?.grossExposurePct != null ? riskAsOf : undefined}
-            hint="Share of NAV invested in the market. Gross counts all positions, net is longs minus shorts — equal here because the fund is long-only."
-          />
-        </Reveal>
+            tier="lead"
+            tone={dayAccent}
+            sub={`${fmtPct(portfolioSummary.totalDayChange)} today`}
+          >
+            <CountUp
+              to={portfolioSummary.totalDayGain}
+              rollId="holdings-day"
+              format={(n) => fmtUSD(n, { maximumFractionDigits: 0 })}
+            />
+          </MetricTile>
+        </div>
+
+        {/* Risk metrics — supporting evidence, and honest about what isn't
+            computed yet. */}
+        <div>
+          <div className="mb-3 flex items-baseline justify-between gap-4">
+            <h3 className="font-mono text-[10px] font-semibold uppercase tracking-[0.28em] text-muted-foreground">
+              Risk
+            </h3>
+            {risk?.sufficient && riskAsOf && (
+              <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                As of {riskAsOf}
+              </span>
+            )}
+          </div>
+          <div className="grid gap-px bg-border sm:grid-cols-2 lg:grid-cols-4">
+            {riskPending ? (
+              <>
+                <PendingMetric
+                  label="Annualized Volatility"
+                  reason={pendingReason}
+                  eta={pendingEta}
+                />
+                <PendingMetric label="Sharpe Ratio" reason={pendingReason} eta={pendingEta} />
+                <PendingMetric label="95% 1-Day VaR" reason={pendingReason} eta={pendingEta} />
+              </>
+            ) : (
+              <>
+                <MetricTile
+                  label="Annualized Volatility"
+                  value={volDisplay}
+                  sub="Std. dev of daily returns × √252"
+                  hint="How much the portfolio's value swings, annualized. Higher means more variable."
+                />
+                <MetricTile
+                  label="Sharpe Ratio"
+                  value={sharpeDisplay}
+                  sub={
+                    risk?.riskFreeRatePct != null
+                      ? `Excess return per unit risk · rf ${risk.riskFreeRatePct.toFixed(2)}%`
+                      : "Excess return per unit of risk"
+                  }
+                  hint="Return earned above the risk-free rate per unit of volatility. Higher is better."
+                />
+                <MetricTile
+                  label="95% 1-Day VaR"
+                  value={varDisplay}
+                  sub={varLookbackNote}
+                  hint="On a typical bad day (the worst 5% of days in the lookback window), the portfolio could lose about this much."
+                />
+              </>
+            )}
+            {/* Exposure needs no history, so it renders even when the rest
+                can't — it is never part of the pending group. */}
+            {risk?.grossExposurePct != null ? (
+              <MetricTile
+                label="Gross / Net Exposure"
+                value={exposureDisplay}
+                sub={
+                  risk.netExposurePct != null
+                    ? `Net ${risk.netExposurePct >= 0 ? "+" : ""}${risk.netExposurePct.toFixed(1)}% · long-only book`
+                    : undefined
+                }
+                hint="Share of NAV invested in the market. Gross counts all positions, net is longs minus shorts — equal here because the fund is long-only."
+              />
+            ) : (
+              <MetricTile
+                label="Weighted Beta"
+                value={fmtNum(portfolioSummary.weightedBeta)}
+                sub="vs. 1.00 S&P 500"
+                hint="How much the book moves for a given move in the index."
+              />
+            )}
+          </div>
+        </div>
+
+        {/* Concentration — derived, never hardcoded. SPY being 41% of the book
+            is the single most important fact on this page and it was invisible
+            in an eleven-column table. */}
+        {concentration && (
+          <div className="border-l-2 border-gold bg-secondary/40 px-6 py-5">
+            <div className="font-mono text-[10px] font-semibold uppercase tracking-[0.28em] text-gold-deep">
+              Concentration
+            </div>
+            <p className="mt-2 max-w-3xl text-lg leading-snug text-ink">
+              <span className="font-semibold">{concentration.symbol}</span> is{" "}
+              <span className="font-semibold">{concentration.pct.toFixed(1)}%</span> of the book
+              {concentration.multiple >= 1.5 && (
+                <>
+                  {" — "}
+                  {concentration.multiple.toFixed(1)}× the next largest position (
+                  {concentration.runnerUp})
+                </>
+              )}
+              . The top five positions are {concentration.topFivePct.toFixed(1)}% of the portfolio.
+            </p>
+          </div>
+        )}
 
         <h2 className="sr-only">Sector Allocation</h2>
         <Reveal className="grid gap-px bg-border md:grid-cols-3">
@@ -535,6 +729,13 @@ function HoldingsPage() {
                 );
               })
             )}
+            <button
+              onClick={() => setShowAllCols((v) => !v)}
+              aria-pressed={showAllCols}
+              className="press hidden min-h-11 items-center border border-border bg-background px-3 py-2.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground hover:border-ink hover:text-foreground md:inline-flex cursor-pointer"
+            >
+              {showAllCols ? "Fewer columns" : "More columns"}
+            </button>
           </div>
         </div>
 
@@ -592,7 +793,104 @@ function HoldingsPage() {
             </div>
 
             {/* Desktop: full table */}
-            <div className="hidden md:block overflow-x-auto border border-border"><table className="w-full text-left text-sm"><caption className="sr-only">Portfolio holdings, sortable by column</caption><thead className="bg-ink text-background"><tr>{cols.map((c) => { const ariaSort: "ascending" | "descending" | "none" = sortKey === c.k ? (sortDir === "asc" ? "ascending" : "descending") : "none"; return (<th key={c.k} aria-sort={ariaSort} className={`px-4 py-3 text-xs font-semibold uppercase tracking-[0.14em] whitespace-nowrap ${c.align === "right" ? "text-right" : ""}`}><button onClick={() => toggleSort(c.k)} className={`inline-flex items-center gap-1.5 hover:text-gold transition-colors duration-150 cursor-pointer ${c.align === "right" ? "ml-auto" : ""}`}>{c.label}<SortIcon active={sortKey === c.k} dir={sortDir} /></button></th>); })}</tr></thead><tbody>{rows.map((h, idx) => (<tr key={h.symbol} className={`border-t border-border hover:bg-secondary/50 transition-colors duration-150 ${idx % 2 === 0 ? "" : "bg-secondary/20"}`}><td className="px-4 py-3 font-medium whitespace-nowrap">{h.company}</td><td className="px-4 py-3 font-mono font-bold text-gold-deep tracking-wider">{h.symbol}</td><td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">{h.industry}</td><td className="px-4 py-3 text-right font-mono">{fmtUSD(h.price)}</td><td className="px-4 py-3 text-right font-mono text-muted-foreground">{fmtNum(h.beta)}</td><td className="px-4 py-3 text-right font-mono">{h.shares.toLocaleString()}</td><td className="px-4 py-3 text-right font-mono">{fmtUSD(h.value, { maximumFractionDigits: 0 })}</td><td className={`px-4 py-3 text-right font-mono font-medium ${h.dayChange >= 0 ? "text-gain" : "text-loss"}`}><span className="inline-flex items-center justify-end gap-0.5">{h.dayChange >= 0 ? <ArrowUp className="h-3 w-3" aria-hidden="true" /> : <ArrowDown className="h-3 w-3" aria-hidden="true" />}{fmtPct(h.dayChange)}</span></td><td className={`px-4 py-3 text-right font-mono ${h.totalReturn >= 0 ? "text-gain" : "text-loss"}`}>{fmtUSD(h.totalReturn, { maximumFractionDigits: 0 })}</td><td className={`px-4 py-3 text-right font-mono font-semibold ${h.returnPct >= 0 ? "text-gain" : "text-loss"}`}><span className="inline-flex items-center justify-end gap-0.5">{h.returnPct >= 0 ? <ArrowUp className="h-3 w-3" aria-hidden="true" /> : <ArrowDown className="h-3 w-3" aria-hidden="true" />}{fmtPct(h.returnPct)}</span></td><td className="px-4 py-3 text-right font-mono text-muted-foreground">{h.allocation.toFixed(2)}%</td></tr>))}</tbody><tfoot className="bg-secondary/60 border-t-2 border-ink font-semibold"><tr><td className="px-4 py-4" colSpan={6}>Total · {rows.length} position{rows.length !== 1 ? "s" : ""}</td><td className="px-4 py-4 text-right font-mono">{fmtUSD(rows.reduce((s, r) => s + r.value, 0), { maximumFractionDigits: 0 })}</td><td className="px-4 py-4 text-right font-mono text-muted-foreground"><span aria-hidden="true">-</span><span className="sr-only">Not applicable</span></td><td className={`px-4 py-4 text-right font-mono ${rows.reduce((s, r) => s + r.totalReturn, 0) >= 0 ? "text-gain" : "text-loss"}`}>{fmtUSD(rows.reduce((s, r) => s + r.totalReturn, 0), { maximumFractionDigits: 0 })}</td><td className="px-4 py-4" /><td className="px-4 py-4 text-right font-mono">{rows.reduce((s, r) => s + r.allocation, 0).toFixed(2)}%</td></tr></tfoot></table></div>
+            <div className="hidden md:block overflow-x-auto border border-border">
+              <table className="w-full text-left text-sm">
+                <caption className="sr-only">
+                  Portfolio holdings, sortable by column. Weight is shown as a bar
+                  proportional to the largest position.
+                </caption>
+                <thead className="bg-ink text-background">
+                  <tr>
+                    {cols.map((c) => {
+                      const ariaSort: "ascending" | "descending" | "none" =
+                        sortKey === c.k ? (sortDir === "asc" ? "ascending" : "descending") : "none";
+                      return (
+                        <th
+                          key={c.k}
+                          aria-sort={ariaSort}
+                          className={`whitespace-nowrap px-4 py-3 text-xs font-semibold uppercase tracking-[0.14em] ${c.align === "right" ? "text-right" : ""}`}
+                        >
+                          <button
+                            onClick={() => toggleSort(c.k)}
+                            className={`inline-flex cursor-pointer items-center gap-1.5 transition-colors duration-150 hover:text-gold ${c.align === "right" ? "ml-auto" : ""}`}
+                          >
+                            {c.label}
+                            <SortIcon active={sortKey === c.k} dir={sortDir} />
+                          </button>
+                        </th>
+                      );
+                    })}
+                  </tr>
+                </thead>
+                <tbody>
+                  {rows.map((h, idx) => (
+                    <motion.tr
+                      key={h.symbol}
+                      // FLIP: filtering and sorting slide rows to their new
+                      // positions instead of hard re-rendering the table.
+                      layout={reduce ? false : "position"}
+                      transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                      // Row cascade, capped at the first 12 rows: everything
+                      // after appears instantly rather than dragging the
+                      // entrance out down a long book.
+                      initial={reduce ? false : { opacity: 0, y: 6 }}
+                      animate={{
+                        opacity: 1,
+                        y: 0,
+                        transition: { duration: 0.22, delay: Math.min(idx, 11) * 0.024 },
+                      }}
+                      className={`border-t border-border transition-colors duration-150 hover:bg-secondary/50 ${idx % 2 === 0 ? "" : "bg-secondary/20"}`}
+                    >
+                      {cols.map((c) => (
+                        <td
+                          key={c.k}
+                          className={cellClass(c.k, h)}
+                        >
+                          {renderCell(c.k, h, maxAllocation)}
+                        </td>
+                      ))}
+                    </motion.tr>
+                  ))}
+                </tbody>
+                <tfoot className="border-t-2 border-ink bg-secondary/60 font-semibold">
+                  <tr>
+                    {/* Rendered per column rather than with a fixed colSpan, so
+                        the totals stay under their own headings whichever
+                        column set is showing. */}
+                    {cols.map((c, i) =>
+                      i === 0 ? (
+                        <td key={c.k} className="px-4 py-4">
+                          Total · {rows.length} position{rows.length !== 1 ? "s" : ""}
+                        </td>
+                      ) : c.k === "value" ? (
+                        <td key={c.k} className="px-4 py-4 text-right font-mono">
+                          {fmtUSD(
+                            rows.reduce((s, r) => s + r.value, 0),
+                            { maximumFractionDigits: 0 },
+                          )}
+                        </td>
+                      ) : c.k === "totalReturn" ? (
+                        <td
+                          key={c.k}
+                          className={`px-4 py-4 text-right font-mono ${rows.reduce((s, r) => s + r.totalReturn, 0) >= 0 ? "text-gain" : "text-loss"}`}
+                        >
+                          {fmtUSD(
+                            rows.reduce((s, r) => s + r.totalReturn, 0),
+                            { maximumFractionDigits: 0 },
+                          )}
+                        </td>
+                      ) : c.k === "allocation" ? (
+                        <td key={c.k} className="px-4 py-4 text-right font-mono">
+                          {rows.reduce((s, r) => s + r.allocation, 0).toFixed(2)}%
+                        </td>
+                      ) : (
+                        <td key={c.k} className="px-4 py-4" />
+                      ),
+                    )}
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
           </>
         )}
 
