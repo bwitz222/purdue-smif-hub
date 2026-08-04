@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
+import { memberDirectory } from "@/data/team";
 
 const BASE_URL = "https://www.purduesmif.org";
 
@@ -29,6 +30,13 @@ export const Route = createFileRoute("/sitemap.xml")({
           { path: "/apply",        changefreq: "monthly", priority: "0.7" },
           { path: "/contact",      changefreq: "yearly",  priority: "0.5" },
         ];
+
+        // One entry per member profile. These are the pages a recruiter
+        // searching an analyst's name can actually land on, so they belong in
+        // the sitemap rather than relying on discovery through /team alone.
+        for (const { slug } of memberDirectory) {
+          entries.push({ path: `/team/${slug}`, changefreq: "monthly", priority: "0.5" });
+        }
 
         const urls = entries.map((e) =>
           [

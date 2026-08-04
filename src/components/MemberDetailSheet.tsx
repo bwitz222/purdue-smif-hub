@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import { Mail, Linkedin } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
+import { Link } from "@tanstack/react-router";
 import { memberEmail, memberPhotoCandidates, type Member } from "@/components/MemberCard";
+import { memberSlug } from "@/data/team";
 
 export function MemberDetailSheet({
   member,
@@ -74,6 +76,13 @@ function MemberDetail({ m }: { m: Member }) {
         </div>
       </div>
       <div className="p-6 space-y-6">
+        <Link
+          to="/team/$slug"
+          params={{ slug: memberSlug(m.name) }}
+          className="press inline-flex w-full items-center justify-center gap-2 border border-ink px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.16em] hover:bg-ink hover:text-background"
+        >
+          View full profile
+        </Link>
         {m.bio && (
           <div>
             <div className="text-[10px] font-semibold uppercase tracking-[0.28em] text-gold-deep mb-2">Bio</div>

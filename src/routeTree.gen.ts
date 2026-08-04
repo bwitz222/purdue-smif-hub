@@ -22,7 +22,8 @@ import { Route as RecruitingRouteImport } from './routes/recruiting'
 import { Route as ResearchRouteImport } from './routes/research'
 import { Route as SectorsRouteImport } from './routes/sectors'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as TeamRouteImport } from './routes/team'
+import { Route as TeamIndexRouteImport } from './routes/team.index'
+import { Route as TeamSlugRouteImport } from './routes/team.$slug'
 import { Route as ApiPublicHooksComputeRiskRouteImport } from './routes/api/public/hooks/compute-risk'
 import { Route as ApiPublicHooksRefreshQuotesRouteImport } from './routes/api/public/hooks/refresh-quotes'
 
@@ -91,9 +92,14 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TeamRoute = TeamRouteImport.update({
-  id: '/team',
-  path: '/team',
+const TeamIndexRoute = TeamIndexRouteImport.update({
+  id: '/team/',
+  path: '/team/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TeamSlugRoute = TeamSlugRouteImport.update({
+  id: '/team/$slug',
+  path: '/team/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicHooksComputeRiskRoute =
@@ -123,7 +129,8 @@ export interface FileRoutesByFullPath {
   '/research': typeof ResearchRoute
   '/sectors': typeof SectorsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/team': typeof TeamRoute
+  '/team/$slug': typeof TeamSlugRoute
+  '/team/': typeof TeamIndexRoute
   '/api/public/hooks/compute-risk': typeof ApiPublicHooksComputeRiskRoute
   '/api/public/hooks/refresh-quotes': typeof ApiPublicHooksRefreshQuotesRoute
 }
@@ -141,7 +148,8 @@ export interface FileRoutesByTo {
   '/research': typeof ResearchRoute
   '/sectors': typeof SectorsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/team': typeof TeamRoute
+  '/team/$slug': typeof TeamSlugRoute
+  '/team': typeof TeamIndexRoute
   '/api/public/hooks/compute-risk': typeof ApiPublicHooksComputeRiskRoute
   '/api/public/hooks/refresh-quotes': typeof ApiPublicHooksRefreshQuotesRoute
 }
@@ -160,7 +168,8 @@ export interface FileRoutesById {
   '/research': typeof ResearchRoute
   '/sectors': typeof SectorsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/team': typeof TeamRoute
+  '/team/$slug': typeof TeamSlugRoute
+  '/team/': typeof TeamIndexRoute
   '/api/public/hooks/compute-risk': typeof ApiPublicHooksComputeRiskRoute
   '/api/public/hooks/refresh-quotes': typeof ApiPublicHooksRefreshQuotesRoute
 }
@@ -180,7 +189,8 @@ export interface FileRouteTypes {
     | '/research'
     | '/sectors'
     | '/sitemap.xml'
-    | '/team'
+    | '/team/$slug'
+    | '/team/'
     | '/api/public/hooks/compute-risk'
     | '/api/public/hooks/refresh-quotes'
   fileRoutesByTo: FileRoutesByTo
@@ -198,6 +208,7 @@ export interface FileRouteTypes {
     | '/research'
     | '/sectors'
     | '/sitemap.xml'
+    | '/team/$slug'
     | '/team'
     | '/api/public/hooks/compute-risk'
     | '/api/public/hooks/refresh-quotes'
@@ -216,7 +227,8 @@ export interface FileRouteTypes {
     | '/research'
     | '/sectors'
     | '/sitemap.xml'
-    | '/team'
+    | '/team/$slug'
+    | '/team/'
     | '/api/public/hooks/compute-risk'
     | '/api/public/hooks/refresh-quotes'
   fileRoutesById: FileRoutesById
@@ -235,7 +247,8 @@ export interface RootRouteChildren {
   ResearchRoute: typeof ResearchRoute
   SectorsRoute: typeof SectorsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
-  TeamRoute: typeof TeamRoute
+  TeamSlugRoute: typeof TeamSlugRoute
+  TeamIndexRoute: typeof TeamIndexRoute
   ApiPublicHooksComputeRiskRoute: typeof ApiPublicHooksComputeRiskRoute
   ApiPublicHooksRefreshQuotesRoute: typeof ApiPublicHooksRefreshQuotesRoute
 }
@@ -333,11 +346,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/team': {
-      id: '/team'
+    '/team/': {
+      id: '/team/'
       path: '/team'
-      fullPath: '/team'
-      preLoaderRoute: typeof TeamRouteImport
+      fullPath: '/team/'
+      preLoaderRoute: typeof TeamIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/team/$slug': {
+      id: '/team/$slug'
+      path: '/team/$slug'
+      fullPath: '/team/$slug'
+      preLoaderRoute: typeof TeamSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/hooks/compute-risk': {
@@ -371,7 +391,8 @@ const rootRouteChildren: RootRouteChildren = {
   ResearchRoute: ResearchRoute,
   SectorsRoute: SectorsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
-  TeamRoute: TeamRoute,
+  TeamSlugRoute: TeamSlugRoute,
+  TeamIndexRoute: TeamIndexRoute,
   ApiPublicHooksComputeRiskRoute: ApiPublicHooksComputeRiskRoute,
   ApiPublicHooksRefreshQuotesRoute: ApiPublicHooksRefreshQuotesRoute,
 }
