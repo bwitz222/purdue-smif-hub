@@ -78,6 +78,26 @@
   --gradient-gold: linear-gradient(135deg, #CEB888 0%, #8E6F3E 100%);
   --shadow-elegant: 0 24px 60px -20px rgba(10,10,10,0.22);
   --shadow-gold:    0 10px 40px -10px rgba(142,111,62,0.35);
+
+  /* ── Motion system ────────────────────────────────────────────────────────
+     Ten motions, four tiers of duration. Every animation on this site reads
+     its timing from here so the whole surface shares one tempo. The rule for
+     shipping any of them: it clarifies a number, a state change, or a
+     relationship. Decoration doesn't ship.
+
+     Everything animates transform and opacity ONLY — never a property that
+     triggers layout — and nothing ever delays a figure being readable or a
+     link being clickable. */
+  --dur-micro:   120ms;  /* hover, press                    */
+  --dur-element: 220ms;  /* element enter, exit, FLIP       */
+  --dur-section: 420ms;  /* section reveal                  */
+  --dur-data:    900ms;  /* data roll, bar draw             */
+  --dur-roll:   1200ms;  /* live number roll                */
+  --dur-draw:   1600ms;  /* chart path draw                 */
+  --dur-sweep:   620ms;  /* section hairline sweep          */
+  --dur-tick:    180ms;  /* countdown digit flip            */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-standard: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 
@@ -163,26 +183,26 @@
 
   /* Tactile press for buttons, chips, and clickable rows. */
   .press {
-    transition: transform 0.12s cubic-bezier(0.22, 1, 0.36, 1),
+    transition: transform var(--dur-micro) var(--ease-standard),
                 box-shadow 0.2s ease, background-color 0.2s ease,
                 border-color 0.2s ease, color 0.2s ease;
   }
   .press:active { transform: scale(0.97); }
 
-  /* Card elevation on hover — gold border + elegant shadow, matches MemberCard. */
+  /* Card lift. Motion spec: the border warms to gold and the elegant shadow
+     fades in over 120ms. NO scale, NO translate — a card that jumps under the
+     cursor makes a dense page feel unstable, and on data surfaces it shifts
+     figures the reader is mid-scan on. */
   .hover-lift,
-  .hover-lift-sm {
-    transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
-                box-shadow 0.22s ease, border-color 0.22s ease;
+  .hover-lift-sm,
+  .hover-raise {
+    transition: box-shadow var(--dur-micro) ease,
+                border-color var(--dur-micro) ease;
   }
-  .hover-lift:hover {
-    transform: translateY(-3px);
+  .hover-lift:hover,
+  .hover-lift-sm:hover {
     box-shadow: var(--shadow-elegant);
     border-color: var(--gold);
-  }
-  .hover-lift-sm:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-elegant);
   }
 
   /* Left-anchored underline that wipes in on hover/focus (for text links). */
@@ -202,19 +222,18 @@
   .link-underline:hover::after,
   .link-underline:focus-visible::after { transform: scaleX(1); }
 
-  /* Arrow/icon that nudges forward when its .group parent is hovered. */
-  .arrow-slide { transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1); }
-  .group:hover .arrow-slide { transform: translateX(4px); }
+  /* Arrow nudge: the arrow inside a CTA travels 3px right, 120ms. */
+  .arrow-slide { transition: transform var(--dur-micro) var(--ease-standard); }
+  .group:hover .arrow-slide { transform: translateX(3px); }
 
   /* Icon that swells slightly with its .group parent — for links whose
      affordance is the glyph (social, download, external) rather than an arrow. */
-  .icon-pop { transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1); }
+  .icon-pop { transition: transform var(--dur-micro) var(--ease-standard); }
   .group:hover .icon-pop { transform: scale(1.12); }
 
-  /* Numeric/stat surfaces: a restrained lift with no border recolor, so dense
-     data grids don't strobe gold on every pointer move. */
-  .hover-raise { transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.22s ease; }
-  .hover-raise:hover { transform: translateY(-2px); box-shadow: var(--shadow-gold); }
+  /* Numeric/stat surfaces: shadow only, no border recolor, so dense data grids
+     don't strobe gold on every pointer move. */
+  .hover-raise:hover { box-shadow: var(--shadow-gold); }
 
   /* Row hover for tabular/list data — a gold rail wipes down the left edge
      instead of a transform, which would misalign columns mid-scan. */
@@ -233,10 +252,26 @@
   }
   .row-rail:hover::before,
   .row-rail:focus-visible::before { transform: scaleY(1); }
+
+  /* Hairline sweep — a 2px gold rule that scales in from the left as its
+     section enters the viewport. This is the ONLY scroll-triggered motion in
+     the system; it replaces fade-up-everything. `data-swept` is set by
+     useInViewOnce (src/lib/use-in-view-once.ts). */
+  .hairline-sweep {
+    display: block;
+    height: 2px;
+    background: var(--gradient-gold);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--dur-sweep) var(--ease-out-expo);
+    transition-delay: var(--sweep-delay, 0ms);
+  }
+  .hairline-sweep[data-swept="true"] { transform: scaleX(1); }
+
   .ticker-wrap  { overflow: hidden; white-space: nowrap; }
   .ticker-inner {
     display: inline-flex;
-    animation: ticker 32s linear infinite;
+    animation: ticker 40s linear infinite;
   }
   .ticker-inner:hover { animation-play-state: paused; }
   @keyframes ticker {
@@ -255,16 +290,13 @@
     from { transform: scaleX(0); transform-origin: left; }
     to   { transform: scaleX(1); transform-origin: left; }
   }
-  /* Slow drift for hero imagery — paired with an opacity overlay so the
-     scale never reads as zoom-jank. transform-only: no layout cost. */
-  @keyframes ken-burns {
-    from { transform: scale(1); }
-    to   { transform: scale(1.07); }
-  }
-  .animate-fade-up   { animation: fade-up   0.72s cubic-bezier(0.22,1,0.36,1) both; }
-  .animate-fade-in   { animation: fade-in   0.55s ease both; }
-  .animate-expand-x  { animation: expand-x  0.65s cubic-bezier(0.22,1,0.36,1) both; }
-  .animate-ken-burns { animation: ken-burns 24s cubic-bezier(0.22,1,0.36,1) both; }
+  /* NOTE: `ken-burns` was removed with the motion system. A slow scale on the
+     hero photograph clarified nothing — it only decorated — and the rule for
+     every motion here is that it explains a number, a state change, or a
+     relationship. Don't reintroduce it. */
+  .animate-fade-up   { animation: fade-up   var(--dur-section) var(--ease-out-expo) both; }
+  .animate-fade-in   { animation: fade-in   var(--dur-element) ease both; }
+  .animate-expand-x  { animation: expand-x  var(--dur-sweep) var(--ease-out-expo) both; }
   .delay-100 { animation-delay: 100ms; }
   .delay-200 { animation-delay: 200ms; }
   .delay-300 { animation-delay: 300ms; }
@@ -274,11 +306,14 @@
   .delay-700 { animation-delay: 700ms; }
   .scrollbar-none { scrollbar-width: none; -ms-overflow-style: none; }
   .scrollbar-none::-webkit-scrollbar { display: none; }
+  /* Reduced motion is a first-class path, not a fallback. Every duration
+     collapses to zero and opacity-only transitions remain: numbers appear
+     final, charts appear drawn, rules appear at full width, the tape stops.
+     Nothing is ever left mid-animation or stuck at opacity 0. */
   @media (prefers-reduced-motion: reduce) {
     .animate-fade-up,
     .animate-fade-in,
     .animate-expand-x,
-    .animate-ken-burns,
     .ticker-inner { animation: none !important; opacity: 1 !important; }
     .press,
     .hover-lift,
@@ -287,16 +322,15 @@
     .arrow-slide,
     .icon-pop,
     .row-rail::before,
+    .hairline-sweep,
     .link-underline::after { transition: none !important; }
     .press:active,
-    .hover-lift:hover,
-    .hover-lift-sm:hover,
-    .hover-raise:hover,
     .group:hover .arrow-slide,
     .group:hover .icon-pop { transform: none !important; }
-    /* The rail stays a hover affordance under reduced motion — it just
-       appears instead of wiping in. */
+    /* The rail and the section rule stay visible affordances under reduced
+       motion — they just appear instead of wiping in. */
     .row-rail:hover::before,
     .row-rail:focus-visible::before { transform: scaleY(1) !important; }
+    .hairline-sweep { transform: scaleX(1) !important; }
   }
 }

@@ -1,64 +1,51 @@
-import { motion, useReducedMotion, type Variants } from "framer-motion";
-import { useEffect, useState, type ReactNode } from "react";
+import { motion, useReducedMotion } from "framer-motion";
+import { Children, useEffect, useState, type ReactNode } from "react";
+
+/**
+ * ── Why this file no longer fades anything up ───────────────────────────────
+ *
+ * `Reveal` used to fade-and-lift every block on every page as it scrolled into
+ * view. Under the motion system that pass is gone: the hairline sweep on
+ * section heads (see SectionRule.tsx) is the only scroll-triggered motion on
+ * the site. An institutional site earns trust by being calm, and content that
+ * animates simply because it exists is decoration — it clarifies no number, no
+ * state change, and no relationship.
+ *
+ * `Reveal` is kept as a transparent wrapper rather than deleted so the ~40 call
+ * sites across eleven routes keep their layout classNames without a mechanical
+ * rename. It renders a plain <div>. `delay` and `y` are accepted and ignored.
+ *
+ * `RevealGroup` / `RevealItem` were repurposed into the ROW CASCADE: rows enter
+ * on a 24ms stagger, capped at the first 12, and everything after that appears
+ * instantly. Use them for tabular and list data (holdings rows, the research
+ * list) — not for cards, sections, or prose.
+ */
 
 interface RevealProps {
   children: ReactNode;
+  /** Accepted for call-site compatibility. No longer has any effect. */
   delay?: number;
+  /** Accepted for call-site compatibility. No longer has any effect. */
   y?: number;
   className?: string;
   as?: "div" | "section" | "li" | "span";
 }
 
-/**
- * Scroll-triggered fade-up wrapper. Animates once when 15% in view.
- *
- * Renders content visible by default for SSR/no-JS/crawlers — only switches
- * to the framer-motion variant after hydration. This prevents shipping
- * `opacity:0` HTML to anyone whose JS hasn't booted yet.
- */
+export function Reveal({ children, className, as = "div" }: RevealProps) {
+  const Tag = as;
+  return <Tag className={className}>{children}</Tag>;
+}
+
 function useHasMounted() {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
   return mounted;
 }
 
-export function Reveal({ children, delay = 0, y = 24, className, as = "div" }: RevealProps) {
-  const reduce = useReducedMotion();
-  const mounted = useHasMounted();
-  const Tag = motion[as] as typeof motion.div;
-
-  if (reduce || !mounted) {
-    return <div className={className}>{children}</div>;
-  }
-
-  const variants: Variants = {
-    hidden: { opacity: 0, y },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.72, ease: [0.22, 1, 0.36, 1], delay },
-    },
-  };
-
-  return (
-    <Tag
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, amount: 0.15 }}
-      variants={variants}
-      className={className}
-    >
-      {children}
-    </Tag>
-  );
-}
-
-/** Stagger children with `<RevealItem>` items inside. */
-import { Children } from "react";
-
+/** Row cascade — 24ms stagger, capped at the first 12 children. */
 export function RevealGroup({
   children,
-  stagger = 0.08,
+  stagger = 0.024,
   className,
 }: {
   children: ReactNode;
@@ -67,19 +54,21 @@ export function RevealGroup({
 }) {
   const reduce = useReducedMotion();
   const mounted = useHasMounted();
+  // Render visible markup for SSR, crawlers, and no-JS: never ship opacity:0.
   if (reduce || !mounted) return <div className={className}>{children}</div>;
-  // Cap total stagger time at 600ms so long lists don't drag the entrance out.
+
   const count = Math.max(1, Children.count(children));
-  const cappedStagger = Math.min(stagger, 0.6 / count);
+  // Cap the total cascade at 12 rows' worth (~288ms). Row 13 onward inherits
+  // the parent's `visible` state immediately, so a 40-row table doesn't spend
+  // a second filling in.
+  const cappedStagger = Math.min(stagger, (stagger * 12) / count);
+
   return (
     <motion.div
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, amount: 0.15 }}
-      variants={{
-        hidden: {},
-        visible: { transition: { staggerChildren: cappedStagger } },
-      }}
+      viewport={{ once: true, amount: 0.05 }}
+      variants={{ hidden: {}, visible: { transition: { staggerChildren: cappedStagger } } }}
       className={className}
     >
       {children}
@@ -89,7 +78,7 @@ export function RevealGroup({
 
 export function RevealItem({
   children,
-  y = 20,
+  y = 8,
   className,
 }: {
   children: ReactNode;
@@ -103,7 +92,7 @@ export function RevealItem({
     <motion.div
       variants={{
         hidden: { opacity: 0, y },
-        visible: { opacity: 1, y: 0, transition: { duration: 0.62, ease: [0.22, 1, 0.36, 1] } },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.22, ease: [0.16, 1, 0.3, 1] } },
       }}
       className={className}
     >

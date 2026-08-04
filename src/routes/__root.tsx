@@ -149,7 +149,11 @@ function RootShell({ children }: { children: React.ReactNode }) {
   return (<html lang="en"><head><HeadContent /></head><body>{children}<Scripts /></body></html>);
 }
 
-/** Short crossfade between routes — keeps transitions feeling deliberate, not jumpy. */
+/**
+ * Route change: an 8px rise and fade over 220ms, on the main column only.
+ * The header, footer, and nav sit outside this boundary and never re-animate —
+ * chrome that reappears on every navigation reads as a page reload.
+ */
 function RouteTransition({ children }: { children: React.ReactNode }) {
   const reduce = useReducedMotion();
   const location = useLocation();
@@ -158,10 +162,10 @@ function RouteTransition({ children }: { children: React.ReactNode }) {
     <AnimatePresence mode="wait" initial={false}>
       <motion.div
         key={location.pathname}
-        initial={{ opacity: 0, y: 6 }}
+        initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -4 }}
-        transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
       >
         {children}
       </motion.div>

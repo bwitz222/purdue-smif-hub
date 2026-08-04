@@ -11,6 +11,34 @@ interface CountUpProps {
   /** Format the numeric value. Receives the current number, returns a string. */
   format?: (n: number) => string;
   className?: string;
+  /**
+   * Stable identity for this figure. When set, the roll runs once per browser
+   * session: navigating back to a page you've already seen shows the number at
+   * rest rather than replaying the count. Omit for figures that should roll on
+   * every mount.
+   */
+  rollId?: string;
+}
+
+const SESSION_PREFIX = "smif:rolled:";
+
+function alreadyRolled(rollId: string | undefined): boolean {
+  if (!rollId || typeof window === "undefined") return false;
+  try {
+    return window.sessionStorage.getItem(SESSION_PREFIX + rollId) === "1";
+  } catch {
+    // Private mode / storage disabled — just roll.
+    return false;
+  }
+}
+
+function markRolled(rollId: string | undefined): void {
+  if (!rollId || typeof window === "undefined") return;
+  try {
+    window.sessionStorage.setItem(SESSION_PREFIX + rollId, "1");
+  } catch {
+    /* storage unavailable; nothing to remember */
+  }
 }
 
 /**
@@ -29,12 +57,13 @@ interface CountUpProps {
 export function CountUp({
   to,
   from = 0,
-  duration = 1.6,
+  duration = 1.2,
   decimals = 0,
   prefix = "",
   suffix = "",
   format,
   className,
+  rollId,
 }: CountUpProps) {
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, margin: "-10% 0px" });
@@ -48,11 +77,12 @@ export function CountUp({
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    // Before the count-up runs (not in view yet) or when reduced-motion is on,
-    // always show the current final value. This keeps late/updated `to` values
-    // (e.g. a live-quote refresh changing a KPI) in sync instead of leaving the
+    // Before the count-up runs (not in view yet), when reduced-motion is on, or
+    // when this figure already rolled earlier in the session, always show the
+    // current final value. This keeps late/updated `to` values (e.g. a
+    // live-quote refresh changing a KPI) in sync instead of leaving the
     // first-paint number frozen on screen.
-    if (!inView || reduce) {
+    if (!inView || reduce || (!startedRef.current && alreadyRolled(rollId))) {
       setDisplay(to);
       return;
     }
@@ -63,6 +93,7 @@ export function CountUp({
     // we animate from the current value so the headline tracks the new data.
     const start = startedRef.current ? mv.get() : from;
     startedRef.current = true;
+    markRolled(rollId);
 
     let stop: (() => void) | undefined;
     const raf = requestAnimationFrame(() => {
@@ -70,7 +101,7 @@ export function CountUp({
       setDisplay(start);
       const controls = animate(mv, to, {
         duration,
-        ease: [0.22, 1, 0.36, 1],
+        ease: [0.16, 1, 0.3, 1], // out-expo
         onUpdate: (v) => setDisplay(v),
       });
       stop = () => controls.stop();
@@ -80,7 +111,7 @@ export function CountUp({
       cancelAnimationFrame(raf);
       stop?.();
     };
-  }, [inView, to, from, duration, mv]);
+  }, [inView, to, from, duration, mv, rollId]);
 
   const formatted = format
     ? format(display)
@@ -89,8 +120,12 @@ export function CountUp({
         maximumFractionDigits: decimals,
       })}${suffix}`;
 
+  // Tabular figures are load-bearing, not typographic polish: without them the
+  // glyph widths change every frame and the number's box jitters as it rolls.
+  // The global rule in styles.css only covers `table` and `.font-mono`, and
+  // most rolled figures here are set in the display serif.
   return (
-    <span ref={ref} className={className}>
+    <span ref={ref} className={className} style={{ fontVariantNumeric: "tabular-nums" }}>
       {formatted}
     </span>
   );
