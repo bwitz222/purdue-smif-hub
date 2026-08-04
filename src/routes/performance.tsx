@@ -9,6 +9,9 @@ import {
 } from "recharts";
 import { socialMeta, canonical, breadcrumbLd, OG_PERFORMANCE } from "@/lib/seo";
 import { Reveal } from "@/components/Reveal";
+import { MetricTile, type MetricTone } from "@/components/MetricTile";
+import { PerformanceLede } from "@/components/PerformanceLede";
+import { useDrawOnce } from "@/lib/use-draw-once";
 import {
   getFundPerformance,
   getFundMonthlyHistory,
@@ -68,6 +71,12 @@ const fmtRatio    = (v: number) => v.toFixed(2);       // Sharpe, beta, correlat
 
 const SMIF_COLOR  = "#CEB888";
 const BENCH_COLOR = "#6B6860";
+
+// Chart draw: the fund path strokes left to right over 1600ms and the
+// benchmark trails it by 120ms, so the eye reads "us, then the index" rather
+// than two lines racing. Both draw once, on first view only — see useDrawOnce.
+const DRAW_MS = 1600;
+const BENCH_TRAIL_MS = 120;
 
 const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 function formatMonth(iso: string): string {
@@ -133,6 +142,12 @@ function Performance() {
   const [incMode,   setIncMode]   = useState<IncMode>("growth");
   const [incSeries, setIncSeries] = useState<Series>("both");
 
+  // One draw per chart, on first view. Without this, every Growth / Drawdown /
+  // Rolling toggle would replay a 1.6s entrance — a counter that re-runs on
+  // every pass, in chart form.
+  const inceptionDraw = useDrawOnce(DRAW_MS);
+  const annualDraw = useDrawOnce(DRAW_MS);
+
   const initial = Route.useLoaderData();
 
   const fetchPerf = useServerFn(getFundPerformance);
@@ -177,18 +192,28 @@ function Performance() {
 
   // Risk & return analytics — derived server-side from the monthly series.
   type Tone = "pos" | "neg" | "neutral";
-  const toneClass = (t: Tone) => (t === "pos" ? "text-gain" : t === "neg" ? "text-loss" : "text-ink");
+  const toneOf = (t: Tone): MetricTone =>
+    t === "pos" ? "positive" : t === "neg" ? "negative" : "neutral";
   const a = monthlyData?.analytics;
-  const analyticsPrimary: { l: string; v: string; tone: Tone; sub: string }[] = a
+  const lastPoint = monthlyData?.series?.[monthlyData.series.length - 1];
+
+  // The three the lede argues about: what the fund returned, and the two
+  // figures that say whether that return came from skill or from exposure.
+  const analyticsLead: { l: string; v: string; tone: Tone; sub: string }[] = a
     ? [
-        { l: "Cumulative Return",     v: fmtPct(a.cumulative_return_pct),      tone: a.cumulative_return_pct >= 0 ? "pos" : "neg", sub: "Since inception" },
-        { l: "Annualized Volatility", v: fmtPctPlain(a.annualized_vol_pct),    tone: "neutral", sub: "Std. dev × √12" },
-        { l: "Sharpe Ratio",          v: fmtRatio(a.sharpe),                   tone: a.sharpe >= 0 ? "pos" : "neg", sub: "rf 0%" },
-        { l: "Sortino Ratio",         v: fmtRatio(a.sortino),                  tone: a.sortino >= 0 ? "pos" : "neg", sub: "Downside, rf 0%" },
-        { l: "Beta vs S&P 500",       v: fmtRatio(a.beta),                     tone: "neutral", sub: "Monthly" },
-        { l: "Annualized Alpha",      v: fmtPct(a.annualized_alpha_pct),       tone: a.annualized_alpha_pct >= 0 ? "pos" : "neg", sub: "vs SPY, rf 0%" },
-        { l: "Tracking Error",        v: fmtPctPlain(a.tracking_error_pct),    tone: "neutral", sub: "Annualized" },
-        { l: "Information Ratio",     v: fmtRatio(a.information_ratio),         tone: a.information_ratio >= 0 ? "pos" : "neg", sub: "Active return / TE" },
+        { l: "Cumulative Return",   v: fmtPct(a.cumulative_return_pct),  tone: a.cumulative_return_pct >= 0 ? "pos" : "neg", sub: "Since inception" },
+        { l: "Annualized Alpha",    v: fmtPct(a.annualized_alpha_pct),   tone: a.annualized_alpha_pct >= 0 ? "pos" : "neg",  sub: "vs SPY, rf 0%" },
+        { l: "Information Ratio",   v: fmtRatio(a.information_ratio),    tone: a.information_ratio >= 0 ? "pos" : "neg",     sub: "Active return / tracking error" },
+      ]
+    : [];
+
+  const analyticsSupport: { l: string; v: string; tone: Tone; sub: string }[] = a
+    ? [
+        { l: "Annualized Return",     v: fmtPct(a.annualized_return_pct),   tone: a.annualized_return_pct >= 0 ? "pos" : "neg", sub: "Geometric" },
+        { l: "Annualized Volatility", v: fmtPctPlain(a.annualized_vol_pct), tone: "neutral", sub: "Std. dev × √12" },
+        { l: "Sharpe Ratio",          v: fmtRatio(a.sharpe),                tone: a.sharpe >= 0 ? "pos" : "neg", sub: "rf 0%" },
+        { l: "Sortino Ratio",         v: fmtRatio(a.sortino),               tone: a.sortino >= 0 ? "pos" : "neg", sub: "Downside, rf 0%" },
+        { l: "Beta vs S&P 500",       v: fmtRatio(a.beta),                  tone: "neutral", sub: "Monthly" },
       ]
     : [];
   const analyticsSecondary: { l: string; v: string; tone: Tone }[] = a
@@ -196,6 +221,7 @@ function Performance() {
         { l: "Best Month",             v: fmtPct(a.best_month_pct),          tone: "pos" },
         { l: "Worst Month",            v: fmtPct(a.worst_month_pct),         tone: "neg" },
         { l: "Positive Months",        v: fmtPctPlain(a.positive_months_pct), tone: "neutral" },
+        { l: "Tracking Error",         v: fmtPctPlain(a.tracking_error_pct), tone: "neutral" },
         { l: "Correlation to S&P 500", v: fmtRatio(a.correlation),           tone: "neutral" },
       ]
     : [];
@@ -307,7 +333,21 @@ function Performance() {
 
       <section className="container-prose py-10 space-y-12 pt-14">
 
-        {/* ── KPI cards ─────────────────────────────────────────── */}
+        {/* ── The editorial frame ───────────────────────────────────
+            Leads with the honest sentence; everything below it is the
+            evidence. Composed from the analytics, so it can never drift out
+            of agreement with the grid. */}
+        {a && monthlyData && lastPoint && (
+          <PerformanceLede
+            analytics={a}
+            rows={tableRows}
+            inceptionLabel={formatMonth(monthlyData.inceptionMonth)}
+            fundGrowth={lastPoint.smif_growth}
+            benchGrowth={lastPoint.bench_growth}
+          />
+        )}
+
+        {/* ── Headline returns ──────────────────────────────────── */}
         <Reveal className={`grid gap-px bg-border ${KPI_STATS.length === 4 ? "md:grid-cols-4" : "md:grid-cols-3"}`}>
           {KPI_STATS.map(({ l, v, pos }) => (
             <div key={l} className="bg-card p-8 flex flex-col gap-1 border border-border hover-raise">
@@ -329,21 +369,22 @@ function Performance() {
                 {a.observations} mo · monthly basis
               </span>
             </div>
-            <div className="grid gap-px bg-border sm:grid-cols-2 lg:grid-cols-4">
-              {analyticsPrimary.map(({ l, v, tone, sub }) => (
-                <div key={l} className="bg-card p-6 flex flex-col gap-1 border border-border hover-raise">
-                  <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">{l}</div>
-                  <div className={`font-display text-3xl font-bold mt-1 ${toneClass(tone)}`}>{v}</div>
-                  <div className="text-[11px] text-muted-foreground font-mono">{sub}</div>
-                </div>
+
+            {/* Three tiers, not twelve equal tiles. The lead row carries the
+                figures the lede just argued about; the rest is evidence. */}
+            <div className="grid gap-px bg-border md:grid-cols-3">
+              {analyticsLead.map(({ l, v, tone, sub }) => (
+                <MetricTile key={l} label={l} value={v} sub={sub} tone={toneOf(tone)} tier="lead" />
+              ))}
+            </div>
+            <div className="grid gap-px bg-border sm:grid-cols-2 lg:grid-cols-5">
+              {analyticsSupport.map(({ l, v, tone, sub }) => (
+                <MetricTile key={l} label={l} value={v} sub={sub} tone={toneOf(tone)} tier="support" />
               ))}
             </div>
             <div className="grid gap-px bg-border grid-cols-2 lg:grid-cols-4">
               {analyticsSecondary.map(({ l, v, tone }) => (
-                <div key={l} className="bg-card px-6 py-5 flex flex-col gap-0.5 border border-border hover-raise">
-                  <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{l}</div>
-                  <div className={`font-display text-xl font-bold ${toneClass(tone)}`}>{v}</div>
-                </div>
+                <MetricTile key={l} label={l} value={v} tone={toneOf(tone)} tier="footnote" />
               ))}
             </div>
             <p className="text-xs text-muted-foreground">
@@ -400,7 +441,7 @@ function Performance() {
               </div>
             </div>
 
-            <div className="h-[420px] w-full">
+            <div className="h-[420px] w-full" ref={inceptionDraw.ref}>
               <ResponsiveContainer width="100%" height="100%">
                 {incMode === "growth" ? (
                   <AreaChart data={monthlySeries} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
@@ -442,10 +483,13 @@ function Performance() {
                     />
                     {showIncSmif && (
                       <Area type="monotone" dataKey="smif" name="SMIF"
+                        isAnimationActive={inceptionDraw.active} animationDuration={DRAW_MS}
                         stroke={SMIF_COLOR} strokeWidth={2.5} fill="url(#smifGrad)" />
                     )}
                     {showIncBench && (
                       <Area type="monotone" dataKey="bench" name="S&P 500 TR (SPY)"
+                        isAnimationActive={inceptionDraw.active} animationDuration={DRAW_MS}
+                        animationBegin={BENCH_TRAIL_MS}
                         stroke={BENCH_COLOR} strokeWidth={2} strokeDasharray="6 4" fill="url(#benchGrad)" />
                     )}
                   </AreaChart>
@@ -480,10 +524,13 @@ function Performance() {
                     />
                     {showIncSmif && (
                       <Line type="monotone" dataKey="smif" name="SMIF" dot={false}
+                        isAnimationActive={inceptionDraw.active} animationDuration={DRAW_MS}
                         stroke={SMIF_COLOR} strokeWidth={2.5} />
                     )}
                     {showIncBench && (
                       <Line type="monotone" dataKey="bench" name="S&P 500 TR (SPY)" dot={false}
+                        isAnimationActive={inceptionDraw.active} animationDuration={DRAW_MS}
+                        animationBegin={BENCH_TRAIL_MS}
                         stroke={BENCH_COLOR} strokeWidth={2} strokeDasharray="6 4" />
                     )}
                   </LineChart>
@@ -540,7 +587,7 @@ function Performance() {
             </div>
           </div>
 
-          <div className="h-[380px] w-full">
+          <div className="h-[380px] w-full" ref={annualDraw.ref}>
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={data} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
                 <CartesianGrid stroke="#E0DDD5" strokeDasharray="3 3" vertical={false} />
@@ -577,6 +624,8 @@ function Performance() {
                     type="monotone"
                     dataKey="smif"
                     name="SMIF"
+                    isAnimationActive={annualDraw.active}
+                    animationDuration={DRAW_MS}
                     stroke={SMIF_COLOR}
                     strokeWidth={2.5}
                     dot={{ r: 4, fill: SMIF_COLOR, strokeWidth: 0 }}
@@ -588,6 +637,9 @@ function Performance() {
                     type="monotone"
                     dataKey="bench"
                     name="S&P 500 TR"
+                    isAnimationActive={annualDraw.active}
+                    animationDuration={DRAW_MS}
+                    animationBegin={BENCH_TRAIL_MS}
                     stroke={BENCH_COLOR}
                     strokeWidth={2}
                     strokeDasharray="6 4"
@@ -600,8 +652,62 @@ function Performance() {
           </div>
         </Reveal>
 
-        {/* ── Annual returns table ───────────────────────────────── */}
-        <Reveal className="overflow-x-auto border border-border">
+        {/* ── Win rate ───────────────────────────────────────────
+            "Beat the index in four of six years" was a fact you could only
+            get by reading the spread column and doing the arithmetic. */}
+        {tableRows.length > 0 && (
+          <Reveal>
+            <div className="mb-3 flex items-baseline justify-between gap-4">
+              <h2 className="font-display text-2xl font-bold text-ink md:text-3xl">
+                Beat the index in {tableRows.filter((r) => r.smif_return > r.bench_return).length} of{" "}
+                {tableRows.length} years
+              </h2>
+              <span className="whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+                Calendar years
+              </span>
+            </div>
+            <ul className="flex flex-wrap gap-px bg-border">
+              {[...tableRows].reverse().map((r) => {
+                const won = r.smif_return > r.bench_return;
+                const spread = r.smif_return - r.bench_return;
+                // A win is marked with a gold rule rather than a gold fill:
+                // tinting the ground drops --gain to 3.41:1 against it and
+                // fails AA. The hairline is also more consistent with how the
+                // rest of the site marks emphasis.
+                return (
+                  <li
+                    key={r.year}
+                    className={`min-w-[5.5rem] flex-1 border-t-2 bg-card px-4 py-3 ${won ? "border-t-gold" : "border-t-transparent"}`}
+                    title={`${r.year}: SMIF ${fmtPct(r.smif_return)} vs S&P 500 ${fmtPct(r.bench_return)}`}
+                  >
+                    <div className="font-mono text-[11px] tracking-wider text-muted-foreground">
+                      {r.year}
+                    </div>
+                    <div
+                      className={`mt-0.5 font-mono text-sm font-semibold tabular-nums ${won ? "text-gain" : "text-loss"}`}
+                    >
+                      {fmtPct(spread)}
+                    </div>
+                    <span className="sr-only">{won ? "Beat the index" : "Trailed the index"}</span>
+                  </li>
+                );
+              })}
+            </ul>
+          </Reveal>
+        )}
+
+        {/* ── Annual returns table ─────────────────────────────────
+            The wrapper scrolls horizontally on narrow screens, so it needs to
+            be reachable and operable by keyboard. (This gap predates the
+            redesign — it was invisible to axe only because the table used to
+            sit at opacity 0 behind a scroll-triggered fade until you reached
+            it.) */}
+        <Reveal
+          className="overflow-x-auto border border-border"
+          role="region"
+          aria-label="Annual returns versus the S&P 500, scrollable"
+          tabIndex={0}
+        >
           <table className="w-full min-w-[520px] text-left">
             <thead className="bg-ink text-background">
               <tr>

@@ -1,5 +1,11 @@
 import { motion, useReducedMotion } from "framer-motion";
-import { Children, useEffect, useState, type ReactNode } from "react";
+import {
+  Children,
+  useEffect,
+  useState,
+  type ComponentPropsWithoutRef,
+  type ReactNode,
+} from "react";
 
 /**
  * ── Why this file no longer fades anything up ───────────────────────────────
@@ -21,7 +27,7 @@ import { Children, useEffect, useState, type ReactNode } from "react";
  * list) — not for cards, sections, or prose.
  */
 
-interface RevealProps {
+interface RevealProps extends Omit<ComponentPropsWithoutRef<"div">, "children"> {
   children: ReactNode;
   /** Accepted for call-site compatibility. No longer has any effect. */
   delay?: number;
@@ -31,9 +37,23 @@ interface RevealProps {
   as?: "div" | "section" | "li" | "span";
 }
 
-export function Reveal({ children, className, as = "div" }: RevealProps) {
-  const Tag = as;
-  return <Tag className={className}>{children}</Tag>;
+export function Reveal({
+  children,
+  className,
+  as = "div",
+  // Swallowed: kept in the signature so existing call sites compile.
+  delay: _delay,
+  y: _y,
+  ...rest
+}: RevealProps) {
+  // `as` widens the element type, so the spread is typed against the div
+  // attribute set and cast at the boundary rather than per call site.
+  const Tag = as as "div";
+  return (
+    <Tag className={className} {...rest}>
+      {children}
+    </Tag>
+  );
 }
 
 function useHasMounted() {
