@@ -13,7 +13,7 @@ const MONTH_YEAR = (iso: string) => {
   return d.toLocaleDateString("en-US", { month: "short", year: "numeric" });
 };
 
-export function PerformanceSparkline() {
+export function PerformanceSparkline({ onDark = false }: { onDark?: boolean } = {}) {
   const fetchHistory = useServerFn(getFundMonthlyHistory);
   const { data } = useQuery({
     queryKey: ["fund-monthly-history"],
@@ -64,7 +64,13 @@ export function PerformanceSparkline() {
         />
         <circle cx={lastX} cy={lastY} r={2.75} fill="var(--gold)" />
       </svg>
-      <div className="text-[11px] font-mono uppercase tracking-[0.18em] text-muted-foreground">
+      {/* --muted-foreground is tuned for the light grounds and measures far
+          below AA on ink, so dark placements get the on-dark token instead. */}
+      <div
+        className={`text-[11px] font-mono uppercase tracking-[0.18em] ${
+          onDark ? "text-on-dark-secondary" : "text-muted-foreground"
+        }`}
+      >
         $1 → ${multiple.toFixed(2)} since {MONTH_YEAR(data.inceptionMonth)}
       </div>
     </div>

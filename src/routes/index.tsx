@@ -10,8 +10,11 @@ import { getFundStats } from "@/lib/fund-stats.functions";
 import { liveQueryOptions } from "@/lib/live-query";
 
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
+import { SectionRule, SectionRuleOnDark } from "@/components/SectionRule";
 import { socialMeta, canonical } from "@/lib/seo";
 import { PerformanceSparkline } from "@/components/PerformanceSparkline";
+import { LivePortfolioPanel } from "@/components/LivePortfolioPanel";
+import { PortfolioTape } from "@/components/PortfolioTape";
 
 const HOME_TITLE = "Purdue SMIF — Student Managed Investment Fund";
 const HOME_DESCRIPTION = "Purdue SMIF is the student investment club at the Daniels School of Business: the university's student-managed fund, where analysts invest real capital.";
@@ -81,7 +84,9 @@ function Index() {
   ];
   return (
     <>
-      {/* Hero */}
+      {/* Hero — the live book above the fold.
+          The skyline is a ground, not the subject: every finance club has that
+          photograph, and none of them can show a real portfolio. */}
       <section className="relative isolate overflow-hidden bg-ink min-h-[100dvh] flex flex-col">
         <div aria-hidden="true" className="absolute inset-0">
           <img
@@ -91,72 +96,107 @@ function Index() {
             height={1080}
             fetchPriority="high"
             decoding="async"
-            className="h-full w-full object-cover opacity-30 animate-ken-burns"
+            className="h-full w-full object-cover opacity-[0.13]"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-ink/85 via-ink/70 to-ink" />
+          <div className="absolute inset-0 bg-gradient-to-b from-ink/90 via-ink/80 to-ink" />
         </div>
-        <div className="relative flex-1 container-prose flex flex-col justify-center py-24 lg:py-28 text-background">
-          <div className="max-w-4xl">
-            <div className="animate-fade-in flex items-center gap-3 mb-8">
-              <span className="rule-gold animate-expand-x delay-100" />
-              <span className="text-xs font-semibold uppercase tracking-[0.18em] text-gold/80">
-                Daniels School of Business · Est. {s.founded_year}
-              </span>
-            </div>
-            <h1
-              className="animate-fade-up delay-200 font-display font-bold text-background"
-              style={{ fontSize: "clamp(2.5rem, 7vw, 5.5rem)", lineHeight: "1.02" }}
-            >
-              Purdue <span className="text-gold">Student</span> Managed<br />Investment Fund
-            </h1>
-            <p className="animate-fade-up delay-400 mt-8 max-w-xl text-on-dark-primary text-base leading-relaxed">
-              A student-run fund managing real university capital, built on rigorous research and a disciplined investment process.
-            </p>
-            <div className="animate-fade-up delay-500 mt-10 flex flex-wrap gap-4">
-              <a
-                href={applyUrl("home-hero")}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="press group inline-flex items-center gap-2.5 bg-gold px-8 py-3.5 text-sm font-semibold text-ink hover:bg-gold-mid"
+
+        <div className="relative flex-1 container-prose flex flex-col justify-center py-20 lg:py-24 text-background">
+          <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
+            {/* Left: who we are, in one breath */}
+            <div>
+              <div className="animate-fade-in flex items-center gap-3 mb-7">
+                <span className="rule-gold animate-expand-x delay-100" />
+                <span className="text-xs font-semibold uppercase tracking-[0.18em] text-gold/80">
+                  Daniels School of Business · Est. {s.founded_year}
+                </span>
+              </div>
+              <h1
+                className="animate-fade-up font-display font-bold text-background"
+                style={{ fontSize: "clamp(2.4rem, 5.4vw, 4.5rem)", lineHeight: "1.02" }}
               >
-                Apply to Join
-                <ExternalLink className="h-4 w-4" aria-hidden="true" />
-                <span className="sr-only">(opens application form in new tab)</span>
-              </a>
-              <Link to="/holdings" className="press inline-flex items-center gap-2.5 border border-background/25 px-8 py-3.5 text-sm font-semibold text-background hover:border-gold hover:text-gold">
-                View Portfolio
-              </Link>
+                Purdue <span className="text-gold">Student</span> Managed Investment Fund
+              </h1>
+              <p className="animate-fade-up mt-6 max-w-lg text-on-dark-primary text-base leading-relaxed">
+                Students run this book. Real university capital, a disciplined research
+                process, and every position defended live before the committee.
+              </p>
+              <div className="animate-fade-up mt-8 flex flex-wrap gap-4">
+                <a
+                  href={applyUrl("home-hero")}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="press group inline-flex items-center gap-2.5 bg-gold px-8 py-3.5 text-sm font-semibold text-ink hover:bg-gold-mid"
+                >
+                  Apply to Join
+                  <ExternalLink className="h-4 w-4" aria-hidden="true" />
+                  <span className="sr-only">(opens application form in new tab)</span>
+                </a>
+                <Link
+                  to="/performance"
+                  className="press group inline-flex items-center gap-2.5 border border-background/25 px-8 py-3.5 text-sm font-semibold text-background hover:border-gold hover:text-gold"
+                >
+                  Track record
+                  <ArrowRight className="arrow-slide h-4 w-4" aria-hidden="true" />
+                </Link>
+              </div>
+            </div>
+
+            {/* Right: the thing no other club can show */}
+            <div className="animate-fade-up lg:pl-4">
+              <LivePortfolioPanel />
             </div>
           </div>
 
-          {/* Stats — CountUp carries the entrance; no double-animation */}
-          <div className="mt-16 grid grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-10 max-w-5xl">
+          {/* Stats — one hairline row, not a four-up band competing with the panel */}
+          <div className="mt-14 grid grid-cols-2 gap-x-8 gap-y-8 border-t border-gold/40 pt-6 lg:grid-cols-4">
             {STATS.map((stat) => (
-              <div key={stat.label} className="border-t border-gold/50 pt-4">
-                <div className="font-display text-5xl lg:text-6xl font-bold text-gold leading-none">
-                  {stat.kind === "aum" ? (<>{aum.prefix && <span>{aum.prefix}</span>}<CountUp to={aum.value} duration={1.8} /><span>{aum.suffix}</span></>) :
-                   stat.kind === "members" ? (<>{members.prefix && <span>{members.prefix}</span>}<CountUp to={members.value} duration={1.4} /><span>{members.suffix}</span></>) :
-                   stat.kind === "track" ? (<><CountUp to={trackRecordYears} duration={1.2} /><span>Y+</span></>) :
-                                           (<CountUp to={s.sector_teams} duration={1.0} />)}
+              <div key={stat.label}>
+                <div className="font-display text-3xl font-bold leading-none text-gold lg:text-4xl">
+                  {stat.kind === "aum" ? (
+                    <>
+                      {aum.prefix && <span>{aum.prefix}</span>}
+                      <CountUp to={aum.value} rollId="home-aum" />
+                      <span>{aum.suffix}</span>
+                    </>
+                  ) : stat.kind === "members" ? (
+                    <>
+                      {members.prefix && <span>{members.prefix}</span>}
+                      <CountUp to={members.value} rollId="home-members" />
+                      <span>{members.suffix}</span>
+                    </>
+                  ) : stat.kind === "track" ? (
+                    <>
+                      <CountUp to={trackRecordYears} rollId="home-track" />
+                      <span>Y+</span>
+                    </>
+                  ) : (
+                    <CountUp to={s.sector_teams} rollId="home-sectors" />
+                  )}
                 </div>
-                <div className="mt-4 text-[10px] uppercase tracking-[0.24em] text-on-dark-secondary font-medium">{stat.label}</div>
-                <div className="mt-1 text-[10px] text-on-dark-dim font-mono uppercase tracking-[0.18em]">{stat.sub}</div>
+                <div className="mt-2.5 text-[10px] uppercase tracking-[0.24em] text-on-dark-secondary font-medium">
+                  {stat.label}
+                </div>
+                <div className="mt-1 text-[10px] text-on-dark-dim font-mono uppercase tracking-[0.18em]">
+                  {stat.sub}
+                </div>
               </div>
             ))}
           </div>
         </div>
+
+        <PortfolioTape />
       </section>
 
       {/* Mission */}
       <section className="bg-ink text-background py-32 overflow-hidden">
         <div className="container-prose">
-          <Reveal className="max-w-2xl mb-20">
-            <span className="rule-gold mb-5 block" />
-            <h2 className="font-display font-bold text-background" style={{ fontSize: "clamp(2.4rem, 5vw, 4.5rem)" }}>
+          <SectionRuleOnDark className="max-w-2xl mb-20">
+            <h2 className="mt-5 font-display font-bold text-background" style={{ fontSize: "clamp(2.4rem, 5vw, 4.5rem)" }}>
               Real capital.<br />Real research.<br />
               <span className="text-gold/70">Real outcomes.</span>
             </h2>
-          </Reveal>
+          </SectionRuleOnDark>
           <div className="grid md:grid-cols-5 gap-16 items-start">
             <Reveal className="md:col-span-3 space-y-5" delay={0.1}>
               <p className="text-background/85 text-lg leading-relaxed">
@@ -192,11 +232,11 @@ function Index() {
       <section className="bg-background border-t border-border py-32">
         <div className="container-prose">
           <Reveal className="flex items-end justify-between mb-16 gap-8 flex-wrap">
-            <div>
-              <h2 className="font-display font-bold text-ink" style={{ fontSize: "clamp(2.2rem, 4.5vw, 3.75rem)" }}>
+            <SectionRule>
+              <h2 className="mt-5 font-display font-bold text-ink" style={{ fontSize: "clamp(2.2rem, 4.5vw, 3.75rem)" }}>
                 Three pillars<br />of the fund
               </h2>
-            </div>
+            </SectionRule>
             <Link to="/apply" className="group hidden md:inline-flex items-center gap-2 text-sm font-semibold text-ink border-b-2 border-gold pb-1 hover:text-gold-deep transition-colors duration-200 cursor-pointer">
               Apply to join
               <ArrowRight className="h-4 w-4 arrow-slide" />
@@ -254,7 +294,7 @@ function Index() {
           </span>
         </div>
         <Reveal className="relative container-prose text-center max-w-3xl mx-auto">
-          <TrendingUp className="mx-auto h-7 w-7 text-gold mb-8 opacity-75" />
+          <TrendingUp className="mx-auto h-7 w-7 text-gold mb-8 opacity-75" aria-hidden="true" />
           <h2 className="font-display font-bold text-background" style={{ fontSize: "clamp(2.4rem, 5.5vw, 4.5rem)" }}>
             Ready to invest<br />in your future?
           </h2>
