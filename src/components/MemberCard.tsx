@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Mail, Linkedin, UserPlus, ExternalLink } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
+import { memberSlug } from "@/data/team";
 import { applyUrl } from "@/lib/apply-url";
 
 export interface Member {
@@ -16,14 +17,6 @@ export interface Member {
   photoScale?: number;
   placeholder?: boolean;
 }
-
-const memberSlug = (name: string) =>
-  name
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
 
 export const memberEmail = (m: Member) => m.email;
 
@@ -117,18 +110,14 @@ export function MemberCard({
       </div>
       <div className="flex flex-1 flex-col p-6">
         <div className="text-xs font-semibold uppercase tracking-[0.18em] text-gold-deep">{m.role}</div>
-        {interactive ? (
-          <button
-            type="button"
-            onClick={(e) => { e.stopPropagation(); handleActivate(); }}
-            aria-label={`View profile for ${m.name}`}
-            className="mt-1 text-left font-display text-lg font-bold leading-tight focus:outline-none focus-visible:underline"
-          >
-            {m.name}
-          </button>
-        ) : (
-          <div className="mt-1 font-display text-lg font-bold leading-tight">{m.name}</div>
-        )}
+        <Link
+          to="/team/$slug"
+          params={{ slug: memberSlug(m.name) }}
+          onClick={stop}
+          className="link-underline mt-1 self-start font-display text-lg font-bold leading-tight"
+        >
+          {m.name}
+        </Link>
         <div className="text-xs text-muted-foreground">{m.year}</div>
         {m.bio && <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{m.bio}</p>}
         <div

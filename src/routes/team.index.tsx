@@ -19,7 +19,7 @@ const allMembers = [
 
 type TeamSearch = { sector?: string };
 
-export const Route = createFileRoute("/team")({
+export const Route = createFileRoute("/team/")({
   component: Team,
   validateSearch: (search: Record<string, unknown>): TeamSearch => ({
     sector: typeof search.sector === "string" ? search.sector : undefined,
@@ -110,7 +110,7 @@ const SCOPE_OPTIONS: ScopeOption[] = [
 function Team() {
   const totalMembers = 54;
   const search = Route.useSearch();
-  const navigate = useNavigate({ from: "/team" });
+  const navigate = useNavigate({ from: "/team/" });
   const reduce = useReducedMotion();
   const gridRef = useRef<HTMLDivElement | null>(null);
 

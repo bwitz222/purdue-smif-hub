@@ -331,3 +331,54 @@ board.forEach((m, i) => { board[i] = attachLinkedIn(m); });
 fixedIncomeMacro.forEach((m, i) => { fixedIncomeMacro[i] = attachLinkedIn(m); });
 portfolioManagers.forEach((m, i) => { portfolioManagers[i] = attachLinkedIn(m); });
 sectorTeams.forEach((t) => { t.members.forEach((m, i) => { t.members[i] = attachLinkedIn(m); }); });
+
+// ── Member directory ────────────────────────────────────────────────────────
+// One flattened, slugged list of every real person on the site, built from the
+// same collections /team renders. Both the roster page and the per-member
+// routes read this, so a name can never exist in one place and not the other.
+// Placeholders (open seats) are excluded — they aren't people.
+
+/** URL-safe slug for a member name. "Sid Voona" -> "sid-voona". */
+export const memberSlug = (name: string) =>
+  name
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+
+export type DirectoryEntry = {
+  slug: string;
+  /** Which group this person appears under, for breadcrumbs and context. */
+  team: string;
+  member: Member;
+};
+
+function buildDirectory(): DirectoryEntry[] {
+  const groups: Array<[string, Member[]]> = [
+    ["Executive Board", board],
+    ...sectorTeams.map((t) => [t.name, t.members] as [string, Member[]]),
+    ["Fixed Income & Macro", fixedIncomeMacro],
+    ["Portfolio + Risk Management", portfolioManagers],
+    ["Faculty Advisors", facultyAdvisors],
+  ];
+  const seen = new Set<string>();
+  const out: DirectoryEntry[] = [];
+  for (const [team, members] of groups) {
+    for (const member of members) {
+      if (member.placeholder || !member.name) continue;
+      const slug = memberSlug(member.name);
+      // A person can sit on the board AND a sector team. First appearance wins,
+      // so each member resolves to exactly one canonical URL.
+      if (seen.has(slug)) continue;
+      seen.add(slug);
+      out.push({ slug, team, member });
+    }
+  }
+  return out;
+}
+
+export const memberDirectory: DirectoryEntry[] = buildDirectory();
+
+export const findMemberBySlug = (slug: string): DirectoryEntry | undefined =>
+  memberDirectory.find((e) => e.slug === slug);
