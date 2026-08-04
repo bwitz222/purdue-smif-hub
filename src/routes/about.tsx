@@ -225,7 +225,7 @@ function About() {
         <RevealGroup className="grid gap-px bg-border md:grid-cols-4" stagger={0.1}>
           {PROCESS.map(({ n, t, d }) => (
             <RevealItem key={n} className="bg-background p-8 lg:p-10 group hover:bg-secondary/50 transition-colors duration-300">
-              <div className="font-display text-5xl font-bold text-gold/25 leading-none mb-6 group-hover:text-gold/45 transition-colors duration-300">
+              <div className="font-display text-5xl font-bold text-gold-deep/80 leading-none mb-6 group-hover:text-gold-deep transition-colors duration-300">
                 {n}
               </div>
               <h3 className="font-display text-xl font-semibold text-ink mb-3">{t}</h3>

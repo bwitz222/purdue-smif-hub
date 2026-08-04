@@ -8,7 +8,7 @@
 // /sectors, and / on the SAME update logic they share this policy: refetch on
 // mount, on window focus, on reconnect, and poll every 30 minutes while the
 // tab is foregrounded so a long-open page still picks up the daily refresh.
-export const LIVE_REFETCH_MS = 30 * 60 * 1000;
+const LIVE_REFETCH_MS = 30 * 60 * 1000;
 
 export const liveQueryOptions = {
   staleTime: LIVE_REFETCH_MS,

@@ -181,7 +181,7 @@ function Index() {
               />
               <div className="absolute -bottom-5 -left-5 bg-gold p-5 shadow-gold hidden lg:block">
                 <div className="font-display text-3xl font-bold text-ink leading-none">{trackRecordYears}Y+</div>
-                <div className="text-xs uppercase tracking-wider text-ink/60 mt-1">Track record</div>
+                <div className="text-xs uppercase tracking-wider text-ink/75 mt-1">Track record</div>
               </div>
             </Reveal>
           </div>

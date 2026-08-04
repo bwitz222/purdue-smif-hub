@@ -13,7 +13,7 @@ import { holdings as baseHoldings, type Holding } from "@/data/holdings";
 // sector breakdown. Refresh periodically (roughly once per year, or when SPY
 // re-composition materially moves any sector by >0.5pp) so the fund's
 // look-through sector allocation stays honest.
-export const ETF_SECTOR_WEIGHTS: Record<string, Record<string, number>> = {
+const ETF_SECTOR_WEIGHTS: Record<string, Record<string, number>> = {
   SPY: {
     Technology: 33.5,
     Financials: 13.5,
@@ -51,7 +51,7 @@ export function applyQuotes(
 
 // Sector breakdown in DOLLARS by industry, with SPY (or any ETF listed in
 // ETF_SECTOR_WEIGHTS) split across its constituent sectors by weight.
-export function sectorDollarBreakdown(holdings: Holding[]): Map<string, number> {
+function sectorDollarBreakdown(holdings: Holding[]): Map<string, number> {
   const map = new Map<string, number>();
   holdings.forEach((h) => {
     const weights = ETF_SECTOR_WEIGHTS[h.symbol];
@@ -79,7 +79,7 @@ export function sectorPercentBreakdown(holdings: Holding[]): [string, number][] 
 // Coverage team → the industry buckets it owns. Kept in one place so
 // /sectors and /team can't disagree with /holdings on which sector owns
 // which industries. Combined teams collapse multiple industries.
-export const TEAM_INDUSTRIES: Record<string, string[]> = {
+const TEAM_INDUSTRIES: Record<string, string[]> = {
   "Information Technology": ["Technology"],
   "Healthcare & Utilities": ["Healthcare", "Utilities"],
   Financials: ["Financials"],
