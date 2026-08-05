@@ -100,7 +100,113 @@ export function nextEvent(nowMs: number): RecruitingEvent | null {
   return CALENDAR.find((e) => eventEndMs(e) > nowMs) ?? null;
 }
 
-/** Every event still ahead, in order. */
-export function upcomingEvents(nowMs: number): RecruitingEvent[] {
-  return CALENDAR.filter((e) => eventEndMs(e) > nowMs);
+// ── The application deadline ────────────────────────────────────────────────
+
+/**
+ * ⚠️ PLACEHOLDER DATE — confirm with the board before this ships.
+ *
+ * The application close is the one date on this page that can actually cost a
+ * student a seat, and it was not recorded anywhere in the codebase. Sep 6 sits
+ * after the last callout (Sep 1) and before Interview Day A (Sep 8), which is
+ * the usual shape for a cycle like this one — but it is an assumption, not a
+ * fact. Correct it here and every surface follows.
+ */
+export const APPLICATION_DEADLINE = {
+  iso: "2026-09-06",
+  /** Display date, matching the style of the calendar rows. */
+  date: "Sun, Sep 6",
+  time: "11:59 PM",
+  label: "Applications close",
+} as const;
+
+export function applicationDeadlineMs(): number {
+  return new Date(`${APPLICATION_DEADLINE.iso}T23:59:00-04:00`).getTime();
+}
+
+// ── Milestones: the full runway, in order ───────────────────────────────────
+
+/**
+ * A milestone is anything the countdown can point at: every calendar event,
+ * then the application close.
+ *
+ * Modelling the deadline as a milestone rather than a calendar row is what
+ * keeps the two representations honest. The countdown walks milestones, so it
+ * finishes on the deadline instead of falling off the end after the last
+ * interview. The .ics export and the schema.org Events walk CALENDAR, so the
+ * deadline — which is not an event anyone attends — never becomes a bogus
+ * calendar entry with a room and a start time.
+ */
+export type Milestone = {
+  kind: "event" | "deadline";
+  name: string;
+  date: string;
+  time: string;
+  location: string | null;
+  /** What the countdown counts down TO. */
+  startMs: number;
+  /** When it stops being the thing a visitor should be looking at. */
+  endMs: number;
+  /** The underlying calendar row, for Google Calendar links. Null for the deadline. */
+  event: RecruitingEvent | null;
+};
+
+/**
+ * The runway the countdown walks: every event up to the application close,
+ * then the close itself. Nothing after it.
+ *
+ * The interviews fall AFTER the deadline — you interview from a closed pool —
+ * so they stay on the calendar, in the .ics, and in the schema.org Events, but
+ * they are not countdown targets. Once applications close there is nothing
+ * left for a prospective applicant to count down to; an admitted candidate
+ * gets their slot by email. Counting down to an interview they may not have
+ * would be worse than showing the closed notice.
+ */
+export function milestones(): Milestone[] {
+  const deadlineMs = applicationDeadlineMs();
+  const events: Milestone[] = CALENDAR.filter((event) => eventStartMs(event) < deadlineMs).map(
+    (event) => ({
+      kind: "event" as const,
+      name: event.name,
+      date: event.date,
+      time: event.time,
+      location: event.location,
+      startMs: eventStartMs(event),
+      endMs: eventEndMs(event),
+      event,
+    }),
+  );
+  const deadline: Milestone = {
+    kind: "deadline",
+    name: APPLICATION_DEADLINE.label,
+    date: APPLICATION_DEADLINE.date,
+    time: APPLICATION_DEADLINE.time,
+    location: null,
+    // A deadline is an instant, not a window: it is its own start and end.
+    startMs: deadlineMs,
+    endMs: deadlineMs,
+    event: null,
+  };
+  // Sorted rather than concatenated so that moving the deadline earlier — say,
+  // to the night of the last callout — reorders the runway correctly instead
+  // of stranding it at the end.
+  return [...events, deadline].sort((a, b) => a.startMs - b.startMs);
+}
+
+/** True while a milestone is underway — started, not yet finished. */
+export function isInProgress(m: Milestone, nowMs: number): boolean {
+  return nowMs >= m.startMs && nowMs < m.endMs;
+}
+
+/**
+ * The next milestone that hasn't finished, or null once the cycle is over.
+ * This is what the countdown targets, so it rolls automatically:
+ * B-Involved Fair → Callout 1 → … → Interviews → Applications close → closed.
+ */
+export function nextMilestone(nowMs: number): Milestone | null {
+  return milestones().find((m) => m.endMs > nowMs) ?? null;
+}
+
+/** Everything still ahead, in order — used for the "then:" runway line. */
+export function upcomingMilestones(nowMs: number): Milestone[] {
+  return milestones().filter((m) => m.endMs > nowMs);
 }

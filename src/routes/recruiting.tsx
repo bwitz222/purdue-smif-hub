@@ -1,45 +1,59 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ArrowRight, Calendar, CalendarPlus, MapPin, Clock, Download } from "lucide-react";
+import { ArrowRight, Calendar, CalendarPlus, MapPin, Clock, Download, Check } from "lucide-react";
 import { useEffect, useState } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import { socialMeta, canonical, breadcrumbLd, OG_RECRUITING } from "@/lib/seo";
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import { PrepCard } from "@/components/PrepCard";
+import {
+  CALENDAR,
+  CYCLE_LABEL,
+  APPLICATION_DEADLINE,
+  applicationDeadlineMs,
+  parseEventTimes,
+  pad2,
+  eventEndMs,
+  nextMilestone,
+  upcomingMilestones,
+  isInProgress,
+  type RecruitingEvent,
+} from "@/data/recruiting";
 
 import { applyUrl } from "@/lib/apply-url";
 
-// Countdown is data-driven from the CALENDAR (defined below) — we pick
-// the next upcoming event and count down to its start. When all events
-// have passed, we render an "Applications closed / next cycle" message
-// instead of a stale date. A plain-text fallback always renders for
-// no-JS / SSR.
-
-function parseEventStartMs(event: Event): number {
-  const { start } = parseEventTimes(event.time);
-  // Eastern offset for the Aug–Sep recruiting window is EDT (-04:00).
-  const iso = `${event.iso}T${pad2(start.h)}:${pad2(start.m)}:00-04:00`;
-  return new Date(iso).getTime();
-}
-
-function nextUpcomingEvent(nowMs: number): Event | null {
-  // CALENDAR is module-scoped (defined below this fn) — read it lazily.
-  return CALENDAR.find((e) => parseEventStartMs(e) > nowMs) ?? null;
-}
-
-function useCountdown() {
-  const [now, setNow] = useState<number | null>(null);
+/**
+ * The countdown walks the whole recruiting runway.
+ *
+ * It targets nextMilestone(), which is every calendar event in order followed
+ * by the application close — so it rolls from the B-Involved Fair through the
+ * callouts, coffee chats, and interviews, finishes on the deadline, and only
+ * then shows the closed notice. Nothing is special-cased per event: editing
+ * src/data/recruiting.ts changes the sequence.
+ *
+ * The digits are real on the server. The route loader stamps a clock, the
+ * component seeds its state from it, and the first client render reproduces
+ * the same numbers — so the HTML never ships "--Days --Hours --Minutes", the
+ * most time-critical element on the site never paints as an error, and there
+ * is no hydration mismatch. The 1s interval takes over on mount.
+ */
+function useCountdown(serverNowMs: number) {
+  const [now, setNow] = useState(serverNowMs);
   useEffect(() => {
     setNow(Date.now());
     const id = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
   }, []);
-  if (now === null) return null;
-  const next = nextUpcomingEvent(now);
-  if (!next) return { expired: true as const };
-  const deadline = parseEventStartMs(next);
-  const diff = Math.max(0, deadline - now);
+
+  const target = nextMilestone(now);
+  if (!target) return { expired: true as const };
+
+  const inProgress = isInProgress(target, now);
+  const diff = Math.max(0, target.startMs - now);
   return {
     expired: false as const,
-    event: next,
+    milestone: target,
+    inProgress,
+    upNext: upcomingMilestones(now).slice(1, 3),
     days: Math.floor(diff / 86_400_000),
     hours: Math.floor((diff % 86_400_000) / 3_600_000),
     minutes: Math.floor((diff % 3_600_000) / 60_000),
@@ -47,134 +61,134 @@ function useCountdown() {
   };
 }
 
-function CountdownUnit({ value, label }: { value: number | string; label: string }) {
+/**
+ * Digit tick — only the digits that actually changed re-animate, over 180ms.
+ * Flipping the whole four-digit block every second is noise; flipping the ones
+ * column is information. Transform and opacity only, and disabled outright
+ * under reduced motion.
+ */
+function TickingDigits({ value }: { value: string }) {
+  const reduce = useReducedMotion();
   return (
-    <div className="flex flex-1 sm:flex-none flex-col items-center border border-gold/30 bg-ink/40 px-4 py-3 min-w-[72px] hover-raise">
-      <span className="font-display text-3xl font-bold text-gold tabular-nums md:text-4xl">{value}</span>
-      <span className="mt-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-on-dark-secondary">{label}</span>
+    <span className="inline-flex tabular-nums">
+      {value.split("").map((d, i) =>
+        reduce ? (
+          <span key={i}>{d}</span>
+        ) : (
+          <span key={i} className="relative inline-block overflow-hidden">
+            <motion.span
+              // Keying on the digit remounts only when that column changes, so
+              // a static tens column sits perfectly still while the ones ticks.
+              key={d}
+              initial={{ y: "-45%", opacity: 0 }}
+              animate={{ y: "0%", opacity: 1 }}
+              transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
+              className="inline-block"
+            >
+              {d}
+            </motion.span>
+          </span>
+        ),
+      )}
+    </span>
+  );
+}
+
+function CountdownUnit({ value, label }: { value: string; label: string }) {
+  return (
+    <div className="flex min-w-[72px] flex-1 flex-col items-center border border-gold/30 bg-ink/40 px-4 py-3 sm:flex-none">
+      <span className="font-display text-3xl font-bold text-gold md:text-4xl">
+        <TickingDigits value={value} />
+      </span>
+      <span className="mt-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-on-dark-secondary">
+        {label}
+      </span>
     </div>
   );
 }
 
-// SSR/no-JS fallback label — uses CALENDAR + build-time clock to name a
-// real upcoming event so the resting HTML matches the live ticker after
-// hydration. Falls back to the first event, then to a closed-cycle label.
-function staticNextEventLabel(): { name: string; date: string; time: string; expired: boolean } {
-  const nowMs = Date.now();
-  const next = nextUpcomingEvent(nowMs);
-  if (next) return { name: next.name, date: next.date, time: next.time, expired: false };
-  const last = CALENDAR[CALENDAR.length - 1];
-  return { name: last?.name ?? "", date: last?.date ?? "", time: last?.time ?? "", expired: true };
-}
-
-function Countdown() {
-  const c = useCountdown();
+function Countdown({ serverNowMs }: { serverNowMs: number }) {
+  const c = useCountdown(serverNowMs);
   const pad = (n: number) => n.toString().padStart(2, "0");
-  const fallback = staticNextEventLabel();
 
-  // Expired — entire cycle has passed. role="status" so AT announces it.
-  if (c?.expired || (c === null && fallback.expired)) {
+  // The whole cycle, deadline included, has passed.
+  if (c.expired) {
     return (
-      <div
-        role="status"
-        className="mt-10 border border-gold/30 bg-ink/60 p-6 text-background md:p-8"
-      >
+      <div role="status" className="border border-gold/30 bg-ink/60 p-6 text-background md:p-8">
         <div className="text-xs font-semibold uppercase tracking-[0.3em] text-gold">
           Applications Closed
         </div>
         <p className="mt-2 text-sm text-on-dark-secondary">
-          Applications for the Fall 2026 cycle are closed. Watch this page or follow us on Instagram for the next application window.
+          Applications for the {CYCLE_LABEL} cycle closed on {APPLICATION_DEADLINE.date}. Watch this
+          page or follow us on Instagram for the next application window.
         </p>
       </div>
     );
   }
 
-  const headline = c?.event?.name ?? fallback.name;
-  const sub = c?.event
-    ? `${c.event.date} · ${c.event.time} ET`
-    : `${fallback.date} · ${fallback.time} ET`;
-  const srLabel = c
-    ? `${c.days} days, ${c.hours} hours, ${c.minutes} minutes until ${headline}.`
-    : `Next event: ${headline} on ${sub}.`;
+  const { milestone, inProgress, upNext } = c;
+  const isDeadline = milestone.kind === "deadline";
+  const sub = isDeadline
+    ? `${milestone.date} · ${milestone.time} ET`
+    : `${milestone.date} · ${milestone.time} ET${milestone.location ? ` · ${milestone.location}` : ""}`;
+
+  const srLabel = inProgress
+    ? `${milestone.name} is happening now.`
+    : `${c.days} days, ${c.hours} hours, ${c.minutes} minutes until ${milestone.name} on ${milestone.date}.`;
 
   return (
-    <div className="mt-10 border border-gold/30 bg-ink/60 p-6 text-background md:p-8">
-      <div className="text-xs font-semibold uppercase tracking-[0.3em] text-gold">
-        Next: {headline}
+    <div
+      className={`border bg-ink/60 p-6 text-background md:p-8 ${isDeadline ? "border-gold" : "border-gold/30"}`}
+    >
+      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+        <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold">
+          {inProgress ? "Happening now" : isDeadline ? "Final deadline" : "Next"}
+        </span>
+        <span className="font-display text-xl font-bold md:text-2xl">{milestone.name}</span>
       </div>
       <p className="mt-1 text-sm text-on-dark-secondary">{sub}</p>
-      {/* Accessible plain-text countdown, hidden visually. Always present
-          so screen readers + no-JS users get a complete sentence. */}
-      <span className="sr-only" aria-live="polite">{srLabel}</span>
-      <div className="mt-5 flex flex-wrap gap-3" aria-hidden="true">
-        <CountdownUnit value={c ? c.days : "--"} label="Days" />
-        <CountdownUnit value={c ? pad(c.hours) : "--"} label="Hours" />
-        <CountdownUnit value={c ? pad(c.minutes) : "--"} label="Minutes" />
-        <CountdownUnit value={c ? pad(c.seconds) : "--"} label="Seconds" />
-      </div>
+
+      {/* Plain-text countdown for assistive tech. Always present, so screen
+          reader and no-JS users get a complete sentence rather than digits. */}
+      <span className="sr-only" aria-live="polite">
+        {srLabel}
+      </span>
+
+      {inProgress ? (
+        <p className="mt-5 font-mono text-sm text-gold">Underway — come find us.</p>
+      ) : (
+        <div className="mt-5 flex flex-wrap gap-3" aria-hidden="true">
+          <CountdownUnit value={String(c.days)} label="Days" />
+          <CountdownUnit value={pad(c.hours)} label="Hours" />
+          <CountdownUnit value={pad(c.minutes)} label="Minutes" />
+          <CountdownUnit value={pad(c.seconds)} label="Seconds" />
+        </div>
+      )}
+
+      {/* The runway. One date in isolation doesn't tell an applicant that this
+          is a sequence with an end; naming what follows does. */}
+      {upNext.length > 0 && (
+        <p className="mt-5 border-t border-white/10 pt-4 font-mono text-[11px] uppercase tracking-[0.16em] text-on-dark-muted">
+          Then:{" "}
+          {upNext.map((m, i) => (
+            <span key={m.name + m.date}>
+              {i > 0 && <span className="mx-1.5 text-white/25">/</span>}
+              <span className={m.kind === "deadline" ? "text-gold" : undefined}>
+                {m.name}, {m.date}
+              </span>
+            </span>
+          ))}
+        </p>
+      )}
     </div>
   );
 }
 
 
 
-type Event = {
-  date: string; // display date
-  iso: string;  // for sorting
-  name: string;
-  time: string;
-  location: string;
-};
-
-const CALENDAR: Event[] = [
-  { iso: "2026-08-22", date: "Sat, Aug 22", name: "B-Involved Fair",          time: "12:00 - 3:00 PM",  location: "Memorial Mall (TBD)" },
-  { iso: "2026-08-25", date: "Tue, Aug 25", name: "SMIF Callout 1",            time: "7:30 - 8:30 PM",   location: "Rawls 1086" },
-  { iso: "2026-08-26", date: "Wed, Aug 26", name: "SMIF Coffee Chats 1",       time: "7:15 - 8:00 PM",   location: "Rawls 1011" },
-  { iso: "2026-08-27", date: "Thu, Aug 27", name: "Daniels Club Expo",         time: "12:00 - 4:00 PM",  location: "Rawls Atrium" },
-  { iso: "2026-08-27", date: "Thu, Aug 27", name: "SMIF Callout 2",            time: "7:30 - 8:30 PM",   location: "Rawls 1086" },
-  { iso: "2026-08-31", date: "Mon, Aug 31", name: "SMIF Finance Club Consortium", time: "12:00 - 2:30 PM", location: "Rawls Atrium" },
-  { iso: "2026-08-31", date: "Mon, Aug 31", name: "SMIF Coffee Chats 2",       time: "7:00 - 8:00 PM",   location: "Rawls 1086" },
-  { iso: "2026-09-01", date: "Tue, Sep 1",  name: "SMIF Callout 3",            time: "7:30 - 8:30 PM",   location: "Rawls 1086" },
-  { iso: "2026-09-08", date: "Mon, Sep 8",  name: "SMIF Interviews, Day A",    time: "TBD",              location: "Young Hall 223, 217, 219, 213" },
-  { iso: "2026-09-09", date: "Tue, Sep 9",  name: "SMIF Interviews, Day B",    time: "TBD",              location: "Young Hall 223, 217, 219, 213" },
-];
-
-// Parse "7:30 PM" / "12:00 PM" — returns { h, m } in 24h, or null
-function parseTimeToken(t: string): { h: number; m: number } | null {
-  const match = t.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
-  if (!match) return null;
-  const [, hh, mm, mer] = match;
-  let h = parseInt(hh, 10);
-  const m = parseInt(mm, 10);
-  if (mer.toUpperCase() === "PM" && h !== 12) h += 12;
-  if (mer.toUpperCase() === "AM" && h === 12) h = 0;
-  return { h, m };
-}
-
-// Parse event.time like "7:30 - 8:30 PM" or "12:00 - 3:00 PM" — meridiem from end token applies to start if missing
-function parseEventTimes(time: string): { start: { h: number; m: number }; end: { h: number; m: number } } {
-  if (time === "TBD") {
-    return { start: { h: 17, m: 0 }, end: { h: 18, m: 0 } };
-  }
-  // Accept hyphen or en-dash range separators (surrounded by spaces so
-  // clock values like "7:30" are never split).
-  const parts = time.split(/\s+[–-]\s+/).map((s) => s.trim());
-  if (parts.length !== 2) return { start: { h: 17, m: 0 }, end: { h: 18, m: 0 } };
-  let [startStr, endStr] = parts;
-  // If start lacks meridiem, inherit from end
-  if (!/AM|PM/i.test(startStr)) {
-    const merMatch = endStr.match(/AM|PM/i);
-    if (merMatch) startStr = `${startStr} ${merMatch[0]}`;
-  }
-  const start = parseTimeToken(startStr) ?? { h: 17, m: 0 };
-  const end = parseTimeToken(endStr) ?? { h: 18, m: 0 };
-  return { start, end };
-}
-
-function pad2(n: number) { return String(n).padStart(2, "0"); }
 
 // Returns "2026-08-25T19:30:00-04:00" (EDT for Aug/Sep 2026)
-function buildEventBody(event: Event): string {
+function buildEventBody(event: RecruitingEvent): string {
   const prefix = event.time === "TBD"
     ? "Note: time TBD. Your specific interview slot will be communicated by email. Update this event when you receive your slot.\n\n"
     : "";
@@ -200,7 +214,7 @@ function nowUtcStamp(): string {
   return `${d.getUTCFullYear()}${pad2(d.getUTCMonth() + 1)}${pad2(d.getUTCDate())}T${pad2(d.getUTCHours())}${pad2(d.getUTCMinutes())}${pad2(d.getUTCSeconds())}Z`;
 }
 
-function generateICS(events: Event[] = CALENDAR): string {
+function generateICS(events: RecruitingEvent[] = CALENDAR): string {
   const stamp = nowUtcStamp();
   const lines: string[] = [
     "BEGIN:VCALENDAR",
@@ -244,7 +258,7 @@ function downloadICS() {
 
 // Google Calendar render URL — opens a prefilled event the user just clicks "Save" on.
 // Works for any Google account (personal Gmail or Purdue's Google Workspace).
-function toGoogleCalendarLink(event: Event): string {
+function toGoogleCalendarLink(event: RecruitingEvent): string {
   const { start, end } = parseEventTimes(event.time);
   const ymd = event.iso.replace(/-/g, "");
   // Floating local time + ctz tells Google to interpret it in Eastern.
@@ -262,6 +276,11 @@ function toGoogleCalendarLink(event: Event): string {
 
 export const Route = createFileRoute("/recruiting")({
   component: Recruiting,
+  // Stamp the server's clock so the countdown renders real digits in the SSR
+  // HTML instead of "--Days --Hours --Minutes", and so the first client render
+  // reproduces them exactly (no hydration mismatch). Reading a clock cannot
+  // throw, so this satisfies the "loaders must not throw" rule in the README.
+  loader: () => ({ serverNowMs: Date.now() }),
   head: () => ({
     meta: [
       { title: "Recruiting Calendar & Interview Prep | Purdue SMIF" },
@@ -310,40 +329,53 @@ export const Route = createFileRoute("/recruiting")({
 });
 
 function Recruiting() {
-  // SSR-safe "now" — null on server, set on client mount
-  const [nowMs, setNowMs] = useState<number | null>(null);
-  useEffect(() => { setNowMs(Date.now()); }, []);
+  const { serverNowMs } = Route.useLoaderData();
+  // Client clock for the "past" marks on the agenda. Seeded from the server so
+  // the first render matches the SSR HTML, then corrected on mount.
+  const [nowMs, setNowMs] = useState(serverNowMs);
+  useEffect(() => {
+    setNowMs(Date.now());
+  }, []);
 
   return (
     <>
+      {/* Masthead. The countdown is the page's headline — it is the most
+          time-critical thing on the site — so it sits alongside the title
+          rather than below two CTAs. */}
       <section className="border-b border-border bg-ink text-background">
-        <div className="container-prose py-24">
-          <span className="animate-fade-in text-xs font-semibold uppercase tracking-[0.3em] text-gold">Recruiting</span>
-          <h1 className="animate-fade-up mt-4 font-display text-5xl font-bold md:text-6xl max-w-3xl">
-            Join the Fund.
-          </h1>
-          <p className="animate-fade-up delay-100 mt-6 max-w-2xl text-lg text-background/70">
-            Our recruiting calendar, plus a complete guide to preparing for both behavioral and technical interviews with SMIF.
-          </p>
-          <div className="animate-fade-up delay-200 mt-8 flex flex-wrap gap-3">
-            <a
-              href={applyUrl("recruiting-hero")}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="press group inline-flex items-center gap-2 bg-gold px-6 py-3 text-sm font-semibold text-ink hover:bg-gold-mid"
-            >
-              Apply Now <ArrowRight className="h-4 w-4 arrow-slide" />
-            </a>
-            <a
-              href="#prep"
-              className="press inline-flex items-center gap-2 border border-background/30 px-6 py-3 text-sm font-semibold text-background hover:border-gold hover:text-gold"
-            >
-              Jump to Prep Guide
-            </a>
+        <div className="container-prose grid gap-10 py-20 lg:grid-cols-[1fr_minmax(0,26rem)] lg:items-start lg:gap-16">
+          <div>
+            <span className="animate-fade-in text-xs font-semibold uppercase tracking-[0.3em] text-gold">
+              Recruiting · {CYCLE_LABEL}
+            </span>
+            <h1 className="animate-fade-up mt-4 max-w-3xl font-display text-5xl font-bold md:text-6xl">
+              Join the Fund.
+            </h1>
+            <p className="animate-fade-up mt-6 max-w-2xl text-lg text-background/70">
+              Our recruiting calendar, plus a complete guide to preparing for both behavioral and
+              technical interviews with SMIF.
+            </p>
+            <div className="animate-fade-up mt-8 flex flex-wrap gap-3">
+              <a
+                href={applyUrl("recruiting-hero")}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="press group inline-flex items-center gap-2 bg-gold px-6 py-3 text-sm font-semibold text-ink hover:bg-gold-mid"
+              >
+                Apply Now <ArrowRight className="h-4 w-4 arrow-slide" aria-hidden="true" />
+              </a>
+              <a
+                href="#prep"
+                className="press inline-flex items-center gap-2 border border-background/30 px-6 py-3 text-sm font-semibold text-background hover:border-gold hover:text-gold"
+              >
+                Jump to Prep Guide
+              </a>
+            </div>
           </div>
-          <Countdown />
+          <div className="lg:pt-2">
+            <Countdown serverNowMs={serverNowMs} />
+          </div>
         </div>
-
       </section>
 
       {/* Calendar */}
@@ -376,7 +408,10 @@ function Recruiting() {
 
         <RevealGroup className="mt-8 divide-y divide-border border-b border-border">
           {CALENDAR.map((e) => {
-            const isPast = nowMs !== null && new Date(e.iso + "T23:59:59-04:00").getTime() < nowMs;
+            // Keyed to the event's actual end, not midnight: a callout that
+            // finished at 8:30pm is past, and the agenda should agree with the
+            // countdown about that rather than waiting for the date to roll.
+            const isPast = eventEndMs(e) < nowMs;
             return (
               <RevealItem key={e.iso + e.name}>
                 <a
@@ -447,6 +482,38 @@ function Recruiting() {
           })}
         </RevealGroup>
 
+        {/* The application close, as the end of the runway. It is not a
+            calendar event — nobody attends it, there is no room, and it gets
+            no Google Calendar link or .ics entry — but it is the date that
+            actually decides whether someone gets a seat, so it terminates the
+            agenda rather than being left implicit. */}
+        <div
+          className={`mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 border-2 px-4 py-5 ${
+            applicationDeadlineMs() < nowMs
+              ? "border-border bg-muted/40"
+              : "border-gold bg-secondary/50"
+          }`}
+        >
+          <span className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.16em] text-gold-deep">
+            {applicationDeadlineMs() < nowMs ? (
+              <Check className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+            ) : (
+              <Calendar className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+            )}
+            {APPLICATION_DEADLINE.date}
+          </span>
+          <span className="font-display text-lg font-bold">
+            {APPLICATION_DEADLINE.label}
+          </span>
+          <span className="font-mono text-sm text-muted-foreground">
+            {APPLICATION_DEADLINE.time} ET
+          </span>
+          {applicationDeadlineMs() < nowMs && (
+            <span className="inline-block border border-border bg-muted px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+              Closed
+            </span>
+          )}
+        </div>
 
         <p className="mt-6 text-sm text-muted-foreground">
           Locations and times subject to change. Email{" "}
@@ -462,6 +529,24 @@ function Recruiting() {
         <div className="container-prose py-20">
           <Reveal>
             <h2 className="font-display text-3xl font-bold md:text-4xl">Tips &amp; Tricks to Prep</h2>
+            {/* The prep guide is the longest scroll on the site. A sub-nav
+                makes it navigable instead of something you page through. */}
+            <nav aria-label="Prep guide sections" className="mt-6 flex flex-wrap gap-2">
+              {[
+                { href: "#behavioral", label: "Behavioral" },
+                { href: "#technical", label: "Technical" },
+                { href: "#day-of", label: "Day-of" },
+                { href: "#reading", label: "Reading" },
+              ].map(({ href, label }) => (
+                <a
+                  key={href}
+                  href={href}
+                  className="press inline-flex min-h-11 items-center border border-border bg-background px-3.5 py-2 text-xs font-semibold uppercase tracking-wider text-foreground hover:border-ink hover:bg-secondary"
+                >
+                  {label}
+                </a>
+              ))}
+            </nav>
           </Reveal>
           <Reveal delay={0.06}>
             <p className="mt-4 max-w-3xl text-muted-foreground">
@@ -476,7 +561,7 @@ function Recruiting() {
               <span className="font-mono text-xs uppercase tracking-[0.3em] text-gold-deep">Round 1</span>
             </Reveal>
             <Reveal>
-              <h3 className="mt-3 font-display text-2xl font-bold md:text-3xl">Behavioral Interview</h3>
+              <h3 id="behavioral" className="mt-3 scroll-mt-20 font-display text-2xl font-bold md:text-3xl">Behavioral Interview</h3>
               <p className="mt-3 max-w-3xl text-muted-foreground">
                 We want to understand who you are, why you're interested in markets, and how you work with others. Be specific, be honest, and have stories ready.
               </p>
@@ -537,7 +622,7 @@ function Recruiting() {
               <span className="font-mono text-xs uppercase tracking-[0.3em] text-gold-deep">Round 2</span>
             </Reveal>
             <Reveal>
-              <h3 className="mt-3 font-display text-2xl font-bold md:text-3xl">Technical Interview</h3>
+              <h3 id="technical" className="mt-3 scroll-mt-20 font-display text-2xl font-bold md:text-3xl">Technical Interview</h3>
               <p className="mt-3 max-w-3xl text-muted-foreground">
                 You don't need to be an investment banking analyst already. We test fundamentals, market awareness, and your ability to defend an investment thesis.
               </p>
@@ -593,7 +678,7 @@ function Recruiting() {
 
           {/* Day-of */}
           <Reveal className="mt-14 border border-gold/30 bg-background p-6 md:p-8 hover-lift-sm">
-            <h3 className="font-display text-xl font-bold">Day-Of Checklist</h3>
+            <h3 id="day-of" className="scroll-mt-20 font-display text-xl font-bold">Day-Of Checklist</h3>
             <ul className="mt-4 grid gap-2 text-sm text-muted-foreground md:grid-cols-2 list-disc pl-5 marker:text-gold-deep">
               <li>Business professional dress: suit and tie or equivalent.</li>
               <li>Arrive 10 minutes early. Silence your phone.</li>
@@ -606,7 +691,7 @@ function Recruiting() {
 
           {/* Reading list */}
           <Reveal className="mt-10 border border-border bg-background p-6 md:p-8 hover-lift-sm">
-            <h3 className="font-display text-xl font-bold">Recommended Reading</h3>
+            <h3 id="reading" className="scroll-mt-20 font-display text-xl font-bold">Recommended Reading</h3>
             <ul className="mt-4 space-y-2 text-sm text-muted-foreground list-disc pl-5 marker:text-gold-deep">
               <li><span className="font-medium text-foreground">The Intelligent Investor</span>, Benjamin Graham: foundational value investing.</li>
               <li><span className="font-medium text-foreground">One Up On Wall Street</span>, Peter Lynch: intuitive intro to stock picking.</li>
