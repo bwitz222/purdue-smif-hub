@@ -28,8 +28,6 @@ export const CALENDAR: RecruitingEvent[] = [
   { iso: "2026-08-31", date: "Mon, Aug 31", name: "SMIF Finance Club Consortium",  time: "12:00 - 2:30 PM",  location: "Rawls Atrium" },
   { iso: "2026-08-31", date: "Mon, Aug 31", name: "SMIF Coffee Chats 2",           time: "7:00 - 8:00 PM",   location: "Rawls 1086" },
   { iso: "2026-09-01", date: "Tue, Sep 1",  name: "SMIF Callout 3",                time: "7:30 - 8:30 PM",   location: "Rawls 1086" },
-  { iso: "2026-09-08", date: "Mon, Sep 8",  name: "SMIF Interviews, Day A",        time: "TBD",              location: "Young Hall 223, 217, 219, 213" },
-  { iso: "2026-09-09", date: "Tue, Sep 9",  name: "SMIF Interviews, Day B",        time: "TBD",              location: "Young Hall 223, 217, 219, 213" },
 ];
 
 // ── Time parsing ────────────────────────────────────────────────────────────
@@ -103,18 +101,16 @@ export function nextEvent(nowMs: number): RecruitingEvent | null {
 // ── The application deadline ────────────────────────────────────────────────
 
 /**
- * ⚠️ PLACEHOLDER DATE — confirm with the board before this ships.
- *
- * The application close is the one date on this page that can actually cost a
- * student a seat, and it was not recorded anywhere in the codebase. Sep 6 sits
- * after the last callout (Sep 1) and before Interview Day A (Sep 8), which is
- * the usual shape for a cycle like this one — but it is an assumption, not a
- * fact. Correct it here and every surface follows.
+ * The application close: the countdown's final target, and the one date on
+ * this page that can actually cost a student a seat. Interviews are scheduled
+ * from the closed pool by email, which is why they are not on the public
+ * calendar above. Edit this and every surface follows — the countdown, the
+ * agenda's closing row, and the Sectors open-seat chips.
  */
 export const APPLICATION_DEADLINE = {
-  iso: "2026-09-06",
+  iso: "2026-09-04",
   /** Display date, matching the style of the calendar rows. */
-  date: "Sun, Sep 6",
+  date: "Fri, Sep 4",
   time: "11:59 PM",
   label: "Applications close",
 } as const;
@@ -154,12 +150,12 @@ export type Milestone = {
  * The runway the countdown walks: every event up to the application close,
  * then the close itself. Nothing after it.
  *
- * The interviews fall AFTER the deadline — you interview from a closed pool —
- * so they stay on the calendar, in the .ics, and in the schema.org Events, but
- * they are not countdown targets. Once applications close there is nothing
- * left for a prospective applicant to count down to; an admitted candidate
- * gets their slot by email. Counting down to an interview they may not have
- * would be worse than showing the closed notice.
+ * The filter is deliberate rather than incidental. Today every calendar event
+ * precedes the deadline, so it is a no-op — but if an event is ever added
+ * after the close (an interview day, an admitted-students session), it belongs
+ * on the calendar without becoming something a prospective applicant is
+ * counted down to. Once applications shut there is nothing left for them to
+ * act on.
  */
 export function milestones(): Milestone[] {
   const deadlineMs = applicationDeadlineMs();

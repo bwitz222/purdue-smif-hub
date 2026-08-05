@@ -60,7 +60,7 @@ Most of what you'd want to change is data, not components.
 | Member headshots | `src/assets/team/*.webp` | Wired up in `PHOTO_BY_NAME` in `src/data/team.ts` |
 | Portfolio positions: shares, cost basis, industry, beta | `src/data/holdings.ts` | Refreshed each quarter against the custody statement. Live prices come from Supabase and overwrite the rest |
 | Recruiting calendar | `src/data/recruiting.ts` (`CALENDAR`) | Drives the countdown, the schema.org Events, and the `.ics` download |
-| Application deadline | `src/data/recruiting.ts` (`APPLICATION_DEADLINE`) | The countdown's final target. **Currently a placeholder — confirm the real date.** |
+| Application deadline | `src/data/recruiting.ts` (`APPLICATION_DEADLINE`) | The countdown's final target, and the closing row on the calendar |
 | Learn curriculum and downloads | `src/routes/learn.tsx` | Downloadable models live in `src/assets/` |
 | Page titles, descriptions, social cards | each route's `head()` + `src/lib/seo.ts` | `socialMeta()` builds the OG/Twitter block |
 
@@ -102,10 +102,13 @@ derived from `memberDirectory`.
 - **The recruiting countdown walks a milestone sequence**, not a single date.
   `milestones()` in `src/data/recruiting.ts` is every event up to the
   application close, then the close itself; the countdown targets
-  `nextMilestone()` and rolls automatically. Events after the deadline (the
-  interviews) stay on the calendar and in the `.ics` but are not countdown
-  targets. The route loader stamps a server clock so the digits render real in
-  the SSR HTML instead of `--`.
+  `nextMilestone()` and rolls automatically. Interviews are scheduled from the
+  closed applicant pool by email, so they are not on the public calendar — and
+  if an event is ever added after the deadline it will appear on the calendar
+  without becoming a countdown target. The route loader stamps a server clock
+  so the digits render real in the SSR HTML instead of `--`.
+  `src/data/recruiting.test.ts` asserts the runway matches the published
+  calendar name-for-name, so editing one without the other fails loudly.
 - **Colour tokens are contrast-checked.** `--gold-deep` is set to a value that
   clears WCAG AA on every ground it is used against. If you darken a background or
   lighten that token, re-run `npm run test:e2e` — it fails on any new axe violation.

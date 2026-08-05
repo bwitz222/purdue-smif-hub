@@ -398,7 +398,7 @@ function Recruiting() {
           <button
             type="button"
             onClick={downloadICS}
-            aria-label="Download all 10 events as iCal file"
+            aria-label={`Download all ${CALENDAR.length} events as iCal file`}
             className="press group inline-flex items-center gap-2 border border-ink px-4 py-2 text-xs font-semibold uppercase tracking-wider hover:bg-ink hover:text-background cursor-pointer"
           >
             <Download className="h-3.5 w-3.5 icon-pop" />

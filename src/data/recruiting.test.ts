@@ -114,6 +114,68 @@ describe("the milestone runway", () => {
   });
 });
 
+// The explicit, order-by-order check: the countdown must walk exactly the
+// calendar as published, in the published order, and finish on the deadline.
+// Written as literal expected values rather than derived ones, so editing the
+// calendar without meaning to fails here loudly.
+describe("the countdown follows the published calendar", () => {
+  const EXPECTED_ORDER = [
+    "B-Involved Fair",
+    "SMIF Callout 1",
+    "SMIF Coffee Chats 1",
+    "Daniels Club Expo",
+    "SMIF Callout 2",
+    "SMIF Finance Club Consortium",
+    "SMIF Coffee Chats 2",
+    "SMIF Callout 3",
+    "Applications close",
+  ];
+
+  it("matches the published calendar exactly, ending at the close", () => {
+    expect(milestones().map((m) => m.name)).toEqual(EXPECTED_ORDER);
+  });
+
+  it("steps through every one of them as the clock advances", () => {
+    const ms = milestones();
+    const walked: string[] = [];
+    // Start just before the first milestone and jump to just past each end.
+    let clock = ms[0].startMs - 1000;
+    for (let i = 0; i < ms.length; i++) {
+      walked.push(nextMilestone(clock)!.name);
+      clock = ms[i].endMs + 1;
+    }
+    expect(walked).toEqual(EXPECTED_ORDER);
+    expect(nextMilestone(clock)).toBeNull();
+  });
+
+  it("holds the published dates and times", () => {
+    const byName = new Map(milestones().map((m) => [m.name, m]));
+    expect(byName.get("B-Involved Fair")?.date).toBe("Sat, Aug 22");
+    expect(byName.get("SMIF Callout 1")?.time).toBe("7:30 - 8:30 PM");
+    expect(byName.get("SMIF Callout 3")?.date).toBe("Tue, Sep 1");
+    expect(byName.get("Applications close")?.date).toBe("Fri, Sep 4");
+    expect(byName.get("Applications close")?.time).toBe("11:59 PM");
+  });
+
+  it("closes applications after the last callout", () => {
+    const lastCallout = milestones().find((m) => m.name === "SMIF Callout 3")!;
+    expect(applicationDeadlineMs()).toBeGreaterThan(lastCallout.endMs);
+  });
+
+  it("puts the deadline on a Friday, as published", () => {
+    // Rendered in Eastern, which is where the cycle runs.
+    const weekday = new Date(applicationDeadlineMs()).toLocaleDateString("en-US", {
+      weekday: "short",
+      timeZone: "America/New_York",
+    });
+    expect(weekday).toBe("Fri");
+  });
+
+  it("carries no interview days on the public calendar", () => {
+    expect(CALENDAR.some((e) => /interview/i.test(e.name))).toBe(false);
+  });
+});
+
 describe("the application deadline", () => {
   it("resolves to a real timestamp", () => {
     expect(Number.isFinite(applicationDeadlineMs())).toBe(true);
