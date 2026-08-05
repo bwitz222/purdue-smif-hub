@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { FileText, Download, ExternalLink, Rss, Search } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RevealGroup, RevealItem } from "@/components/Reveal";
+import { SweepRule } from "@/components/SectionRule";
 import { socialMeta, canonical, breadcrumbLd, OG_RESEARCH } from "@/lib/seo";
 import { getPublications, type PublicationRow } from "@/lib/publications.functions";
 
@@ -34,10 +34,10 @@ export const Route = createFileRoute("/research")({
 type Category = "equity_research" | "semester" | "annual";
 type SortKey = "newest" | "oldest" | "title";
 
-const CATEGORIES: { value: Category; label: string; description: string }[] = [
-  { value: "equity_research", label: "Equity Research", description: "Single-name pitches and deep-dive analyst reports." },
-  { value: "semester", label: "Semester Reports", description: "End-of-semester performance and attribution reviews." },
-  { value: "annual", label: "Annual Reports", description: "Comprehensive yearly reports to the Daniels School and stakeholders." },
+const CATEGORIES: { value: Category; label: string }[] = [
+  { value: "equity_research", label: "Equity Research" },
+  { value: "semester", label: "Semester Reports" },
+  { value: "annual", label: "Annual Reports" },
 ];
 
 const CATEGORY_LABEL: Record<Category, string> = {
@@ -53,26 +53,63 @@ function formatBytes(bytes: number | null) {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
+// The sample AMZN files carry a real created_at from when they were seeded,
+// which isn't when the work was done. Label them by term instead of by row
+// timestamp.
+function displayDate(pub: PublicationRow): string {
+  if (/sample/i.test(pub.title)) return "Spring 2026";
+  return new Date(pub.created_at).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
+/**
+ * What's coming, stated plainly.
+ *
+ * A library this small looks broken when it's presented as three category
+ * grids that happen to be empty. Naming the next drop makes the same sparseness
+ * read as a publishing schedule that hasn't come round yet — which is what it
+ * is. Update this whenever a cycle closes.
+ */
+const NEXT_REPORT = {
+  title: "Fall 2026 semester review",
+  due: "December 2026",
+  note: "End-of-term performance and attribution land here once the semester closes, followed by the annual report after the fiscal-year audit.",
+};
+
 function Research() {
   const { pubs } = Route.useLoaderData();
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<SortKey>("newest");
+  const [category, setCategory] = useState<Category | "all">("all");
 
   const filtered = useMemo<PublicationRow[]>(() => {
     const q = query.trim().toLowerCase();
-    const base = q
-      ? pubs.filter(
-          (p: PublicationRow) =>
-            p.title.toLowerCase().includes(q) ||
-            (p.description ?? "").toLowerCase().includes(q),
-        )
-      : pubs;
+    let base = category === "all" ? pubs : pubs.filter((p) => p.category === category);
+    if (q) {
+      base = base.filter(
+        (p: PublicationRow) =>
+          p.title.toLowerCase().includes(q) || (p.description ?? "").toLowerCase().includes(q),
+      );
+    }
     const sorted = [...base];
     if (sort === "newest") sorted.sort((a, b) => +new Date(b.created_at) - +new Date(a.created_at));
     else if (sort === "oldest") sorted.sort((a, b) => +new Date(a.created_at) - +new Date(b.created_at));
     else sorted.sort((a, b) => a.title.localeCompare(b.title));
     return sorted;
-  }, [pubs, query, sort]);
+  }, [pubs, query, sort, category]);
+
+  // The newest publication carries the page; the rest are the list beneath it.
+  // Only feature when nothing is filtered — a "latest" block that changes as
+  // you type is a search result wearing a hat.
+  const isUnfiltered = category === "all" && query.trim() === "";
+  const featured = useMemo<PublicationRow | null>(() => {
+    if (!isUnfiltered || pubs.length === 0) return null;
+    return [...pubs].sort((a, b) => +new Date(b.created_at) - +new Date(a.created_at))[0];
+  }, [pubs, isUnfiltered]);
+  const listed = featured ? filtered.filter((p) => p.id !== featured.id) : filtered;
 
   const jsonLd = useMemo(() => {
     if (pubs.length === 0) return null;
@@ -122,150 +159,166 @@ function Research() {
       </section>
 
       <section className="container-prose py-16">
-        <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="relative w-full sm:max-w-sm">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <input
-              type="search"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search reports…"
-              aria-label="Search reports"
-              className="w-full border border-input bg-background py-2 pl-9 pr-3 text-sm outline-none focus:border-gold"
-            />
-          </div>
-          <label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-            Sort
-            <select
-              value={sort}
-              onChange={(e) => setSort(e.target.value as SortKey)}
-              aria-label="Sort reports"
-              className="border border-input bg-background px-2 py-1.5 text-xs font-medium tracking-normal text-foreground outline-none focus:border-gold"
-            >
-              <option value="newest">Newest first</option>
-              <option value="oldest">Oldest first</option>
-              <option value="title">Title (A-Z)</option>
-            </select>
-          </label>
-        </div>
-
-        <Tabs defaultValue="equity_research" className="w-full">
-          <TabsList className="h-auto flex-wrap gap-1 bg-secondary/60 p-1">
-            {CATEGORIES.map((c) => (
-              <TabsTrigger key={c.value} value={c.value} className="px-4 py-2 text-sm">
-                {c.label}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-
-          {CATEGORIES.map((c) => {
-            const items = filtered.filter((p) => p.category === c.value);
-            return (
-              <TabsContent key={c.value} value={c.value} className="mt-8">
-                <div className="mb-6 flex items-baseline justify-between gap-4">
-                  <div>
-                    <h2 className="font-display text-2xl font-bold">{c.label}</h2>
-                    <p className="mt-1 text-sm text-muted-foreground">{c.description}</p>
-                  </div>
-                  <span className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                    {items.length} {items.length === 1 ? "report" : "reports"}
+        {/* One featured publication, then a compact list. The old shell — three
+            category headers, a sort control, and a filter row — was larger than
+            the library it governed, and four files spread across 3:4 card
+            tiles read as an empty grid rather than a deliberate one. */}
+        {featured && (
+          <article className="mb-12 border-t-2 border-gold bg-card">
+            <div className="grid gap-6 p-6 md:grid-cols-[auto_1fr] md:gap-10 md:p-8">
+              <div className="flex items-start gap-3">
+                <FileText className="h-8 w-8 shrink-0 text-gold-deep" aria-hidden="true" />
+              </div>
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                  <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.28em] text-gold-deep">
+                    Latest · {CATEGORY_LABEL[featured.category]}
+                  </span>
+                  <span className="font-mono text-[11px] text-muted-foreground">
+                    {displayDate(featured)}
+                    {formatBytes(featured.file_size) && ` · ${formatBytes(featured.file_size)}`}
                   </span>
                 </div>
+                <h2 className="mt-3 font-display text-2xl font-bold leading-tight md:text-3xl">
+                  {featured.title}
+                </h2>
+                {featured.description && (
+                  <p className="mt-3 max-w-2xl leading-relaxed text-muted-foreground">
+                    {featured.description}
+                  </p>
+                )}
+                <a
+                  href={featured.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="press group mt-5 inline-flex items-center gap-2 border border-ink px-5 py-2.5 text-xs font-semibold uppercase tracking-wider hover:bg-ink hover:text-background"
+                >
+                  <Download className="icon-pop h-3.5 w-3.5" aria-hidden="true" />
+                  Read the report
+                </a>
+              </div>
+            </div>
+          </article>
+        )}
 
-                <RevealGroup className="grid gap-4 md:grid-cols-2" stagger={0.06}>
-                  {items.length === 0 ? (
-                    <EmptyState category={c.value} label={c.label} query={query} />
-                  ) : (
-                    items.map((p) => (
-                      <RevealItem key={p.id} className="h-full [&>div]:h-full">
-                        <PublicationCard pub={p} />
-                      </RevealItem>
-                    ))
-                  )}
-                </RevealGroup>
+        {/* One control row, not three headers plus two controls. */}
+        <SweepRule className="mb-4" />
+        <div className="flex flex-col gap-3 border-b border-border pb-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-wrap items-center gap-2">
+            {[{ value: "all" as const, label: "All" }, ...CATEGORIES].map((c) => {
+              const active = category === c.value;
+              return (
+                <button
+                  key={c.value}
+                  onClick={() => setCategory(c.value)}
+                  aria-pressed={active}
+                  className={`press inline-flex min-h-11 items-center border px-3 py-2 text-xs font-semibold uppercase tracking-wider ${
+                    active
+                      ? "border-ink bg-ink text-background"
+                      : "border-border bg-background text-foreground hover:border-ink hover:bg-secondary"
+                  }`}
+                >
+                  {c.label}
+                </button>
+              );
+            })}
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="relative w-full sm:w-56">
+              <Search
+                className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+                aria-hidden="true"
+              />
+              <input
+                type="search"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search reports…"
+                aria-label="Search reports"
+                className="w-full border border-input bg-background py-2 pl-9 pr-3 text-sm outline-none focus:border-gold"
+              />
+            </div>
+            <label className="flex shrink-0 items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+              <span className="sr-only sm:not-sr-only">Sort</span>
+              <select
+                value={sort}
+                onChange={(e) => setSort(e.target.value as SortKey)}
+                aria-label="Sort reports"
+                className="min-h-11 border border-input bg-background px-2 text-xs font-medium tracking-normal text-foreground outline-none focus:border-gold"
+              >
+                <option value="newest">Newest</option>
+                <option value="oldest">Oldest</option>
+                <option value="title">Title (A-Z)</option>
+              </select>
+            </label>
+          </div>
+        </div>
 
-              </TabsContent>
-            );
-          })}
-        </Tabs>
+        {/* The library itself: a dated list. */}
+        {listed.length > 0 ? (
+          <RevealGroup className="divide-y divide-border border-b border-border">
+            {listed.map((p) => (
+              <RevealItem key={p.id}>
+                <a
+                  href={p.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="group row-rail -mx-2 flex flex-col gap-1 px-2 py-5 transition-colors hover:bg-secondary/40 sm:flex-row sm:items-baseline sm:gap-6"
+                >
+                  <span className="w-28 shrink-0 font-mono text-[11px] uppercase tracking-[0.16em] text-gold-deep">
+                    {displayDate(p)}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block font-display text-lg font-bold leading-tight">
+                      {p.title}
+                    </span>
+                    {p.description && (
+                      <span className="mt-1 block text-sm text-muted-foreground">
+                        {p.description}
+                      </span>
+                    )}
+                  </span>
+                  <span className="flex shrink-0 items-center gap-3 font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+                    {CATEGORY_LABEL[p.category]}
+                    {formatBytes(p.file_size) && <span>{formatBytes(p.file_size)}</span>}
+                    <Download className="icon-pop h-3.5 w-3.5" aria-hidden="true" />
+                    <span className="sr-only">Download (opens in a new tab)</span>
+                  </span>
+                </a>
+              </RevealItem>
+            ))}
+          </RevealGroup>
+        ) : (
+          <p className="border-b border-border py-10 text-sm text-muted-foreground">
+            {query
+              ? `Nothing matches "${query}".`
+              : "Nothing published in this category yet — see what's next below."}
+          </p>
+        )}
+
+        {/* One explicit "next report drops" line, replacing three empty grids
+            in three tabs. Sparse on purpose reads better than sparse by
+            accident. */}
+        <div className="mt-10 flex flex-wrap items-baseline gap-x-4 gap-y-2 border-l-2 border-gold bg-secondary/40 px-5 py-4">
+          <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.28em] text-gold-deep">
+            Next report
+          </span>
+          <span className="font-display text-lg font-bold">{NEXT_REPORT.title}</span>
+          <span className="font-mono text-sm text-muted-foreground">{NEXT_REPORT.due}</span>
+        </div>
+        <p className="mt-3 max-w-2xl text-sm text-muted-foreground">
+          {NEXT_REPORT.note}{" "}
+          <a
+            href={SUBSTACK_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="link-underline font-medium text-gold-deep hover:text-gold"
+          >
+            Interim writeups go out on Substack
+          </a>
+          .
+        </p>
       </section>
     </>
   );
 }
-
-function PublicationCard({ pub }: { pub: PublicationRow }) {
-  const isSample = /sample/i.test(pub.title);
-  return (
-    <div className="group flex flex-col border border-border bg-card hover-lift">
-      <div className="relative aspect-[3/4] overflow-hidden border-b border-border bg-secondary/40">
-        <div className="absolute inset-x-0 top-0 h-0.5 bg-gradient-gold" aria-hidden="true" />
-        {isSample && (
-          <span className="absolute right-3 top-3 z-10 border border-gold/60 bg-background/90 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.2em] text-gold-deep">
-            Sample
-          </span>
-        )}
-        <div className="flex h-full flex-col items-center justify-center gap-4 p-6 text-center">
-          <FileText className="h-12 w-12 text-gold-deep/70" aria-hidden="true" />
-          <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-            {CATEGORY_LABEL[pub.category]}
-          </span>
-        </div>
-      </div>
-      <div className="flex flex-1 flex-col p-5">
-        <h3 className="font-display text-lg font-bold leading-tight">{pub.title}</h3>
-        {pub.description && (
-          <p className="mt-2 text-sm text-muted-foreground">{pub.description}</p>
-        )}
-        <div className="mt-2 text-xs text-muted-foreground">
-          {isSample ? "Spring 2026" : new Date(pub.created_at).toLocaleDateString()}
-          {formatBytes(pub.file_size) && ` · ${formatBytes(pub.file_size)}`}
-        </div>
-        <div className="mt-4 flex items-center gap-3 border-t border-border pt-3 text-xs">
-          <a href={pub.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-muted-foreground transition hover:text-gold-deep">
-            <Download className="h-3.5 w-3.5" /> View / Download
-          </a>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function EmptyState({ category, label, query }: { category: Category; label: string; query: string }) {
-  if (query) {
-    return (
-      <div className="col-span-full border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
-        No {label.toLowerCase()} match "{query}".
-      </div>
-    );
-  }
-  const copy: Record<Category, { headline: string; support: string }> = {
-    equity_research: {
-      headline: "Analyst pitches publish here after each research cycle.",
-      support: "Follow interim writeups on Substack while the next cycle wraps.",
-    },
-    semester: {
-      headline: "First semester report publishes December 2026.",
-      support: "End-of-term performance and attribution reviews will land here after each semester closes.",
-    },
-    annual: {
-      headline: "The next annual report will be published here after the fiscal-year audit.",
-      support: "Full reports to the Daniels School and stakeholders are posted once audited each year.",
-    },
-  };
-  const c = copy[category];
-  return (
-    <div className="col-span-full relative border border-border bg-secondary/30 p-12 md:p-16 text-center">
-      <span aria-hidden="true" className="absolute inset-x-0 top-0 h-0.5 bg-gradient-gold" />
-      <span className="text-[10px] font-semibold uppercase tracking-[0.28em] text-gold-deep">
-        {label} · Coming soon
-      </span>
-      <h3 className="mt-4 font-display text-2xl md:text-3xl font-bold text-ink max-w-xl mx-auto leading-tight">
-        {c.headline}
-      </h3>
-      <p className="mt-4 text-sm text-muted-foreground max-w-md mx-auto leading-relaxed">
-        {c.support}
-      </p>
-    </div>
-  );
-}
-

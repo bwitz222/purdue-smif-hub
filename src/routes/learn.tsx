@@ -2,6 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ExternalLink, Download } from "lucide-react";
 import { socialMeta, canonical, breadcrumbLd, OG_LEARN } from "@/lib/seo";
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
+import { SweepRule } from "@/components/SectionRule";
+import { useScrollSpy } from "@/lib/use-scroll-spy";
 import { applyUrl } from "@/lib/apply-url";
 import dcfAmzn from "@/assets/dcf-model-amzn.xlsx?url";
 import amznThesis from "@/assets/amzn-investment-thesis.docx?url";
@@ -122,7 +124,11 @@ const GLOSSARY = [
   { term: "Sharpe Ratio", def: "Excess return per unit of risk; risk-adjusted performance." },
 ];
 
+const MODULE_IDS = CURRICULUM.map((m) => `module-${m.n}`);
+
 function Learn() {
+  // Marks where you are in the syllabus as you scroll the modules.
+  const activeModule = useScrollSpy(MODULE_IDS);
   return (
     <>
       {/* Hero */}
@@ -148,7 +154,7 @@ function Learn() {
       <section className="bg-background border-t border-border py-28">
         <div className="container-prose">
           <Reveal className="max-w-2xl mb-14">
-            <span className="rule-gold mb-5 block" />
+            <SweepRule className="mb-5" />
             <h2 className="font-display font-bold text-ink" style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>
               Two tracks,<br />one standard.
             </h2>
@@ -167,26 +173,53 @@ function Learn() {
         </div>
       </section>
 
-      {/* Curriculum / learning path */}
+      {/* Curriculum — a syllabus, with the module index alongside the modules.
+          Six numbered rows in a flat stack read like six more cards; a sticky
+          contents rail says "this is a course, and here is its shape". */}
       <section className="bg-secondary/40 border-t border-border py-28">
-        <div className="container-prose">
-          <Reveal className="max-w-2xl mb-14">
+        <div className="container-prose grid gap-12 lg:grid-cols-[minmax(0,15rem)_1fr] lg:gap-16">
+          <div className="lg:sticky lg:top-20 lg:self-start">
+            <SweepRule className="mb-5" />
             <h2 className="font-display font-bold text-ink" style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>
               The learning path.
             </h2>
-          </Reveal>
-          <RevealGroup className="border-t border-border" stagger={0.06}>
+            <nav aria-label="Curriculum modules" className="mt-6 border-t border-border">
+              {CURRICULUM.map((m) => {
+                const isActive = activeModule === `module-${m.n}`;
+                return (
+                  <a
+                    key={m.n}
+                    href={`#module-${m.n}`}
+                    aria-current={isActive ? "true" : undefined}
+                    className={`group flex items-baseline gap-3 border-b border-l-2 border-border py-2.5 pl-3 text-sm transition-colors ${
+                      isActive
+                        ? "border-l-gold bg-background/70"
+                        : "border-l-transparent hover:bg-background/60"
+                    }`}
+                  >
+                    <span className="font-mono text-[11px] tracking-[0.18em] text-gold-deep">
+                      {m.n}
+                    </span>
+                    <span className={isActive ? "text-ink" : "text-muted-foreground group-hover:text-ink"}>
+                      {m.title}
+                    </span>
+                  </a>
+                );
+              })}
+            </nav>
+          </div>
+
+          <RevealGroup className="border-t border-border" stagger={0.024}>
             {CURRICULUM.map((m) => (
-              <RevealItem
-                key={m.n}
-                className="grid md:grid-cols-[auto_1fr] gap-6 md:gap-10 border-b border-border py-8"
-              >
-                <div className="font-mono text-xs uppercase tracking-[0.22em] text-gold-deep md:pt-1">
-                  {m.n}
-                </div>
-                <div>
-                  <h3 className="font-display text-xl md:text-2xl font-semibold text-ink mb-2">{m.title}</h3>
-                  <p className="text-muted-foreground leading-relaxed">{m.body}</p>
+              <RevealItem key={m.n} className="border-b border-border py-8">
+                <div id={`module-${m.n}`} className="scroll-mt-20">
+                  <div className="font-mono text-xs uppercase tracking-[0.22em] text-gold-deep">
+                    Module {m.n}
+                  </div>
+                  <h3 className="mt-2 font-display text-xl font-semibold text-ink md:text-2xl">
+                    {m.title}
+                  </h3>
+                  <p className="mt-2 leading-relaxed text-muted-foreground">{m.body}</p>
                 </div>
               </RevealItem>
             ))}
@@ -198,17 +231,27 @@ function Learn() {
       <section className="bg-background border-t border-border py-28">
         <div className="container-prose">
           <Reveal className="max-w-2xl mb-14">
-            <span className="rule-gold mb-5 block" />
+            <SweepRule className="mb-5" />
             <h2 className="font-display font-bold text-ink" style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>
               Reading list.
             </h2>
           </Reveal>
-          <RevealGroup className="grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-border border border-border" stagger={0.05}>
+          {/* A reading list is a list. Nine equal cards made every title look
+              like a product tile; the citation form makes them look like books. */}
+          <RevealGroup className="border-t border-border" stagger={0.024}>
             {READING.map((b) => (
-              <RevealItem key={b.title} className="bg-background p-7 lg:p-8 flex flex-col">
-                <h3 className="font-display text-lg font-semibold text-ink leading-snug">{b.title}</h3>
-                <p className="mt-2 font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">{b.author}</p>
-                <p className="mt-4 text-sm text-muted-foreground leading-relaxed">{b.note}</p>
+              <RevealItem key={b.title}>
+                <div className="grid gap-1 border-b border-border py-5 md:grid-cols-[minmax(0,22rem)_1fr] md:items-baseline md:gap-8">
+                  <div>
+                    <h3 className="font-display text-lg font-semibold leading-snug text-ink">
+                      {b.title}
+                    </h3>
+                    <p className="mt-0.5 font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                      {b.author}
+                    </p>
+                  </div>
+                  <p className="text-sm leading-relaxed text-muted-foreground">{b.note}</p>
+                </div>
               </RevealItem>
             ))}
           </RevealGroup>
@@ -219,24 +262,28 @@ function Learn() {
       <section className="bg-background border-t border-border py-28">
         <div className="container-prose">
           <Reveal className="max-w-2xl mb-14">
+            <SweepRule className="mb-5" />
             <h2 className="font-display font-bold text-ink" style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>
               Tools we use.
             </h2>
           </Reveal>
-          <RevealGroup className="grid sm:grid-cols-2 lg:grid-cols-4 gap-px bg-border border border-border" stagger={0.05}>
+          <RevealGroup className="border-t border-border" stagger={0.024}>
             {TOOLS.map((t) => (
-              <RevealItem key={t.name} className="bg-background">
+              <RevealItem key={t.name}>
                 <a
                   href={t.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group flex flex-col h-full p-7 lg:p-8 hover:bg-secondary/40 transition-colors duration-200"
+                  className="group row-rail -mx-2 grid gap-1 border-b border-border px-2 py-4 transition-colors duration-200 hover:bg-secondary/40 md:grid-cols-[minmax(0,14rem)_1fr_auto] md:items-baseline md:gap-8"
                 >
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="font-display text-lg font-semibold text-ink group-hover:text-gold-deep transition-colors">{t.name}</h3>
-                    <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-gold-deep transition-colors" aria-hidden="true" />
-                  </div>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{t.note}</p>
+                  <h3 className="font-display text-lg font-semibold text-ink transition-colors group-hover:text-gold-deep">
+                    {t.name}
+                  </h3>
+                  <p className="text-sm leading-relaxed text-muted-foreground">{t.note}</p>
+                  <ExternalLink
+                    className="icon-pop h-4 w-4 shrink-0 text-muted-foreground transition-colors group-hover:text-gold-deep"
+                    aria-hidden="true"
+                  />
                   <span className="sr-only">(opens in new tab)</span>
                 </a>
               </RevealItem>
@@ -250,7 +297,7 @@ function Learn() {
       <section className="bg-background border-t border-border py-28">
         <div className="container-prose">
           <Reveal className="max-w-2xl mb-14">
-            <span className="rule-gold mb-5 block" />
+            <SweepRule className="mb-5" />
             <h2 className="font-display font-bold text-ink" style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>
               Example models.
             </h2>
@@ -258,20 +305,31 @@ function Learn() {
               Worked examples from our analyst training. Open them, tear them apart, and build your own.
             </p>
           </Reveal>
-          <RevealGroup className="grid sm:grid-cols-2 gap-px bg-border border border-border" stagger={0.05}>
+          {/* Downloadable files, presented as files: kind and name first, so
+              you can tell an Excel model from a Word memo before you click. */}
+          <RevealGroup className="border-t border-border" stagger={0.024}>
             {EXAMPLES.map((e) => (
-              <RevealItem key={e.title} className="bg-background">
+              <RevealItem key={e.title}>
                 <a
                   href={e.href}
                   download={e.filename}
-                  className="group flex flex-col h-full p-7 lg:p-8 hover:bg-secondary/40 transition-colors duration-200"
+                  className="group row-rail -mx-2 grid gap-1 border-b border-border px-2 py-5 transition-colors duration-200 hover:bg-secondary/40 md:grid-cols-[minmax(0,12rem)_1fr_auto] md:items-baseline md:gap-8"
                 >
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="font-display text-lg font-semibold text-ink group-hover:text-gold-deep transition-colors">{e.title}</h3>
-                    <Download className="h-4 w-4 text-muted-foreground group-hover:text-gold-deep transition-colors" aria-hidden="true" />
-                  </div>
-                  <p className="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground mb-3">{e.kind}</p>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{e.note}</p>
+                  <span className="font-mono text-xs uppercase tracking-[0.18em] text-gold-deep">
+                    {e.kind}
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block font-display text-lg font-semibold text-ink transition-colors group-hover:text-gold-deep">
+                      {e.title}
+                    </span>
+                    <span className="mt-1 block text-sm leading-relaxed text-muted-foreground">
+                      {e.note}
+                    </span>
+                  </span>
+                  <Download
+                    className="icon-pop h-4 w-4 shrink-0 text-muted-foreground transition-colors group-hover:text-gold-deep"
+                    aria-hidden="true"
+                  />
                 </a>
               </RevealItem>
             ))}
@@ -284,18 +342,21 @@ function Learn() {
 
         <div className="container-prose">
           <Reveal className="max-w-2xl mb-14">
+            <SweepRule className="mb-5" />
             <h2 className="font-display font-bold text-ink" style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>
               Key terms.
             </h2>
           </Reveal>
-          <RevealGroup className="grid md:grid-cols-2 gap-px bg-border border border-border" stagger={0.04}>
+          {/* A glossary is a definition list, and marking it up as one is both
+              better semantics and a smaller, faster read than 20 cards. */}
+          <dl className="grid border-t border-border md:grid-cols-2 md:gap-x-12">
             {GLOSSARY.map((g) => (
-              <RevealItem key={g.term} className="bg-background p-7 lg:p-8">
-                <h3 className="font-display text-lg font-semibold text-ink mb-2">{g.term}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{g.def}</p>
-              </RevealItem>
+              <div key={g.term} className="border-b border-border py-5">
+                <dt className="font-display text-lg font-semibold text-ink">{g.term}</dt>
+                <dd className="mt-1 text-sm leading-relaxed text-muted-foreground">{g.def}</dd>
+              </div>
             ))}
-          </RevealGroup>
+          </dl>
         </div>
       </section>
 

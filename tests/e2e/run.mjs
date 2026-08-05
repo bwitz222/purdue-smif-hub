@@ -190,13 +190,32 @@ try {
 
   {
     const { page, ctx } = await open("/recruiting");
-    record("/recruiting rows link to Google Calendar",
-      (await page.locator('a[href*="calendar.google.com"]').count()) === 10);
+    const gcalLinks = await page.locator('a[href*="calendar.google.com"]').count();
+    record("/recruiting rows link to Google Calendar", gcalLinks > 0, `${gcalLinks} links`);
+
     const [download] = await Promise.all([
       page.waitForEvent("download", { timeout: 10_000 }).catch(() => null),
       page.locator('button:has-text("Download all events")').click(),
     ]);
     record("/recruiting .ics downloads", !!download, download ? await download.suggestedFilename() : "no download");
+
+    // Deliberately not a hardcoded count: that drifts silently the moment the
+    // calendar is edited. The invariant that actually matters is that the two
+    // independent renderings of CALENDAR agree — one Google Calendar link per
+    // row, one VEVENT per row — so editing the calendar keeps this honest
+    // while a bug in either path still fails.
+    if (download) {
+      const icsPath = await download.path();
+      const ics = icsPath ? readFileSync(icsPath, "utf8") : "";
+      const vevents = (ics.match(/BEGIN:VEVENT/g) ?? []).length;
+      record("/recruiting .ics has one VEVENT per calendar row",
+        vevents === gcalLinks && vevents > 0, `${vevents} VEVENTs vs ${gcalLinks} rows`);
+    }
+
+    // The application close is not an event — it must never acquire a Google
+    // Calendar link or an .ics entry, but it must appear on the page.
+    const bodyText = await page.locator("body").innerText();
+    record("/recruiting states the application deadline", /Applications close/i.test(bodyText));
     await ctx.close();
   }
 

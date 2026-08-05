@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useReducedMotion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import {
@@ -14,7 +15,6 @@ import {
   Home,
   LineChart,
   Briefcase,
-  RefreshCw,
 } from "lucide-react";
 import { socialMeta, canonical, breadcrumbLd, OG_SECTORS } from "@/lib/seo";
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
@@ -23,6 +23,9 @@ import { getRiskMetrics } from "@/lib/risk.functions";
 import { applyQuotes, teamAllocations, baseHoldings } from "@/lib/portfolio";
 import { liveQueryOptions } from "@/lib/live-query";
 import { sectorTeams, fixedIncomeMacro, portfolioManagers } from "@/data/team";
+import { nextEvent } from "@/data/recruiting";
+import { SweepRule } from "@/components/SectionRule";
+import { useInViewOnce } from "@/lib/use-in-view-once";
 
 type EquityTeam = {
   Icon: typeof Cpu;
@@ -113,6 +116,66 @@ function pmsForProcessTeam(name: string): string[] {
   return [];
 }
 
+/**
+ * An unfilled PM seat, designed as an opportunity rather than as missing data.
+ *
+ * "Open seat" in muted italics read like a gap in the roster the site had
+ * failed to fill. It's the opposite: it's the single most concrete recruiting
+ * pitch on the site, so it links to the calendar and names the next event.
+ */
+function OpenSeat() {
+  // SSR-safe: null until mounted, so the server and the first client render
+  // agree. The resting label works with or without a date.
+  const [nowMs, setNowMs] = useState<number | null>(null);
+  useEffect(() => setNowMs(Date.now()), []);
+  const next = nowMs === null ? null : nextEvent(nowMs);
+
+  return (
+    <Link
+      to="/recruiting"
+      className="press group mt-0.5 inline-flex flex-wrap items-center gap-x-2 gap-y-1 border border-gold-deep/40 px-2.5 py-1.5 text-xs font-semibold text-gold-deep transition-colors hover:border-gold-deep hover:bg-secondary"
+    >
+      Open seat
+      <span className="font-normal text-muted-foreground">
+        {next ? `· next: ${next.name}, ${next.date}` : "· recruiting each fall and spring"}
+      </span>
+      <ArrowRight className="arrow-slide h-3 w-3" aria-hidden="true" />
+    </Link>
+  );
+}
+
+/**
+ * A team's share of invested capital, drawn left to right on first view.
+ *
+ * The ladder IS the data visualisation on this page, so it gets the data-draw
+ * tier (900ms, out-expo) the same way the sector bars on /holdings and the
+ * chart paths on /performance do. Bars stagger down the ladder so the eye
+ * reads the ranking in order rather than seeing eight bars appear at once.
+ *
+ * The width is set from the first paint — the draw scales a transform on top
+ * of it, so the number is never gated behind the animation, and under reduced
+ * motion the bar is simply already at full length.
+ */
+function AllocationBar({ pct, index }: { pct: number; index: number }) {
+  const reduce = useReducedMotion();
+  const { ref, inView } = useInViewOnce<HTMLSpanElement>(0.3);
+  const drawn = reduce || inView;
+  return (
+    <span ref={ref} aria-hidden="true" className="relative h-1.5 flex-1 bg-muted">
+      <span
+        className="absolute inset-y-0 left-0 origin-left bg-gradient-gold"
+        style={{
+          width: `${pct}%`,
+          transform: `scaleX(${drawn ? 1 : 0})`,
+          transition: reduce
+            ? "none"
+            : `transform var(--dur-data) var(--ease-out-expo) ${Math.min(index, 7) * 40}ms`,
+        }}
+      />
+    </span>
+  );
+}
+
 function Sectors() {
   const fetchQuotes = useServerFn(getLiveQuotes);
   const symbols = useMemo(() => baseHoldings.map((h) => h.symbol), []);
@@ -137,6 +200,21 @@ function Sectors() {
     return new Map(allocations.map((a) => [a.team, a]));
   }, [quoteData]);
 
+  // Ranked by weight, heaviest first — the ladder's whole point is that the
+  // reading order matches the allocation order.
+  const rankedEquityTeams = useMemo(
+    () =>
+      EQUITY_TEAMS.map((t) => ({
+        ...t,
+        alloc: teams.get(t.name),
+        pms: pmsForEquityTeam(t.name),
+      })).sort((a, b) => (b.alloc?.pctOfInvested ?? 0) - (a.alloc?.pctOfInvested ?? 0)),
+    [teams],
+  );
+  // Bars scale against the heaviest team rather than 100%, so the spread
+  // between teams is visible instead of eight short stubs.
+  const maxTeamPct = Math.max(...rankedEquityTeams.map((t) => t.alloc?.pctOfInvested ?? 0), 1);
+
   // True session date of the quotes (Polygon's latest completed close), from
   // the risk metrics' as_of — not quoteData.cachedAt, which is the fetch time.
   const asOf = risk?.asOf
@@ -154,108 +232,124 @@ function Sectors() {
             <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
               Eight equity sector teams cover the investable universe from the bottom up. A Fixed Income &amp; Macro group frames the rate and credit backdrop, and Portfolio + Risk Management oversees allocation, trading, and performance.
             </p>
-            <div
-              aria-live="polite"
-              className="mt-6 inline-flex items-center gap-2 border border-border bg-background/60 px-3 py-1.5 text-xs font-mono text-muted-foreground"
-            >
-              {isFetching ? (
-                <><RefreshCw className="h-3 w-3 animate-spin text-gold" /> Refreshing allocations…</>
-              ) : asOf ? (
-                <>
-                  <span className="h-1.5 w-1.5 rounded-full bg-gold" aria-hidden="true" />
-                  Allocations as of {asOf} close
-                </>
-              ) : quoteData?.cachedAt ? (
-                <>
-                  <span className="h-1.5 w-1.5 rounded-full bg-gold" aria-hidden="true" />
-                  Allocations · latest end-of-day close
-                </>
-              ) : (
-                <>Last reported snapshot</>
-              )}
+            {/* Resting state is the as-of line; a refresh in flight shows a
+                hairline rather than swapping the text. Same treatment as the
+                Holdings masthead. */}
+            <div className="mt-6 inline-block">
+              <div
+                aria-live="polite"
+                className="font-mono text-xs text-muted-foreground"
+              >
+                {asOf ? (
+                  <>Allocations as of {asOf} close</>
+                ) : quoteData?.cachedAt ? (
+                  <>Allocations · latest end-of-day close</>
+                ) : (
+                  <>Last reported snapshot</>
+                )}
+              </div>
+              <div className="mt-1.5 h-0.5 w-full overflow-hidden bg-border">
+                <span
+                  aria-hidden="true"
+                  className={`block h-full bg-gradient-gold transition-transform duration-500 ${
+                    isFetching ? "animate-fade-in w-1/3" : "w-full"
+                  }`}
+                />
+              </div>
             </div>
           </Reveal>
         </div>
       </section>
 
+      {/* Allocation ladder. Eight identical cards in a 2-up grid said every
+          team carries the same weight, which is never true. Ranked full-width
+          rows with proportional bars say what the book actually looks like. */}
       <section className="container-prose py-20">
-        <div className="flex items-baseline justify-between mb-8 gap-4">
-          <h2 className="font-display text-2xl md:text-3xl font-bold text-ink">Equity coverage</h2>
-          <span className="text-[10px] font-mono uppercase tracking-[0.22em] text-muted-foreground">
+        <div className="mb-8 flex items-baseline justify-between gap-4">
+          <div>
+            <SweepRule index={0} className="mb-3" />
+            <h2 className="font-display text-2xl font-bold text-ink md:text-3xl">Equity coverage</h2>
+          </div>
+          <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
             % of invested capital
           </span>
         </div>
-        <RevealGroup className="grid gap-px bg-border md:grid-cols-2" stagger={0.04}>
-          {EQUITY_TEAMS.map(({ Icon, name, lead }) => {
-            const alloc = teams.get(name);
-            const pms = pmsForEquityTeam(name);
-            return (
-              <RevealItem key={name} className="bg-background">
-                <article className="group flex h-full flex-col p-8 transition-colors duration-200 hover:bg-secondary/30">
-                  <div className="flex items-start justify-between gap-6">
-                    <div className="flex items-start gap-4">
-                      <Icon className="mt-1 h-6 w-6 shrink-0 text-gold-deep icon-pop" />
-                      <div>
-                        <h3 className="font-display text-xl font-bold text-ink">{name}</h3>
-                        <p className="mt-1.5 text-sm text-muted-foreground">{lead}</p>
-                      </div>
-                    </div>
-                    <div className="text-right shrink-0">
-                      <div className="font-display text-3xl font-bold text-ink leading-none">
-                        {alloc ? fmtPct(alloc.pctOfInvested) : "—"}
-                      </div>
-                      <div className="mt-1 text-[10px] font-mono uppercase tracking-[0.18em] text-muted-foreground">
-                        {alloc ? fmtUSD0(alloc.dollars) : ""}
-                      </div>
+        <RevealGroup className="border-t border-border" stagger={0.024}>
+          {rankedEquityTeams.map(({ Icon, name, lead, alloc, pms }, i) => (
+            <RevealItem key={name}>
+              <article className="group grid gap-x-8 gap-y-4 border-b border-border py-7 transition-colors duration-200 hover:bg-secondary/30 md:grid-cols-[1.5fr_1fr_auto] md:items-start">
+                {/* Identity + weight bar */}
+                <div>
+                  <div className="flex items-start gap-3.5">
+                    <Icon className="icon-pop mt-1 h-5 w-5 shrink-0 text-gold-deep" aria-hidden="true" />
+                    <div className="min-w-0">
+                      <h3 className="font-display text-xl font-bold text-ink">{name}</h3>
+                      <p className="mt-1 text-sm text-muted-foreground">{lead}</p>
                     </div>
                   </div>
+                  <div className="mt-4 flex items-center gap-3 md:pl-9">
+                    <AllocationBar
+                      pct={alloc ? (alloc.pctOfInvested / maxTeamPct) * 100 : 0}
+                      index={i}
+                    />
+                    <span className="font-display text-2xl font-bold leading-none text-ink tabular-nums">
+                      {alloc ? fmtPct(alloc.pctOfInvested) : "—"}
+                    </span>
+                    <span className="w-20 shrink-0 text-right font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+                      {alloc ? fmtUSD0(alloc.dollars) : ""}
+                    </span>
+                  </div>
+                </div>
 
-                  <div className="mt-6 grid gap-6 sm:grid-cols-2">
-                    <div>
-                      <div className="text-[10px] font-mono uppercase tracking-[0.22em] text-muted-foreground">
-                        Portfolio Manager
-                      </div>
-                      <div className="mt-1.5 text-sm text-ink">
-                        {pms.length ? pms.join(", ") : <span className="text-muted-foreground italic">Open seat</span>}
-                      </div>
+                {/* Who runs it, and what's in it */}
+                <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-1 md:gap-3">
+                  <div>
+                    <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+                      Portfolio Manager
                     </div>
-                    <div>
-                      <div className="text-[10px] font-mono uppercase tracking-[0.22em] text-muted-foreground">
-                        Top holdings
-                      </div>
-                      <ul className="mt-1.5 space-y-0.5 text-sm text-ink">
-                        {alloc && alloc.topHoldings.length ? (
-                          alloc.topHoldings.map((h) => (
-                            <li key={h.symbol} className="flex items-baseline gap-2">
-                              <span className="font-mono text-xs text-gold-deep">{h.symbol}</span>
-                              <span className="truncate text-muted-foreground">{h.company}</span>
-                            </li>
-                          ))
-                        ) : (
-                          <li className="text-muted-foreground italic">No direct positions yet</li>
-                        )}
-                      </ul>
+                    <div className="mt-1.5 text-sm text-ink">
+                      {pms.length ? pms.join(", ") : <OpenSeat />}
                     </div>
                   </div>
+                  <div>
+                    <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+                      Top holdings
+                    </div>
+                    <ul className="mt-1.5 space-y-0.5 text-sm text-ink">
+                      {alloc && alloc.topHoldings.length ? (
+                        alloc.topHoldings.map((h) => (
+                          <li key={h.symbol} className="flex items-baseline gap-2">
+                            <span className="font-mono text-xs text-gold-deep">{h.symbol}</span>
+                            <span className="truncate text-muted-foreground">{h.company}</span>
+                          </li>
+                        ))
+                      ) : (
+                        <li className="text-muted-foreground">
+                          Covered through the index position
+                        </li>
+                      )}
+                    </ul>
+                  </div>
+                </div>
 
-                  <div className="mt-8 pt-5 border-t border-border">
-                    <Link
-                      to="/team"
-                      search={{ sector: name }}
-                      className="link-underline inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-gold-deep hover:text-ink transition-colors"
-                    >
-                      View team
-                      <ArrowRight className="h-3.5 w-3.5 arrow-slide" />
-                    </Link>
-                  </div>
-                </article>
-              </RevealItem>
-            );
-          })}
+                <div className="md:pt-1">
+                  <Link
+                    to="/team"
+                    search={{ sector: name }}
+                    className="link-underline inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-gold-deep transition-colors hover:text-ink"
+                  >
+                    View team
+                    <ArrowRight className="arrow-slide h-3.5 w-3.5" aria-hidden="true" />
+                  </Link>
+                </div>
+              </article>
+            </RevealItem>
+          ))}
         </RevealGroup>
       </section>
 
       <section className="container-prose pb-24">
+        <SweepRule index={1} className="mb-3" />
         <h2 className="font-display text-2xl md:text-3xl font-bold text-ink mb-8">Process teams</h2>
         <RevealGroup className="grid gap-px bg-border md:grid-cols-2" stagger={0.04}>
           {PROCESS_TEAMS.map(({ Icon, name, lead }) => {
@@ -275,7 +369,7 @@ function Sectors() {
                       {pms.length > 1 ? "Portfolio Managers" : "Portfolio Manager"}
                     </div>
                     <div className="mt-1.5 text-sm text-ink">
-                      {pms.length ? pms.join(", ") : <span className="text-muted-foreground italic">Open seat</span>}
+                      {pms.length ? pms.join(", ") : <OpenSeat />}
                     </div>
                   </div>
                   <div className="mt-auto pt-8">
