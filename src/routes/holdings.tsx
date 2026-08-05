@@ -366,10 +366,15 @@ function HoldingsPage() {
       <AnimatePresence>
         {showSticky && (
           <motion.div
-            initial={{ y: -60, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -60, opacity: 0 }}
-            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+            // Element enter/exit: 220ms. Under reduced motion the bar fades
+            // only — an opacity transition is allowed, the 60px slide is not.
+            initial={reduce ? { opacity: 0 } : { y: -60, opacity: 0 }}
+            animate={reduce ? { opacity: 1 } : { y: 0, opacity: 1 }}
+            exit={reduce ? { opacity: 0 } : { y: -60, opacity: 0 }}
+            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+            // Marks a deliberately scroll-conditional element: it is absent at
+            // the top of the page by design, not by failing to appear.
+            data-transient="sticky-summary"
             className="fixed top-14 left-0 right-0 z-40 border-b border-border bg-background/95 backdrop-blur-md shadow-sm"
           >
             <div className="container-prose flex items-center justify-between gap-4 py-2.5 text-xs">
