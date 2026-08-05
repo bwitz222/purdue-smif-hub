@@ -2,6 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ExternalLink, Download } from "lucide-react";
 import { socialMeta, canonical, breadcrumbLd, OG_LEARN } from "@/lib/seo";
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
+import { SweepRule } from "@/components/SectionRule";
+import { useScrollSpy } from "@/lib/use-scroll-spy";
 import { applyUrl } from "@/lib/apply-url";
 import dcfAmzn from "@/assets/dcf-model-amzn.xlsx?url";
 import amznThesis from "@/assets/amzn-investment-thesis.docx?url";
@@ -122,7 +124,11 @@ const GLOSSARY = [
   { term: "Sharpe Ratio", def: "Excess return per unit of risk; risk-adjusted performance." },
 ];
 
+const MODULE_IDS = CURRICULUM.map((m) => `module-${m.n}`);
+
 function Learn() {
+  // Marks where you are in the syllabus as you scroll the modules.
+  const activeModule = useScrollSpy(MODULE_IDS);
   return (
     <>
       {/* Hero */}
@@ -148,7 +154,7 @@ function Learn() {
       <section className="bg-background border-t border-border py-28">
         <div className="container-prose">
           <Reveal className="max-w-2xl mb-14">
-            <span className="rule-gold mb-5 block" />
+            <SweepRule className="mb-5" />
             <h2 className="font-display font-bold text-ink" style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>
               Two tracks,<br />one standard.
             </h2>
@@ -173,20 +179,33 @@ function Learn() {
       <section className="bg-secondary/40 border-t border-border py-28">
         <div className="container-prose grid gap-12 lg:grid-cols-[minmax(0,15rem)_1fr] lg:gap-16">
           <div className="lg:sticky lg:top-20 lg:self-start">
+            <SweepRule className="mb-5" />
             <h2 className="font-display font-bold text-ink" style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>
               The learning path.
             </h2>
             <nav aria-label="Curriculum modules" className="mt-6 border-t border-border">
-              {CURRICULUM.map((m) => (
-                <a
-                  key={m.n}
-                  href={`#module-${m.n}`}
-                  className="group row-rail flex items-baseline gap-3 border-b border-border py-2.5 text-sm transition-colors hover:bg-background/60"
-                >
-                  <span className="font-mono text-[11px] tracking-[0.18em] text-gold-deep">{m.n}</span>
-                  <span className="text-muted-foreground group-hover:text-ink">{m.title}</span>
-                </a>
-              ))}
+              {CURRICULUM.map((m) => {
+                const isActive = activeModule === `module-${m.n}`;
+                return (
+                  <a
+                    key={m.n}
+                    href={`#module-${m.n}`}
+                    aria-current={isActive ? "true" : undefined}
+                    className={`group flex items-baseline gap-3 border-b border-l-2 border-border py-2.5 pl-3 text-sm transition-colors ${
+                      isActive
+                        ? "border-l-gold bg-background/70"
+                        : "border-l-transparent hover:bg-background/60"
+                    }`}
+                  >
+                    <span className="font-mono text-[11px] tracking-[0.18em] text-gold-deep">
+                      {m.n}
+                    </span>
+                    <span className={isActive ? "text-ink" : "text-muted-foreground group-hover:text-ink"}>
+                      {m.title}
+                    </span>
+                  </a>
+                );
+              })}
             </nav>
           </div>
 
@@ -212,7 +231,7 @@ function Learn() {
       <section className="bg-background border-t border-border py-28">
         <div className="container-prose">
           <Reveal className="max-w-2xl mb-14">
-            <span className="rule-gold mb-5 block" />
+            <SweepRule className="mb-5" />
             <h2 className="font-display font-bold text-ink" style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>
               Reading list.
             </h2>
@@ -243,6 +262,7 @@ function Learn() {
       <section className="bg-background border-t border-border py-28">
         <div className="container-prose">
           <Reveal className="max-w-2xl mb-14">
+            <SweepRule className="mb-5" />
             <h2 className="font-display font-bold text-ink" style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>
               Tools we use.
             </h2>
@@ -277,7 +297,7 @@ function Learn() {
       <section className="bg-background border-t border-border py-28">
         <div className="container-prose">
           <Reveal className="max-w-2xl mb-14">
-            <span className="rule-gold mb-5 block" />
+            <SweepRule className="mb-5" />
             <h2 className="font-display font-bold text-ink" style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>
               Example models.
             </h2>
@@ -322,6 +342,7 @@ function Learn() {
 
         <div className="container-prose">
           <Reveal className="max-w-2xl mb-14">
+            <SweepRule className="mb-5" />
             <h2 className="font-display font-bold text-ink" style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>
               Key terms.
             </h2>

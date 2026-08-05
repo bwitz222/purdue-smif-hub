@@ -5,6 +5,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { socialMeta, canonical, breadcrumbLd, OG_RECRUITING } from "@/lib/seo";
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import { PrepCard } from "@/components/PrepCard";
+import { SweepRule } from "@/components/SectionRule";
 import {
   CALENDAR,
   CYCLE_LABEL,
@@ -383,6 +384,7 @@ function Recruiting() {
         <Reveal className="flex items-end justify-between gap-6 border-b border-border pb-6">
           <div>
             <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">Fall 2026</span>
+            <SweepRule index={0} className="mt-3" />
             <h2 className="mt-3 font-display text-3xl font-bold md:text-4xl">Recruiting Calendar</h2>
           </div>
           <span className="hidden md:inline font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
@@ -528,6 +530,7 @@ function Recruiting() {
       <section id="prep" className="border-t border-border bg-secondary/40">
         <div className="container-prose py-20">
           <Reveal>
+            <SweepRule index={0} className="mb-4" />
             <h2 className="font-display text-3xl font-bold md:text-4xl">Tips &amp; Tricks to Prep</h2>
             {/* The prep guide is the longest scroll on the site. A sub-nav
                 makes it navigable instead of something you page through. */}

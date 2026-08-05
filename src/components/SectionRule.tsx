@@ -48,6 +48,32 @@ export function SectionRule({
 }
 
 /**
+ * The rule on its own, for dropping in above an existing heading without
+ * restructuring the markup around it. Same 620ms sweep, same stagger.
+ */
+export function SweepRule({
+  index = 0,
+  width = "2.5rem",
+  className = "",
+}: {
+  index?: number;
+  width?: string;
+  className?: string;
+}) {
+  const { ref, inView } = useInViewOnce<HTMLSpanElement>(0.2);
+  const delay = Math.min(index, 4) * 140;
+  return (
+    <span
+      ref={ref}
+      aria-hidden="true"
+      className={`hairline-sweep ${className}`}
+      data-swept={inView ? "true" : "false"}
+      style={{ width, ["--sweep-delay" as string]: `${delay}ms` }}
+    />
+  );
+}
+
+/**
  * Same sweep, tuned for dark grounds where `--gold-deep` would be unreadable.
  */
 export function SectionRuleOnDark({

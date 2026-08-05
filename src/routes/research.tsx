@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { FileText, Download, ExternalLink, Rss, Search } from "lucide-react";
 import { RevealGroup, RevealItem } from "@/components/Reveal";
+import { SweepRule } from "@/components/SectionRule";
 import { socialMeta, canonical, breadcrumbLd, OG_RESEARCH } from "@/lib/seo";
 import { getPublications, type PublicationRow } from "@/lib/publications.functions";
 
@@ -201,6 +202,7 @@ function Research() {
         )}
 
         {/* One control row, not three headers plus two controls. */}
+        <SweepRule className="mb-4" />
         <div className="flex flex-col gap-3 border-b border-border pb-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-wrap items-center gap-2">
             {[{ value: "all" as const, label: "All" }, ...CATEGORIES].map((c) => {

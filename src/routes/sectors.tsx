@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
+import { useReducedMotion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import {
@@ -23,6 +24,8 @@ import { applyQuotes, teamAllocations, baseHoldings } from "@/lib/portfolio";
 import { liveQueryOptions } from "@/lib/live-query";
 import { sectorTeams, fixedIncomeMacro, portfolioManagers } from "@/data/team";
 import { nextEvent } from "@/data/recruiting";
+import { SweepRule } from "@/components/SectionRule";
+import { useInViewOnce } from "@/lib/use-in-view-once";
 
 type EquityTeam = {
   Icon: typeof Cpu;
@@ -141,6 +144,38 @@ function OpenSeat() {
   );
 }
 
+/**
+ * A team's share of invested capital, drawn left to right on first view.
+ *
+ * The ladder IS the data visualisation on this page, so it gets the data-draw
+ * tier (900ms, out-expo) the same way the sector bars on /holdings and the
+ * chart paths on /performance do. Bars stagger down the ladder so the eye
+ * reads the ranking in order rather than seeing eight bars appear at once.
+ *
+ * The width is set from the first paint — the draw scales a transform on top
+ * of it, so the number is never gated behind the animation, and under reduced
+ * motion the bar is simply already at full length.
+ */
+function AllocationBar({ pct, index }: { pct: number; index: number }) {
+  const reduce = useReducedMotion();
+  const { ref, inView } = useInViewOnce<HTMLSpanElement>(0.3);
+  const drawn = reduce || inView;
+  return (
+    <span ref={ref} aria-hidden="true" className="relative h-1.5 flex-1 bg-muted">
+      <span
+        className="absolute inset-y-0 left-0 origin-left bg-gradient-gold"
+        style={{
+          width: `${pct}%`,
+          transform: `scaleX(${drawn ? 1 : 0})`,
+          transition: reduce
+            ? "none"
+            : `transform var(--dur-data) var(--ease-out-expo) ${Math.min(index, 7) * 40}ms`,
+        }}
+      />
+    </span>
+  );
+}
+
 function Sectors() {
   const fetchQuotes = useServerFn(getLiveQuotes);
   const symbols = useMemo(() => baseHoldings.map((h) => h.symbol), []);
@@ -231,13 +266,16 @@ function Sectors() {
           rows with proportional bars say what the book actually looks like. */}
       <section className="container-prose py-20">
         <div className="mb-8 flex items-baseline justify-between gap-4">
-          <h2 className="font-display text-2xl font-bold text-ink md:text-3xl">Equity coverage</h2>
+          <div>
+            <SweepRule index={0} className="mb-3" />
+            <h2 className="font-display text-2xl font-bold text-ink md:text-3xl">Equity coverage</h2>
+          </div>
           <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
             % of invested capital
           </span>
         </div>
         <RevealGroup className="border-t border-border" stagger={0.024}>
-          {rankedEquityTeams.map(({ Icon, name, lead, alloc, pms }) => (
+          {rankedEquityTeams.map(({ Icon, name, lead, alloc, pms }, i) => (
             <RevealItem key={name}>
               <article className="group grid gap-x-8 gap-y-4 border-b border-border py-7 transition-colors duration-200 hover:bg-secondary/30 md:grid-cols-[1.5fr_1fr_auto] md:items-start">
                 {/* Identity + weight bar */}
@@ -250,14 +288,10 @@ function Sectors() {
                     </div>
                   </div>
                   <div className="mt-4 flex items-center gap-3 md:pl-9">
-                    <span aria-hidden="true" className="relative h-1.5 flex-1 bg-muted">
-                      <span
-                        className="absolute inset-y-0 left-0 bg-gradient-gold"
-                        style={{
-                          width: alloc ? `${(alloc.pctOfInvested / maxTeamPct) * 100}%` : "0%",
-                        }}
-                      />
-                    </span>
+                    <AllocationBar
+                      pct={alloc ? (alloc.pctOfInvested / maxTeamPct) * 100 : 0}
+                      index={i}
+                    />
                     <span className="font-display text-2xl font-bold leading-none text-ink tabular-nums">
                       {alloc ? fmtPct(alloc.pctOfInvested) : "—"}
                     </span>
@@ -315,6 +349,7 @@ function Sectors() {
       </section>
 
       <section className="container-prose pb-24">
+        <SweepRule index={1} className="mb-3" />
         <h2 className="font-display text-2xl md:text-3xl font-bold text-ink mb-8">Process teams</h2>
         <RevealGroup className="grid gap-px bg-border md:grid-cols-2" stagger={0.04}>
           {PROCESS_TEAMS.map(({ Icon, name, lead }) => {

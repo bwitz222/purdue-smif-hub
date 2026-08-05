@@ -13,6 +13,7 @@ import { Reveal } from "@/components/Reveal";
 import { MetricTile } from "@/components/MetricTile";
 import { PendingMetric } from "@/components/PendingMetric";
 import { PortfolioTape } from "@/components/PortfolioTape";
+import { SweepRule } from "@/components/SectionRule";
 import { socialMeta, canonical, breadcrumbLd, OG_HOLDINGS } from "@/lib/seo";
 import { applyQuotes, sectorPercentBreakdown } from "@/lib/portfolio";
 import { liveQueryOptions } from "@/lib/live-query";
@@ -512,6 +513,7 @@ function HoldingsPage() {
             computed yet. */}
         <div>
           <div className="mb-3 flex items-baseline justify-between gap-4">
+            <SweepRule index={0} className="mb-2" />
             <h3 className="font-mono text-[10px] font-semibold uppercase tracking-[0.28em] text-muted-foreground">
               Risk
             </h3>
@@ -623,7 +625,7 @@ function HoldingsPage() {
                       initial={{ scaleX: 0 }}
                       whileInView={{ scaleX: 1 }}
                       viewport={{ once: true, amount: 0.4 }}
-                      transition={{ duration: 0.9, delay: 0.04 * i, ease: [0.22, 1, 0.36, 1] }}
+                      transition={{ duration: 0.9, delay: 0.04 * i, ease: [0.16, 1, 0.3, 1] }}
                       style={{ width: `${Math.min(100, pct)}%` }}
                     />
                   </div>

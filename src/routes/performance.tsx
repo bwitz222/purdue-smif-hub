@@ -12,6 +12,7 @@ import { Reveal } from "@/components/Reveal";
 import { MetricTile, type MetricTone } from "@/components/MetricTile";
 import { PerformanceLede } from "@/components/PerformanceLede";
 import { useDrawOnce } from "@/lib/use-draw-once";
+import { SweepRule } from "@/components/SectionRule";
 import {
   getFundPerformance,
   getFundMonthlyHistory,
@@ -364,7 +365,10 @@ function Performance() {
         {a && a.observations >= 12 && (
           <Reveal className="space-y-4" delay={0.02}>
             <div className="flex items-baseline justify-between gap-4">
-              <h2 className="font-display text-2xl font-bold text-ink md:text-3xl">Risk &amp; return analytics</h2>
+              <div>
+                <SweepRule index={0} className="mb-3" />
+                <h2 className="font-display text-2xl font-bold text-ink md:text-3xl">Risk &amp; return analytics</h2>
+              </div>
               <span className="text-[10px] font-mono uppercase tracking-[0.22em] text-muted-foreground whitespace-nowrap">
                 {a.observations} mo · monthly basis
               </span>
