@@ -28,12 +28,24 @@ export const memberEmail = (m: Member) => m.email;
  * outright when the env vars weren't set, and (b) meant the 7 members
  * without a bundled photo each fired a 404 for the .jpg and then the .png
  * before falling back to initials. Bundled photos never needed either URL.
+ *
+ * The client throws when SUPABASE_URL / SUPABASE_PUBLISHABLE_KEY are absent,
+ * and a throw during render takes the whole page down — /team rendered 108
+ * characters of nothing on a config outage. Degrade instead: no client means
+ * no remote candidates, which every caller already handles by falling back to
+ * the member's initials. This is the same "degrade rather than throw" rule the
+ * route loaders follow.
  */
-export const memberPhotoCandidates = (m: Member) => {
+export const memberPhotoCandidates = (m: Member): { jpg: string; png: string } | null => {
   const slug = memberSlug(m.name);
-  const jpg = supabase.storage.from("team-headshots").getPublicUrl(`${slug}.jpg`).data.publicUrl;
-  const png = supabase.storage.from("team-headshots").getPublicUrl(`${slug}.png`).data.publicUrl;
-  return { jpg, png };
+  try {
+    return {
+      jpg: supabase.storage.from("team-headshots").getPublicUrl(`${slug}.jpg`).data.publicUrl,
+      png: supabase.storage.from("team-headshots").getPublicUrl(`${slug}.png`).data.publicUrl,
+    };
+  } catch {
+    return null;
+  }
 };
 
 export function MemberCard({
