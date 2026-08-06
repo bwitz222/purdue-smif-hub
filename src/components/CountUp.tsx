@@ -42,6 +42,7 @@ export function CountUp({
   // First render (server + client hydration) always shows the final value.
   const [display, setDisplay] = useState(to);
   const startedRef = useRef(false);
+  const finishedRef = useRef(false);
 
   useEffect(() => {
     const reduce =
@@ -57,21 +58,48 @@ export function CountUp({
       return;
     }
 
+    // The entrance count runs ONCE. These KPIs are seeded with fallback values
+    // and then replaced when the fund-stats query resolves, typically a second
+    // or two after load. Re-animating on that swap made every number count up,
+    // rest, then visibly count a second time — a jump long after the page
+    // looked settled. Once the entrance has completed, later data lands
+    // silently on screen.
+    if (finishedRef.current) {
+      mv.set(to);
+      setDisplay(to);
+      return;
+    }
+
     // Defer to the next animation frame so the first paint keeps the
     // final value; only then do we jump back to the start and animate up.
-    // First time in view we count up from `from`; on subsequent `to` changes
-    // we animate from the current value so the headline tracks the new data.
+    // If `to` changes while the entrance is still in flight we retarget from
+    // the current value rather than restarting, so the number keeps moving.
     const start = startedRef.current ? mv.get() : from;
     startedRef.current = true;
+
+    // Only re-render when the *formatted* value would actually change.
+    // onUpdate fires every frame, but a stat like "10 sector teams" has ten
+    // distinct states across sixty frames; the rest were wasted renders.
+    const precision = 10 ** decimals;
+    const quantize = (v: number) => Math.round(v * precision) / precision;
 
     let stop: (() => void) | undefined;
     const raf = requestAnimationFrame(() => {
       mv.set(start);
-      setDisplay(start);
+      setDisplay(quantize(start));
       const controls = animate(mv, to, {
         duration,
         ease: [0.22, 1, 0.36, 1],
-        onUpdate: (v) => setDisplay(v),
+        onUpdate: (v) => {
+          const next = quantize(v);
+          setDisplay((prev) => (prev === next ? prev : next));
+        },
+        onComplete: () => {
+          finishedRef.current = true;
+          // Pin the exact target. The final onUpdate can land a hair short of
+          // `to`, and quantizing that would rest the stat one unit low.
+          setDisplay(to);
+        },
       });
       stop = () => controls.stop();
     });
@@ -80,7 +108,7 @@ export function CountUp({
       cancelAnimationFrame(raf);
       stop?.();
     };
-  }, [inView, to, from, duration, mv]);
+  }, [inView, to, from, duration, decimals, mv]);
 
   const formatted = format
     ? format(display)

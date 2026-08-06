@@ -97,22 +97,28 @@ function Index() {
         </div>
         <div className="relative flex-1 container-prose flex flex-col justify-center py-24 lg:py-28 text-background">
           <div className="max-w-4xl">
-            <div className="animate-fade-in flex items-center gap-3 mb-8">
-              <span className="rule-gold animate-expand-x delay-100" />
+            {/* No entrance animation on the hero copy. The eyebrow, headline,
+                paragraph and CTA row previously slid up 20px on staggered
+                delays (200/400/500ms), finishing ~1040ms after load. Four
+                elements moving independently over the first second read as the
+                whole hero shuddering rather than as one considered entrance.
+                The stat count-up below is the only load animation here now. */}
+            <div className="flex items-center gap-3 mb-8">
+              <span className="rule-gold" />
               <span className="text-xs font-semibold uppercase tracking-[0.18em] text-gold/80">
                 Daniels School of Business · Est. {s.founded_year}
               </span>
             </div>
             <h1
-              className="animate-fade-up delay-200 font-display font-bold text-background"
+              className="font-display font-bold text-background"
               style={{ fontSize: "clamp(2.5rem, 7vw, 5.5rem)", lineHeight: "1.02" }}
             >
               Purdue <span className="text-gold">Student</span> Managed<br />Investment Fund
             </h1>
-            <p className="animate-fade-up delay-400 mt-8 max-w-xl text-on-dark-primary text-base leading-relaxed">
+            <p className="mt-8 max-w-xl text-on-dark-primary text-base leading-relaxed">
               A student-run fund managing real university capital, built on rigorous research and a disciplined investment process.
             </p>
-            <div className="animate-fade-up delay-500 mt-10 flex flex-wrap gap-4">
+            <div className="mt-10 flex flex-wrap gap-4">
               <a
                 href={applyUrl("home-hero")}
                 target="_blank"
