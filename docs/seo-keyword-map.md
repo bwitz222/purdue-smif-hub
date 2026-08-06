@@ -9,15 +9,20 @@ section before using this one.
 
 ## How to read this
 
-**Persona.** One reader: a Purdue undergraduate deciding whether to apply to
-SMIF, or deciding which finance club to apply to. Every term below is one they
-plausibly type. Terms that only a recruiter, alum, or sponsor would search are
-excluded — they matter, but they are a different document.
+**Persona.** One reader: a Purdue undergraduate targeting a career in high
+finance — equity research, asset management, private equity, investment banking,
+private credit, and the seats around them — who is deciding whether to apply to
+SMIF or choosing between finance clubs. That career motive is the reason they
+search at all, so cluster 7 treats it at full width rather than as an
+afterthought. Terms that only a recruiter, alum, or sponsor would search are
+excluded; they matter, but they are a different document.
 
-**No volume data.** The KeywordTool connector ran on its guest tier, which
-returns keyword strings without metrics. Terms are ordered within each cluster by
-**intent** — how close the searcher is to submitting an application — not by
-traffic. See the audit's method section.
+**Almost no volume data.** The KeywordTool connector ran on its guest tier, which
+returns keyword strings without metrics on all but a handful of terms. Terms are
+ordered within each cluster by **intent** — how close the searcher is to
+submitting an application — not by traffic. Where a term did return volume it is
+stated inline; `private credit` in cluster 7E is the only strategically relevant
+one. See the audit's method section.
 
 **Sources.** Terms marked ◆ appeared verbatim in Google or Bing autocomplete
 data pulled this session. Unmarked terms are synthesized from the persona, the
@@ -257,40 +262,217 @@ Banking Academy publicly advertises a minimum. Whether SMIF has one is an
 organizational question, not an SEO one, but the silence is conspicuous to
 anyone comparing the two.
 
-## Cluster 7 — Career outcome
+## Cluster 7 — Breaking into high finance
 
-The actual motivation behind most applications. High volume, national, and
-dominated by Wall Street Oasis and Mergers & Inquisitions. Not winnable on the
-generic terms; winnable on the Purdue-qualified ones.
+The actual motivation behind most applications, and the largest cluster in this
+document. SMIF exists for students targeting high finance broadly: equity
+research, asset management, private equity, investment banking, private credit,
+and the adjacent seats around them. The keyword surface has to match that scope.
 
-| Term                                                     | Intent | Target        | Coverage                      |
-| -------------------------------------------------------- | ------ | ------------- | ----------------------------- |
-| how to get into investment banking from purdue           | Career | `/about`      | Gap                           |
-| purdue investment banking placement                      | Career | `/about`      | Partial — employer logos only |
-| purdue investment banking recruiting                     | Career | `/recruiting` | Gap                           |
-| purdue wall street placement                             | Career | `/about`      | Gap                           |
-| what clubs help you get into investment banking          | Career | `/about`      | Gap                           |
-| how to break into investment banking ◆                   | Career | `/learn`      | Gap                           |
-| how to break into investment banking from a non target ◆ | Career | `/about`      | Gap                           |
-| how to get into investment banking with no experience ◆  | Career | `/learn`      | Gap                           |
-| how to get into investment banking internship ◆          | Career | `/recruiting` | Gap                           |
-| equity research analyst internship ◆                     | Career | `/research`   | Gap                           |
-| how to get an equity research internship                 | Career | `/research`   | Gap                           |
-| asset management internship                              | Career | `/about`      | Gap                           |
-| how to get into asset management                         | Career | `/about`      | Gap                           |
-| finance internship sophomore year                        | Career | `/recruiting` | Gap                           |
-| purdue finance career outcomes                           | Career | `/about`      | Partial                       |
+**The site does not currently match it.** Across every route, the copy names
+four destinations and no more:
 
-Almost uniformly Gap, and that is a strategic choice rather than an oversight.
-`src/routes/about.tsx` shows employer logos — Morgan Stanley, Barclays, BMO
-Capital, Wells Fargo, and the Big Four — without narrative placement copy. The
-opportunity is one page that answers "how does joining SMIF help me get an
-investment banking or equity research seat," written honestly, with the
-placement record it already has. That page would sit at the intersection of the
-highest-volume cluster here and the site's actual differentiator.
+| Where                      | Copy                                                                                        | Paths named            |
+| -------------------------- | ------------------------------------------------------------------------------------------- | ---------------------- |
+| `src/routes/index.tsx:163` | "careers in asset management, investment banking, and equity research"                      | AM, IB, ER             |
+| `src/routes/index.tsx:60`  | "Purdue alumni at investment banks, hedge funds, and asset managers"                        | IB, HF, AM             |
+| `src/routes/about.tsx`     | Employer logos: Morgan Stanley, Barclays, BMO Capital, Wells Fargo, Deloitte, PwC, EY, KPMG | Banks and the Big Four |
 
-Competing for bare "how to break into investment banking" is not realistic and
-should not be attempted.
+Private equity and private credit appear **nowhere on the site**. Neither does
+venture capital, sales and trading, restructuring, or corporate development. A
+sophomore targeting a private equity seat reads this site and does not see
+themselves in it, which costs applications before it costs rankings.
+
+The gap is a positioning problem, not a capability problem. The underlying
+material is already there and simply unlabelled:
+
+- `src/routes/learn.tsx:81` — Module 02 covers "DCF mechanics, trading comps, and
+  **precedent transactions**." Precedent transactions is deal work, and it is
+  never framed that way.
+- `src/routes/learn.tsx:85` — Module 06, "Markets, Macro & Fixed Income," covers
+  "rates, the yield curve, and **credit**." That is the private credit bridge.
+- `src/routes/sectors.tsx:46` — the Fixed Income & Macro team covers "rates,
+  **credit**, FX, and global macro."
+
+What is genuinely absent is leveraged buyout modeling. There is no LBO module,
+no LBO template alongside the AMZN discounted cash flow and comparable company
+analysis files, and no mention of the paper LBO — the single most predictable
+private equity interview exercise.
+
+### 7A — Investment banking
+
+| Term                                                         | Intent | Target        | Coverage                      |
+| ------------------------------------------------------------ | ------ | ------------- | ----------------------------- |
+| how to get into investment banking from purdue               | Career | `/about`      | Gap                           |
+| purdue investment banking placement                          | Career | `/about`      | Partial — logos, no narrative |
+| purdue investment banking recruiting                         | Career | `/recruiting` | Gap                           |
+| purdue wall street placement                                 | Career | `/about`      | Gap                           |
+| what clubs help you get into investment banking              | Career | `/about`      | Gap                           |
+| how to break into investment banking ◆                       | Career | `/learn`      | Gap                           |
+| how to break into investment banking from a non target ◆     | Career | `/about`      | Gap                           |
+| how to get into investment banking with no experience ◆      | Career | `/learn`      | Gap                           |
+| how to get into investment banking internship ◆              | Career | `/recruiting` | Gap                           |
+| how to get into investment banking with engineering degree ◆ | Career | `/apply`      | Partial                       |
+| investment banking summer analyst 2027                       | Career | `/recruiting` | Gap                           |
+| investment banking sophomore diversity program               | Career | `/recruiting` | Gap                           |
+
+### 7B — Equity research
+
+| Term                                       | Intent | Target      | Coverage |
+| ------------------------------------------ | ------ | ----------- | -------- |
+| equity research analyst internship ◆       | Career | `/research` | Gap      |
+| how to get an equity research internship   | Career | `/research` | Gap      |
+| equity research summer analyst             | Career | `/research` | Gap      |
+| how to become an equity research analyst ◆ | Career | `/learn`    | Partial  |
+| equity research vs investment banking      | Career | `/about`    | Gap      |
+| buy-side vs sell-side research             | Career | `/about`    | Gap      |
+| equity research analyst job description ◆  | Career | `/research` | Gap      |
+
+Strongest natural fit on the site. `/research` publishes real analyst reports,
+which almost no undergraduate competitor can show. It is also the cluster where
+the site currently claims the least.
+
+### 7C — Asset management
+
+| Term                                    | Intent | Target   | Coverage                 |
+| --------------------------------------- | ------ | -------- | ------------------------ |
+| asset management internship             | Career | `/about` | Gap                      |
+| how to get into asset management        | Career | `/about` | Gap                      |
+| asset management vs investment banking  | Career | `/about` | Gap                      |
+| asset management vs sales and trading ◆ | Career | `/about` | Gap                      |
+| how to become a portfolio manager       | Career | `/team`  | Partial — PM roles exist |
+| buy-side internship undergrad           | Career | `/about` | Gap                      |
+| long only asset manager internship      | Career | `/about` | Gap                      |
+
+The closest match between what SMIF actually does day to day and a career path.
+Students run a real long-only book with named portfolio managers. Nothing on the
+site connects those two facts.
+
+### 7D — Private equity
+
+Named as a target outcome; absent from the site entirely.
+
+| Term                                                          | Intent   | Target        | Coverage |
+| ------------------------------------------------------------- | -------- | ------------- | -------- |
+| how to break into private equity from undergrad ◆             | Career   | `/about`      | **Gap**  |
+| how to get into private equity out of college ◆               | Career   | `/about`      | **Gap**  |
+| how to get into private equity after college ◆                | Career   | `/about`      | **Gap**  |
+| how to break into private equity without banking experience ◆ | Career   | `/about`      | **Gap**  |
+| how to break into private equity with no experience ◆         | Career   | `/about`      | **Gap**  |
+| how to get into private equity with an engineering degree ◆   | Career   | `/apply`      | **Gap**  |
+| how to break into private equity without ib ◆                 | Career   | `/about`      | **Gap**  |
+| private equity recruiting undergrad                           | Career   | `/recruiting` | **Gap**  |
+| private equity interview questions                            | Prep     | `/recruiting` | **Gap**  |
+| paper lbo                                                     | Prep     | `/learn`      | **Gap**  |
+| lbo model ◆                                                   | Learning | `/learn`      | **Gap**  |
+| how to build an lbo model ◆                                   | Learning | `/learn`      | **Gap**  |
+| walk me through an lbo model ◆                                | Prep     | `/learn`      | **Gap**  |
+| lbo model template ◆                                          | Learning | `/learn`      | **Gap**  |
+| basic lbo model test ◆                                        | Prep     | `/learn`      | **Gap**  |
+
+The `lbo model` family is the highest-value unclaimed opportunity in this
+document. It runs parallel to the `dcf model` terms the site already serves with
+a downloadable file, the searcher intent is identical, and SMIF already teaches
+the valuation layer underneath it. An LBO template next to the existing AMZN
+models would claim a proven query shape at low cost.
+
+### 7E — Private credit
+
+| Term                                 | Intent   | Target     | Coverage            |
+| ------------------------------------ | -------- | ---------- | ------------------- |
+| private credit ◆                     | Category | `/sectors` | **Gap**             |
+| what is private credit ◆             | Category | `/learn`   | **Gap**             |
+| private credit analyst ◆             | Career   | `/sectors` | **Gap**             |
+| private credit analyst jobs ◆        | Career   | `/sectors` | **Gap**             |
+| private credit internship            | Career   | `/sectors` | **Gap**             |
+| how to break into private credit     | Career   | `/about`   | **Gap**             |
+| private credit vs investment banking | Career   | `/about`   | **Gap**             |
+| credit analysis for beginners        | Learning | `/learn`   | Partial — Module 06 |
+| leveraged loans explained            | Learning | `/learn`   | **Gap**             |
+| direct lending analyst               | Career   | `/sectors` | **Gap**             |
+
+**This is the one term in the entire engagement that returned real metrics.**
+`private credit` shows 27,100 monthly searches with a trend value of +22, meaning
+demand is rising rather than flat. Every other term in both documents came back
+without data, so treat this as the single quantified data point available.
+
+The asymmetry is stark: private credit is the fastest-growing seat in high
+finance, SMIF runs a Fixed Income & Macro team that already covers credit
+(`sectors.tsx:46`), and the word "credit" appears in exactly two places on the
+site, neither framed as a career path.
+
+### 7F — Hedge funds and public markets
+
+| Term                                        | Intent | Target        | Coverage              |
+| ------------------------------------------- | ------ | ------------- | --------------------- |
+| hedge fund internship college student       | Career | `/about`      | Partial — one mention |
+| how to get into a hedge fund from undergrad | Career | `/about`      | Gap                   |
+| hedge fund analyst                          | Career | `/about`      | Gap                   |
+| long short equity analyst                   | Career | `/holdings`   | Gap                   |
+| how to pitch a short                        | Prep   | `/recruiting` | Gap                   |
+
+`index.tsx:60` names hedge funds once, in a mentorship context. Everything else
+is a gap, despite the fund running exactly the long-only research process a
+fundamental hedge fund seat screens for.
+
+### 7G — Sales and trading, and adjacent seats
+
+| Term                                      | Intent   | Target        | Coverage |
+| ----------------------------------------- | -------- | ------------- | -------- |
+| sales and trading ◆                       | Category | `/sectors`    | **Gap**  |
+| what is sales and trading in finance ◆    | Category | `/learn`      | **Gap**  |
+| is sales and trading investment banking ◆ | Category | `/about`      | **Gap**  |
+| sales and trading analyst ◆               | Career   | `/sectors`    | **Gap**  |
+| sales and trading interview questions     | Prep     | `/recruiting` | **Gap**  |
+| sales and trading brain teasers ◆         | Prep     | `/recruiting` | **Gap**  |
+| venture capital internship undergrad      | Career   | `/about`      | **Gap**  |
+| how to break into venture capital         | Career   | `/about`      | **Gap**  |
+| restructuring investment banking          | Career   | `/about`      | **Gap**  |
+| corporate development analyst             | Career   | `/about`      | **Gap**  |
+| growth equity analyst                     | Career   | `/about`      | **Gap**  |
+
+Venture capital deserves a note: Purdue runs a separate Student Managed Venture
+Fund. If SMIF does not place into venture capital, this row should stay a
+deliberate gap rather than a target, and the distinction is worth stating so
+students self-route correctly instead of applying to the wrong fund.
+
+### 7H — Cross-path and comparison
+
+Where an undecided student actually starts. Highest intent in the cluster,
+because someone comparing paths has not yet chosen one and is open to influence.
+
+| Term                                          | Intent     | Target        | Coverage |
+| --------------------------------------------- | ---------- | ------------- | -------- |
+| investment banking vs private equity          | Comparison | `/about`      | Gap      |
+| equity research vs asset management           | Comparison | `/about`      | Gap      |
+| private credit vs private equity              | Comparison | `/about`      | Gap      |
+| buy-side vs sell-side                         | Comparison | `/about`      | Gap      |
+| high finance careers explained                | Category   | `/learn`      | Gap      |
+| what is high finance                          | Category   | `/learn`      | Gap      |
+| best finance career path                      | Comparison | `/about`      | Gap      |
+| finance internship sophomore year             | Career     | `/recruiting` | Gap      |
+| how to get a finance internship as a freshman | Career     | `/recruiting` | Gap      |
+| purdue finance career outcomes                | Career     | `/about`      | Partial  |
+| what skills do you need for high finance      | Category   | `/learn`      | Partial  |
+
+### What to do with this cluster
+
+One page, `/careers` or a substantial section on `/about`, that names every path
+SMIF actually places into and states honestly what the fund gives a student
+pursuing each one. Structure it by destination — equity research, asset
+management, private equity, investment banking, private credit, and the rest —
+so each has a heading a search engine can match.
+
+Two constraints on writing it. First, name only paths with a real placement
+record behind them. The `/about` employer logos are banks and the Big Four with
+no private equity or private credit firm shown, so if alumni have placed into
+those seats the logos should reflect it, and if they have not, the copy should
+describe the skills that transfer rather than implying placements that did not
+happen. Second, do not chase bare "how to break into investment banking" or
+"how to break into private equity." Those belong to Wall Street Oasis and
+Mergers & Inquisitions. The winnable versions are Purdue-qualified and
+club-qualified: "how to break into private equity from undergrad at purdue,"
+"what clubs help you get into private equity."
 
 ## Cluster 8 — Skill and learning
 
@@ -428,8 +610,8 @@ reconstructing them from a three-year-old `.com` page.
 
 ## Priority shortlist
 
-Ten terms worth acting on first, chosen for intent quality and for how little
-new work each requires.
+Thirteen terms worth acting on first, chosen for intent quality and for how
+little new work each requires.
 
 | #   | Term                                                    | Page that should own it | What has to change                                                      |
 | --- | ------------------------------------------------------- | ----------------------- | ----------------------------------------------------------------------- |
@@ -443,8 +625,12 @@ new work each requires.
 | 8   | dcf model excel template                                | `/learn`                | Schema on the downloadable models — audit P1-5.                         |
 | 9   | how to do a stock pitch                                 | `/recruiting`           | Consolidate the pitch guidance now split across three pages.            |
 | 10  | purdue student managed investment fund _(peer pattern)_ | `/`                     | Consistent naming plus link consolidation — cluster 11.                 |
+| 11  | lbo model / paper lbo                                   | `/learn`                | An LBO template beside the AMZN files, plus a module. Cluster 7D.       |
+| 12  | private credit analyst                                  | `/sectors` or `/about`  | Name credit as a career path. The Fixed Income team already covers it.  |
+| 13  | how to break into private equity from undergrad         | `/about` or `/careers`  | A careers section naming every path SMIF places into. Cluster 7.        |
 
-Six of the ten require no new copy at all. They require internal links, a
-consolidated domain, and one disambiguation sentence. That is the finding worth
-carrying out of both documents: this site's search problem is structural, not
-editorial.
+Six of the first ten require no new copy at all — internal links, a consolidated
+domain, and one disambiguation sentence. Items 11 through 13 do require new
+work, and they are here because the career surface the fund actually serves is
+wider than the surface the site describes. That is the second structural finding
+in these documents, alongside the orphaned `/apply` page.

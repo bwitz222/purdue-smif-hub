@@ -2,7 +2,9 @@
 
 **Date:** August 6, 2026
 **Scope:** organic search performance for one visitor type — a Purdue student
-deciding which finance club to apply to.
+targeting a career in high finance (equity research, asset management, private
+equity, investment banking, private credit, and adjacent seats) who is deciding
+which finance club to apply to.
 **Companion document:** [`seo-keyword-map.md`](./seo-keyword-map.md), the search
 terms this audit is measured against.
 
@@ -13,17 +15,24 @@ terms this audit is measured against.
 Read this section before acting on anything below. Two constraints shaped what
 this audit can and cannot claim.
 
-**No search volume data.** Keyword research ran through the KeywordTool MCP
-connector on its guest tier. That tier returns keyword strings but withholds
-metrics: of roughly 2,000 terms pulled across 15 seed queries, exactly 2 carried
-cached search volume. **Every priority call in these two documents is therefore
-based on intent quality — how close the searcher is to submitting an
-application — and not on volume.** A term that 12 people search in September,
-all of them sophomores who then apply, outranks a term 4,000 strangers search.
-That is the right basis for a recruiting site anyway, but it does mean nothing
-here should be read as a traffic forecast. Confirming volume needs a paid tier or
-a Google Search Console export, and Search Console will be better regardless
-because it reports the queries this site already surfaces for.
+**Almost no search volume data.** Keyword research ran through the KeywordTool
+MCP connector on its guest tier. That tier returns keyword strings but withholds
+metrics: of roughly 2,600 terms pulled across 19 seed queries, 7 carried cached
+search volume. **Every priority call in these two documents is therefore based on
+intent quality — how close the searcher is to submitting an application — and not
+on volume.** A term that 12 people search in September, all of them sophomores
+who then apply, outranks a term 4,000 strangers search. That is the right basis
+for a recruiting site anyway, but nothing here should be read as a traffic
+forecast.
+
+The one exception worth naming: `private credit` returned 27,100 monthly searches
+with a trend value of +22. It is the only strategically relevant term in the
+engagement with hard numbers behind it, and it is a phrase this site never uses.
+See finding 4.
+
+Confirming volume elsewhere needs a paid tier or a Google Search Console export,
+and Search Console will be better regardless because it reports the queries this
+site already surfaces for.
 
 **The live site was never fetched.** This session's network policy refused
 `www.purduesmif.org` at the proxy (`403` to `CONNECT`). The audit is against
@@ -203,11 +212,63 @@ basketball program and a 1990s rap catalog, and neither is going to yield.
   token. Every current title already pairs it with descriptive words. Keep that
   rule.
 
+### 4. The site describes a narrower career surface than the fund serves
+
+SMIF is built for students breaking into high finance broadly: equity research,
+asset management, private equity, investment banking, private credit, and the
+adjacent seats. The site names four of those and stops.
+
+| Location                   | Copy                                                                                 | Paths named          |
+| -------------------------- | ------------------------------------------------------------------------------------ | -------------------- |
+| `src/routes/index.tsx:163` | "careers in asset management, investment banking, and equity research"               | AM, IB, ER           |
+| `src/routes/index.tsx:60`  | "Purdue alumni at investment banks, hedge funds, and asset managers"                 | IB, HF, AM           |
+| `src/routes/about.tsx`     | Employer logos: Morgan Stanley, Barclays, BMO Capital, Wells Fargo, and the Big Four | Banks and accounting |
+
+A repository-wide search returns zero occurrences of "private equity," "private
+credit," "venture capital," "sales and trading," "restructuring," or "corporate
+development" anywhere in the routes, components, or `llms.txt`. The word "credit"
+appears twice, both times describing what the Fixed Income & Macro team analyzes
+(`src/routes/sectors.tsx:46`, `src/routes/learn.tsx:85`), never as a destination
+a member might be aiming for.
+
+This costs applications before it costs rankings. A sophomore targeting private
+equity reads the mission copy, sees three paths that are not theirs, and
+concludes the fund is for someone else.
+
+**The capability is already there and simply unlabelled.** `learn.tsx:81` teaches
+precedent transactions, which is deal work. `learn.tsx:85` teaches rates, the
+yield curve, and credit, which is the private credit foundation. `sectors.tsx:46`
+runs a team covering rates, credit, FX, and macro. What is genuinely missing is
+leveraged buyout modeling: no LBO module, no LBO template beside the AMZN
+discounted cash flow and comparable company analysis files, and no mention of the
+paper LBO, which is the most predictable private equity interview exercise there
+is.
+
+The keyword consequence is large. Cluster 7 of the keyword map now runs eight
+sub-clusters, and the private equity and private credit sections are almost
+entirely Gap. Notably, `private credit` is the **only term in this entire
+engagement that returned search volume** — 27,100 monthly with a rising trend
+value of +22 — against a site that never uses the phrase.
+
+**Recommendation.** Add a `/careers` page, or a substantial section on `/about`,
+organized by destination with one heading per path. Two constraints. First, name
+only paths with a real placement record; the employer logos currently show banks
+and the Big Four with no private equity or private credit firm, so either the
+logos should reflect those placements or the copy should describe transferable
+skills rather than imply placements that did not happen. Second, do not chase
+bare "how to break into private equity" — that belongs to Wall Street Oasis. The
+winnable phrasings are Purdue-qualified and club-qualified.
+
+Two supporting changes worth pairing with it: ship an LBO model template
+alongside the existing AMZN files on `/learn`, and add private credit to the
+Fixed Income & Macro description on `/sectors` as a career destination rather
+than only an asset class.
+
 ---
 
 ## P1 findings
 
-### 4. `/holdings` has essentially no indexable prose
+### 5. `/holdings` has essentially no indexable prose
 
 The page has one `<h1>` (`src/routes/holdings.tsx:286`, "Current portfolio.") and
 four `<h2>` elements that are all `sr-only`: Portfolio Summary (`:338`), Sector
@@ -228,7 +289,7 @@ prices refresh. Make at least the "Sector Allocation" and "Holdings" headings
 visible. This is a copy change, not a schema change, and it does not require
 touching the live-quote path.
 
-### 5. No `Course` or `LearningResource` schema on `/learn`
+### 6. No `Course` or `LearningResource` schema on `/learn`
 
 `/learn` is the richest keyword surface on the site: a six-module curriculum, a
 nine-book reading list, a tools section, a glossary, and downloadable AMZN DCF and
@@ -241,14 +302,14 @@ It carries only a `BreadcrumbList`. A `Course` or `ItemList` of
 for structured presentation, and it is the one page here whose content genuinely
 warrants it.
 
-### 6. No web app manifest
+### 7. No web app manifest
 
 There is no `site.webmanifest` or `manifest.json` in `public/`, and no
 `<link rel="manifest">` in `__root.tsx:67-78`. `theme-color` is set (`:60`) and
 both favicon formats exist, so this is the last piece of a standard install
 surface. Low effort, small payoff, no risk.
 
-### 7. No `SearchAction` on the `WebSite` node
+### 8. No `SearchAction` on the `WebSite` node
 
 The `WebSite` node (`__root.tsx:129-135`) has no `potentialAction`. This is
 correct as things stand, because the site has no search endpoint to point one at.
@@ -260,7 +321,7 @@ a search endpoint that does not exist is worse than declaring nothing.
 
 ## P2 findings
 
-### 8. `/research` structured data sits in the body, not the head
+### 9. `/research` structured data sits in the body, not the head
 
 `src/routes/research.tsx:99-104` renders its `ItemList` of `Article` nodes as a
 raw `<script>` inside the component body via `dangerouslySetInnerHTML`, unlike
@@ -277,21 +338,21 @@ silently vanishes — consistent with the repo's documented degradation policy, 
 worth knowing. And the inconsistency with the other 11 routes is a maintenance
 trap more than a ranking one.
 
-### 9. `keywords` meta tag is dead weight
+### 10. `keywords` meta tag is dead weight
 
 `__root.tsx:58` ships a nine-term `keywords` meta. Google has ignored this tag
 since 2009 and Bing treats it as a spam signal at worst, noise at best. Harmless
 to keep, cleaner to delete. Worth noting that its content is a decent record of
 intended positioning, so if it goes, the keyword map document replaces it.
 
-### 10. `twitter:site` points at a possibly nonexistent account
+### 11. `twitter:site` points at a possibly nonexistent account
 
 `__root.tsx:65` declares `@PurdueSMIF`. No X or Twitter link appears in `sameAs`
 (`:118-127`) or in `SiteFooter`, which links BoilerLink, Instagram, LinkedIn, and
 Substack. Either the account exists and should be in `sameAs` and the footer, or
 it does not and the tag should go. **[unverified]** — confirm before changing.
 
-### 11. Title and Open Graph title diverge on several routes
+### 12. Title and Open Graph title diverge on several routes
 
 `/about` uses `<title>` "About Purdue SMIF — Student Investment Club & Fund" but
 `og:title` "About Purdue SMIF: History, Philosophy & Process". `/holdings` and
@@ -300,14 +361,14 @@ and a shared-card title do different jobs. Flagged only to confirm it is
 deliberate rather than drift, and to make sure nobody "fixes" it later by
 accident.
 
-### 12. Stale `wrangler.jsonc`
+### 13. Stale `wrangler.jsonc`
 
 `wrangler.jsonc` is Cloudflare configuration named `tanstack-start-app`, left
 over from Lovable hosting and contradicted by `vite.config.ts:14`
 (`nitro: { preset: "vercel" }`). No SEO effect. Deleting it removes a false trail
 for anyone auditing the deploy target.
 
-### 13. Two render-blocking font stylesheets from a cross-origin host
+### 14. Two render-blocking font stylesheets from a cross-origin host
 
 `__root.tsx:75-77` loads two Google Fonts stylesheets. The split is already
 thoughtful: body font with `display=swap`, display and mono with
@@ -363,21 +424,22 @@ rather than the category queries the school's own domain will take.
 
 ## Fix list
 
-| #   | Finding                                            | Priority | Effort   | Files                                                                     |
-| --- | -------------------------------------------------- | -------- | -------- | ------------------------------------------------------------------------- |
-| 1   | Link `/apply` into the nav and header CTA          | P0       | Low      | `src/lib/nav.ts`, `src/components/SiteHeader.tsx`, `src/lib/apply-url.ts` |
-| 2   | Consolidate `.com` and remove the manus clone      | P0       | Off-repo | Domain registrar, Search Console                                          |
-| 3   | Widen `alternateName`; keep titles descriptive     | P0       | Low      | `src/routes/__root.tsx:89-94`                                             |
-| 4   | Add prose and visible headings to `/holdings`      | P1       | Medium   | `src/routes/holdings.tsx`                                                 |
-| 5   | Add `Course`/`LearningResource` schema to `/learn` | P1       | Medium   | `src/routes/learn.tsx`                                                    |
-| 6   | Add a web app manifest                             | P1       | Low      | `public/`, `src/routes/__root.tsx`                                        |
-| 7   | `SearchAction` — only if search ships              | P1       | —        | `src/routes/__root.tsx`                                                   |
-| 8   | Move `/research` schema into `head()`              | P2       | Low      | `src/routes/research.tsx`                                                 |
-| 9   | Delete the `keywords` meta                         | P2       | Trivial  | `src/routes/__root.tsx:58`                                                |
-| 10  | Verify or remove `twitter:site`                    | P2       | Trivial  | `src/routes/__root.tsx:65`                                                |
-| 11  | Confirm title/OG divergence is deliberate          | P2       | Trivial  | Several routes                                                            |
-| 12  | Delete `wrangler.jsonc`                            | P2       | Trivial  | `wrangler.jsonc`                                                          |
-| 13  | Test self-hosted fonts against current LCP         | P2       | Medium   | `src/routes/__root.tsx:75-77`                                             |
+| #   | Finding                                            | Priority | Effort   | Files                                                                                      |
+| --- | -------------------------------------------------- | -------- | -------- | ------------------------------------------------------------------------------------------ |
+| 1   | Link `/apply` into the nav and header CTA          | P0       | Low      | `src/lib/nav.ts`, `src/components/SiteHeader.tsx`, `src/lib/apply-url.ts`                  |
+| 2   | Consolidate `.com` and remove the manus clone      | P0       | Off-repo | Domain registrar, Search Console                                                           |
+| 3   | Widen `alternateName`; keep titles descriptive     | P0       | Low      | `src/routes/__root.tsx:89-94`                                                              |
+| 4   | Name the full career surface (PE, PC, S&T, VC)     | P0       | Medium   | `src/routes/about.tsx` or new `/careers`, `src/routes/sectors.tsx`, `src/routes/learn.tsx` |
+| 5   | Add prose and visible headings to `/holdings`      | P1       | Medium   | `src/routes/holdings.tsx`                                                                  |
+| 6   | Add `Course`/`LearningResource` schema to `/learn` | P1       | Medium   | `src/routes/learn.tsx`                                                                     |
+| 7   | Add a web app manifest                             | P1       | Low      | `public/`, `src/routes/__root.tsx`                                                         |
+| 8   | `SearchAction` — only if search ships              | P1       | —        | `src/routes/__root.tsx`                                                                    |
+| 9   | Move `/research` schema into `head()`              | P2       | Low      | `src/routes/research.tsx`                                                                  |
+| 10  | Delete the `keywords` meta                         | P2       | Trivial  | `src/routes/__root.tsx:58`                                                                 |
+| 11  | Verify or remove `twitter:site`                    | P2       | Trivial  | `src/routes/__root.tsx:65`                                                                 |
+| 12  | Confirm title/OG divergence is deliberate          | P2       | Trivial  | Several routes                                                                             |
+| 13  | Delete `wrangler.jsonc`                            | P2       | Trivial  | `wrangler.jsonc`                                                                           |
+| 14  | Test self-hosted fonts against current LCP         | P2       | Medium   | `src/routes/__root.tsx:75-77`                                                              |
 
 ## Recommended next step
 
