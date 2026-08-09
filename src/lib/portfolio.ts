@@ -7,7 +7,31 @@
 // Team-level aggregation (e.g. "Healthcare & Utilities" = Healthcare +
 // Utilities) is layered on top by consumers using TEAM_INDUSTRIES below.
 
-import { holdings as baseHoldings, type Holding } from "@/data/holdings";
+import { holdings as baseHoldings, portfolioSummary, type Holding } from "@/data/holdings";
+
+/**
+ * Round to the nearest $1K and format as e.g. "$449K".
+ *
+ * Lives here rather than in fund-stats.functions.ts so the server (computing
+ * live AUM from quote_cache) and the client (rendering the offline fallback)
+ * format the same number the same way. A second copy would eventually drift.
+ */
+export function formatAumK(value: number): string {
+  const k = Math.round(value / 1000);
+  return `$${k.toLocaleString("en-US")}K`;
+}
+
+/**
+ * Last known assets under management, derived from the committed portfolio
+ * baseline in src/data/holdings.ts.
+ *
+ * This is the value shown when the live fund-stats read is unavailable. It is
+ * DERIVED, not hand-entered: whoever updates the holdings table updates this
+ * automatically, so the fallback can no longer drift away from the positions
+ * the site actually lists. Previously this was a separate literal on the home
+ * route that had to be remembered and, predictably, went stale.
+ */
+export const baselineAumDisplay = formatAumK(portfolioSummary.portfolioValue);
 
 // SPY sector weights (%) — hardcoded snapshot of State Street's published
 // sector breakdown. Refresh periodically (roughly once per year, or when SPY

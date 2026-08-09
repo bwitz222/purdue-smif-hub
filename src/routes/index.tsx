@@ -7,6 +7,7 @@ import { CountUp } from "@/components/CountUp";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getFundStats } from "@/lib/fund-stats.functions";
+import { baselineAumDisplay } from "@/lib/portfolio";
 import { liveQueryOptions } from "@/lib/live-query";
 
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
@@ -36,12 +37,19 @@ export const Route = createFileRoute("/")({
   }),
 });
 
-// Last-resort fallback used ONLY when the fund_stats table fetch fails.
-// The live values come from the DB (computed server-side from holdings ×
-// latest quotes + cash). Refresh these numbers whenever the fund's stats
-// move materially so a failed fetch still shows a reasonable approximation.
+// Last-resort fallback, used ONLY when the fund_stats read fails AND the
+// server has no cached last-known figures (i.e. a cold instance during an
+// outage). Live values come from the DB, computed server-side from
+// holdings × latest quotes + cash.
+//
+// aum_display is DERIVED from the committed portfolio baseline rather than
+// typed here. It used to be the literal "$638K", which had to be manually
+// kept in step with src/data/holdings.ts and had already fallen behind the
+// live figure. Updating the holdings table now updates this automatically.
+// The remaining values are structural rather than market-driven, so they do
+// not drift the same way.
 const FALLBACK_STATS = {
-  aum_display: "$638K",
+  aum_display: baselineAumDisplay,
   active_members: "50+",
   founded_year: 2009,
   sector_teams: 10,

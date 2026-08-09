@@ -1,5 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { holdings as baseHoldings } from "@/data/holdings";
+// Shared with the client so the hero stat and the offline fallback format
+// identically. See src/lib/portfolio.ts.
+import { formatAumK } from "@/lib/portfolio";
 
 export type FundStats = {
   aum_display: string;
@@ -9,12 +12,17 @@ export type FundStats = {
   cash_holdings: number;
 };
 
-// Round to nearest $1K and format as e.g. "$449K" so the hero stat matches
-// the live /holdings portfolio value (single source of truth).
-function formatAumK(value: number): string {
-  const k = Math.round(value / 1000);
-  return `$${k.toLocaleString("en-US")}K`;
-}
+/**
+ * Last successful read, held in module scope.
+ *
+ * When Supabase is briefly unreachable this serves the genuinely last known
+ * figures instead of dropping the caller to the static baseline. It is
+ * per-instance and in-memory: a cold serverless instance starts empty, so it
+ * is a cushion over transient failures, NOT a durable store. The durable
+ * store is the fund_stats table; the committed baseline in
+ * src/data/holdings.ts is the final floor.
+ */
+let lastKnown: FundStats | null = null;
 
 export const getFundStats = createServerFn({ method: "GET" }).handler(
   async (): Promise<FundStats | null> => {
@@ -31,7 +39,10 @@ export const getFundStats = createServerFn({ method: "GET" }).handler(
           .select("symbol, price"),
       ]);
       const data = statsRes.data;
-      if (statsRes.error || !data) return null;
+      // Row unreadable or missing: fall back to the last figures this instance
+      // served rather than to nothing, so a blip does not reset the hero to the
+      // static baseline for every visitor hitting a warm instance.
+      if (statsRes.error || !data) return lastKnown;
 
       const cash = Number(data.cash_holdings) || 0;
       const quotes = new Map<string, number>();
@@ -56,16 +67,18 @@ export const getFundStats = createServerFn({ method: "GET" }).handler(
         ? formatAumK(computedAum)
         : data.aum_display;
 
-      return {
+      const stats: FundStats = {
         aum_display: aumDisplay,
         active_members: data.active_members,
         founded_year: Number(data.founded_year),
         sector_teams: Number(data.sector_teams),
         cash_holdings: cash,
       };
+      lastKnown = stats;
+      return stats;
     } catch (e) {
       console.error("[fund-stats] fetch failed:", e);
-      return null;
+      return lastKnown;
     }
   },
 );
