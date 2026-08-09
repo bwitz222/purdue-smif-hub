@@ -55,7 +55,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Purdue Student Managed Investment Fund" },
       { name: "description", content: "Purdue SMIF — the student-managed investment fund at Purdue's Daniels School of Business, managing real capital since 2009." },
-      { name: "keywords", content: "Purdue SMIF, Purdue Student Managed Investment Fund, Purdue Investment Fund, Purdue Investment Club, Purdue Finance Club, Purdue investing club, Purdue finance organization, Daniels School of Business, student investment fund" },
+      // No `keywords` meta tag. Google dropped it as a ranking signal in 2009 and
+      // Bing treats it as a spam indicator, so it can only publish our keyword
+      // targeting to competitors. The terms we actually want to rank for have to
+      // be earned in titles, headings, and body copy on the pages that own them.
       { name: "author", content: "Purdue SMIF" },
       { name: "theme-color", content: "#0A0A0A" },
       { property: "og:site_name", content: "Purdue SMIF" },
