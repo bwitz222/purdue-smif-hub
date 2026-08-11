@@ -1,0 +1,212 @@
+<title>Research — Purdue SMIF Mockup</title>
+<!--@include _shared/style.html-->
+
+<a class="skip-link" href="#main">Skip to content</a>
+<div class="progress" aria-hidden="true"></div>
+<!--@include _shared/header.html-->
+
+<main id="main">
+  <section class="section section--tight section--paper" style="border-top: 0">
+    <div class="wrap">
+      <div class="between" style="align-items: flex-end">
+        <div>
+          <p class="eyebrow">Publications</p>
+          <h1 style="font-size: var(--step-5); max-width: 18ch">Reports &amp; research from the fund.</h1>
+          <p class="lead" style="margin-top: 1.25rem">
+            Equity research, semester letters, and annual reviews — the written
+            record behind every position in the portfolio.
+          </p>
+        </div>
+        <a class="btn btn--outline group" href="#">Read us on Substack <span class="arrow" aria-hidden="true">↗</span></a>
+      </div>
+      <div class="note" style="margin-top: 2rem; max-width: 64rem">
+        <b>A publication is only useful if you can find the one you want.</b>
+        The live page sorts by date inside three tabs, with nothing to tell you
+        what a report covers until you open it. Each card here leads with the
+        ticker, the recommendation, and the price target — the three fields a
+        reader scans for — and filters cut across the tabs rather than inside
+        them.
+      </div>
+    </div>
+  </section>
+
+  <div class="toolbar">
+    <div class="wrap">
+      <div class="between" style="align-items: center">
+        <label style="flex: 1 1 16rem; max-width: 22rem">
+          <span class="sr-only">Search publications</span>
+          <input class="input" type="search" placeholder="Search ticker, company, or author…" data-filter-target="#pubs" />
+        </label>
+        <div class="row" style="gap: 1rem">
+          <span class="meta"><span data-filter-count="#pubs">9</span> publications</span>
+          <div class="segment" data-toggle-group role="group" aria-label="Sort">
+            <button data-value="new" aria-pressed="true">Newest</button>
+            <button data-value="old" aria-pressed="false">Oldest</button>
+            <button data-value="az" aria-pressed="false">A–Z</button>
+          </div>
+        </div>
+      </div>
+      <div class="chips" role="group" aria-label="Filter by type" data-toggle-group data-filter-key data-filter-target="#pubs" style="margin-top: 0.75rem">
+        <button class="chip" data-value="all" aria-pressed="true">All</button>
+        <button class="chip" data-value="equity" aria-pressed="false">Equity research</button>
+        <button class="chip" data-value="semester" aria-pressed="false">Semester reports</button>
+        <button class="chip" data-value="annual" aria-pressed="false">Annual reports</button>
+      </div>
+    </div>
+  </div>
+
+  <section style="padding-block: 3rem 5rem">
+    <div class="wrap">
+      <div id="pubs" class="pubs" data-reveal data-stagger>
+        <article class="pub card" data-filter-row data-sector="equity" data-search="amzn amazon consumer discretionary dcf initiation" data-reveal>
+          <div class="pub__head">
+            <span class="badge badge--gold mono">AMZN</span>
+            <span class="badge badge--up">Buy · PT $312</span>
+          </div>
+          <h2 class="h5"><a class="link-block" href="#">Amazon.com — Initiation of Coverage</a></h2>
+          <p class="body-muted">AWS reacceleration and a retail margin structurally repriced by regionalized fulfillment. DCF, comparable-company analysis, and commentary.</p>
+          <div class="pub__foot">
+            <span class="meta">Consumer Discretionary · Spring 2025</span>
+            <span class="row" style="gap: 0.75rem">
+              <a class="link group" href="#">Thesis <span class="arrow" aria-hidden="true">↓</span></a>
+              <a class="link group" href="#">Model <span class="arrow" aria-hidden="true">↓</span></a>
+            </span>
+          </div>
+        </article>
+
+        <article class="pub card" data-filter-row data-sector="equity" data-search="panw palo alto networks technology platformization" data-reveal>
+          <div class="pub__head">
+            <span class="badge badge--gold mono">PANW</span>
+            <span class="badge badge--up">Buy · PT $318</span>
+          </div>
+          <h2 class="h5"><a class="link-block" href="#">Palo Alto Networks — Platformization Is the Moat</a></h2>
+          <p class="body-muted">Consolidating point products onto one vendor raises switching costs and lifts net revenue retention. Up 44% since the pitch.</p>
+          <div class="pub__foot">
+            <span class="meta">Information Technology · Spring 2024</span>
+            <a class="link group" href="#">Report <span class="arrow" aria-hidden="true">↓</span></a>
+          </div>
+        </article>
+
+        <article class="pub card" data-filter-row data-sector="equity" data-search="ceg constellation energy post mortem utilities" data-reveal>
+          <div class="pub__head">
+            <span class="badge badge--gold mono">CEG</span>
+            <span class="badge badge--down">Under review · −22.5%</span>
+          </div>
+          <h2 class="h5"><a class="link-block" href="#">Constellation Energy — What We Got Wrong</a></h2>
+          <p class="body-muted">A written post-mortem on the datacenter PPA thesis that did not convert on the timeline underwritten. Published because losing positions get the same treatment as winners.</p>
+          <div class="pub__foot">
+            <span class="meta">Energy &amp; Real Estate · Fall 2025</span>
+            <a class="link group" href="#">Post-mortem <span class="arrow" aria-hidden="true">↓</span></a>
+          </div>
+        </article>
+
+        <article class="pub card" data-filter-row data-sector="equity" data-search="lly eli lilly healthcare incretin" data-reveal>
+          <div class="pub__head">
+            <span class="badge badge--gold mono">LLY</span>
+            <span class="badge badge--up">Buy · PT $1,240</span>
+          </div>
+          <h2 class="h5"><a class="link-block" href="#">Eli Lilly — Capacity, Not Demand, Is the Constraint</a></h2>
+          <p class="body-muted">Incretin franchise sizing, manufacturing build-out, and what the bear case actually requires.</p>
+          <div class="pub__foot">
+            <span class="meta">Healthcare &amp; Utilities · Fall 2025</span>
+            <a class="link group" href="#">Report <span class="arrow" aria-hidden="true">↓</span></a>
+          </div>
+        </article>
+
+        <article class="pub card" data-filter-row data-sector="equity" data-search="de deere industrials precision agriculture" data-reveal>
+          <div class="pub__head">
+            <span class="badge badge--gold mono">DE</span>
+            <span class="badge badge--up">Hold · PT $560</span>
+          </div>
+          <h2 class="h5"><a class="link-block" href="#">Deere — Precision Ag as Recurring Revenue</a></h2>
+          <p class="body-muted">Attach rate turning equipment sales into software revenue. The fund's best-performing position at +50.7%.</p>
+          <div class="pub__foot">
+            <span class="meta">Industrials · Fall 2023</span>
+            <a class="link group" href="#">Report <span class="arrow" aria-hidden="true">↓</span></a>
+          </div>
+        </article>
+
+        <article class="pub card" data-filter-row data-sector="equity" data-search="usb u.s. bancorp financials nim" data-reveal>
+          <div class="pub__head">
+            <span class="badge badge--gold mono">USB</span>
+            <span class="badge badge--up">Buy · PT $62</span>
+          </div>
+          <h2 class="h5"><a class="link-block" href="#">U.S. Bancorp — Fee Mix and the NIM Trough</a></h2>
+          <p class="body-muted">A super-regional whose deposit base held through 2023, with fee income well above peers.</p>
+          <div class="pub__foot">
+            <span class="meta">Financials · Fall 2023</span>
+            <a class="link group" href="#">Report <span class="arrow" aria-hidden="true">↓</span></a>
+          </div>
+        </article>
+
+        <article class="pub card pub--report" data-filter-row data-sector="semester" data-search="spring 2026 semester report letter" data-reveal>
+          <div class="pub__head"><span class="badge">Semester report</span></div>
+          <h2 class="h5"><a class="link-block" href="#">Spring 2026 Semester Report</a></h2>
+          <p class="body-muted">Portfolio review, attribution by sector, positions initiated and exited, and the analyst class that pitched them.</p>
+          <div class="pub__foot">
+            <span class="meta">Published May 2026 · 24 pages</span>
+            <a class="link group" href="#">PDF <span class="arrow" aria-hidden="true">↓</span></a>
+          </div>
+        </article>
+
+        <article class="pub card pub--report" data-filter-row data-sector="semester" data-search="fall 2025 semester report letter" data-reveal>
+          <div class="pub__head"><span class="badge">Semester report</span></div>
+          <h2 class="h5"><a class="link-block" href="#">Fall 2025 Semester Report</a></h2>
+          <p class="body-muted">Six new positions, the Constellation post-mortem, and a revised concentration policy.</p>
+          <div class="pub__foot">
+            <span class="meta">Published December 2025 · 21 pages</span>
+            <a class="link group" href="#">PDF <span class="arrow" aria-hidden="true">↓</span></a>
+          </div>
+        </article>
+
+        <article class="pub card pub--report" data-filter-row data-sector="annual" data-search="2025 annual report review performance" data-reveal>
+          <div class="pub__head"><span class="badge">Annual report</span></div>
+          <h2 class="h5"><a class="link-block" href="#">2025 Annual Review</a></h2>
+          <p class="body-muted">Full-year performance against the S&amp;P 500, risk statistics, the investment policy statement, and where members landed after graduation.</p>
+          <div class="pub__foot">
+            <span class="meta">Published January 2026 · 38 pages</span>
+            <a class="link group" href="#">PDF <span class="arrow" aria-hidden="true">↓</span></a>
+          </div>
+        </article>
+      </div>
+
+      <p data-filter-empty="#pubs" hidden class="body-muted" style="padding: 3rem; text-align: center">
+        Nothing published under that filter yet. Semester reports go out each May and December.
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--tight section--dark">
+    <div class="wrap between" data-reveal style="align-items: center">
+      <div>
+        <h2 style="font-size: var(--step-3)">Want to write one of these?</h2>
+        <p class="body-muted" style="margin-top: 0.5rem">Every analyst publishes. Recruiting opens 22 August.</p>
+      </div>
+      <a class="btn btn--gold group" href="apply-contact.html">Apply to Join <span class="arrow" aria-hidden="true">→</span></a>
+    </div>
+  </section>
+</main>
+
+<!--@include _shared/footer.html-->
+
+<div class="mockup-flag">
+  <span>Mockup · Research</span>
+  <a href="index.html">All mockups ↗</a>
+</div>
+
+<style>
+  .pubs { display: grid; gap: 1.25rem; grid-template-columns: 1fr }
+  @media (min-width: 700px) { .pubs { grid-template-columns: repeat(2, 1fr) } }
+  @media (min-width: 1100px) { .pubs { grid-template-columns: repeat(3, 1fr) } }
+  .pub { display: flex; flex-direction: column; gap: 0.75rem; border-top: 2px solid var(--gold); padding: 1.5rem }
+  .pub:hover { transform: translateY(-3px); box-shadow: var(--shadow-elegant); border-color: var(--border); border-top-color: var(--gold) }
+  .pub--report { border-top-color: var(--muted-foreground); background: var(--secondary) }
+  .pub__head { display: flex; gap: 0.5rem; flex-wrap: wrap }
+  .pub__foot { margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap }
+  /* The whole card is the hit target; the heading link stretches over it. */
+  .link-block::after { content: ""; position: absolute; inset: 0 }
+  .pub { position: relative }
+  .pub__foot a, .pub__head { position: relative; z-index: 1 }
+</style>
+
+<!--@include _shared/script.html-->

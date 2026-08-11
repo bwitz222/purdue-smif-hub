@@ -1,0 +1,359 @@
+<title>Team — Purdue SMIF Mockup</title>
+<!--@include _shared/style.html-->
+
+<a class="skip-link" href="#main">Skip to content</a>
+<div class="progress" aria-hidden="true"></div>
+<!--@include _shared/header.html-->
+
+<main id="main">
+  <section class="section section--tight section--paper" style="border-top: 0">
+    <div class="wrap">
+      <p class="eyebrow">The fund</p>
+      <h1 style="font-size: var(--step-5); max-width: 20ch">The people behind the portfolio.</h1>
+      <p class="lead" style="margin-top: 1.25rem">
+        Every analyst, by team and role, plus two faculty advisors — and the
+        seats that are currently open. Every name here has defended a pitch in
+        front of the room.
+      </p>
+      <div class="hairline cols-4" style="margin-top: 2.5rem" data-reveal data-stagger>
+        <div data-reveal><div class="stat" style="border-top: 0; padding-top: 0"><div class="stat__value">7</div><div class="stat__label">Executive Board</div></div></div>
+        <div data-reveal><div class="stat" style="border-top: 0; padding-top: 0"><div class="stat__value">8</div><div class="stat__label">Sector Teams</div></div></div>
+        <div data-reveal><div class="stat" style="border-top: 0; padding-top: 0"><div class="stat__value">4</div><div class="stat__label">Fixed Income &amp; Macro</div></div></div>
+        <div data-reveal><div class="stat" style="border-top: 0; padding-top: 0"><div class="stat__value">6</div><div class="stat__label">PM + Risk</div></div></div>
+      </div>
+      <div class="note" style="margin-top: 2rem; max-width: 64rem">
+        <b>The roster is a directory, so it should behave like one.</b> The live
+        page is 400 lines of stacked group headings — finding one analyst means
+        scrolling past everyone else. Here, search and the role filter narrow in
+        place, and a card opens a detail panel instead of a separate page load.
+        Try searching <b>Industrials</b>, or open any card.
+      </div>
+    </div>
+  </section>
+
+  <div class="toolbar">
+    <div class="wrap">
+      <div class="between" style="align-items: center">
+        <label style="flex: 1 1 16rem; max-width: 22rem">
+          <span class="sr-only">Search by name, role, or team</span>
+          <input class="input" type="search" placeholder="Search name, role, or team…" data-filter-target="#roster" />
+        </label>
+        <span class="meta"><span data-filter-count="#roster">37</span> shown</span>
+      </div>
+      <div class="chips" role="group" aria-label="Filter by group" data-toggle-group data-filter-key data-filter-target="#roster" style="margin-top: 0.75rem">
+        <button class="chip" data-value="all" aria-pressed="true">Everyone</button>
+        <button class="chip" data-value="Leadership" aria-pressed="false">Leadership</button>
+        <button class="chip" data-value="Information Technology" aria-pressed="false">Information Technology</button>
+        <button class="chip" data-value="Consumer Discretionary" aria-pressed="false">Consumer Discretionary</button>
+        <button class="chip" data-value="Financials" aria-pressed="false">Financials</button>
+        <button class="chip" data-value="Consumer Staples" aria-pressed="false">Consumer Staples</button>
+        <button class="chip" data-value="Industrials" aria-pressed="false">Industrials</button>
+        <button class="chip" data-value="Healthcare &amp; Utilities" aria-pressed="false">Healthcare &amp; Utilities</button>
+        <button class="chip" data-value="Communications" aria-pressed="false">Communications</button>
+        <button class="chip" data-value="Energy &amp; Real Estate" aria-pressed="false">Energy &amp; Real Estate</button>
+        <button class="chip" data-value="Fixed Income &amp; Macro" aria-pressed="false">Fixed Income &amp; Macro</button>
+        <button class="chip" data-value="Portfolio + Risk" aria-pressed="false">Portfolio + Risk</button>
+        <button class="chip" data-value="Faculty" aria-pressed="false">Faculty</button>
+      </div>
+    </div>
+  </div>
+
+  <section style="padding-block: 3rem 5rem">
+    <div class="wrap">
+      <div id="roster" class="roster" data-reveal data-stagger>
+        <!-- Leadership -->
+        <button class="card member" data-filter-row data-sector="Leadership" data-search="andrew lacambra co-president fixed income macro leadership" data-reveal data-sheet-open data-sheet-name="Andrew Lacambra" data-sheet-role="Co-President · Head, Fixed Income &amp; Macro" data-sheet-year="Class of 2027" data-sheet-email="alacambr@purdue.edu" data-sheet-bio="Leads the fund alongside the Co-President and runs the Fixed Income & Macro desk: rates, credit, and the FX overlay that frames every equity pitch.">
+          <span class="member__avatar" aria-hidden="true">AL</span>
+          <span class="member__body">
+            <span class="member__name">Andrew Lacambra</span>
+            <span class="member__role">Co-President</span>
+            <span class="member__meta mono">Class of 2027</span>
+          </span>
+        </button>
+        <button class="card member" data-filter-row data-sector="Leadership" data-search="ian teh co-president industrials leadership" data-reveal data-sheet-open data-sheet-name="Ian Teh" data-sheet-role="Co-President · Head, Industrials" data-sheet-year="Class of 2027" data-sheet-email="iteh@purdue.edu" data-sheet-bio="Co-runs the fund and heads the Industrials team, which owns Cummins, Deere, and Orion Group — 6.3% of invested capital.">
+          <span class="member__avatar" aria-hidden="true">IT</span>
+          <span class="member__body">
+            <span class="member__name">Ian Teh</span>
+            <span class="member__role">Co-President</span>
+            <span class="member__meta mono">Class of 2027</span>
+          </span>
+        </button>
+        <button class="card member" data-filter-row data-sector="Leadership" data-search="hunter specht co-cio education portfolio manager leadership" data-reveal data-sheet-open data-sheet-name="Hunter Specht" data-sheet-role="Co-CIO &amp; Co-Head of Education" data-sheet-year="Class of 2027" data-sheet-email="hspecht@purdue.edu" data-sheet-bio="Drives portfolio strategy and final investment decisions across all sectors, and co-leads the analyst education curriculum.">
+          <span class="member__avatar" aria-hidden="true">HS</span>
+          <span class="member__body">
+            <span class="member__name">Hunter Specht</span>
+            <span class="member__role">Co-CIO &amp; Co-Head of Education</span>
+            <span class="member__meta mono">Class of 2027</span>
+          </span>
+        </button>
+        <button class="card member" data-filter-row data-sector="Leadership" data-search="sandhya gopinath co-cio education portfolio manager leadership" data-reveal data-sheet-open data-sheet-name="Sandhya Gopinath" data-sheet-role="Co-CIO &amp; Co-Head of Education" data-sheet-year="Class of 2028" data-sheet-email="gopinas@purdue.edu" data-sheet-bio="Shares responsibility for portfolio construction and the education track, and serves as one of two Portfolio Managers on the risk desk.">
+          <span class="member__avatar" aria-hidden="true">SG</span>
+          <span class="member__body">
+            <span class="member__name">Sandhya Gopinath</span>
+            <span class="member__role">Co-CIO &amp; Co-Head of Education</span>
+            <span class="member__meta mono">Class of 2028</span>
+          </span>
+        </button>
+        <button class="card member" data-filter-row data-sector="Leadership" data-search="keren wadhwani treasurer fundraising rates leadership" data-reveal data-sheet-open data-sheet-name="Keren Wadhwani" data-sheet-role="Treasurer &amp; Director of Fundraising" data-sheet-year="Class of 2028" data-sheet-email="kwadhwan@purdue.edu" data-sheet-bio="Owns the fund's books and its fundraising pipeline, and covers rates as a senior analyst on Fixed Income & Macro.">
+          <span class="member__avatar" aria-hidden="true">KW</span>
+          <span class="member__body">
+            <span class="member__name">Keren Wadhwani</span>
+            <span class="member__role">Treasurer &amp; Director of Fundraising</span>
+            <span class="member__meta mono">Class of 2028</span>
+          </span>
+        </button>
+        <button class="card member" data-filter-row data-sector="Leadership" data-search="chris andreou talent operations information technology leadership" data-reveal data-sheet-open data-sheet-name="Chris Andreou" data-sheet-role="Director of Talent and Operations" data-sheet-year="Class of 2028" data-sheet-email="andreou@purdue.edu" data-sheet-bio="Runs recruiting and internal operations, and heads the Information Technology sector team.">
+          <span class="member__avatar" aria-hidden="true">CA</span>
+          <span class="member__body">
+            <span class="member__name">Chris Andreou</span>
+            <span class="member__role">Director of Talent and Operations</span>
+            <span class="member__meta mono">Class of 2028</span>
+          </span>
+        </button>
+        <button class="card member" data-filter-row data-sector="Leadership" data-search="shaheera ali marketing outreach information technology leadership" data-reveal data-sheet-open data-sheet-name="Shaheera Ali" data-sheet-role="Director of Marketing and Outreach" data-sheet-year="Class of 2028" data-sheet-email="ali251@purdue.edu" data-sheet-bio="Leads the fund's external communications and campus outreach, and analyses software names on the IT team.">
+          <span class="member__avatar" aria-hidden="true">SA</span>
+          <span class="member__body">
+            <span class="member__name">Shaheera Ali</span>
+            <span class="member__role">Director of Marketing and Outreach</span>
+            <span class="member__meta mono">Class of 2028</span>
+          </span>
+        </button>
+
+        <!-- Information Technology -->
+        <button class="card member" data-filter-row data-sector="Information Technology" data-search="parth dama senior analyst information technology" data-reveal data-sheet-open data-sheet-name="Parth Dama" data-sheet-role="Senior Analyst · Information Technology" data-sheet-year="Class of 2029" data-sheet-email="damap@purdue.edu" data-sheet-bio="Covers semiconductors and infrastructure software for the IT team.">
+          <span class="member__avatar" aria-hidden="true">PD</span>
+          <span class="member__body"><span class="member__name">Parth Dama</span><span class="member__role">Senior Analyst · IT</span><span class="member__meta mono">Class of 2029</span></span>
+        </button>
+        <button class="card member" data-filter-row data-sector="Information Technology" data-search="landon haffner analyst information technology" data-reveal data-sheet-open data-sheet-name="Landon Haffner" data-sheet-role="Analyst · Information Technology" data-sheet-year="Class of 2029" data-sheet-email="haffnel@purdue.edu" data-sheet-bio="Analyst on the IT team, covering hardware and IT services.">
+          <span class="member__avatar" aria-hidden="true">LH</span>
+          <span class="member__body"><span class="member__name">Landon Haffner</span><span class="member__role">Analyst · IT</span><span class="member__meta mono">Class of 2029</span></span>
+        </button>
+
+        <!-- Consumer Discretionary -->
+        <button class="card member" data-filter-row data-sector="Consumer Discretionary" data-search="ayden wong head sector consumer discretionary" data-reveal data-sheet-open data-sheet-name="Ayden Wong" data-sheet-role="Head, Consumer Discretionary" data-sheet-year="Class of 2028" data-sheet-email="wong482@purdue.edu" data-sheet-bio="Heads Consumer Discretionary — the team behind Amazon, Ralph Lauren, and DoorDash.">
+          <span class="member__avatar" aria-hidden="true">AW</span>
+          <span class="member__body"><span class="member__name">Ayden Wong</span><span class="member__role">Head, Consumer Discretionary</span><span class="member__meta mono">Class of 2028</span></span>
+        </button>
+        <button class="card member" data-filter-row data-sector="Consumer Discretionary" data-search="riley collins senior analyst consumer discretionary" data-reveal data-sheet-open data-sheet-name="Riley Collins" data-sheet-role="Senior Analyst · Consumer Discretionary" data-sheet-year="Class of 2028" data-sheet-email="colli571@purdue.edu" data-sheet-bio="Covers retail and leisure names for the Consumer Discretionary team.">
+          <span class="member__avatar" aria-hidden="true">RC</span>
+          <span class="member__body"><span class="member__name">Riley Collins</span><span class="member__role">Senior Analyst · Cons. Disc.</span><span class="member__meta mono">Class of 2028</span></span>
+        </button>
+        <button class="card member" data-filter-row data-sector="Consumer Discretionary" data-search="karanvir singh senior analyst consumer discretionary" data-reveal data-sheet-open data-sheet-name="Karanvir Singh" data-sheet-role="Senior Analyst · Consumer Discretionary" data-sheet-year="Class of 2028" data-sheet-email="sing2553@purdue.edu" data-sheet-bio="Covers autos and apparel for the Consumer Discretionary team.">
+          <span class="member__avatar" aria-hidden="true">KS</span>
+          <span class="member__body"><span class="member__name">Karanvir Singh</span><span class="member__role">Senior Analyst · Cons. Disc.</span><span class="member__meta mono">Class of 2028</span></span>
+        </button>
+        <button class="card member" data-filter-row data-sector="Consumer Discretionary" data-search="fabian segura vargas senior analyst consumer discretionary" data-reveal data-sheet-open data-sheet-name="Fabian Segura Vargas" data-sheet-role="Senior Analyst · Consumer Discretionary" data-sheet-year="Class of 2028" data-sheet-email="fsegurav@purdue.edu" data-sheet-bio="Senior analyst on Consumer Discretionary.">
+          <span class="member__avatar" aria-hidden="true">FS</span>
+          <span class="member__body"><span class="member__name">Fabian Segura Vargas</span><span class="member__role">Senior Analyst · Cons. Disc.</span><span class="member__meta mono">Class of 2028</span></span>
+        </button>
+
+        <!-- Financials -->
+        <button class="card member" data-filter-row data-sector="Financials" data-search="alex belanger head sector financials" data-reveal data-sheet-open data-sheet-name="Alex Belanger" data-sheet-role="Head, Financials" data-sheet-year="Class of 2027" data-sheet-email="belangea@purdue.edu" data-sheet-bio="Heads Financials, the fund's largest active sector at 12.0% of invested capital: U.S. Bancorp, Berkshire, Ally, and Capital One.">
+          <span class="member__avatar" aria-hidden="true">AB</span>
+          <span class="member__body"><span class="member__name">Alex Belanger</span><span class="member__role">Head, Financials</span><span class="member__meta mono">Class of 2027</span></span>
+        </button>
+        <button class="card member" data-filter-row data-sector="Financials" data-search="daniel friedman senior analyst financials" data-reveal data-sheet-open data-sheet-name="Daniel Friedman" data-sheet-role="Senior Analyst · Financials" data-sheet-year="Class of Dec 2026" data-sheet-email="friedmd@purdue.edu" data-sheet-bio="Covers banks and capital markets infrastructure.">
+          <span class="member__avatar" aria-hidden="true">DF</span>
+          <span class="member__body"><span class="member__name">Daniel Friedman</span><span class="member__role">Senior Analyst · Financials</span><span class="member__meta mono">Class of Dec 2026</span></span>
+        </button>
+        <button class="card member" data-filter-row data-sector="Financials" data-search="mikhail bilokin analyst financials" data-reveal data-sheet-open data-sheet-name="Mikhail Bilokin" data-sheet-role="Analyst · Financials" data-sheet-year="Class of 2029" data-sheet-email="mbilokin@purdue.edu" data-sheet-bio="Analyst on the Financials team.">
+          <span class="member__avatar" aria-hidden="true">MB</span>
+          <span class="member__body"><span class="member__name">Mikhail Bilokin</span><span class="member__role">Analyst · Financials</span><span class="member__meta mono">Class of 2029</span></span>
+        </button>
+
+        <!-- Consumer Staples -->
+        <button class="card member" data-filter-row data-sector="Consumer Staples" data-search="evan wright head sector consumer staples" data-reveal data-sheet-open data-sheet-name="Evan Wright" data-sheet-role="Head, Consumer Staples" data-sheet-year="Class of 2027" data-sheet-email="wrigh712@purdue.edu" data-sheet-bio="Heads Consumer Staples — Monster Beverage, Procter &amp; Gamble, and Smithfield Foods.">
+          <span class="member__avatar" aria-hidden="true">EW</span>
+          <span class="member__body"><span class="member__name">Evan Wright</span><span class="member__role">Head, Consumer Staples</span><span class="member__meta mono">Class of 2027</span></span>
+        </button>
+        <button class="card member" data-filter-row data-sector="Consumer Staples" data-search="logan friedman senior analyst consumer staples" data-reveal data-sheet-open data-sheet-name="Logan Friedman" data-sheet-role="Senior Analyst · Consumer Staples" data-sheet-year="Class of 2028" data-sheet-email="friedml@purdue.edu" data-sheet-bio="Covers food and beverage for Consumer Staples.">
+          <span class="member__avatar" aria-hidden="true">LF</span>
+          <span class="member__body"><span class="member__name">Logan Friedman</span><span class="member__role">Senior Analyst · Staples</span><span class="member__meta mono">Class of 2028</span></span>
+        </button>
+
+        <!-- Industrials -->
+        <button class="card member" data-filter-row data-sector="Industrials" data-search="dallas white senior analyst industrials" data-reveal data-sheet-open data-sheet-name="Dallas White" data-sheet-role="Senior Analyst · Industrials" data-sheet-year="Class of 2029" data-sheet-email="whit1259@purdue.edu" data-sheet-bio="Covers machinery and capital goods for the Industrials team.">
+          <span class="member__avatar" aria-hidden="true">DW</span>
+          <span class="member__body"><span class="member__name">Dallas White</span><span class="member__role">Senior Analyst · Industrials</span><span class="member__meta mono">Class of 2029</span></span>
+        </button>
+        <button class="card member" data-filter-row data-sector="Industrials" data-search="cooper weiss senior analyst industrials" data-reveal data-sheet-open data-sheet-name="Cooper Weiss" data-sheet-role="Senior Analyst · Industrials" data-sheet-year="Class of 2028" data-sheet-email="weiss109@purdue.edu" data-sheet-bio="Covers aerospace, defense, and transports.">
+          <span class="member__avatar" aria-hidden="true">CW</span>
+          <span class="member__body"><span class="member__name">Cooper Weiss</span><span class="member__role">Senior Analyst · Industrials</span><span class="member__meta mono">Class of 2028</span></span>
+        </button>
+        <button class="card member" data-filter-row data-sector="Industrials" data-search="augustus matushek senior analyst industrials" data-reveal data-sheet-open data-sheet-name="Augustus Matushek" data-sheet-role="Senior Analyst · Industrials" data-sheet-year="Class of 2029" data-sheet-email="amatush@purdue.edu" data-sheet-bio="Senior analyst on the Industrials team.">
+          <span class="member__avatar" aria-hidden="true">AM</span>
+          <span class="member__body"><span class="member__name">Augustus Matushek</span><span class="member__role">Senior Analyst · Industrials</span><span class="member__meta mono">Class of 2029</span></span>
+        </button>
+
+        <!-- Healthcare & Utilities -->
+        <button class="card member" data-filter-row data-sector="Healthcare &amp; Utilities" data-search="sid voona head sector healthcare utilities" data-reveal data-sheet-open data-sheet-name="Sid Voona" data-sheet-role="Head, Healthcare &amp; Utilities" data-sheet-year="Class of 2028" data-sheet-email="voona@purdue.edu" data-sheet-bio="Heads Healthcare &amp; Utilities — Eli Lilly and Constellation Energy sit under this team.">
+          <span class="member__avatar" aria-hidden="true">SV</span>
+          <span class="member__body"><span class="member__name">Sid Voona</span><span class="member__role">Head, Healthcare &amp; Utilities</span><span class="member__meta mono">Class of 2028</span></span>
+        </button>
+        <button class="card member" data-filter-row data-sector="Healthcare &amp; Utilities" data-search="gautham santhanam senior analyst healthcare utilities" data-reveal data-sheet-open data-sheet-name="Gautham Santhanam" data-sheet-role="Senior Analyst · Healthcare &amp; Utilities" data-sheet-year="Class of 2028" data-sheet-email="gsanthan@purdue.edu" data-sheet-bio="Covers pharma and med-tech.">
+          <span class="member__avatar" aria-hidden="true">GS</span>
+          <span class="member__body"><span class="member__name">Gautham Santhanam</span><span class="member__role">Senior Analyst · Healthcare</span><span class="member__meta mono">Class of 2028</span></span>
+        </button>
+        <button class="card member" data-filter-row data-sector="Healthcare &amp; Utilities" data-search="brock heller senior analyst healthcare utilities" data-reveal data-sheet-open data-sheet-name="Brock Heller" data-sheet-role="Senior Analyst · Healthcare &amp; Utilities" data-sheet-year="Class of 2027" data-sheet-email="baheller@purdue.edu" data-sheet-bio="Covers managed care and regulated utilities.">
+          <span class="member__avatar" aria-hidden="true">BH</span>
+          <span class="member__body"><span class="member__name">Brock Heller</span><span class="member__role">Senior Analyst · Healthcare</span><span class="member__meta mono">Class of 2027</span></span>
+        </button>
+
+        <!-- Communications -->
+        <button class="card member" data-filter-row data-sector="Communications" data-search="gabriel fridman senior analyst communications" data-reveal data-sheet-open data-sheet-name="Gabriel Fridman" data-sheet-role="Senior Analyst · Communications" data-sheet-year="Class of 2028" data-sheet-email="gfridman@purdue.edu" data-sheet-bio="Covers telecom, media, and platform names — Meta and Verizon.">
+          <span class="member__avatar" aria-hidden="true">GF</span>
+          <span class="member__body"><span class="member__name">Gabriel Fridman</span><span class="member__role">Senior Analyst · Comms</span><span class="member__meta mono">Class of 2028</span></span>
+        </button>
+        <!-- Open seats are stated, not hidden. A visible gap is a recruiting
+             asset: it tells an applicant exactly where they would land. -->
+        <div class="card member member--open" data-filter-row data-sector="Communications" data-search="open seat head sector communications">
+          <span class="member__avatar member__avatar--open" aria-hidden="true">+</span>
+          <span class="member__body">
+            <span class="member__name">Head, Communications</span>
+            <span class="member__role gold-deep">Open seat · Fall 2026</span>
+            <span class="member__meta mono">Apply to be considered</span>
+          </span>
+        </div>
+
+        <!-- Energy & Real Estate -->
+        <button class="card member" data-filter-row data-sector="Energy &amp; Real Estate" data-search="jacob george head sector energy real estate" data-reveal data-sheet-open data-sheet-name="Jacob George" data-sheet-role="Head, Energy &amp; Real Estate" data-sheet-year="Class of 2029" data-sheet-email="georg243@purdue.edu" data-sheet-bio="Heads Energy &amp; Real Estate. The team owns Occidental and Constellation Energy, and carries the CEG post-mortem.">
+          <span class="member__avatar" aria-hidden="true">JG</span>
+          <span class="member__body"><span class="member__name">Jacob George</span><span class="member__role">Head, Energy &amp; Real Estate</span><span class="member__meta mono">Class of 2029</span></span>
+        </button>
+        <button class="card member" data-filter-row data-sector="Energy &amp; Real Estate" data-search="alejandro cabrales senior analyst energy real estate" data-reveal data-sheet-open data-sheet-name="Alejandro Cabrales" data-sheet-role="Senior Analyst · Energy &amp; Real Estate" data-sheet-year="Class of 2028" data-sheet-email="acabrale@purdue.edu" data-sheet-bio="Covers integrated energy and E&amp;P.">
+          <span class="member__avatar" aria-hidden="true">AC</span>
+          <span class="member__body"><span class="member__name">Alejandro Cabrales</span><span class="member__role">Senior Analyst · Energy</span><span class="member__meta mono">Class of 2028</span></span>
+        </button>
+        <button class="card member" data-filter-row data-sector="Energy &amp; Real Estate" data-search="arav ginde senior analyst energy real estate" data-reveal data-sheet-open data-sheet-name="Arav Ginde" data-sheet-role="Senior Analyst · Energy &amp; Real Estate" data-sheet-year="Class of 2027" data-sheet-email="aginde@purdue.edu" data-sheet-bio="Covers midstream, refiners, and listed real estate.">
+          <span class="member__avatar" aria-hidden="true">AG</span>
+          <span class="member__body"><span class="member__name">Arav Ginde</span><span class="member__role">Senior Analyst · Energy</span><span class="member__meta mono">Class of 2027</span></span>
+        </button>
+        <button class="card member" data-filter-row data-sector="Energy &amp; Real Estate" data-search="veer sanyal senior analyst energy real estate" data-reveal data-sheet-open data-sheet-name="Veer Sanyal" data-sheet-role="Senior Analyst · Energy &amp; Real Estate" data-sheet-year="Class of 2028" data-sheet-email="vsanyal@purdue.edu" data-sheet-bio="Senior analyst on Energy &amp; Real Estate.">
+          <span class="member__avatar" aria-hidden="true">VS</span>
+          <span class="member__body"><span class="member__name">Veer Sanyal</span><span class="member__role">Senior Analyst · Energy</span><span class="member__meta mono">Class of 2028</span></span>
+        </button>
+
+        <!-- Fixed Income & Macro -->
+        <button class="card member" data-filter-row data-sector="Fixed Income &amp; Macro" data-search="aditya balaji analyst credit fixed income macro" data-reveal data-sheet-open data-sheet-name="Aditya Balaji" data-sheet-role="Analyst, Credit · Fixed Income &amp; Macro" data-sheet-year="Class of 2028" data-sheet-email="balaji57@purdue.edu" data-sheet-bio="Covers corporate credit for the Fixed Income &amp; Macro desk.">
+          <span class="member__avatar" aria-hidden="true">AB</span>
+          <span class="member__body"><span class="member__name">Aditya Balaji</span><span class="member__role">Analyst, Credit · FIM</span><span class="member__meta mono">Class of 2028</span></span>
+        </button>
+        <button class="card member" data-filter-row data-sector="Fixed Income &amp; Macro" data-search="balthazar schmitt analyst fx macro fixed income" data-reveal data-sheet-open data-sheet-name="Balthazar Schmitt" data-sheet-role="Analyst, FX &amp; Macro · Fixed Income &amp; Macro" data-sheet-year="Class of 2028" data-sheet-email="bschm@purdue.edu" data-sheet-bio="Covers currencies and the macro overlay.">
+          <span class="member__avatar" aria-hidden="true">BS</span>
+          <span class="member__body"><span class="member__name">Balthazar Schmitt</span><span class="member__role">Analyst, FX &amp; Macro</span><span class="member__meta mono">Class of 2028</span></span>
+        </button>
+
+        <!-- Portfolio + Risk -->
+        <button class="card member" data-filter-row data-sector="Portfolio + Risk" data-search="yashita pujari portfolio management associate risk" data-reveal data-sheet-open data-sheet-name="Yashita Pujari" data-sheet-role="Portfolio Management Associate" data-sheet-year="Class of 2028" data-sheet-email="ypujari@purdue.edu" data-sheet-bio="Maintains the risk model: portfolio beta, volatility, Sharpe, and the VaR figure published on the holdings page.">
+          <span class="member__avatar" aria-hidden="true">YP</span>
+          <span class="member__body"><span class="member__name">Yashita Pujari</span><span class="member__role">PM Associate</span><span class="member__meta mono">Class of 2028</span></span>
+        </button>
+        <button class="card member" data-filter-row data-sector="Portfolio + Risk" data-search="anushka patel portfolio management associate risk" data-reveal data-sheet-open data-sheet-name="Anushka Patel" data-sheet-role="Portfolio Management Associate" data-sheet-year="Class of 2029" data-sheet-email="pate3115@purdue.edu" data-sheet-bio="Portfolio Management Associate on the risk desk.">
+          <span class="member__avatar" aria-hidden="true">AP</span>
+          <span class="member__body"><span class="member__name">Anushka Patel</span><span class="member__role">PM Associate</span><span class="member__meta mono">Class of 2029</span></span>
+        </button>
+        <button class="card member" data-filter-row data-sector="Portfolio + Risk" data-search="abhipsa prajapati portfolio management associate risk" data-reveal data-sheet-open data-sheet-name="Abhipsa Prajapati" data-sheet-role="Portfolio Management Associate" data-sheet-year="Class of 2029" data-sheet-email="aprajap@purdue.edu" data-sheet-bio="Portfolio Management Associate on the risk desk.">
+          <span class="member__avatar" aria-hidden="true">AP</span>
+          <span class="member__body"><span class="member__name">Abhipsa Prajapati</span><span class="member__role">PM Associate</span><span class="member__meta mono">Class of 2029</span></span>
+        </button>
+
+        <!-- Faculty -->
+        <button class="card member" data-filter-row data-sector="Faculty" data-search="lulu zeng faculty advisor daniels school" data-reveal data-sheet-open data-sheet-name="Lulu Zeng" data-sheet-role="Faculty Advisor" data-sheet-year="Daniels School of Business" data-sheet-email="—" data-sheet-bio="Faculty advisor to the fund. Faculty oversight is what makes the mandate real: the fund invests university capital under academic supervision.">
+          <span class="member__avatar" aria-hidden="true">LZ</span>
+          <span class="member__body"><span class="member__name">Lulu Zeng</span><span class="member__role">Faculty Advisor</span><span class="member__meta mono">Daniels School</span></span>
+        </button>
+        <button class="card member" data-filter-row data-sector="Faculty" data-search="alexander boquist faculty advisor daniels school" data-reveal data-sheet-open data-sheet-name="Alexander Boquist" data-sheet-role="Faculty Advisor" data-sheet-year="Daniels School of Business" data-sheet-email="—" data-sheet-bio="Faculty advisor to the fund.">
+          <span class="member__avatar" aria-hidden="true">AB</span>
+          <span class="member__body"><span class="member__name">Alexander Boquist</span><span class="member__role">Faculty Advisor</span><span class="member__meta mono">Daniels School</span></span>
+        </button>
+      </div>
+
+      <p data-filter-empty="#roster" hidden class="body-muted" style="padding: 3rem; text-align: center">
+        Nobody matches that search. Try a sector name, or clear the filter.
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--tight section--dark">
+    <div class="wrap between" data-reveal style="align-items: center">
+      <div>
+        <h2 style="font-size: var(--step-3)">Your name could be on this page.</h2>
+        <p class="body-muted" style="margin-top: 0.75rem">Fall 2026 applications open 22 August.</p>
+      </div>
+      <a class="btn btn--gold group" href="apply-contact.html">Apply to Join <span class="arrow" aria-hidden="true">→</span></a>
+    </div>
+  </section>
+</main>
+
+<!-- Slide-over detail. The live site loads a separate route per member; a
+     panel keeps the reader's place in a 31-card grid they were scanning. -->
+<div class="sheet" data-open="false" role="dialog" aria-modal="true" aria-labelledby="sheet-name">
+  <div class="sheet__scrim"></div>
+  <div class="sheet__panel">
+    <div class="between" style="align-items: flex-start">
+      <span class="eyebrow" style="margin: 0">Analyst</span>
+      <button data-sheet-close class="press" aria-label="Close" style="background: none; border: 0; cursor: pointer; font-family: var(--font-mono); font-size: 1.125rem; min-width: 2.75rem; min-height: 2.75rem">✕</button>
+    </div>
+    <h2 id="sheet-name" data-slot="name" style="font-size: var(--step-3); margin-top: 1rem">—</h2>
+    <p class="gold-deep" data-slot="role" style="font-weight: 600; margin-top: 0.5rem">—</p>
+    <p class="meta" data-slot="year" style="margin-top: 0.25rem">—</p>
+    <span class="rule-gold" style="margin-block: 1.5rem"></span>
+    <p class="body-muted" data-slot="bio">—</p>
+    <p style="margin-top: 1.5rem"><a class="link" data-slot="email" href="#">—</a></p>
+  </div>
+</div>
+
+<!--@include _shared/footer.html-->
+
+<div class="mockup-flag">
+  <span>Mockup · Team</span>
+  <a href="index.html">All mockups ↗</a>
+</div>
+
+<style>
+  .roster {
+    display: grid;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 640px) { .roster { grid-template-columns: repeat(2, 1fr) } }
+  @media (min-width: 1024px) { .roster { grid-template-columns: repeat(3, 1fr) } }
+  .member {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    text-align: left;
+    width: 100%;
+    border: 0;
+    background: var(--card);
+    padding: 1.125rem 1.25rem;
+    cursor: pointer;
+    font: inherit;
+    transition: background-color var(--dur-fast) ease, transform 0.22s var(--ease);
+  }
+  .member:hover { background: var(--secondary); transform: none }
+  .member:hover .member__avatar { border-color: var(--gold); color: var(--gold-deep) }
+  .member--open { cursor: default; background: var(--background) }
+  .member__avatar {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 2.875rem;
+    height: 2.875rem;
+    border: 1px solid var(--border);
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    letter-spacing: 0.04em;
+    color: var(--muted-foreground);
+    transition: border-color var(--dur-fast) ease, color var(--dur-fast) ease;
+  }
+  .member__avatar--open { border-style: dashed; border-color: var(--gold); color: var(--gold-deep) }
+  .member__body { display: grid; gap: 0.125rem; min-width: 0 }
+  .member__name { font-weight: 600; font-size: 0.9375rem; line-height: 1.3 }
+  .member__role { font-size: 0.8125rem; color: var(--muted-foreground); line-height: 1.35 }
+  .member__meta { font-size: 0.6875rem; color: var(--muted-foreground); opacity: 0.75; letter-spacing: 0.08em }
+</style>
+
+<!--@include _shared/script.html-->

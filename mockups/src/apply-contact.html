@@ -1,0 +1,195 @@
+<title>Apply &amp; Contact — Purdue SMIF Mockup</title>
+<!--@include _shared/style.html-->
+
+<a class="skip-link" href="#main">Skip to content</a>
+<div class="progress" aria-hidden="true"></div>
+<!--@include _shared/header.html-->
+
+<main id="main">
+  <section class="section section--tight section--dark" style="border-top: 0">
+    <div class="wrap">
+      <p class="eyebrow">Fall 2026</p>
+      <h1 style="font-size: var(--step-5)">We can't wait<br /><span class="gold">to meet you.</span></h1>
+      <p class="lead" style="margin-top: 1.5rem; color: var(--on-dark-secondary); max-width: 38rem">
+        One form, about fifteen minutes. Every application is read by a member
+        of the executive board.
+      </p>
+      <div class="row" style="margin-top: 2rem; gap: 1rem">
+        <a class="btn btn--gold group" href="#">Open the application <span class="arrow" aria-hidden="true">↗</span><span class="sr-only">(opens in a new tab)</span></a>
+        <a class="btn btn--outline" href="recruiting.html">See the calendar</a>
+      </div>
+      <p class="meta" style="margin-top: 1.25rem">Opens 22 August · closes 1 September, 11:59 PM</p>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="wrap">
+      <div class="note" style="max-width: 64rem">
+        <b>Apply and Contact were both unreachable from the primary nav.</b> On
+        the live site they exist only as footer links and inline CTAs, which
+        means the two pages a motivated visitor most wants are the two hardest
+        to find. Both now sit under the <b>Join</b> nav group, and they are
+        combined here because they are the same intent at different
+        temperatures: ready to apply, or wanting to ask first.
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ WHAT WE LOOK FOR ════════════════════════════════════════════════ -->
+  <section class="section section--tight">
+    <div class="wrap">
+      <p class="eyebrow" data-reveal>What we look for</p>
+      <h2 style="font-size: var(--step-3)" data-reveal>Three things, and none of them is a résumé line</h2>
+      <div class="hairline cols-3" style="margin-top: 2rem" data-reveal data-stagger>
+        <div data-reveal>
+          <h3 class="h5">Curiosity that predates us</h3>
+          <p class="body-muted" style="margin-top: 0.75rem">You already read about companies for reasons that have nothing to do with a job. Tell us what you were reading last week.</p>
+        </div>
+        <div data-reveal>
+          <h3 class="h5">Willingness to be wrong in public</h3>
+          <p class="body-muted" style="margin-top: 0.75rem">Every pitch is defended live and voted down about as often as it is accepted. The people who thrive here treat that as the point.</p>
+        </div>
+        <div data-reveal>
+          <h3 class="h5">Preparation</h3>
+          <p class="body-muted" style="margin-top: 0.75rem">Not experience. The technical round covers material that is free and public on our <a class="link" href="learn.html">Learn</a> page. Doing that work is the signal.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ TIMELINE ════════════════════════════════════════════════════════ -->
+  <section class="section section--tight section--paper">
+    <div class="wrap">
+      <p class="eyebrow" data-reveal>Timeline</p>
+      <h2 style="font-size: var(--step-3)" data-reveal>About three weeks, start to offer</h2>
+      <ol class="mini-steps" data-reveal data-stagger>
+        <li data-reveal><span class="mini-steps__n mono">01</span><b>Meet us</b><span class="body-muted">Callouts and coffee chats, 22–31 August</span></li>
+        <li data-reveal><span class="mini-steps__n mono">02</span><b>Apply</b><span class="body-muted">Form closes 1 September</span></li>
+        <li data-reveal><span class="mini-steps__n mono">03</span><b>Interview</b><span class="body-muted">Two rounds, 8–9 September</span></li>
+        <li data-reveal><span class="mini-steps__n mono">04</span><b>Offer</b><span class="body-muted">Same week, then onto a sector team</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ══ CONTACT ═════════════════════════════════════════════════════════ -->
+  <section class="section section--tight" id="contact">
+    <div class="wrap">
+      <p class="eyebrow" data-reveal>Contact</p>
+      <h2 style="font-size: var(--step-3)" data-reveal>Not ready to apply? Ask first.</h2>
+
+      <div class="contact-grid">
+        <div data-reveal>
+          <form class="stack" novalidate>
+            <div class="field">
+              <label class="field__label" for="topic">What is this about?</label>
+              <select class="input" id="topic" name="topic">
+                <option>Joining the fund</option>
+                <option>Recruiting timeline</option>
+                <option>Research or a publication</option>
+                <option>Alumni &amp; mentorship</option>
+                <option>Sponsorship or partnership</option>
+                <option>Something else</option>
+              </select>
+            </div>
+            <div class="two-up">
+              <div class="field">
+                <label class="field__label" for="name">Name</label>
+                <input class="input" id="name" name="name" autocomplete="name" required />
+              </div>
+              <div class="field">
+                <label class="field__label" for="email">Email</label>
+                <!-- Shown in its error state so the mockup carries validation
+                     styling, not just the happy path. -->
+                <input class="input" id="email" name="email" type="email" autocomplete="email" aria-invalid="true" aria-describedby="email-err" value="ian@purdue" required />
+                <p class="field__error" id="email-err">Enter a complete email address, including the domain.</p>
+              </div>
+            </div>
+            <div class="field">
+              <label class="field__label" for="msg">Message</label>
+              <textarea class="input" id="msg" name="message" rows="6" maxlength="4000" aria-describedby="msg-hint"></textarea>
+              <p class="field__hint" id="msg-hint"><span id="count">0</span> / 4000 characters</p>
+            </div>
+            <div class="row" style="justify-content: space-between">
+              <button class="btn btn--ink group" type="submit">Send message <span class="arrow" aria-hidden="true">→</span></button>
+              <span class="meta">We reply within two business days</span>
+            </div>
+          </form>
+        </div>
+
+        <aside data-reveal>
+          <div class="hairline" style="grid-template-columns: 1fr">
+            <div>
+              <p class="meta">Email</p>
+              <a class="link" href="mailto:smif26@purdue.edu" style="margin-top: 0.375rem">smif26@purdue.edu</a>
+            </div>
+            <div>
+              <p class="meta">Address</p>
+              <p style="margin-top: 0.375rem; font-size: 0.9375rem; line-height: 1.6">403 Mitch Daniels Blvd<br />West Lafayette, IN 47907</p>
+            </div>
+            <div>
+              <p class="meta">Find us</p>
+              <div class="stack" style="margin-top: 0.5rem">
+                <a class="link group" href="#">LinkedIn <span class="arrow" aria-hidden="true">↗</span></a>
+                <a class="link group" href="#">Instagram <span class="arrow" aria-hidden="true">↗</span></a>
+                <a class="link group" href="#">BoilerLink <span class="arrow" aria-hidden="true">↗</span></a>
+              </div>
+            </div>
+          </div>
+          <div class="note" style="margin-top: 1.5rem">
+            <b>Answered already?</b> The recruiting FAQ covers majors, prior
+            experience, class year, and time commitment.
+            <a class="link" href="recruiting.html#prep" style="display: inline-flex; margin-top: 0.5rem">Read the FAQ</a>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tight section--dark">
+    <div class="wrap" data-reveal style="text-align: center; max-width: 44rem; margin-inline: auto">
+      <h2 style="font-size: var(--step-4)">Applications open 22 August.</h2>
+      <p class="body-muted" style="margin-top: 0.75rem">Every college at Purdue. No prior finance experience required.</p>
+      <div style="margin-top: 2rem"><a class="btn btn--gold group" href="#">Open the application <span class="arrow" aria-hidden="true">↗</span></a></div>
+    </div>
+  </section>
+</main>
+
+<!--@include _shared/footer.html-->
+
+<div class="apply-bar" data-visible="false">
+  <div>
+    <div class="apply-bar__meta">Fall 2026 recruiting</div>
+    <div class="apply-bar__count mono">Opens 22 August</div>
+  </div>
+  <a class="btn btn--gold btn--sm" href="#">Apply</a>
+</div>
+
+<div class="mockup-flag">
+  <span>Mockup · Apply &amp; Contact</span>
+  <a href="index.html">All mockups ↗</a>
+</div>
+
+<style>
+  main { padding-bottom: 5rem }
+  @media (min-width: 1024px) { main { padding-bottom: 0 } }
+  .mini-steps { list-style: none; padding: 0; margin-top: 2rem; display: grid; gap: 1px; background: var(--border); border: 1px solid var(--border); grid-template-columns: 1fr }
+  @media (min-width: 800px) { .mini-steps { grid-template-columns: repeat(4, 1fr) } }
+  .mini-steps > li { background: var(--secondary); padding: 1.5rem; display: grid; gap: 0.375rem }
+  .mini-steps__n { font-size: 0.75rem; letter-spacing: 0.14em; color: var(--gold-deep) }
+  .contact-grid { display: grid; gap: clamp(2rem, 4vw, 3.5rem); grid-template-columns: 1fr; margin-top: 2rem }
+  @media (min-width: 900px) { .contact-grid { grid-template-columns: 1.4fr 1fr } }
+  .two-up { display: grid; gap: 1rem; grid-template-columns: 1fr }
+  @media (min-width: 560px) { .two-up { grid-template-columns: 1fr 1fr } }
+  select.input { appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--muted-foreground) 50%), linear-gradient(135deg, var(--muted-foreground) 50%, transparent 50%); background-position: calc(100% - 18px) 50%, calc(100% - 13px) 50%; background-size: 5px 5px, 5px 5px; background-repeat: no-repeat; padding-right: 2.5rem }
+</style>
+
+<script>
+  (function () {
+    var ta = document.getElementById("msg");
+    var out = document.getElementById("count");
+    if (!ta || !out) return;
+    ta.addEventListener("input", function () { out.textContent = ta.value.length; });
+  })();
+</script>
+
+<!--@include _shared/script.html-->

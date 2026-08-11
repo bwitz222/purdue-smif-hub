@@ -1,0 +1,1632 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   PURDUE SMIF — MOCKUP DESIGN SYSTEM
+   Evolved from src/styles.css. Tokens are copied verbatim from the live site
+   so the mockups cannot drift from the ratified brand. Everything below the
+   token block is the proposed evolution.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* ── 1. TOKENS ─────────────────────────────────────────────────────────── */
+
+:root {
+  /* Grounds & type — verbatim from src/styles.css */
+  --background: #fafaf6;
+  --foreground: #0a0a0a;
+  --card: #ffffff;
+  --secondary: #f2efe7;
+  --muted: #ededea;
+  --muted-foreground: #5a5955;
+  --border: #e0ddd5;
+
+  /* Brand — #CEB888 is ratified Purdue Boilermaker Gold. --gold-deep is the
+     AA-safe derived shade (5.19:1 worst case); do not lighten it. */
+  --gold: #ceb888;
+  --gold-mid: #b8975a;
+  --gold-deep: #7f6335;
+  --ink: #0a0a0a;
+  --ink-soft: #1c1c1a;
+  /* Surfaces that are dark in BOTH registers: the header, footer, drawer,
+     mobile apply bar, and every .section--dark band. These cannot ride on
+     --ink, because desk mode inverts it — the chrome would turn light while
+     the text on it stayed light. */
+  --chrome: #0a0a0a;
+  --chrome-soft: #1c1c1a;
+
+  /* Direction. Distinct from destructive red.
+     NOTE: the live site's --gain is #2E7D52, which measures 4.38:1 on the
+     --secondary ground (#F2EFE7) at 14px and fails WCAG AA. Like --gold-deep,
+     this is a derived semantic color rather than a ratified brand color, so it
+     is free to move: #2A7049 clears it at 5.22:1 on the same ground. */
+  --gain: #2a7049;
+  --loss: #b94040;
+  --destructive: #c0392b;
+
+  /* On-dark text */
+  --on-dark-primary: rgba(250, 250, 246, 0.95);
+  --on-dark-secondary: rgba(250, 250, 246, 0.75);
+  --on-dark-muted: rgba(250, 250, 246, 0.55);
+  --on-dark-hairline: rgba(255, 255, 255, 0.1);
+
+  --gradient-gold: linear-gradient(135deg, #ceb888 0%, #8e6f3e 100%);
+  --shadow-elegant: 0 24px 60px -20px rgba(10, 10, 10, 0.22);
+  --shadow-gold: 0 10px 40px -10px rgba(142, 111, 62, 0.35);
+
+  /* NEW — chart tokens. These were hardcoded inline in performance.tsx
+     (SMIF_COLOR / BENCH_COLOR), which let charts drift from the chrome. */
+  --chart-smif: #ceb888;
+  --chart-bench: #6b6860;
+  --chart-grid: #e0ddd5;
+  --chart-axis: #6b6860;
+
+  /* Type */
+  --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-body: "IBM Plex Sans", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", Menlo, monospace;
+
+  /* NEW — a named display scale. The live site invents a clamp() per heading;
+     these are the six sizes that actually appear, named once. */
+  --step-6: clamp(2.75rem, 7vw, 5.25rem); /* page hero h1 */
+  --step-5: clamp(2.25rem, 5vw, 4rem); /* major section h2 */
+  --step-4: clamp(1.875rem, 3.6vw, 2.75rem); /* section h2 */
+  --step-3: clamp(1.5rem, 2.4vw, 2rem); /* sub-section h3 */
+  --step-2: 1.3125rem; /* card title */
+  --step-1: 1.0625rem; /* lead paragraph */
+  --step-0: 1rem; /* body */
+
+  --micro: 0.6875rem; /* eyebrows, table headers, meta */
+  --track-eyebrow: 0.28em;
+
+  /* Space & motion */
+  --gutter: 1.5rem;
+  --measure: 1280px;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 0.18s;
+  --dur: 0.28s;
+  --dur-slow: 0.72s;
+
+  --radius: 0; /* Deliberate. Sharp rectangles are the brand. */
+  --header-h: 3.5rem;
+}
+
+/* ── 2. DESK MODE ──────────────────────────────────────────────────────────
+   The live site has no dark mode at all. Holdings and Performance are read
+   like a terminal, often for long stretches — they get an opt-in dark
+   register that re-points the same tokens. Nothing else changes: every rule
+   below this block is written against tokens, never against literal hexes. */
+
+[data-theme="desk"] {
+  --background: #0a0a0a;
+  --foreground: #fafaf6;
+  --card: #141413;
+  --secondary: #1c1c1a;
+  --muted: #232320;
+  --muted-foreground: #a3a099;
+  --border: #2e2e2a;
+  --gold-deep: #d9c398; /* inverted ground → the AA-safe gold flips light */
+  --ink: #fafaf6;
+  --ink-soft: #e8e5dd;
+  --gain: #4fb07d;
+  --loss: #e07a7a;
+  --chart-bench: #8f8b82; /* the light-ground benchmark grey is invisible here */
+  --chart-grid: #2e2e2a;
+  --chart-axis: #a3a099;
+  --chrome: #141413;
+  --chrome-soft: #1c1c1a;
+  --shadow-elegant: 0 24px 60px -20px rgba(0, 0, 0, 0.7);
+}
+
+/* ── 3. RESET & BASE ───────────────────────────────────────────────────── */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  border-color: var(--border);
+}
+* {
+  margin: 0;
+}
+/* The UA rule for [hidden] is display:none at user-agent priority, so any
+   author rule setting display — .member { display: flex }, a grid item, a
+   flex row — silently beats it and the "hidden" element keeps rendering.
+   Filtering relies on this attribute, so it has to actually win. */
+[hidden] {
+  display: none !important;
+}
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--header-h) + 1rem);
+  -webkit-text-size-adjust: 100%;
+}
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body);
+  font-size: var(--step-0);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  transition: background-color var(--dur) ease, color var(--dur) ease;
+}
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  font-variant-numeric: lining-nums;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  text-wrap: balance;
+}
+p {
+  text-wrap: pretty;
+}
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+table,
+.mono,
+.num {
+  font-variant-numeric: tabular-nums;
+}
+.mono,
+.num {
+  font-family: var(--font-mono);
+}
+::selection {
+  background: var(--gold);
+  color: #0a0a0a;
+}
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+a,
+button,
+[role="button"],
+summary,
+label,
+input,
+select,
+textarea {
+  transition: color var(--dur-fast) ease, background-color var(--dur-fast) ease,
+    border-color var(--dur-fast) ease, box-shadow var(--dur-fast) ease;
+}
+
+.skip-link {
+  position: absolute;
+  left: 0.5rem;
+  top: -3rem;
+  z-index: 100;
+  background: var(--gold);
+  color: #0a0a0a;
+  padding: 0.5rem 1rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+.skip-link:focus {
+  top: 0.5rem;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── 4. LAYOUT ─────────────────────────────────────────────────────────── */
+
+.wrap {
+  max-width: var(--measure);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+@media (min-width: 768px) {
+  .wrap {
+    padding-inline: 3rem;
+  }
+}
+
+.section {
+  padding-block: clamp(4rem, 9vw, 8rem);
+  border-top: 1px solid var(--border);
+}
+.section--tight {
+  padding-block: clamp(2.5rem, 5vw, 4.5rem);
+}
+.section--dark {
+  background: var(--chrome);
+  color: var(--on-dark-primary);
+  border-color: var(--on-dark-hairline);
+}
+.section--dark h1,
+.section--dark h2,
+.section--dark h3 {
+  color: var(--on-dark-primary);
+}
+.section--paper {
+  background: var(--secondary);
+}
+
+/* Hairline grid — the site's signature. Cells sit on a border-colored ground
+   with 1px gaps, so the grid reads as a ruled table, not floating cards. */
+.hairline {
+  display: grid;
+  gap: 1px;
+  background: var(--border);
+  border-block: 1px solid var(--border);
+}
+.hairline > * {
+  background: var(--background);
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+}
+.section--dark .hairline,
+.section--dark .hairline > * {
+  background: var(--chrome);
+}
+.section--dark .hairline {
+  background: var(--on-dark-hairline);
+  border-color: var(--on-dark-hairline);
+}
+.section--paper .hairline > * {
+  background: var(--secondary);
+}
+.cols-2 {
+  grid-template-columns: 1fr;
+}
+.cols-3 {
+  grid-template-columns: 1fr;
+}
+.cols-4 {
+  grid-template-columns: repeat(2, 1fr);
+}
+@media (min-width: 640px) {
+  .cols-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (min-width: 900px) {
+  .cols-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .cols-4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.stack > * + * {
+  margin-top: 1rem;
+}
+.row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.between {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+/* ── 5. TYPE HELPERS ───────────────────────────────────────────────────── */
+
+.h1 {
+  font-size: var(--step-6);
+}
+.h2 {
+  font-size: var(--step-5);
+}
+.h3 {
+  font-size: var(--step-4);
+}
+.h4 {
+  font-size: var(--step-3);
+}
+.h5 {
+  font-family: var(--font-display);
+  font-size: var(--step-2);
+  font-weight: 600;
+  line-height: 1.2;
+}
+.lead {
+  font-size: var(--step-1);
+  line-height: 1.6;
+  color: var(--muted-foreground);
+  max-width: 62ch;
+}
+.section--dark .lead {
+  color: var(--on-dark-secondary);
+}
+.body-muted {
+  color: var(--muted-foreground);
+  font-size: 0.9375rem;
+  line-height: 1.7;
+}
+.section--dark .body-muted {
+  color: var(--on-dark-secondary);
+}
+.gold {
+  color: var(--gold);
+}
+.gold-deep {
+  color: var(--gold-deep);
+}
+.up {
+  color: var(--gain);
+}
+.down {
+  color: var(--loss);
+}
+
+.rule-gold {
+  display: block;
+  width: 2.5rem;
+  height: 2px;
+  background: var(--gradient-gold);
+}
+
+/* rule → eyebrow → serif heading. The site's section opener, made a component
+   instead of a hand-assembled trio repeated on every route. */
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: var(--micro);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: var(--track-eyebrow);
+  color: var(--gold-deep);
+  margin-bottom: 1.25rem;
+}
+.section--dark .eyebrow {
+  color: var(--gold);
+}
+.eyebrow::before {
+  content: "";
+  flex: none;
+  width: 2.5rem;
+  height: 2px;
+  background: var(--gradient-gold);
+}
+.meta {
+  font-family: var(--font-mono);
+  font-size: var(--micro);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--muted-foreground);
+}
+.section--dark .meta,
+.site-footer .meta {
+  color: var(--on-dark-secondary);
+}
+.section--dark .meta.gold,
+.site-footer .meta.gold {
+  color: var(--gold);
+}
+
+/* ── 6. BUTTONS ────────────────────────────────────────────────────────────
+   The live site has no button component — every CTA repeats a ~10-class
+   Tailwind string. One spec, four variants, all states. */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  padding: 0.875rem 2rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  border: 1px solid transparent;
+  cursor: pointer;
+  background: none;
+  transition: transform 0.12s var(--ease), background-color var(--dur-fast) ease,
+    border-color var(--dur-fast) ease, color var(--dur-fast) ease,
+    box-shadow var(--dur-fast) ease;
+}
+.btn:active {
+  transform: scale(0.97);
+}
+.btn--gold {
+  background: var(--gold);
+  color: #0a0a0a;
+}
+.btn--gold:hover {
+  background: var(--gold-mid);
+}
+.btn--ink {
+  background: var(--ink);
+  color: var(--background);
+}
+.btn--ink:hover {
+  background: var(--ink-soft);
+}
+.btn--outline {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+.btn--outline:hover {
+  background: var(--ink);
+  color: var(--background);
+}
+.section--dark .btn--outline {
+  border-color: rgba(250, 250, 246, 0.25);
+  color: var(--on-dark-primary);
+}
+.section--dark .btn--outline:hover {
+  background: transparent;
+  border-color: var(--gold);
+  color: var(--gold);
+}
+.btn--sm {
+  padding: 0.5rem 1.125rem;
+  font-size: 0.8125rem;
+}
+.btn--block {
+  width: 100%;
+}
+.btn[aria-disabled="true"],
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.btn[aria-disabled="true"]:active,
+.btn:disabled:active {
+  transform: none;
+}
+
+/* Inline text link with the left-origin gold underline wipe. */
+.link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--gold-deep);
+}
+.section--dark .link {
+  color: var(--gold);
+}
+.link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  height: 1.5px;
+  width: 100%;
+  background: var(--gradient-gold);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur) var(--ease);
+}
+.link:hover::after,
+.link:focus-visible::after {
+  transform: scaleX(1);
+}
+.link .arrow {
+  transition: transform var(--dur) var(--ease);
+}
+.link:hover .arrow {
+  transform: translateX(4px);
+}
+
+/* ── 7. SURFACES ───────────────────────────────────────────────────────── */
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  padding: 1.5rem;
+  transition: transform 0.22s var(--ease), box-shadow 0.22s ease,
+    border-color 0.22s ease;
+}
+a.card:hover,
+.card--interactive:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-elegant);
+  border-color: var(--gold);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.1875rem 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border: 1px solid var(--border);
+  color: var(--muted-foreground);
+  white-space: nowrap;
+}
+.badge--gold {
+  border-color: var(--gold);
+  color: var(--gold-deep);
+  background: color-mix(in srgb, var(--gold) 12%, transparent);
+}
+.badge--up {
+  border-color: color-mix(in srgb, var(--gain) 45%, transparent);
+  color: var(--gain);
+}
+.badge--down {
+  border-color: color-mix(in srgb, var(--loss) 45%, transparent);
+  color: var(--loss);
+}
+.section--dark .badge {
+  border-color: var(--on-dark-hairline);
+  color: var(--on-dark-secondary);
+}
+
+/* Stat tile. Restrained lift — no border recolor, so a grid of figures
+   doesn't strobe gold as the pointer crosses it. */
+.stat {
+  border-top: 2px solid var(--gold);
+  padding-top: 1rem;
+  transition: transform 0.22s var(--ease), box-shadow 0.22s ease;
+}
+.stat--raise:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-gold);
+}
+.stat__value {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  font-weight: 700;
+  line-height: 1;
+  /* Cormorant defaults to old-style figures, which render "10" as something
+     close to "Io" at display size. Lining figures for anything numeric. */
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.stat__label {
+  margin-top: 0.75rem;
+  font-size: 0.625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.24em;
+  color: var(--muted-foreground);
+}
+.stat__sub {
+  margin-top: 0.25rem;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--muted-foreground);
+}
+.section--dark .stat__label {
+  color: var(--on-dark-secondary);
+}
+.section--dark .stat__sub {
+  color: var(--on-dark-muted);
+}
+.section--dark .stat__value {
+  color: var(--gold);
+}
+
+/* ── 8. TABLES ─────────────────────────────────────────────────────────────
+   Wide tables scroll inside their own container — the page body never scrolls
+   sideways. Header row sticks under the site header. */
+
+.table-scroll {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  background: var(--card);
+}
+table.data {
+  width: 100%;
+  min-width: 62rem;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+table.data th,
+table.data td {
+  padding: 0.6875rem 1rem;
+  text-align: right;
+  white-space: nowrap;
+}
+table.data th:first-child,
+table.data td:first-child {
+  text-align: left;
+  position: sticky;
+  left: 0;
+  background: var(--card);
+  z-index: 1;
+}
+table.data thead th {
+  position: sticky;
+  top: var(--header-h);
+  z-index: 2;
+  background: var(--secondary);
+  font-family: var(--font-mono);
+  font-size: var(--micro);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted-foreground);
+  border-bottom: 1px solid var(--border);
+}
+table.data thead th:first-child {
+  background: var(--secondary);
+  z-index: 3;
+}
+table.data tbody tr {
+  border-bottom: 1px solid var(--border);
+}
+table.data tfoot td {
+  border-top: 2px solid var(--ink);
+  font-weight: 600;
+  background: var(--secondary);
+}
+table.data tfoot td:first-child {
+  background: var(--secondary);
+}
+
+/* Sortable header button */
+.th-sort {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  color: inherit;
+}
+.th-sort:hover {
+  color: var(--gold-deep);
+}
+.th-sort .caret {
+  opacity: 0.25;
+  font-size: 0.625rem;
+  transition: opacity var(--dur-fast) ease, transform var(--dur-fast) ease;
+}
+th[aria-sort="ascending"] .caret,
+th[aria-sort="descending"] .caret {
+  opacity: 1;
+  color: var(--gold-deep);
+}
+th[aria-sort="ascending"] .caret {
+  transform: rotate(180deg);
+}
+
+/* Row hover is a gold rail wiping down the left edge — a transform would
+   misalign columns mid-scan. */
+.row-rail {
+  position: relative;
+}
+.row-rail::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--gradient-gold);
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 0.24s var(--ease);
+}
+.row-rail:hover::before,
+.row-rail:focus-within::before,
+.row-rail[aria-expanded="true"]::before {
+  transform: scaleY(1);
+}
+
+/* On a <tr> the rail has to hang off the first cell instead. A pseudo-element
+   generated on a table-row is inline content, so the table layout algorithm
+   wraps it in an anonymous table-cell — which silently pushes every real cell
+   one column to the right and un-aligns the body from its own header. */
+tr.row-rail::before {
+  content: none;
+}
+tr.row-rail > td:first-child::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--gradient-gold);
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 0.24s var(--ease);
+}
+tr.row-rail:hover > td:first-child::before,
+tr.row-rail:focus-within > td:first-child::before,
+tr.row-rail[aria-expanded="true"] > td:first-child::before {
+  transform: scaleY(1);
+}
+.row-rail:hover > td {
+  background: var(--secondary);
+}
+.row-rail:hover > td:first-child {
+  background: var(--secondary);
+}
+
+/* ── 9. CONTROLS ───────────────────────────────────────────────────────── */
+
+.field {
+  display: block;
+}
+.field__label {
+  display: block;
+  font-size: var(--micro);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--muted-foreground);
+  margin-bottom: 0.5rem;
+}
+.input {
+  width: 100%;
+  padding: 0.6875rem 0.875rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  font-size: 0.9375rem;
+}
+.input::placeholder {
+  color: var(--muted-foreground);
+  opacity: 0.7;
+}
+.input:focus-visible {
+  border-color: var(--gold);
+}
+.input[aria-invalid="true"] {
+  border-color: var(--destructive);
+}
+.field__error {
+  margin-top: 0.375rem;
+  font-size: 0.8125rem;
+  color: var(--destructive);
+}
+.field__hint {
+  margin-top: 0.375rem;
+  font-size: 0.8125rem;
+  color: var(--muted-foreground);
+}
+
+.chips {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+  scrollbar-width: none;
+}
+.chips::-webkit-scrollbar {
+  display: none;
+}
+.chip {
+  flex: none;
+  padding: 0.4375rem 0.875rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  border: 1px solid var(--border);
+  background: var(--card);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform 0.12s var(--ease), background-color var(--dur-fast) ease,
+    border-color var(--dur-fast) ease, color var(--dur-fast) ease;
+}
+.chip:hover {
+  border-color: var(--gold);
+}
+.chip:active {
+  transform: scale(0.97);
+}
+.chip[aria-selected="true"],
+.chip[aria-pressed="true"] {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--background);
+}
+
+/* Segmented control — for period toggles (QTD / YTD / 1Y / ITD). */
+.segment {
+  display: inline-flex;
+  border: 1px solid var(--border);
+  background: var(--card);
+}
+.segment button {
+  padding: 0.4375rem 0.875rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: none;
+  border: 0;
+  border-right: 1px solid var(--border);
+  cursor: pointer;
+  color: var(--muted-foreground);
+}
+.segment button:last-child {
+  border-right: 0;
+}
+.segment button[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--background);
+}
+
+.toolbar {
+  position: sticky;
+  top: var(--header-h);
+  z-index: 20;
+  background: color-mix(in srgb, var(--background) 92%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+  padding-block: 0.875rem;
+}
+
+/* ── 10. NAVIGATION ────────────────────────────────────────────────────────
+   Eight flat items forced label-by-label scanning on every page. Four groups
+   with a descriptor-bearing mega-menu instead. */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--chrome);
+  border-bottom: 1px solid var(--on-dark-hairline);
+  transition: box-shadow var(--dur) ease;
+}
+.site-header[data-scrolled="true"] {
+  box-shadow: 0 4px 24px -4px rgba(0, 0, 0, 0.4);
+}
+.site-header__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  height: var(--header-h);
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  flex: none;
+}
+.brand__mark {
+  width: 1.75rem;
+  height: 1.75rem;
+  display: grid;
+  place-items: center;
+  border: 1.5px solid var(--gold);
+  font-family: var(--font-display);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--gold);
+  transition: transform var(--dur) var(--ease);
+}
+.brand:hover .brand__mark {
+  transform: scale(1.12);
+}
+.brand__word {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--on-dark-secondary);
+}
+.brand:hover .brand__word {
+  color: var(--gold);
+}
+
+.nav {
+  display: none;
+  align-items: center;
+  gap: 0.25rem;
+}
+@media (min-width: 1024px) {
+  .nav {
+    display: flex;
+  }
+}
+.nav__item {
+  position: relative;
+}
+.nav__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: rgba(250, 250, 246, 0.65);
+}
+.nav__trigger::after {
+  content: "";
+  position: absolute;
+  left: 0.75rem;
+  right: 0.75rem;
+  bottom: 0;
+  height: 1px;
+  background: var(--gold);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur) var(--ease);
+}
+.nav__trigger:hover,
+.nav__trigger[aria-expanded="true"],
+.nav__trigger[aria-current="true"] {
+  color: var(--on-dark-primary);
+}
+.nav__trigger:hover::after,
+.nav__trigger[aria-expanded="true"]::after,
+.nav__trigger[aria-current="true"]::after {
+  transform: scaleX(1);
+}
+.nav__trigger .caret {
+  font-size: 0.5rem;
+  opacity: 0.6;
+  transition: transform var(--dur) var(--ease);
+}
+.nav__trigger[aria-expanded="true"] .caret {
+  transform: rotate(180deg);
+}
+
+.mega {
+  position: absolute;
+  top: calc(100% + 1px);
+  left: 0;
+  min-width: 19rem;
+  background: var(--chrome-soft);
+  border: 1px solid var(--on-dark-hairline);
+  padding: 0.5rem;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px);
+  transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease),
+    visibility var(--dur);
+}
+.nav__item[data-open="true"] .mega {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+.mega a {
+  display: block;
+  padding: 0.625rem 0.75rem;
+  border-left: 2px solid transparent;
+}
+.mega a:hover,
+.mega a:focus-visible {
+  background: rgba(255, 255, 255, 0.04);
+  border-left-color: var(--gold);
+}
+.mega__title {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--on-dark-primary);
+}
+.mega__desc {
+  font-size: 0.75rem;
+  line-height: 1.45;
+  color: var(--on-dark-muted);
+  margin-top: 0.125rem;
+}
+
+.hamburger {
+  display: inline-grid;
+  place-items: center;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  margin-right: -0.5rem;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  color: var(--on-dark-secondary);
+}
+@media (min-width: 1024px) {
+  .hamburger {
+    display: none;
+  }
+}
+.header-apply {
+  display: none;
+}
+@media (min-width: 1024px) {
+  .header-apply {
+    display: inline-flex;
+  }
+}
+
+/* Mobile drawer */
+.drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: var(--chrome);
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--dur) ease, visibility var(--dur);
+}
+.drawer[data-open="true"] {
+  opacity: 1;
+  visibility: visible;
+}
+.drawer__link {
+  display: block;
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 7vw, 2.6rem);
+  font-weight: 600;
+  line-height: 1.15;
+  color: rgba(250, 250, 246, 0.55);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-block: 0.6rem;
+  opacity: 0;
+  transform: translateX(-24px);
+}
+.drawer[data-open="true"] .drawer__link {
+  animation: drawer-in 0.32s var(--ease) forwards;
+}
+.drawer__link:hover {
+  color: var(--on-dark-primary);
+}
+@keyframes drawer-in {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Mobile conversion bar — the apply CTA scrolls out of reach on phones. */
+.apply-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem var(--gutter);
+  background: var(--chrome);
+  border-top: 1px solid var(--gold);
+  transform: translateY(110%);
+  transition: transform var(--dur) var(--ease);
+}
+.apply-bar[data-visible="true"] {
+  transform: translateY(0);
+}
+@media (min-width: 1024px) {
+  .apply-bar {
+    display: none;
+  }
+}
+.apply-bar__meta {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--on-dark-muted);
+}
+.apply-bar__count {
+  color: var(--gold);
+  font-size: 0.8125rem;
+  letter-spacing: 0.08em;
+}
+
+/* Scroll progress rail */
+.progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2px;
+  width: 100%;
+  transform-origin: left;
+  transform: scaleX(0);
+  background: var(--gradient-gold);
+  z-index: 70;
+}
+
+/* ── 11. FOOTER ────────────────────────────────────────────────────────── */
+
+.site-footer {
+  background: var(--chrome);
+  color: var(--on-dark-secondary);
+  padding-block: 4rem 2rem;
+  border-top: 1px solid var(--on-dark-hairline);
+}
+.site-footer h3 {
+  font-family: var(--font-mono);
+  font-size: var(--micro);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--gold);
+  margin-bottom: 1rem;
+}
+.site-footer a:hover {
+  color: var(--gold);
+}
+.footer-grid {
+  display: grid;
+  gap: 2.5rem;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 640px) {
+  .footer-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (min-width: 1024px) {
+  .footer-grid {
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+  }
+}
+.footer-rule {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-block: 3rem 1.5rem;
+  font-family: var(--font-mono);
+  font-size: var(--micro);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--on-dark-muted);
+}
+.footer-rule::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--gradient-gold);
+  opacity: 0.5;
+}
+
+/* ── 12. DATA VIZ ──────────────────────────────────────────────────────── */
+
+.bar-track {
+  height: 6px;
+  background: var(--muted);
+  overflow: hidden;
+}
+.bar-fill {
+  height: 100%;
+  background: var(--gradient-gold);
+  transform-origin: left;
+  transform: scaleX(0);
+  transition: transform 0.9s var(--ease);
+}
+[data-inview="true"] .bar-fill {
+  transform: scaleX(1);
+}
+
+/* Allocation treemap — proportional blocks beat a bar list for "where is the
+   money", because area is the quantity being asked about. */
+.treemap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  min-height: 15rem;
+}
+.treemap__cell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0.625rem;
+  overflow: hidden;
+  background: var(--secondary);
+  border: 1px solid var(--border);
+  color: var(--foreground);
+  transition: filter var(--dur-fast) ease, transform 0.22s var(--ease);
+}
+.treemap__cell:hover {
+  filter: brightness(0.96);
+  transform: translateY(-2px);
+  z-index: 2;
+  box-shadow: var(--shadow-elegant);
+}
+.treemap__sym {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.treemap__pct {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  opacity: 0.7;
+}
+
+.spark {
+  display: block;
+  overflow: visible;
+}
+.spark path {
+  fill: none;
+  stroke: var(--chart-smif);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.spark .spark-draw {
+  stroke-dasharray: var(--len, 1000);
+  stroke-dashoffset: var(--len, 1000);
+}
+[data-inview="true"] .spark .spark-draw {
+  animation: draw 1.4s var(--ease) forwards;
+}
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.ticker-wrap {
+  overflow: hidden;
+  white-space: nowrap;
+  border-block: 1px solid var(--on-dark-hairline);
+  background: rgba(0, 0, 0, 0.4);
+}
+.ticker-inner {
+  display: inline-flex;
+  animation: ticker 44s linear infinite;
+}
+.ticker-wrap:hover .ticker-inner,
+.ticker-wrap:focus-within .ticker-inner {
+  animation-play-state: paused;
+}
+.ticker-item {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 0.5rem 1.25rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  color: var(--on-dark-secondary);
+  border-right: 1px solid var(--on-dark-hairline);
+}
+@keyframes ticker {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* ── 13. DISCLOSURE ────────────────────────────────────────────────────── */
+
+.accordion__trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  width: 100%;
+  padding: 1.25rem 0;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--font-display);
+  font-size: var(--step-2);
+  font-weight: 600;
+}
+.accordion__trigger:hover {
+  color: var(--gold-deep);
+}
+.accordion__trigger .sign {
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  color: var(--gold-deep);
+  transition: transform var(--dur) var(--ease);
+}
+.accordion__trigger[aria-expanded="true"] .sign {
+  transform: rotate(45deg);
+}
+.accordion__panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--dur) var(--ease);
+  border-bottom: 1px solid var(--border);
+}
+.accordion__panel[data-open="true"] {
+  grid-template-rows: 1fr;
+}
+.accordion__panel > div {
+  overflow: hidden;
+}
+.accordion__panel p {
+  padding-block: 0 1.25rem;
+  color: var(--muted-foreground);
+  max-width: 68ch;
+}
+
+/* Slide-over sheet */
+.sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  visibility: hidden;
+}
+.sheet[data-open="true"] {
+  visibility: visible;
+}
+.sheet__scrim {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 10, 10, 0.55);
+  opacity: 0;
+  transition: opacity var(--dur) ease;
+}
+.sheet[data-open="true"] .sheet__scrim {
+  opacity: 1;
+}
+.sheet__panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(26rem, 100%);
+  background: var(--background);
+  border-left: 1px solid var(--border);
+  padding: 2rem;
+  overflow-y: auto;
+  transform: translateX(100%);
+  transition: transform var(--dur) var(--ease);
+}
+.sheet[data-open="true"] .sheet__panel {
+  transform: translateX(0);
+}
+
+/* ── 14. MOTION ────────────────────────────────────────────────────────────
+   Scroll reveal is opt-in via [data-reveal]; motion.js flips [data-inview].
+   Content ships visible when JS never runs — nothing is hidden by default
+   except under the class that the observer itself manages. */
+
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity var(--dur-slow) var(--ease),
+    transform var(--dur-slow) var(--ease);
+  transition-delay: var(--reveal-delay, 0s);
+}
+[data-reveal][data-inview="true"] {
+  opacity: 1;
+  transform: none;
+}
+html:not(.js) [data-reveal] {
+  opacity: 1;
+  transform: none;
+}
+
+.press {
+  transition: transform 0.12s var(--ease);
+}
+.press:active {
+  transform: scale(0.97);
+}
+.hover-lift {
+  transition: transform 0.22s var(--ease), box-shadow 0.22s ease,
+    border-color 0.22s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-elegant);
+  border-color: var(--gold);
+}
+.icon-pop {
+  transition: transform var(--dur) var(--ease);
+}
+.group:hover .icon-pop {
+  transform: scale(1.12);
+}
+.arrow {
+  transition: transform var(--dur) var(--ease);
+}
+.group:hover .arrow {
+  transform: translateX(4px);
+}
+
+.kenburns {
+  animation: kenburns 24s var(--ease) both;
+}
+@keyframes kenburns {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.07);
+  }
+}
+.fade-up {
+  animation: fade-up 0.72s var(--ease) both;
+}
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+.expand-x {
+  animation: expand-x 0.65s var(--ease) both;
+  transform-origin: left;
+}
+@keyframes expand-x {
+  from {
+    transform: scaleX(0);
+  }
+}
+.d1 {
+  animation-delay: 0.1s;
+}
+.d2 {
+  animation-delay: 0.2s;
+}
+.d3 {
+  animation-delay: 0.3s;
+}
+.d4 {
+  animation-delay: 0.4s;
+}
+.d5 {
+  animation-delay: 0.5s;
+}
+
+/* Every animation above has a counterpart here. Nothing loops, nothing
+   translates, and nothing is left invisible. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .drawer__link {
+    opacity: 1;
+    transform: none;
+  }
+  .bar-fill {
+    transform: scaleX(1) !important;
+  }
+  .spark .spark-draw {
+    stroke-dashoffset: 0 !important;
+  }
+  .ticker-inner {
+    animation: none !important;
+  }
+  /* The rail stays a hover affordance — it just appears instead of wiping. */
+  .row-rail:hover::before,
+  tr.row-rail:hover > td:first-child::before {
+    transform: scaleY(1) !important;
+  }
+}
+
+/* ── 15. MOCKUP CHROME ─────────────────────────────────────────────────────
+   Not part of the proposed site — the annotation layer that explains each
+   change to whoever is reviewing the mockup. */
+
+.note {
+  position: relative;
+  border-left: 2px solid var(--gold);
+  background: color-mix(in srgb, var(--gold) 8%, transparent);
+  padding: 0.875rem 1.125rem;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--muted-foreground);
+}
+.note b {
+  color: var(--foreground);
+  font-weight: 600;
+}
+.note::before {
+  content: "Design note";
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--gold-deep);
+  margin-bottom: 0.375rem;
+}
+.mockup-flag {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.875rem;
+  background: var(--chrome);
+  border: 1px solid var(--gold);
+  border-right: 0;
+  border-bottom: 0;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--gold);
+}
+.mockup-flag a {
+  color: var(--on-dark-secondary);
+}
+.mockup-flag a:hover {
+  color: var(--gold);
+}
+@media (max-width: 1023px) {
+  .mockup-flag {
+    display: none;
+  }
+}
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.75rem;
+  background: none;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--muted-foreground);
+}
+.theme-toggle:hover {
+  border-color: var(--gold);
+  color: var(--gold-deep);
+}
+
+/* Decorative oversized wordmark behind the closing CTA. Rendered as generated
+   content so it is not a text node in the accessibility tree — at 3% white on
+   ink it can never satisfy a contrast check, and it is not meant to. */
+.watermark {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  user-select: none;
+  overflow: hidden;
+}
+.watermark::before {
+  content: "SMIF";
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  font-size: clamp(5rem, 20vw, 16rem);
+  color: rgba(255, 255, 255, 0.03);
+}
