@@ -90,6 +90,19 @@ const TEAM_INDUSTRIES: Record<string, string[]> = {
   Communications: ["Communication Services"],
 };
 
+/**
+ * Which coverage team owns an industry bucket, or null for the index sleeve
+ * (SPY spans every sector, so no single team owns it). The inverse of
+ * TEAM_INDUSTRIES, exposed so /holdings can attribute a position to a team
+ * without duplicating the mapping.
+ */
+export function teamForIndustry(industry: string): string | null {
+  for (const [team, industries] of Object.entries(TEAM_INDUSTRIES)) {
+    if (industries.includes(industry)) return team;
+  }
+  return null;
+}
+
 export type TeamAllocation = {
   team: string;
   industries: string[];

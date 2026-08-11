@@ -8,6 +8,7 @@ import {
   Tooltip, Legend, ResponsiveContainer, ReferenceLine,
 } from "recharts";
 import { socialMeta, canonical, breadcrumbLd, OG_PERFORMANCE } from "@/lib/seo";
+import { chartColors } from "@/lib/chart-theme";
 import { Reveal } from "@/components/Reveal";
 import {
   getFundPerformance,
@@ -66,8 +67,10 @@ const fmtMult = (v: number) => `${v.toFixed(2)}×`;
 const fmtPctPlain = (v: number) => `${v.toFixed(1)}%`; // no leading + (vol, tracking error…)
 const fmtRatio    = (v: number) => v.toFixed(2);       // Sharpe, beta, correlation…
 
-const SMIF_COLOR  = "#CEB888";
-const BENCH_COLOR = "#6B6860";
+// Chart colors come from the same CSS custom properties as the rest of the
+// page (see src/lib/chart-theme.ts). recharts takes colors as props rather
+// than classes, so something has to resolve them; doing it once here keeps
+// src/styles.css the single source of truth instead of scattering literals.
 
 const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 function formatMonth(iso: string): string {
@@ -106,6 +109,9 @@ function MonthlyTooltip({ active, payload, label, mode }: {
   label?: string;
   mode: IncMode;
 }) {
+  // The band is drawn with three helper series; they are geometry, not data a
+  // reader asked about, so they never appear in the tooltip.
+  payload = payload?.filter((p) => !p.dataKey?.startsWith("spread"));
   if (!active || !payload?.length) return null;
   const fmt = (v: number) =>
     mode === "growth" ? fmtMult(v) : `${v > 0 ? "+" : ""}${v.toFixed(2)}%`;
@@ -128,6 +134,9 @@ function MonthlyTooltip({ active, payload, label, mode }: {
 }
 
 function Performance() {
+  // Resolved from CSS custom properties; falls back to the :root values on
+  // the server, where there is no computed style to read.
+  const C = useMemo(() => chartColors(), []);
   const [mode,   setMode]   = useState<Mode>("cumulative");
   const [series, setSeries] = useState<Series>("both");
   const [incMode,   setIncMode]   = useState<IncMode>("growth");
@@ -179,24 +188,47 @@ function Performance() {
   type Tone = "pos" | "neg" | "neutral";
   const toneClass = (t: Tone) => (t === "pos" ? "text-gain" : t === "neg" ? "text-loss" : "text-ink");
   const a = monthlyData?.analytics;
-  const analyticsPrimary: { l: string; v: string; tone: Tone; sub: string }[] = a
+  // Twelve figures in two undifferentiated grids answered three different
+  // questions with no visual distinction between them. Grouping them is the
+  // whole change: what did we earn, what did we risk to earn it, and how much
+  // did we get per unit of that risk. Config-driven so a group can be
+  // reordered or a tile moved between groups without touching the render.
+  const analyticsGroups: {
+    heading: string;
+    blurb: string;
+    tiles: { l: string; v: string; tone: Tone; sub: string }[];
+  }[] = a
     ? [
-        { l: "Cumulative Return",     v: fmtPct(a.cumulative_return_pct),      tone: a.cumulative_return_pct >= 0 ? "pos" : "neg", sub: "Since inception" },
-        { l: "Annualized Volatility", v: fmtPctPlain(a.annualized_vol_pct),    tone: "neutral", sub: "Std. dev × √12" },
-        { l: "Sharpe Ratio",          v: fmtRatio(a.sharpe),                   tone: a.sharpe >= 0 ? "pos" : "neg", sub: "rf 0%" },
-        { l: "Sortino Ratio",         v: fmtRatio(a.sortino),                  tone: a.sortino >= 0 ? "pos" : "neg", sub: "Downside, rf 0%" },
-        { l: "Beta vs S&P 500",       v: fmtRatio(a.beta),                     tone: "neutral", sub: "Monthly" },
-        { l: "Annualized Alpha",      v: fmtPct(a.annualized_alpha_pct),       tone: a.annualized_alpha_pct >= 0 ? "pos" : "neg", sub: "vs SPY, rf 0%" },
-        { l: "Tracking Error",        v: fmtPctPlain(a.tracking_error_pct),    tone: "neutral", sub: "Annualized" },
-        { l: "Information Ratio",     v: fmtRatio(a.information_ratio),         tone: a.information_ratio >= 0 ? "pos" : "neg", sub: "Active return / TE" },
-      ]
-    : [];
-  const analyticsSecondary: { l: string; v: string; tone: Tone }[] = a
-    ? [
-        { l: "Best Month",             v: fmtPct(a.best_month_pct),          tone: "pos" },
-        { l: "Worst Month",            v: fmtPct(a.worst_month_pct),         tone: "neg" },
-        { l: "Positive Months",        v: fmtPctPlain(a.positive_months_pct), tone: "neutral" },
-        { l: "Correlation to S&P 500", v: fmtRatio(a.correlation),           tone: "neutral" },
+        {
+          heading: "Return earned",
+          blurb: "What the fund produced",
+          tiles: [
+            { l: "Cumulative Return",     v: fmtPct(a.cumulative_return_pct),   tone: a.cumulative_return_pct >= 0 ? "pos" : "neg", sub: "Since inception" },
+            { l: "Annualized Return",     v: fmtPct(a.annualized_return_pct),   tone: a.annualized_return_pct >= 0 ? "pos" : "neg", sub: "Geometric, per year" },
+            { l: "Annualized Alpha",      v: fmtPct(a.annualized_alpha_pct),    tone: a.annualized_alpha_pct >= 0 ? "pos" : "neg", sub: "vs SPY, rf 0%" },
+            { l: "Best / Worst Month",    v: `${fmtPct(a.best_month_pct)} / ${fmtPct(a.worst_month_pct)}`, tone: "neutral", sub: "Monthly extremes" },
+          ],
+        },
+        {
+          heading: "Risk taken",
+          blurb: "What it cost in volatility",
+          tiles: [
+            { l: "Annualized Volatility", v: fmtPctPlain(a.annualized_vol_pct), tone: "neutral", sub: "Std. dev × √12" },
+            { l: "Beta vs S&P 500",       v: fmtRatio(a.beta),                  tone: "neutral", sub: "Monthly" },
+            { l: "Tracking Error",        v: fmtPctPlain(a.tracking_error_pct), tone: "neutral", sub: "Annualized" },
+            { l: "Correlation to S&P 500", v: fmtRatio(a.correlation),          tone: "neutral", sub: "Monthly" },
+          ],
+        },
+        {
+          heading: "Return per unit of risk",
+          blurb: "Whether the risk was worth it",
+          tiles: [
+            { l: "Sharpe Ratio",       v: fmtRatio(a.sharpe),                 tone: a.sharpe >= 0 ? "pos" : "neg", sub: "rf 0%" },
+            { l: "Sortino Ratio",      v: fmtRatio(a.sortino),                tone: a.sortino >= 0 ? "pos" : "neg", sub: "Downside, rf 0%" },
+            { l: "Information Ratio",  v: fmtRatio(a.information_ratio),      tone: a.information_ratio >= 0 ? "pos" : "neg", sub: "Active return / TE" },
+            { l: "Positive Months",    v: fmtPctPlain(a.positive_months_pct), tone: "neutral", sub: "Share of months up" },
+          ],
+        },
       ]
     : [];
 
@@ -234,10 +266,32 @@ function Performance() {
     if (incMode === "drawdown") {
       return pts.map((p) => ({ month: p.month, smif: p.smif_drawdown_pct, bench: p.bench_drawdown_pct }));
     }
-    return pts.map((p) => ({ month: p.month, smif: p.smif_growth, bench: p.bench_growth }));
+    // Growth, plus the out/under-performance band. Three stacked fields:
+    // a transparent floor at the lower of the two curves, then the gap above
+    // it split into "ahead" and "behind" so the band can carry direction.
+    // Exactly one of the two is non-zero at any month.
+    return pts.map((p) => ({
+      month: p.month,
+      smif: p.smif_growth,
+      bench: p.bench_growth,
+      spreadBase: Math.min(p.smif_growth, p.bench_growth),
+      spreadUp: Math.max(0, p.smif_growth - p.bench_growth),
+      spreadDown: Math.max(0, p.bench_growth - p.smif_growth),
+    }));
   }, [monthlyData, incMode]);
 
   // Only show January tick labels so the long axis stays readable.
+  // Always the drawdown, regardless of what the main chart is showing.
+  const drawdownSeries = useMemo(
+    () =>
+      (monthlyData?.series ?? []).map((p) => ({
+        month: p.month,
+        smif: p.smif_drawdown_pct,
+        bench: p.bench_drawdown_pct,
+      })),
+    [monthlyData],
+  );
+
   const monthlyTickFormatter = (iso: string) => {
     const [y, m] = iso.split("-");
     return m === "01" ? y : "";
@@ -322,30 +376,31 @@ function Performance() {
 
         {/* ── Risk & return analytics ───────────────────────────── */}
         {a && a.observations >= 12 && (
-          <Reveal className="space-y-4" delay={0.02}>
+          <Reveal className="space-y-6" delay={0.02}>
             <div className="flex items-baseline justify-between gap-4">
               <h2 className="font-display text-2xl font-bold text-ink md:text-3xl">Risk &amp; return analytics</h2>
               <span className="text-[10px] font-mono uppercase tracking-[0.22em] text-muted-foreground whitespace-nowrap">
                 {a.observations} mo · monthly basis
               </span>
             </div>
-            <div className="grid gap-px bg-border sm:grid-cols-2 lg:grid-cols-4">
-              {analyticsPrimary.map(({ l, v, tone, sub }) => (
-                <div key={l} className="bg-card p-6 flex flex-col gap-1 border border-border hover-raise">
-                  <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">{l}</div>
-                  <div className={`font-display text-3xl font-bold mt-1 ${toneClass(tone)}`}>{v}</div>
-                  <div className="text-[11px] text-muted-foreground font-mono">{sub}</div>
+            {analyticsGroups.map((g) => (
+              <section key={g.heading} className="space-y-3">
+                <div className="flex items-baseline gap-3 pt-2">
+                  <span className="rule-gold shrink-0" aria-hidden="true" />
+                  <h3 className="text-xs font-semibold uppercase tracking-[0.22em] text-gold-deep">{g.heading}</h3>
+                  <span className="text-[11px] text-muted-foreground">{g.blurb}</span>
                 </div>
-              ))}
-            </div>
-            <div className="grid gap-px bg-border grid-cols-2 lg:grid-cols-4">
-              {analyticsSecondary.map(({ l, v, tone }) => (
-                <div key={l} className="bg-card px-6 py-5 flex flex-col gap-0.5 border border-border hover-raise">
-                  <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{l}</div>
-                  <div className={`font-display text-xl font-bold ${toneClass(tone)}`}>{v}</div>
+                <div className="grid gap-px bg-border sm:grid-cols-2 lg:grid-cols-4">
+                  {g.tiles.map(({ l, v, tone, sub }) => (
+                    <div key={l} className="bg-card p-6 flex flex-col gap-1 border border-border hover-raise">
+                      <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">{l}</div>
+                      <div className={`font-display text-3xl font-bold mt-1 ${toneClass(tone)}`}>{v}</div>
+                      <div className="text-[11px] text-muted-foreground font-mono">{sub}</div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </section>
+            ))}
             <p className="text-xs text-muted-foreground">
               Computed from monthly SMIF and S&amp;P 500 total-return (SPY) returns since {formatMonth(monthlyData!.inceptionMonth)}, excluding custodian-transition bridge months. Sharpe and Sortino assume a 0% risk-free rate; alpha, beta, and correlation are measured against the S&amp;P 500 total-return index.
             </p>
@@ -406,72 +461,102 @@ function Performance() {
                   <AreaChart data={monthlySeries} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
                     <defs>
                       <linearGradient id="smifGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor={SMIF_COLOR} stopOpacity={0.35} />
-                        <stop offset="100%" stopColor={SMIF_COLOR} stopOpacity={0} />
+                        <stop offset="0%" stopColor={C.smif} stopOpacity={0.35} />
+                        <stop offset="100%" stopColor={C.smif} stopOpacity={0} />
                       </linearGradient>
                       <linearGradient id="benchGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor={BENCH_COLOR} stopOpacity={0.18} />
-                        <stop offset="100%" stopColor={BENCH_COLOR} stopOpacity={0} />
+                        <stop offset="0%" stopColor={C.bench} stopOpacity={0.18} />
+                        <stop offset="100%" stopColor={C.bench} stopOpacity={0} />
                       </linearGradient>
                     </defs>
-                    <CartesianGrid stroke="#E0DDD5" strokeDasharray="3 3" vertical={false} />
+                    <CartesianGrid stroke={C.grid} strokeDasharray="3 3" vertical={false} />
                     <XAxis
                       dataKey="month"
-                      stroke="#6B6860"
+                      stroke={C.axis}
                       tick={{ fontSize: 11, fontFamily: "IBM Plex Mono" }}
                       tickLine={false}
-                      axisLine={{ stroke: "#E0DDD5" }}
+                      axisLine={{ stroke: C.grid }}
                       tickFormatter={monthlyTickFormatter}
                       interval={0}
                       minTickGap={20}
                     />
                     <YAxis
-                      stroke="#6B6860"
+                      stroke={C.axis}
                       tick={{ fontSize: 11, fontFamily: "IBM Plex Mono" }}
                       tickLine={false}
                       axisLine={false}
                       tickFormatter={(v) => `${v.toFixed(1)}×`}
                     />
                     <Tooltip
-                      cursor={{ stroke: "#CEB888", strokeDasharray: "4 4", strokeWidth: 1 }}
+                      cursor={{ stroke: C.smif, strokeDasharray: "4 4", strokeWidth: 1 }}
                       content={<MonthlyTooltip mode={incMode} />}
                     />
+                    {/* Explicit payload: legendType="none" still leaves a
+                        legend entry, so the three helper series that draw the
+                        band would otherwise surface to readers as
+                        "spreadBase / spreadUp / spreadDown". */}
                     <Legend
                       iconType="circle"
                       wrapperStyle={{ fontSize: 11, paddingTop: 16, fontFamily: "IBM Plex Mono" }}
+                      payload={[
+                        ...(showIncSmif ? [{ value: "SMIF", type: "circle" as const, id: "smif", color: C.smif }] : []),
+                        ...(showIncBench ? [{ value: "S&P 500 TR (SPY)", type: "circle" as const, id: "bench", color: C.bench }] : []),
+                      ]}
                     />
+                    {/* The out/under-performance band. Filling each series to
+                        the baseline draws two overlapping areas; filling the
+                        gap between them draws the actual comparison. Only
+                        meaningful when both series are on screen. */}
+                    {/* Three siblings, not a Fragment: recharts collects its
+                        children by inspecting element types and does not
+                        traverse fragments, so wrapping these drops the band
+                        silently. */}
+                    {showIncSmif && showIncBench && (
+                      <Area type="monotone" dataKey="spreadBase" stackId="spread" legendType="none"
+                        stroke="none" fill="none" isAnimationActive={false} activeDot={false} />
+                    )}
+                    {showIncSmif && showIncBench && (
+                      <Area type="monotone" dataKey="spreadUp" stackId="spread" legendType="none"
+                        stroke="none" fill={C.up} fillOpacity={0.28} isAnimationActive={false} activeDot={false} />
+                    )}
+                    {showIncSmif && showIncBench && (
+                      <Area type="monotone" dataKey="spreadDown" stackId="spread" legendType="none"
+                        stroke="none" fill={C.down} fillOpacity={0.28} isAnimationActive={false} activeDot={false} />
+                    )}
                     {showIncSmif && (
                       <Area type="monotone" dataKey="smif" name="SMIF"
-                        stroke={SMIF_COLOR} strokeWidth={2.5} fill="url(#smifGrad)" />
+                        stroke={C.smif} strokeWidth={2.5}
+                        fill={showIncBench ? "none" : "url(#smifGrad)"} />
                     )}
                     {showIncBench && (
                       <Area type="monotone" dataKey="bench" name="S&P 500 TR (SPY)"
-                        stroke={BENCH_COLOR} strokeWidth={2} strokeDasharray="6 4" fill="url(#benchGrad)" />
+                        stroke={C.bench} strokeWidth={2} strokeDasharray="6 4"
+                        fill={showIncSmif ? "none" : "url(#benchGrad)"} />
                     )}
                   </AreaChart>
                 ) : (
                   <LineChart data={monthlySeries} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
-                    <CartesianGrid stroke="#E0DDD5" strokeDasharray="3 3" vertical={false} />
+                    <CartesianGrid stroke={C.grid} strokeDasharray="3 3" vertical={false} />
                     <XAxis
                       dataKey="month"
-                      stroke="#6B6860"
+                      stroke={C.axis}
                       tick={{ fontSize: 11, fontFamily: "IBM Plex Mono" }}
                       tickLine={false}
-                      axisLine={{ stroke: "#E0DDD5" }}
+                      axisLine={{ stroke: C.grid }}
                       tickFormatter={monthlyTickFormatter}
                       interval={0}
                       minTickGap={20}
                     />
                     <YAxis
-                      stroke="#6B6860"
+                      stroke={C.axis}
                       tick={{ fontSize: 11, fontFamily: "IBM Plex Mono" }}
                       tickLine={false}
                       axisLine={false}
                       tickFormatter={(v) => `${v.toFixed(0)}%`}
                     />
-                    <ReferenceLine y={0} stroke="#E0DDD5" strokeWidth={1} />
+                    <ReferenceLine y={0} stroke={C.grid} strokeWidth={1} />
                     <Tooltip
-                      cursor={{ stroke: "#CEB888", strokeDasharray: "4 4", strokeWidth: 1 }}
+                      cursor={{ stroke: C.smif, strokeDasharray: "4 4", strokeWidth: 1 }}
                       content={<MonthlyTooltip mode={incMode} />}
                     />
                     <Legend
@@ -480,16 +565,57 @@ function Performance() {
                     />
                     {showIncSmif && (
                       <Line type="monotone" dataKey="smif" name="SMIF" dot={false}
-                        stroke={SMIF_COLOR} strokeWidth={2.5} />
+                        stroke={C.smif} strokeWidth={2.5} />
                     )}
                     {showIncBench && (
                       <Line type="monotone" dataKey="bench" name="S&P 500 TR (SPY)" dot={false}
-                        stroke={BENCH_COLOR} strokeWidth={2} strokeDasharray="6 4" />
+                        stroke={C.bench} strokeWidth={2} strokeDasharray="6 4" />
                     )}
                   </LineChart>
                 )}
               </ResponsiveContainer>
             </div>
+
+            {/* Drawdown as a companion strip on the same time axis, rather than
+                a mode that replaces the chart above. How far underwater the
+                fund went, and for how long, is the question a committee asks
+                next — not one worth navigating away from growth to answer.
+                Suppressed in drawdown mode, where it would be the same chart
+                twice. Same margins as the plot above so the x-axes line up. */}
+            {incMode !== "drawdown" && monthlySeries.length > 0 && (
+              <div className="mt-6">
+                <div className="flex items-baseline justify-between gap-3 mb-2">
+                  <span className="text-[10px] font-mono uppercase tracking-[0.22em] text-muted-foreground">
+                    Drawdown from peak
+                  </span>
+                  <span className="text-[10px] font-mono uppercase tracking-[0.22em] text-muted-foreground">
+                    Worst {fmtPct(monthlyData!.kpis.max_drawdown_pct)}
+                  </span>
+                </div>
+                <div className="h-[96px] w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={drawdownSeries} margin={{ top: 4, right: 20, left: 0, bottom: 0 }}>
+                      <CartesianGrid stroke={C.grid} strokeDasharray="3 3" vertical={false} />
+                      <XAxis dataKey="month" hide />
+                      <YAxis
+                        stroke={C.axis}
+                        tick={{ fontSize: 10, fontFamily: "IBM Plex Mono" }}
+                        tickLine={false}
+                        axisLine={false}
+                        width={44}
+                        tickFormatter={(v: number) => `${v.toFixed(0)}%`}
+                      />
+                      <Tooltip
+                        cursor={{ stroke: C.smif, strokeDasharray: "4 4", strokeWidth: 1 }}
+                        content={<MonthlyTooltip mode="drawdown" />}
+                      />
+                      <Area type="monotone" dataKey="smif" name="SMIF" stroke={C.down} strokeWidth={1.5}
+                        fill={C.down} fillOpacity={0.14} />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            )}
 
             <p className="text-xs text-muted-foreground mt-6">
               SMIF returns derived from monthly custodian statements (Modified Dietz for months with external cash flows).
@@ -543,29 +669,29 @@ function Performance() {
           <div className="h-[380px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={data} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
-                <CartesianGrid stroke="#E0DDD5" strokeDasharray="3 3" vertical={false} />
+                <CartesianGrid stroke={C.grid} strokeDasharray="3 3" vertical={false} />
                 <XAxis
                   dataKey="year"
-                  stroke="#6B6860"
+                  stroke={C.axis}
                   tick={{ fontSize: 11, fontFamily: "IBM Plex Mono" }}
                   tickLine={false}
-                  axisLine={{ stroke: "#E0DDD5" }}
+                  axisLine={{ stroke: C.grid }}
                   minTickGap={24}
                   interval="preserveStartEnd"
                 />
 
                 <YAxis
-                  stroke="#6B6860"
+                  stroke={C.axis}
                   tick={{ fontSize: 11, fontFamily: "IBM Plex Mono" }}
                   tickLine={false}
                   axisLine={false}
                   tickFormatter={(v) => mode === "cumulative" ? `${v.toFixed(1)}×` : `${v}%`}
                 />
                 {mode === "annual" && (
-                  <ReferenceLine y={0} stroke="#E0DDD5" strokeWidth={1} />
+                  <ReferenceLine y={0} stroke={C.grid} strokeWidth={1} />
                 )}
                 <Tooltip
-                  cursor={{ stroke: "#CEB888", strokeDasharray: "4 4", strokeWidth: 1 }}
+                  cursor={{ stroke: C.smif, strokeDasharray: "4 4", strokeWidth: 1 }}
                   content={<ChartTooltip mode={mode} />}
                 />
                 <Legend
@@ -577,10 +703,10 @@ function Performance() {
                     type="monotone"
                     dataKey="smif"
                     name="SMIF"
-                    stroke={SMIF_COLOR}
+                    stroke={C.smif}
                     strokeWidth={2.5}
-                    dot={{ r: 4, fill: SMIF_COLOR, strokeWidth: 0 }}
-                    activeDot={{ r: 6, stroke: SMIF_COLOR, strokeWidth: 2, fill: "#fff" }}
+                    dot={{ r: 4, fill: C.smif, strokeWidth: 0 }}
+                    activeDot={{ r: 6, stroke: C.smif, strokeWidth: 2, fill: "#fff" }}
                   />
                 )}
                 {showBench && (
@@ -588,11 +714,11 @@ function Performance() {
                     type="monotone"
                     dataKey="bench"
                     name="S&P 500 TR"
-                    stroke={BENCH_COLOR}
+                    stroke={C.bench}
                     strokeWidth={2}
                     strokeDasharray="6 4"
-                    dot={{ r: 3, fill: BENCH_COLOR, strokeWidth: 0 }}
-                    activeDot={{ r: 5, stroke: BENCH_COLOR, strokeWidth: 2, fill: "#fff" }}
+                    dot={{ r: 3, fill: C.bench, strokeWidth: 0 }}
+                    activeDot={{ r: 5, stroke: C.bench, strokeWidth: 2, fill: "#fff" }}
                   />
                 )}
               </LineChart>
@@ -601,7 +727,7 @@ function Performance() {
         </Reveal>
 
         {/* ── Annual returns table ───────────────────────────────── */}
-        <Reveal className="overflow-x-auto border border-border">
+        <Reveal className="overflow-x-auto [contain:paint] border border-border">
           <table className="w-full min-w-[520px] text-left">
             <thead className="bg-ink text-background">
               <tr>

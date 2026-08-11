@@ -4,6 +4,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import appCss from "../styles.css?url";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { ApplyBar } from "@/components/ApplyBar";
 import { Toaster } from "@/components/ui/sonner";
 import smifLogo from "@/assets/smif-logo-mark.png";
 
@@ -187,11 +188,18 @@ function RootComponent() {
           </RouteTransition>
         </main>
         {/* Footer spacing lives on the layout, not on SiteFooter — keeps short pages
-            from carrying an enormous gap when they don't need one. */}
-        <div className="mt-24">
+            from carrying an enormous gap when they don't need one. The bottom
+            padding reserves room for the fixed mobile Apply bar so it never
+            covers the footer's last rows; it collapses at lg, where the bar
+            is hidden and the header's Apply button is back in reach. */}
+        <div className="mt-24 pb-20 lg:pb-0">
           <SiteFooter />
         </div>
       </div>
+      {/* After the skip link in DOM order, so the bar can never become the
+          first tab stop, and outside RouteTransition so its countdown interval
+          survives navigation. */}
+      <ApplyBar />
       <Toaster />
     </QueryClientProvider>
   );
