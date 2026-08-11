@@ -1,0 +1,135 @@
+<header class="site-header" data-scrolled="false">
+  <div class="wrap site-header__bar">
+    <a class="brand group" href="home.html">
+      <span class="brand__mark icon-pop" aria-hidden="true">S</span>
+      <span class="brand__word">Purdue SMIF</span>
+    </a>
+
+    <!-- Four grouped entries replace eight flat links. Each destination now
+         carries a one-line descriptor, so the menu answers "which page do I
+         want" instead of making the reader guess from a single word. -->
+    <nav class="nav" aria-label="Primary">
+      <div class="nav__item" data-open="false">
+        <button class="nav__trigger" aria-expanded="false" data-nav="fund">
+          The Fund <span class="caret" aria-hidden="true">▼</span>
+        </button>
+        <div class="mega">
+          <a href="about.html" data-route="about.html">
+            <span class="mega__title">About</span>
+            <span class="mega__desc">History, philosophy, and the investment policy statement</span>
+          </a>
+          <a href="team.html" data-route="team.html">
+            <span class="mega__title">Team</span>
+            <span class="mega__desc">52 analysts and 2 faculty advisors, by sector and role</span>
+          </a>
+          <a href="sectors.html" data-route="sectors.html">
+            <span class="mega__title">Sectors</span>
+            <span class="mega__desc">Ten coverage teams and what each one owns</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="nav__item" data-open="false">
+        <button class="nav__trigger" aria-expanded="false" data-nav="portfolio">
+          Portfolio <span class="caret" aria-hidden="true">▼</span>
+        </button>
+        <div class="mega">
+          <a href="holdings.html" data-route="holdings.html">
+            <span class="mega__title">Holdings</span>
+            <span class="mega__desc">Every position, live, with allocation and risk</span>
+          </a>
+          <a href="performance.html" data-route="performance.html">
+            <span class="mega__title">Performance</span>
+            <span class="mega__desc">Returns against the S&amp;P 500, reported quarterly</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="nav__item" data-open="false">
+        <button class="nav__trigger" aria-expanded="false" data-nav="research">
+          Research <span class="caret" aria-hidden="true">▼</span>
+        </button>
+        <div class="mega">
+          <a href="research.html" data-route="research.html">
+            <span class="mega__title">Publications</span>
+            <span class="mega__desc">Equity reports, semester letters, annual reviews</span>
+          </a>
+          <a href="learn.html" data-route="learn.html">
+            <span class="mega__title">Learn</span>
+            <span class="mega__desc">Curriculum, reading list, and downloadable models</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="nav__item" data-open="false">
+        <button class="nav__trigger" aria-expanded="false" data-nav="join">
+          Join <span class="caret" aria-hidden="true">▼</span>
+        </button>
+        <div class="mega">
+          <a href="recruiting.html" data-route="recruiting.html">
+            <span class="mega__title">Recruiting</span>
+            <span class="mega__desc">Calendar, deadlines, and the two-round prep guide</span>
+          </a>
+          <a href="apply-contact.html" data-route="apply-contact.html">
+            <span class="mega__title">Apply</span>
+            <span class="mega__desc">What we look for, the timeline, and the FAQ</span>
+          </a>
+          <a href="apply-contact.html#contact" data-route="contact">
+            <span class="mega__title">Contact</span>
+            <span class="mega__desc">Reach the fund directly</span>
+          </a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="row" style="gap: 0.75rem">
+      <a class="btn btn--gold btn--sm header-apply" href="apply-contact.html">Apply</a>
+      <button class="hamburger" data-drawer-open aria-label="Open menu" aria-haspopup="dialog">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <path d="M3 6h14M3 10h14M3 14h14" />
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="drawer" data-open="false" role="dialog" aria-modal="true" aria-label="Navigation menu">
+  <div class="wrap site-header__bar" style="border-bottom: 1px solid var(--on-dark-hairline); flex: none">
+    <span class="brand__word">Purdue SMIF</span>
+    <button class="hamburger" data-drawer-close aria-label="Close menu" style="display: inline-grid">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+        <path d="M5 5l10 10M15 5L5 15" />
+      </svg>
+    </button>
+  </div>
+  <nav class="wrap" style="flex: 1; display: flex; flex-direction: column; justify-content: center; overflow-y: auto; padding-block: 2rem" aria-label="Mobile">
+    <a class="drawer__link" href="about.html">About</a>
+    <a class="drawer__link" href="team.html">Team</a>
+    <a class="drawer__link" href="sectors.html">Sectors</a>
+    <a class="drawer__link" href="holdings.html">Holdings</a>
+    <a class="drawer__link" href="performance.html">Performance</a>
+    <a class="drawer__link" href="research.html">Research</a>
+    <a class="drawer__link" href="learn.html">Learn</a>
+    <a class="drawer__link" href="recruiting.html">Recruiting</a>
+    <a class="btn btn--gold" style="margin-top: 2rem" href="apply-contact.html">Apply to Join</a>
+  </nav>
+  <div class="wrap" style="padding-bottom: 1.5rem; flex: none">
+    <span class="meta">Daniels School of Business · Est. 2009</span>
+  </div>
+</div>
+
+<script>
+  /* Mark the current page in both the mega-menu and its group trigger, so the
+     collapsed nav still shows you where you are. */
+  (function () {
+    var here = location.pathname.split("/").pop() || "home.html";
+    var link = document.querySelector('.mega a[data-route="' + here + '"]');
+    if (!link) return;
+    link.setAttribute("aria-current", "page");
+    link.style.borderLeftColor = "var(--gold)";
+    var trigger = link.closest(".nav__item").querySelector(".nav__trigger");
+    if (trigger) trigger.setAttribute("aria-current", "true");
+    var drawerLink = document.querySelector('.drawer a[href="' + here + '"]');
+    if (drawerLink) drawerLink.style.color = "var(--gold)";
+  })();
+</script>

@@ -1,0 +1,552 @@
+<title>Holdings — Purdue SMIF Mockup</title>
+<!--@include _shared/style.html-->
+
+<a class="skip-link" href="#main">Skip to content</a>
+<div class="progress" aria-hidden="true"></div>
+<!--@include _shared/header.html-->
+
+<main id="main">
+  <!-- ══ PAGE HEAD ═══════════════════════════════════════════════════════ -->
+  <section class="section section--tight section--paper" style="border-top: 0">
+    <div class="wrap">
+      <div class="between" style="align-items: flex-end">
+        <div>
+          <p class="eyebrow">Portfolio</p>
+          <h1 style="font-size: var(--step-5)">Current portfolio.</h1>
+          <div class="row" style="margin-top: 1rem; gap: 0.5rem">
+            <span class="badge">As of 11 Aug 2026 close</span>
+            <span class="badge badge--gold">Prices live · Polygon EOD</span>
+            <span class="badge">23 positions</span>
+          </div>
+        </div>
+        <div class="row" style="gap: 0.75rem">
+          <!-- Desk mode. This screen is read for long stretches; the paper
+               ground is a liability at 11pm the night before a pitch. -->
+          <button class="theme-toggle" data-theme-toggle aria-pressed="false">
+            <span aria-hidden="true">◐</span> <span data-theme-label>Desk mode</span>
+          </button>
+          <a class="btn btn--outline btn--sm group" href="#" download>
+            Export CSV <span class="arrow" aria-hidden="true">↓</span>
+          </a>
+        </div>
+      </div>
+      <div class="note" style="margin-top: 2rem; max-width: 64rem">
+        <b>Six changes on this page.</b> The table sorts and filters in place;
+        every row expands to its thesis instead of dead-ending; allocation is
+        drawn as area, because area is the question being asked; day movers are
+        promoted above the fold; the header row sticks so column meaning
+        survives a scroll; and the whole screen has a dark register for long
+        reading. Try sorting by <b>Return %</b>, filtering to
+        <b>Financials</b>, or expanding <b>PANW</b>.
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ KPI RAIL ════════════════════════════════════════════════════════ -->
+  <section class="section section--tight">
+    <div class="wrap">
+      <div class="hairline cols-4" data-reveal data-stagger>
+        <div data-reveal>
+          <div class="stat" style="border-top: 0; padding-top: 0">
+            <div class="stat__value">$637,508</div>
+            <div class="stat__label">Portfolio Value</div>
+            <div class="stat__sub">invested + cash</div>
+          </div>
+        </div>
+        <div data-reveal>
+          <div class="stat" style="border-top: 0; padding-top: 0">
+            <div class="stat__value up">+25.52%</div>
+            <div class="stat__label">Total Return</div>
+            <div class="stat__sub">+$162,661 since inception</div>
+          </div>
+        </div>
+        <div data-reveal>
+          <div class="stat" style="border-top: 0; padding-top: 0">
+            <div class="stat__value up">+$428</div>
+            <div class="stat__label">Day P&amp;L</div>
+            <div class="stat__sub">+0.07% on the day</div>
+          </div>
+        </div>
+        <div data-reveal>
+          <div class="stat" style="border-top: 0; padding-top: 0">
+            <div class="stat__value">1.02</div>
+            <div class="stat__label">Weighted Beta</div>
+            <div class="stat__sub">vs S&amp;P 500</div>
+          </div>
+        </div>
+      </div>
+      <div class="hairline cols-4" data-reveal data-stagger style="border-top: 0">
+        <div data-reveal>
+          <div class="meta">Cash Holdings</div>
+          <div class="num" style="font-size: 1.375rem; margin-top: 0.375rem">$15,484</div>
+          <div class="body-muted" style="font-size: 0.75rem">2.4% of portfolio</div>
+        </div>
+        <div data-reveal>
+          <div class="meta">Annualized Volatility</div>
+          <div class="num" style="font-size: 1.375rem; margin-top: 0.375rem">14.8%</div>
+          <div class="body-muted" style="font-size: 0.75rem">trailing 3Y, monthly</div>
+        </div>
+        <div data-reveal>
+          <div class="meta">Sharpe Ratio</div>
+          <div class="num" style="font-size: 1.375rem; margin-top: 0.375rem">0.94</div>
+          <div class="body-muted" style="font-size: 0.75rem">rf = 3-mo T-bill</div>
+        </div>
+        <div data-reveal>
+          <div class="meta">95% 1-Day VaR</div>
+          <div class="num" style="font-size: 1.375rem; margin-top: 0.375rem">−$9,240</div>
+          <div class="body-muted" style="font-size: 0.75rem">parametric, normal</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ ALLOCATION ══════════════════════════════════════════════════════ -->
+  <section class="section section--tight section--paper">
+    <div class="wrap">
+      <div class="between" data-reveal style="margin-bottom: 2rem">
+        <div>
+          <p class="eyebrow">Allocation</p>
+          <h2 style="font-size: var(--step-3)">Where the money sits</h2>
+        </div>
+        <div class="segment" data-toggle-group role="group" aria-label="Allocation view">
+          <button data-value="position" aria-pressed="true">By position</button>
+          <button data-value="sector" aria-pressed="false">By sector</button>
+        </div>
+      </div>
+
+      <!-- Area encodes weight directly. A stack of bars makes the reader
+           compare lengths across rows; a treemap answers "what dominates"
+           in one look — and SPY at 41.5% is the answer. -->
+      <div class="treemap" data-reveal data-inview-watch>
+        <div class="treemap__cell hover-lift" style="flex: 41.53 1 40%; max-width: 46%; background: color-mix(in srgb, var(--gold) 55%, var(--secondary)); min-height: 9rem">
+          <span class="treemap__sym">SPY</span><span class="treemap__pct">41.5% · $264,768</span>
+        </div>
+        <div class="treemap__cell hover-lift" style="flex: 5.14 1 12%; max-width: 26%; background: color-mix(in srgb, var(--gold) 34%, var(--secondary)); min-height: 9rem">
+          <span class="treemap__sym">MNST</span><span class="treemap__pct">5.1%</span>
+        </div>
+        <div class="treemap__cell hover-lift" style="flex: 4.33 1 11%; max-width: 24%; background: color-mix(in srgb, var(--gold) 30%, var(--secondary)); min-height: 9rem">
+          <span class="treemap__sym">USB</span><span class="treemap__pct">4.3%</span>
+        </div>
+        <div class="treemap__cell hover-lift" style="flex: 4.32 1 11%; max-width: 24%; background: color-mix(in srgb, var(--gold) 30%, var(--secondary)); min-height: 9rem">
+          <span class="treemap__sym">BRK.B</span><span class="treemap__pct">4.3%</span>
+        </div>
+        <div class="treemap__cell hover-lift" style="flex: 3.91 1 9%; max-width: 20%; background: color-mix(in srgb, var(--gold) 26%, var(--secondary))">
+          <span class="treemap__sym">AMZN</span><span class="treemap__pct">3.9%</span>
+        </div>
+        <div class="treemap__cell hover-lift" style="flex: 3.57 1 9%; max-width: 20%; background: color-mix(in srgb, var(--gold) 24%, var(--secondary))">
+          <span class="treemap__sym">META</span><span class="treemap__pct">3.6%</span>
+        </div>
+        <div class="treemap__cell hover-lift" style="flex: 3.53 1 9%; max-width: 20%; background: color-mix(in srgb, var(--gold) 24%, var(--secondary))">
+          <span class="treemap__sym">MSFT</span><span class="treemap__pct">3.5%</span>
+        </div>
+        <div class="treemap__cell hover-lift" style="flex: 3.26 1 8%; max-width: 18%; background: color-mix(in srgb, var(--gold) 22%, var(--secondary))">
+          <span class="treemap__sym">CIFR</span><span class="treemap__pct">3.3%</span>
+        </div>
+        <div class="treemap__cell hover-lift" style="flex: 3.18 1 8%; max-width: 18%; background: color-mix(in srgb, var(--gold) 22%, var(--secondary))">
+          <span class="treemap__sym">PANW</span><span class="treemap__pct">3.2%</span>
+        </div>
+        <div class="treemap__cell hover-lift" style="flex: 2.77 1 7%; max-width: 15%; background: color-mix(in srgb, var(--gold) 19%, var(--secondary))">
+          <span class="treemap__sym">LLY</span><span class="treemap__pct">2.8%</span>
+        </div>
+        <div class="treemap__cell hover-lift" style="flex: 2.54 1 7%; max-width: 15%; background: color-mix(in srgb, var(--gold) 18%, var(--secondary))">
+          <span class="treemap__sym">CMI</span><span class="treemap__pct">2.5%</span>
+        </div>
+        <div class="treemap__cell hover-lift" style="flex: 2.44 1 7%; max-width: 15%; background: color-mix(in srgb, var(--gold) 17%, var(--secondary))">
+          <span class="treemap__sym">ALLY</span><span class="treemap__pct">2.4%</span>
+        </div>
+        <div class="treemap__cell hover-lift" style="flex: 2.31 1 7%; max-width: 15%; background: color-mix(in srgb, var(--gold) 16%, var(--secondary))">
+          <span class="treemap__sym">ORN</span><span class="treemap__pct">2.3%</span>
+        </div>
+        <div class="treemap__cell hover-lift" style="flex: 2.3 1 7%; max-width: 15%; background: color-mix(in srgb, var(--gold) 16%, var(--secondary))">
+          <span class="treemap__sym">CEG</span><span class="treemap__pct">2.3%</span>
+        </div>
+        <div class="treemap__cell hover-lift" style="flex: 2.24 1 7%; max-width: 15%; background: color-mix(in srgb, var(--gold) 16%, var(--secondary))">
+          <span class="treemap__sym">STLD</span><span class="treemap__pct">2.2%</span>
+        </div>
+        <div class="treemap__cell hover-lift" style="flex: 1.72 1 6%; max-width: 13%; background: color-mix(in srgb, var(--gold) 12%, var(--secondary))">
+          <span class="treemap__sym">OXY</span><span class="treemap__pct">1.7%</span>
+        </div>
+        <div class="treemap__cell hover-lift" style="flex: 1.71 1 6%; max-width: 13%; background: color-mix(in srgb, var(--gold) 12%, var(--secondary))">
+          <span class="treemap__sym">RL</span><span class="treemap__pct">1.7%</span>
+        </div>
+        <div class="treemap__cell hover-lift" style="flex: 1.6 1 6%; max-width: 13%; background: color-mix(in srgb, var(--gold) 11%, var(--secondary))">
+          <span class="treemap__sym">VZ</span><span class="treemap__pct">1.6%</span>
+        </div>
+        <div class="treemap__cell hover-lift" style="flex: 1.45 1 6%; max-width: 13%; background: color-mix(in srgb, var(--gold) 10%, var(--secondary))">
+          <span class="treemap__sym">DE</span><span class="treemap__pct">1.4%</span>
+        </div>
+        <div class="treemap__cell hover-lift" style="flex: 1.24 1 5%; max-width: 11%; background: color-mix(in srgb, var(--gold) 9%, var(--secondary))">
+          <span class="treemap__sym">PG</span><span class="treemap__pct">1.2%</span>
+        </div>
+        <div class="treemap__cell hover-lift" style="flex: 0.91 1 5%; max-width: 11%; background: color-mix(in srgb, var(--gold) 7%, var(--secondary))">
+          <span class="treemap__sym">COF</span><span class="treemap__pct">0.9%</span>
+        </div>
+        <div class="treemap__cell hover-lift" style="flex: 0.81 1 5%; max-width: 11%; background: color-mix(in srgb, var(--gold) 6%, var(--secondary))">
+          <span class="treemap__sym">SFD</span><span class="treemap__pct">0.8%</span>
+        </div>
+        <div class="treemap__cell hover-lift" style="flex: 0.75 1 5%; max-width: 11%; background: color-mix(in srgb, var(--gold) 5%, var(--secondary))">
+          <span class="treemap__sym">DASH</span><span class="treemap__pct">0.8%</span>
+        </div>
+        <!-- Cash is 2.4% of the portfolio and appears nowhere in the live
+             allocation view. If the picture is "where the money sits", the
+             uninvested part belongs in it. -->
+        <div class="treemap__cell" style="flex: 2.43 1 7%; max-width: 22%; background: repeating-linear-gradient(45deg, var(--secondary), var(--secondary) 6px, var(--muted) 6px, var(--muted) 12px)">
+          <span class="treemap__sym">CASH</span><span class="treemap__pct">2.4% · $15,484</span>
+        </div>
+      </div>
+
+      <div class="hairline cols-3" data-reveal data-inview-watch style="margin-top: 2rem">
+        <div data-reveal>
+          <div class="meta">Financials</div>
+          <div class="between" style="align-items: baseline; margin-block: 0.375rem 0.5rem"><span class="num" style="font-size: 1.25rem">12.0%</span><span class="body-muted" style="font-size: 0.75rem">$74,518</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width: 29%"></div></div>
+        </div>
+        <div data-reveal>
+          <div class="meta">Technology</div>
+          <div class="between" style="align-items: baseline; margin-block: 0.375rem 0.5rem"><span class="num" style="font-size: 1.25rem">9.97%</span><span class="body-muted" style="font-size: 0.75rem">$63,606</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width: 24%"></div></div>
+        </div>
+        <div data-reveal>
+          <div class="meta">Consumer Defensive</div>
+          <div class="between" style="align-items: baseline; margin-block: 0.375rem 0.5rem"><span class="num" style="font-size: 1.25rem">7.19%</span><span class="body-muted" style="font-size: 0.75rem">$45,828</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width: 17%"></div></div>
+        </div>
+        <div data-reveal>
+          <div class="meta">Industrials</div>
+          <div class="between" style="align-items: baseline; margin-block: 0.375rem 0.5rem"><span class="num" style="font-size: 1.25rem">6.30%</span><span class="body-muted" style="font-size: 0.75rem">$40,106</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width: 15%"></div></div>
+        </div>
+        <div data-reveal>
+          <div class="meta">Consumer Cyclical</div>
+          <div class="between" style="align-items: baseline; margin-block: 0.375rem 0.5rem"><span class="num" style="font-size: 1.25rem">6.37%</span><span class="body-muted" style="font-size: 0.75rem">$40,595</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width: 15%"></div></div>
+        </div>
+        <div data-reveal>
+          <div class="meta">Energy</div>
+          <div class="between" style="align-items: baseline; margin-block: 0.375rem 0.5rem"><span class="num" style="font-size: 1.25rem">4.02%</span><span class="body-muted" style="font-size: 0.75rem">$25,661</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width: 10%"></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ MOVERS ══════════════════════════════════════════════════════════ -->
+  <section class="section section--tight">
+    <div class="wrap">
+      <p class="eyebrow" data-reveal>Today</p>
+      <div style="display: grid; gap: 2rem; grid-template-columns: 1fr" class="movers">
+        <div data-reveal>
+          <h2 class="h5" style="margin-bottom: 1rem">Leaders</h2>
+          <ul style="list-style: none; padding: 0; border-top: 1px solid var(--border)">
+            <li class="row-rail" style="display: flex; justify-content: space-between; gap: 1rem; padding: 0.75rem 0.875rem; border-bottom: 1px solid var(--border)"><span><b class="mono">PANW</b> <span class="body-muted">Palo Alto Networks</span></span><span class="num up">+9.28%</span></li>
+            <li class="row-rail" style="display: flex; justify-content: space-between; gap: 1rem; padding: 0.75rem 0.875rem; border-bottom: 1px solid var(--border)"><span><b class="mono">MSFT</b> <span class="body-muted">Microsoft</span></span><span class="num up">+5.45%</span></li>
+            <li class="row-rail" style="display: flex; justify-content: space-between; gap: 1rem; padding: 0.75rem 0.875rem; border-bottom: 1px solid var(--border)"><span><b class="mono">DASH</b> <span class="body-muted">DoorDash</span></span><span class="num up">+1.65%</span></li>
+            <li class="row-rail" style="display: flex; justify-content: space-between; gap: 1rem; padding: 0.75rem 0.875rem; border-bottom: 1px solid var(--border)"><span><b class="mono">USB</b> <span class="body-muted">U.S. Bancorp</span></span><span class="num up">+0.73%</span></li>
+          </ul>
+        </div>
+        <div data-reveal>
+          <h2 class="h5" style="margin-bottom: 1rem">Laggards</h2>
+          <ul style="list-style: none; padding: 0; border-top: 1px solid var(--border)">
+            <li class="row-rail" style="display: flex; justify-content: space-between; gap: 1rem; padding: 0.75rem 0.875rem; border-bottom: 1px solid var(--border)"><span><b class="mono">ORN</b> <span class="body-muted">Orion Group</span></span><span class="num down">−4.04%</span></li>
+            <li class="row-rail" style="display: flex; justify-content: space-between; gap: 1rem; padding: 0.75rem 0.875rem; border-bottom: 1px solid var(--border)"><span><b class="mono">CIFR</b> <span class="body-muted">Cipher Digital</span></span><span class="num down">−3.82%</span></li>
+            <li class="row-rail" style="display: flex; justify-content: space-between; gap: 1rem; padding: 0.75rem 0.875rem; border-bottom: 1px solid var(--border)"><span><b class="mono">CMI</b> <span class="body-muted">Cummins</span></span><span class="num down">−3.30%</span></li>
+            <li class="row-rail" style="display: flex; justify-content: space-between; gap: 1rem; padding: 0.75rem 0.875rem; border-bottom: 1px solid var(--border)"><span><b class="mono">SFD</b> <span class="body-muted">Smithfield Foods</span></span><span class="num down">−2.16%</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ TOOLBAR ═════════════════════════════════════════════════════════ -->
+  <div class="toolbar">
+    <div class="wrap">
+      <div class="between" style="align-items: center; gap: 1rem">
+        <label class="field" style="flex: 1 1 16rem; max-width: 22rem">
+          <span class="sr-only">Search holdings</span>
+          <input class="input" type="search" placeholder="Search ticker or company…" data-filter-target="#holdings-table" />
+        </label>
+        <span class="meta"><span data-filter-count="#holdings-table">23</span> of 23 positions</span>
+      </div>
+      <div class="chips" role="group" aria-label="Filter by sector" data-toggle-group data-filter-key data-filter-target="#holdings-table" style="margin-top: 0.75rem">
+        <button class="chip" data-value="all" aria-pressed="true">All</button>
+        <button class="chip" data-value="ETF" aria-pressed="false">ETF</button>
+        <button class="chip" data-value="Financials" aria-pressed="false">Financials</button>
+        <button class="chip" data-value="Technology" aria-pressed="false">Technology</button>
+        <button class="chip" data-value="Consumer Defensive" aria-pressed="false">Consumer Defensive</button>
+        <button class="chip" data-value="Consumer Cyclical" aria-pressed="false">Consumer Cyclical</button>
+        <button class="chip" data-value="Industrials" aria-pressed="false">Industrials</button>
+        <button class="chip" data-value="Energy" aria-pressed="false">Energy</button>
+        <button class="chip" data-value="Healthcare" aria-pressed="false">Healthcare</button>
+        <button class="chip" data-value="Materials" aria-pressed="false">Materials</button>
+        <button class="chip" data-value="Communication Services" aria-pressed="false">Communication Services</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TABLE ═══════════════════════════════════════════════════════════ -->
+  <section style="padding-block: 2rem 5rem">
+    <div class="wrap">
+      <h2 class="sr-only">Holdings</h2>
+      <div class="table-scroll">
+        <table class="data" id="holdings-table" data-sortable>
+          <caption class="sr-only">All 23 portfolio positions. Column headers are buttons that sort the table.</caption>
+          <thead>
+            <tr>
+              <th scope="col" aria-sort="none" style="text-align: left"><button class="th-sort" type="button" data-sort-key="company">Position <span class="caret" aria-hidden="true">▼</span></button></th>
+              <th scope="col" aria-sort="none"><button class="th-sort" type="button" data-sort-key="price">Price <span class="caret" aria-hidden="true">▼</span></button></th>
+              <th scope="col" aria-sort="none"><button class="th-sort" type="button" data-sort-key="daychange">Day % <span class="caret" aria-hidden="true">▼</span></button></th>
+              <th scope="col">Trend <span class="sr-only">(30-day sparkline)</span></th>
+              <th scope="col" aria-sort="none"><button class="th-sort" type="button" data-sort-key="shares">Shares <span class="caret" aria-hidden="true">▼</span></button></th>
+              <th scope="col" aria-sort="none"><button class="th-sort" type="button" data-sort-key="value">Value <span class="caret" aria-hidden="true">▼</span></button></th>
+              <th scope="col" aria-sort="none"><button class="th-sort" type="button" data-sort-key="returnpct">Return % <span class="caret" aria-hidden="true">▼</span></button></th>
+              <th scope="col" aria-sort="none"><button class="th-sort" type="button" data-sort-key="beta">Beta <span class="caret" aria-hidden="true">▼</span></button></th>
+              <th scope="col" aria-sort="none"><button class="th-sort" type="button" data-sort-key="allocation">Weight <span class="caret" aria-hidden="true">▼</span></button></th>
+              <th scope="col"><span class="sr-only">Thesis</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="row-rail" data-sector="ETF" data-search="spy state street spdr s&p 500 etf" data-company="State Street SPDR" data-price="756.48" data-daychange="0.25" data-shares="350" data-value="264768" data-returnpct="79.14" data-beta="1.0" data-allocation="41.53">
+              <td><b class="mono">SPY</b> <span class="body-muted">State Street SPDR S&amp;P 500 ETF</span></td>
+              <td class="num">756.48</td><td class="num up">+0.25%</td>
+              <td><svg class="spark" viewBox="0 0 64 18" width="64" height="18" aria-hidden="true"><path d="M0,14 L11,12 L21,13 L32,9 L43,10 L53,6 L64,3" /></svg></td>
+              <td class="num">350</td><td class="num">$264,768</td><td class="num up">+79.14%</td><td class="num">1.00</td><td class="num">41.53%</td>
+              <td><button data-expand aria-expanded="false" aria-label="Show thesis for SPY" style="background:none;border:0;cursor:pointer;color:var(--gold-deep);font-family:var(--font-mono)">›</button></td>
+            </tr>
+            <tr data-detail-row hidden><td colspan="10" style="background: var(--secondary); text-align: left; white-space: normal; padding: 1.25rem"><b>Core beta sleeve.</b> The IPS caps single-name concentration, so index exposure carries the market return while the sector teams take active risk around it. Reviewed each semester against the drift band.</td></tr>
+
+            <tr class="row-rail" data-sector="Consumer Defensive" data-search="mnst monster beverage" data-company="Monster Beverage" data-price="88.08" data-daychange="0.10" data-shares="372" data-value="32766" data-returnpct="27.43" data-beta="0.54" data-allocation="5.14">
+              <td><b class="mono">MNST</b> <span class="body-muted">Monster Beverage</span></td>
+              <td class="num">88.08</td><td class="num up">+0.10%</td>
+              <td><svg class="spark" viewBox="0 0 64 18" width="64" height="18" aria-hidden="true"><path d="M0,12 L11,13 L21,10 L32,11 L43,8 L53,9 L64,6" /></svg></td>
+              <td class="num">372</td><td class="num">$32,766</td><td class="num up">+27.43%</td><td class="num">0.54</td><td class="num">5.14%</td>
+              <td><button data-expand aria-expanded="false" aria-label="Show thesis for MNST" style="background:none;border:0;cursor:pointer;color:var(--gold-deep);font-family:var(--font-mono)">›</button></td>
+            </tr>
+            <tr data-detail-row hidden><td colspan="10" style="background: var(--secondary); text-align: left; white-space: normal; padding: 1.25rem"><b>Consumer Staples · pitched Spring 2024.</b> Category leader with pricing power and a distribution moat through the Coca-Cola system. Held on international volume growth and margin recovery as aluminum costs normalized.</td></tr>
+
+            <tr class="row-rail" data-sector="Financials" data-search="usb u.s. bancorp" data-company="U.S. Bancorp" data-price="54.85" data-daychange="0.73" data-shares="503" data-value="27590" data-returnpct="17.49" data-beta="0.99" data-allocation="4.33">
+              <td><b class="mono">USB</b> <span class="body-muted">U.S. Bancorp</span></td>
+              <td class="num">54.85</td><td class="num up">+0.73%</td>
+              <td><svg class="spark" viewBox="0 0 64 18" width="64" height="18" aria-hidden="true"><path d="M0,13 L11,11 L21,12 L32,8 L43,9 L53,7 L64,5" /></svg></td>
+              <td class="num">503</td><td class="num">$27,590</td><td class="num up">+17.49%</td><td class="num">0.99</td><td class="num">4.33%</td>
+              <td><button data-expand aria-expanded="false" aria-label="Show thesis for USB" style="background:none;border:0;cursor:pointer;color:var(--gold-deep);font-family:var(--font-mono)">›</button></td>
+            </tr>
+            <tr data-detail-row hidden><td colspan="10" style="background: var(--secondary); text-align: left; white-space: normal; padding: 1.25rem"><b>Financials · pitched Fall 2023.</b> Super-regional with a fee-income mix well above peers and a deposit base that held through the 2023 stress. Thesis is NIM expansion plus the Union Bank integration finishing.</td></tr>
+
+            <tr class="row-rail" data-sector="Financials" data-search="brk.b berkshire hathaway" data-company="Berkshire Hathaway" data-price="474.48" data-daychange="-0.62" data-shares="58" data-value="27520" data-returnpct="14.85" data-beta="0.62" data-allocation="4.32">
+              <td><b class="mono">BRK.B</b> <span class="body-muted">Berkshire Hathaway</span></td>
+              <td class="num">474.48</td><td class="num down">−0.62%</td>
+              <td><svg class="spark" viewBox="0 0 64 18" width="64" height="18" aria-hidden="true"><path d="M0,11 L11,10 L21,12 L32,9 L43,11 L53,8 L64,9" /></svg></td>
+              <td class="num">58</td><td class="num">$27,520</td><td class="num up">+14.85%</td><td class="num">0.62</td><td class="num">4.32%</td>
+              <td><button data-expand aria-expanded="false" aria-label="Show thesis for BRK.B" style="background:none;border:0;cursor:pointer;color:var(--gold-deep);font-family:var(--font-mono)">›</button></td>
+            </tr>
+            <tr data-detail-row hidden><td colspan="10" style="background: var(--secondary); text-align: left; white-space: normal; padding: 1.25rem"><b>Financials · long-term hold.</b> Held as a low-beta ballast: insurance float, an operating-company mix uncorrelated with the fund's growth names, and a cash position that becomes an asset in a drawdown.</td></tr>
+
+            <tr class="row-rail" data-sector="Consumer Cyclical" data-search="amzn amazon.com" data-company="Amazon.com" data-price="270.64" data-daychange="-1.23" data-shares="92" data-value="24899" data-returnpct="7.06" data-beta="1.45" data-allocation="3.91">
+              <td><b class="mono">AMZN</b> <span class="body-muted">Amazon.com</span></td>
+              <td class="num">270.64</td><td class="num down">−1.23%</td>
+              <td><svg class="spark" viewBox="0 0 64 18" width="64" height="18" aria-hidden="true"><path d="M0,9 L11,11 L21,8 L32,12 L43,9 L53,11 L64,10" /></svg></td>
+              <td class="num">92</td><td class="num">$24,899</td><td class="num up">+7.06%</td><td class="num">1.45</td><td class="num">3.91%</td>
+              <td><button data-expand aria-expanded="false" aria-label="Show thesis for AMZN" style="background:none;border:0;cursor:pointer;color:var(--gold-deep);font-family:var(--font-mono)">›</button></td>
+            </tr>
+            <tr data-detail-row hidden><td colspan="10" style="background: var(--secondary); text-align: left; white-space: normal; padding: 1.25rem"><b>Consumer Discretionary · pitched Spring 2025.</b> AWS reacceleration and retail margin structurally repriced by regionalized fulfillment. The fund's DCF and comparable-company work on this name are published on <a class="link" href="research.html">Research</a>.</td></tr>
+
+            <tr class="row-rail" data-sector="Communication Services" data-search="meta platforms" data-company="Meta Platforms" data-price="632.51" data-daychange="-0.44" data-shares="36" data-value="22770" data-returnpct="-0.83" data-beta="1.23" data-allocation="3.57">
+              <td><b class="mono">META</b> <span class="body-muted">Meta Platforms</span></td>
+              <td class="num">632.51</td><td class="num down">−0.44%</td>
+              <td><svg class="spark" viewBox="0 0 64 18" width="64" height="18" aria-hidden="true"><path d="M0,8 L11,10 L21,9 L32,12 L43,10 L53,13 L64,11" /></svg></td>
+              <td class="num">36</td><td class="num">$22,770</td><td class="num down">−0.83%</td><td class="num">1.23</td><td class="num">3.57%</td>
+              <td><button data-expand aria-expanded="false" aria-label="Show thesis for META" style="background:none;border:0;cursor:pointer;color:var(--gold-deep);font-family:var(--font-mono)">›</button></td>
+            </tr>
+            <tr data-detail-row hidden><td colspan="10" style="background: var(--secondary); text-align: left; white-space: normal; padding: 1.25rem"><b>Communications · pitched Fall 2025.</b> Entered near cost. Thesis rests on ad-load efficiency from ranking models rather than on Reality Labs, which is underwritten at zero.</td></tr>
+
+            <tr class="row-rail" data-sector="Technology" data-search="msft microsoft corp" data-company="Microsoft" data-price="450.24" data-daychange="5.45" data-shares="50" data-value="22512" data-returnpct="-12.45" data-beta="1.09" data-allocation="3.53">
+              <td><b class="mono">MSFT</b> <span class="body-muted">Microsoft Corp.</span></td>
+              <td class="num">450.24</td><td class="num up">+5.45%</td>
+              <td><svg class="spark" viewBox="0 0 64 18" width="64" height="18" aria-hidden="true"><path d="M0,10 L11,12 L21,11 L32,13 L43,10 L53,7 L64,4" /></svg></td>
+              <td class="num">50</td><td class="num">$22,512</td><td class="num down">−12.45%</td><td class="num">1.09</td><td class="num">3.53%</td>
+              <td><button data-expand aria-expanded="false" aria-label="Show thesis for MSFT" style="background:none;border:0;cursor:pointer;color:var(--gold-deep);font-family:var(--font-mono)">›</button></td>
+            </tr>
+            <tr data-detail-row hidden><td colspan="10" style="background: var(--secondary); text-align: left; white-space: normal; padding: 1.25rem"><b>Technology · under review.</b> Down 12.5% against cost. The IT team is re-underwriting Azure capacity spend versus monetization; a hold-or-trim vote is scheduled for the next committee meeting.</td></tr>
+
+            <tr class="row-rail" data-sector="Technology" data-search="cifr cipher digital" data-company="Cipher Digital" data-price="23.65" data-daychange="-3.82" data-shares="880" data-value="20812" data-returnpct="73.45" data-beta="3.21" data-allocation="3.26">
+              <td><b class="mono">CIFR</b> <span class="body-muted">Cipher Digital</span></td>
+              <td class="num">23.65</td><td class="num down">−3.82%</td>
+              <td><svg class="spark" viewBox="0 0 64 18" width="64" height="18" aria-hidden="true"><path d="M0,15 L11,9 L21,13 L32,5 L43,10 L53,4 L64,8" /></svg></td>
+              <td class="num">880</td><td class="num">$20,812</td><td class="num up">+73.45%</td><td class="num">3.21</td><td class="num">3.26%</td>
+              <td><button data-expand aria-expanded="false" aria-label="Show thesis for CIFR" style="background:none;border:0;cursor:pointer;color:var(--gold-deep);font-family:var(--font-mono)">›</button></td>
+            </tr>
+            <tr data-detail-row hidden><td colspan="10" style="background: var(--secondary); text-align: left; white-space: normal; padding: 1.25rem"><b>Technology · highest-beta position (3.21).</b> Up 73% but the single largest contributor to portfolio volatility. Position is size-capped by the risk team rather than by conviction.</td></tr>
+
+            <tr class="row-rail" data-sector="Technology" data-search="panw palo alto networks" data-company="Palo Alto Networks" data-price="281.69" data-daychange="9.28" data-shares="72" data-value="20282" data-returnpct="43.95" data-beta="0.89" data-allocation="3.18">
+              <td><b class="mono">PANW</b> <span class="body-muted">Palo Alto Networks</span></td>
+              <td class="num">281.69</td><td class="num up">+9.28%</td>
+              <td><svg class="spark" viewBox="0 0 64 18" width="64" height="18" aria-hidden="true"><path d="M0,14 L11,13 L21,11 L32,10 L43,8 L53,7 L64,2" /></svg></td>
+              <td class="num">72</td><td class="num">$20,282</td><td class="num up">+43.95%</td><td class="num">0.89</td><td class="num">3.18%</td>
+              <td><button data-expand aria-expanded="false" aria-label="Show thesis for PANW" style="background:none;border:0;cursor:pointer;color:var(--gold-deep);font-family:var(--font-mono)">›</button></td>
+            </tr>
+            <tr data-detail-row hidden><td colspan="10" style="background: var(--secondary); text-align: left; white-space: normal; padding: 1.25rem"><b>Technology · best day in the book, +9.28%.</b> Platformization thesis: consolidating point products onto one vendor raises switching costs and lifts net revenue retention. Pitched Spring 2024, up 44% since.</td></tr>
+
+            <tr class="row-rail" data-sector="Healthcare" data-search="lly eli lilly" data-company="Eli Lilly" data-price="1105.00" data-daychange="-1.93" data-shares="16" data-value="17680" data-returnpct="5.64" data-beta="0.53" data-allocation="2.77">
+              <td><b class="mono">LLY</b> <span class="body-muted">Eli Lilly and Co.</span></td>
+              <td class="num">1,105.00</td><td class="num down">−1.93%</td>
+              <td><svg class="spark" viewBox="0 0 64 18" width="64" height="18" aria-hidden="true"><path d="M0,10 L11,8 L21,11 L32,9 L43,12 L53,10 L64,12" /></svg></td>
+              <td class="num">16</td><td class="num">$17,680</td><td class="num up">+5.64%</td><td class="num">0.53</td><td class="num">2.77%</td>
+              <td><button data-expand aria-expanded="false" aria-label="Show thesis for LLY" style="background:none;border:0;cursor:pointer;color:var(--gold-deep);font-family:var(--font-mono)">›</button></td>
+            </tr>
+            <tr data-detail-row hidden><td colspan="10" style="background: var(--secondary); text-align: left; white-space: normal; padding: 1.25rem"><b>Healthcare · pitched Fall 2025.</b> Incretin franchise with manufacturing capacity as the binding constraint rather than demand. Low beta relative to the position's growth profile.</td></tr>
+
+            <tr class="row-rail" data-sector="Industrials" data-search="cmi cummins inc" data-company="Cummins" data-price="646.63" data-daychange="-3.30" data-shares="25" data-value="16166" data-returnpct="24.85" data-beta="1.25" data-allocation="2.54">
+              <td><b class="mono">CMI</b> <span class="body-muted">Cummins Inc.</span></td>
+              <td class="num">646.63</td><td class="num down">−3.30%</td>
+              <td><svg class="spark" viewBox="0 0 64 18" width="64" height="18" aria-hidden="true"><path d="M0,9 L11,7 L21,10 L32,8 L43,11 L53,10 L64,13" /></svg></td>
+              <td class="num">25</td><td class="num">$16,166</td><td class="num up">+24.85%</td><td class="num">1.25</td><td class="num">2.54%</td>
+              <td><button data-expand aria-expanded="false" aria-label="Show thesis for CMI" style="background:none;border:0;cursor:pointer;color:var(--gold-deep);font-family:var(--font-mono)">›</button></td>
+            </tr>
+            <tr data-detail-row hidden><td colspan="10" style="background: var(--secondary); text-align: left; white-space: normal; padding: 1.25rem"><b>Industrials · Indiana-headquartered.</b> Aftermarket parts revenue smooths the truck cycle; Accelera is underwritten as an option, not as the base case.</td></tr>
+
+            <tr class="row-rail" data-sector="Financials" data-search="ally financial" data-company="Ally Financial" data-price="42.81" data-daychange="0.02" data-shares="364" data-value="15583" data-returnpct="25.25" data-beta="1.09" data-allocation="2.44">
+              <td><b class="mono">ALLY</b> <span class="body-muted">Ally Financial</span></td>
+              <td class="num">42.81</td><td class="num up">+0.02%</td>
+              <td><svg class="spark" viewBox="0 0 64 18" width="64" height="18" aria-hidden="true"><path d="M0,12 L11,11 L21,9 L32,10 L43,8 L53,9 L64,7" /></svg></td>
+              <td class="num">364</td><td class="num">$15,583</td><td class="num up">+25.25%</td><td class="num">1.09</td><td class="num">2.44%</td>
+              <td><button data-expand aria-expanded="false" aria-label="Show thesis for ALLY" style="background:none;border:0;cursor:pointer;color:var(--gold-deep);font-family:var(--font-mono)">›</button></td>
+            </tr>
+            <tr data-detail-row hidden><td colspan="10" style="background: var(--secondary); text-align: left; white-space: normal; padding: 1.25rem"><b>Financials · pitched Spring 2024.</b> Auto-loan book repricing above the deposit cost curve; the thesis is the NIM trough being behind rather than credit normalizing.</td></tr>
+
+            <tr class="row-rail" data-sector="Industrials" data-search="orn orion group" data-company="Orion Group" data-price="13.76" data-daychange="-4.04" data-shares="1070" data-value="14723" data-returnpct="19.24" data-beta="1.39" data-allocation="2.31">
+              <td><b class="mono">ORN</b> <span class="body-muted">Orion Group</span></td>
+              <td class="num">13.76</td><td class="num down">−4.04%</td>
+              <td><svg class="spark" viewBox="0 0 64 18" width="64" height="18" aria-hidden="true"><path d="M0,8 L11,11 L21,7 L32,12 L43,9 L53,13 L64,14" /></svg></td>
+              <td class="num">1,070</td><td class="num">$14,723</td><td class="num up">+19.24%</td><td class="num">1.39</td><td class="num">2.31%</td>
+              <td><button data-expand aria-expanded="false" aria-label="Show thesis for ORN" style="background:none;border:0;cursor:pointer;color:var(--gold-deep);font-family:var(--font-mono)">›</button></td>
+            </tr>
+            <tr data-detail-row hidden><td colspan="10" style="background: var(--secondary); text-align: left; white-space: normal; padding: 1.25rem"><b>Industrials · small cap, worst day in the book.</b> Marine-construction backlog conversion is the whole thesis; the position is deliberately small because backlog timing is lumpy.</td></tr>
+
+            <tr class="row-rail" data-sector="Energy" data-search="ceg constellation energy" data-company="Constellation Energy" data-price="287.75" data-daychange="0.50" data-shares="51" data-value="14675" data-returnpct="-22.47" data-beta="1.09" data-allocation="2.30">
+              <td><b class="mono">CEG</b> <span class="body-muted">Constellation Energy</span></td>
+              <td class="num">287.75</td><td class="num up">+0.50%</td>
+              <td><svg class="spark" viewBox="0 0 64 18" width="64" height="18" aria-hidden="true"><path d="M0,5 L11,8 L21,7 L32,11 L43,13 L53,12 L64,14" /></svg></td>
+              <td class="num">51</td><td class="num">$14,675</td><td class="num down">−22.47%</td><td class="num">1.09</td><td class="num">2.30%</td>
+              <td><button data-expand aria-expanded="false" aria-label="Show thesis for CEG" style="background:none;border:0;cursor:pointer;color:var(--gold-deep);font-family:var(--font-mono)">›</button></td>
+            </tr>
+            <tr data-detail-row hidden><td colspan="10" style="background: var(--secondary); text-align: left; white-space: normal; padding: 1.25rem"><b>Energy · worst position, −22.5%.</b> Datacenter PPA thesis has not converted on the timeline underwritten. The Energy team owns a written post-mortem regardless of the hold-or-exit vote — a rejected idea gets feedback, and so does a losing one.</td></tr>
+
+            <tr class="row-rail" data-sector="Materials" data-search="stld steel dynamics" data-company="Steel Dynamics" data-price="260.15" data-daychange="-0.23" data-shares="55" data-value="14308" data-returnpct="46.72" data-beta="1.51" data-allocation="2.24">
+              <td><b class="mono">STLD</b> <span class="body-muted">Steel Dynamics</span></td>
+              <td class="num">260.15</td><td class="num down">−0.23%</td>
+              <td><svg class="spark" viewBox="0 0 64 18" width="64" height="18" aria-hidden="true"><path d="M0,13 L11,11 L21,12 L32,8 L43,6 L53,7 L64,5" /></svg></td>
+              <td class="num">55</td><td class="num">$14,308</td><td class="num up">+46.72%</td><td class="num">1.51</td><td class="num">2.24%</td>
+              <td><button data-expand aria-expanded="false" aria-label="Show thesis for STLD" style="background:none;border:0;cursor:pointer;color:var(--gold-deep);font-family:var(--font-mono)">›</button></td>
+            </tr>
+            <tr data-detail-row hidden><td colspan="10" style="background: var(--secondary); text-align: left; white-space: normal; padding: 1.25rem"><b>Materials · pitched Fall 2023.</b> Low-cost EAF operator taking share from integrated mills. Up 46.7%; the team is running a trim analysis at the next review.</td></tr>
+
+            <tr class="row-rail" data-sector="Energy" data-search="oxy occidental petroleum" data-company="Occidental Petroleum" data-price="56.63" data-daychange="-1.20" data-shares="194" data-value="10986" data-returnpct="34.80" data-beta="0.15" data-allocation="1.72">
+              <td><b class="mono">OXY</b> <span class="body-muted">Occidental Petroleum</span></td>
+              <td class="num">56.63</td><td class="num down">−1.20%</td>
+              <td><svg class="spark" viewBox="0 0 64 18" width="64" height="18" aria-hidden="true"><path d="M0,12 L11,10 L21,11 L32,7 L43,9 L53,8 L64,9" /></svg></td>
+              <td class="num">194</td><td class="num">$10,986</td><td class="num up">+34.80%</td><td class="num">0.15</td><td class="num">1.72%</td>
+              <td><button data-expand aria-expanded="false" aria-label="Show thesis for OXY" style="background:none;border:0;cursor:pointer;color:var(--gold-deep);font-family:var(--font-mono)">›</button></td>
+            </tr>
+            <tr data-detail-row hidden><td colspan="10" style="background: var(--secondary); text-align: left; white-space: normal; padding: 1.25rem"><b>Energy · lowest beta in the book (0.15).</b> Permian cost position plus deleveraging. Held as much for its correlation profile as for the commodity view.</td></tr>
+
+            <tr class="row-rail" data-sector="Consumer Cyclical" data-search="rl ralph lauren" data-company="Ralph Lauren" data-price="363.90" data-daychange="-1.85" data-shares="30" data-value="10917" data-returnpct="7.73" data-beta="1.37" data-allocation="1.71">
+              <td><b class="mono">RL</b> <span class="body-muted">Ralph Lauren</span></td>
+              <td class="num">363.90</td><td class="num down">−1.85%</td>
+              <td><svg class="spark" viewBox="0 0 64 18" width="64" height="18" aria-hidden="true"><path d="M0,10 L11,9 L21,11 L32,10 L43,12 L53,11 L64,13" /></svg></td>
+              <td class="num">30</td><td class="num">$10,917</td><td class="num up">+7.73%</td><td class="num">1.37</td><td class="num">1.71%</td>
+              <td><button data-expand aria-expanded="false" aria-label="Show thesis for RL" style="background:none;border:0;cursor:pointer;color:var(--gold-deep);font-family:var(--font-mono)">›</button></td>
+            </tr>
+            <tr data-detail-row hidden><td colspan="10" style="background: var(--secondary); text-align: left; white-space: normal; padding: 1.25rem"><b>Consumer Discretionary · pitched Spring 2025.</b> Brand-elevation strategy showing up as AUR growth rather than volume, with direct-to-consumer mix carrying gross margin.</td></tr>
+
+            <tr class="row-rail" data-sector="Communication Services" data-search="vz verizon communications" data-company="Verizon" data-price="47.81" data-daychange="-0.42" data-shares="213" data-value="10184" data-returnpct="15.87" data-beta="0.22" data-allocation="1.60">
+              <td><b class="mono">VZ</b> <span class="body-muted">Verizon Communications</span></td>
+              <td class="num">47.81</td><td class="num down">−0.42%</td>
+              <td><svg class="spark" viewBox="0 0 64 18" width="64" height="18" aria-hidden="true"><path d="M0,11 L11,10 L21,11 L32,9 L43,10 L53,9 L64,10" /></svg></td>
+              <td class="num">213</td><td class="num">$10,184</td><td class="num up">+15.87%</td><td class="num">0.22</td><td class="num">1.60%</td>
+              <td><button data-expand aria-expanded="false" aria-label="Show thesis for VZ" style="background:none;border:0;cursor:pointer;color:var(--gold-deep);font-family:var(--font-mono)">›</button></td>
+            </tr>
+            <tr data-detail-row hidden><td colspan="10" style="background: var(--secondary); text-align: left; white-space: normal; padding: 1.25rem"><b>Communications · income and ballast.</b> Beta of 0.22 with a covered dividend. Held for the diversification contribution rather than for growth.</td></tr>
+
+            <tr class="row-rail" data-sector="Industrials" data-search="de deere & company" data-company="Deere" data-price="542.18" data-daychange="0.59" data-shares="17" data-value="9217" data-returnpct="50.74" data-beta="0.93" data-allocation="1.45">
+              <td><b class="mono">DE</b> <span class="body-muted">Deere &amp; Company</span></td>
+              <td class="num">542.18</td><td class="num up">+0.59%</td>
+              <td><svg class="spark" viewBox="0 0 64 18" width="64" height="18" aria-hidden="true"><path d="M0,14 L11,12 L21,10 L32,11 L43,7 L53,6 L64,4" /></svg></td>
+              <td class="num">17</td><td class="num">$9,217</td><td class="num up">+50.74%</td><td class="num">0.93</td><td class="num">1.45%</td>
+              <td><button data-expand aria-expanded="false" aria-label="Show thesis for DE" style="background:none;border:0;cursor:pointer;color:var(--gold-deep);font-family:var(--font-mono)">›</button></td>
+            </tr>
+            <tr data-detail-row hidden><td colspan="10" style="background: var(--secondary); text-align: left; white-space: normal; padding: 1.25rem"><b>Industrials · best return in the book, +50.7%.</b> Precision-ag attach rate turning equipment sales into recurring software revenue. Held through the cycle trough on that mix shift.</td></tr>
+
+            <tr class="row-rail" data-sector="Consumer Defensive" data-search="pg procter & gamble" data-company="Procter &amp; Gamble" data-price="143.56" data-daychange="-1.61" data-shares="55" data-value="7896" data-returnpct="0.00" data-beta="0.39" data-allocation="1.24">
+              <td><b class="mono">PG</b> <span class="body-muted">Procter &amp; Gamble</span></td>
+              <td class="num">143.56</td><td class="num down">−1.61%</td>
+              <td><svg class="spark" viewBox="0 0 64 18" width="64" height="18" aria-hidden="true"><path d="M0,10 L11,10 L21,9 L32,11 L43,10 L53,11 L64,12" /></svg></td>
+              <td class="num">55</td><td class="num">$7,896</td><td class="num">0.00%</td><td class="num">0.39</td><td class="num">1.24%</td>
+              <td><button data-expand aria-expanded="false" aria-label="Show thesis for PG" style="background:none;border:0;cursor:pointer;color:var(--gold-deep);font-family:var(--font-mono)">›</button></td>
+            </tr>
+            <tr data-detail-row hidden><td colspan="10" style="background: var(--secondary); text-align: left; white-space: normal; padding: 1.25rem"><b>Consumer Staples · recently initiated.</b> Flat against cost. Defensive volume growth with pricing that has held post-inflation; a full quarter of data is needed before the thesis is testable.</td></tr>
+
+            <tr class="row-rail" data-sector="Financials" data-search="cof capital one financial" data-company="Capital One" data-price="187.93" data-daychange="0.49" data-shares="31" data-value="5826" data-returnpct="-7.41" data-beta="1.03" data-allocation="0.91">
+              <td><b class="mono">COF</b> <span class="body-muted">Capital One Financial</span></td>
+              <td class="num">187.93</td><td class="num up">+0.49%</td>
+              <td><svg class="spark" viewBox="0 0 64 18" width="64" height="18" aria-hidden="true"><path d="M0,8 L11,10 L21,9 L32,12 L43,11 L53,12 L64,11" /></svg></td>
+              <td class="num">31</td><td class="num">$5,826</td><td class="num down">−7.41%</td><td class="num">1.03</td><td class="num">0.91%</td>
+              <td><button data-expand aria-expanded="false" aria-label="Show thesis for COF" style="background:none;border:0;cursor:pointer;color:var(--gold-deep);font-family:var(--font-mono)">›</button></td>
+            </tr>
+            <tr data-detail-row hidden><td colspan="10" style="background: var(--secondary); text-align: left; white-space: normal; padding: 1.25rem"><b>Financials · pitched Fall 2025.</b> Discover integration synergies against a card book with rising charge-offs. Down 7.4%; the credit assumption is the part being re-tested.</td></tr>
+
+            <tr class="row-rail" data-sector="Consumer Defensive" data-search="sfd smithfield foods" data-company="Smithfield Foods" data-price="25.83" data-daychange="-2.16" data-shares="200" data-value="5166" data-returnpct="3.84" data-beta="0.38" data-allocation="0.81">
+              <td><b class="mono">SFD</b> <span class="body-muted">Smithfield Foods</span></td>
+              <td class="num">25.83</td><td class="num down">−2.16%</td>
+              <td><svg class="spark" viewBox="0 0 64 18" width="64" height="18" aria-hidden="true"><path d="M0,9 L11,11 L21,10 L32,9 L43,11 L53,12 L64,13" /></svg></td>
+              <td class="num">200</td><td class="num">$5,166</td><td class="num up">+3.84%</td><td class="num">0.38</td><td class="num">0.81%</td>
+              <td><button data-expand aria-expanded="false" aria-label="Show thesis for SFD" style="background:none;border:0;cursor:pointer;color:var(--gold-deep);font-family:var(--font-mono)">›</button></td>
+            </tr>
+            <tr data-detail-row hidden><td colspan="10" style="background: var(--secondary); text-align: left; white-space: normal; padding: 1.25rem"><b>Consumer Staples · post-IPO, small position.</b> Packaged-meats mix shift away from commodity hog exposure. Sized small pending two more reported quarters.</td></tr>
+
+            <tr class="row-rail" data-sector="Consumer Cyclical" data-search="dash doordash" data-company="DoorDash" data-price="159.29" data-daychange="1.65" data-shares="30" data-value="4779" data-returnpct="-2.20" data-beta="1.82" data-allocation="0.75">
+              <td><b class="mono">DASH</b> <span class="body-muted">DoorDash</span></td>
+              <td class="num">159.29</td><td class="num up">+1.65%</td>
+              <td><svg class="spark" viewBox="0 0 64 18" width="64" height="18" aria-hidden="true"><path d="M0,11 L11,13 L21,10 L32,12 L43,9 L53,10 L64,8" /></svg></td>
+              <td class="num">30</td><td class="num">$4,779</td><td class="num down">−2.20%</td><td class="num">1.82</td><td class="num">0.75%</td>
+              <td><button data-expand aria-expanded="false" aria-label="Show thesis for DASH" style="background:none;border:0;cursor:pointer;color:var(--gold-deep);font-family:var(--font-mono)">›</button></td>
+            </tr>
+            <tr data-detail-row hidden><td colspan="10" style="background: var(--secondary); text-align: left; white-space: normal; padding: 1.25rem"><b>Consumer Discretionary · newest position.</b> Grocery and retail categories carrying order growth as restaurant delivery matures. Highest beta after CIFR, hence the small size.</td></tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td>Total · 23 positions</td>
+              <td></td><td class="num up">+0.07%</td><td></td><td></td>
+              <td class="num">$622,024</td><td class="num up">+25.52%</td><td class="num">1.02</td><td class="num">100.00%</td><td></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+      <p data-filter-empty="#holdings-table" hidden class="body-muted" style="padding: 3rem; text-align: center">No positions match that filter.</p>
+
+      <div class="note" style="margin-top: 2.5rem; max-width: 64rem">
+        <b>Methodology.</b> Shares and cost basis are reconciled quarterly
+        against the custody statement. Prices are Polygon end-of-day closes,
+        cached and refreshed by a scheduled job; when the fetch fails the page
+        falls back to the last stored value rather than erroring. Beta is
+        trailing 3-year monthly against the S&amp;P 500. Past performance does
+        not indicate future results.
+      </div>
+    </div>
+  </section>
+</main>
+
+<!--@include _shared/footer.html-->
+
+<div class="mockup-flag">
+  <span>Mockup · Holdings</span>
+  <a href="index.html">All mockups ↗</a>
+</div>
+
+<style>
+  @media (min-width: 768px) { .movers { grid-template-columns: 1fr 1fr; gap: 3rem } }
+  .spark path { stroke-width: 1.25 }
+  td .spark path { stroke: var(--chart-bench) }
+  tr.row-rail:hover .spark path { stroke: var(--chart-smif) }
+</style>
+
+<!--@include _shared/script.html-->

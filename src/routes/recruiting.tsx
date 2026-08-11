@@ -6,46 +6,16 @@ import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import { PrepCard } from "@/components/PrepCard";
 
 import { applyUrl } from "@/lib/apply-url";
-
-// Countdown is data-driven from the CALENDAR (defined below) — we pick
-// the next upcoming event and count down to its start. When all events
-// have passed, we render an "Applications closed / next cycle" message
-// instead of a stale date. A plain-text fallback always renders for
-// no-JS / SSR.
-
-function parseEventStartMs(event: Event): number {
-  const { start } = parseEventTimes(event.time);
-  // Eastern offset for the Aug–Sep recruiting window is EDT (-04:00).
-  const iso = `${event.iso}T${pad2(start.h)}:${pad2(start.m)}:00-04:00`;
-  return new Date(iso).getTime();
-}
-
-function nextUpcomingEvent(nowMs: number): Event | null {
-  // CALENDAR is module-scoped (defined below this fn) — read it lazily.
-  return CALENDAR.find((e) => parseEventStartMs(e) > nowMs) ?? null;
-}
-
-function useCountdown() {
-  const [now, setNow] = useState<number | null>(null);
-  useEffect(() => {
-    setNow(Date.now());
-    const id = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(id);
-  }, []);
-  if (now === null) return null;
-  const next = nextUpcomingEvent(now);
-  if (!next) return { expired: true as const };
-  const deadline = parseEventStartMs(next);
-  const diff = Math.max(0, deadline - now);
-  return {
-    expired: false as const,
-    event: next,
-    days: Math.floor(diff / 86_400_000),
-    hours: Math.floor((diff % 86_400_000) / 3_600_000),
-    minutes: Math.floor((diff % 3_600_000) / 60_000),
-    seconds: Math.floor((diff % 60_000) / 1000),
-  };
-}
+// The calendar and its date math are shared with the mobile Apply bar, which
+// counts down to the same next event. Two copies would drift.
+import {
+  CALENDAR,
+  parseEventTimes,
+  pad2,
+  useCountdown,
+  staticNextEventLabel,
+  type RecruitingEvent as Event,
+} from "@/lib/recruiting-calendar";
 
 function CountdownUnit({ value, label }: { value: number | string; label: string }) {
   return (
@@ -54,17 +24,6 @@ function CountdownUnit({ value, label }: { value: number | string; label: string
       <span className="mt-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-on-dark-secondary">{label}</span>
     </div>
   );
-}
-
-// SSR/no-JS fallback label — uses CALENDAR + build-time clock to name a
-// real upcoming event so the resting HTML matches the live ticker after
-// hydration. Falls back to the first event, then to a closed-cycle label.
-function staticNextEventLabel(): { name: string; date: string; time: string; expired: boolean } {
-  const nowMs = Date.now();
-  const next = nextUpcomingEvent(nowMs);
-  if (next) return { name: next.name, date: next.date, time: next.time, expired: false };
-  const last = CALENDAR[CALENDAR.length - 1];
-  return { name: last?.name ?? "", date: last?.date ?? "", time: last?.time ?? "", expired: true };
 }
 
 function Countdown() {
@@ -116,64 +75,6 @@ function Countdown() {
   );
 }
 
-
-
-type Event = {
-  date: string; // display date
-  iso: string;  // for sorting
-  name: string;
-  time: string;
-  location: string;
-};
-
-const CALENDAR: Event[] = [
-  { iso: "2026-08-22", date: "Sat, Aug 22", name: "B-Involved Fair",          time: "12:00 - 3:00 PM",  location: "Memorial Mall (TBD)" },
-  { iso: "2026-08-25", date: "Tue, Aug 25", name: "SMIF Callout 1",            time: "7:30 - 8:30 PM",   location: "Rawls 1086" },
-  { iso: "2026-08-26", date: "Wed, Aug 26", name: "SMIF Coffee Chats 1",       time: "7:15 - 8:00 PM",   location: "Rawls 1011" },
-  { iso: "2026-08-27", date: "Thu, Aug 27", name: "Daniels Club Expo",         time: "12:00 - 4:00 PM",  location: "Rawls Atrium" },
-  { iso: "2026-08-27", date: "Thu, Aug 27", name: "SMIF Callout 2",            time: "7:30 - 8:30 PM",   location: "Rawls 1086" },
-  { iso: "2026-08-31", date: "Mon, Aug 31", name: "SMIF Finance Club Consortium", time: "12:00 - 2:30 PM", location: "Rawls Atrium" },
-  { iso: "2026-08-31", date: "Mon, Aug 31", name: "SMIF Coffee Chats 2",       time: "7:00 - 8:00 PM",   location: "Rawls 1086" },
-  { iso: "2026-09-01", date: "Tue, Sep 1",  name: "SMIF Callout 3",            time: "7:30 - 8:30 PM",   location: "Rawls 1086" },
-  { iso: "2026-09-08", date: "Mon, Sep 8",  name: "SMIF Interviews, Day A",    time: "TBD",              location: "Young Hall 223, 217, 219, 213" },
-  { iso: "2026-09-09", date: "Tue, Sep 9",  name: "SMIF Interviews, Day B",    time: "TBD",              location: "Young Hall 223, 217, 219, 213" },
-];
-
-// Parse "7:30 PM" / "12:00 PM" — returns { h, m } in 24h, or null
-function parseTimeToken(t: string): { h: number; m: number } | null {
-  const match = t.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
-  if (!match) return null;
-  const [, hh, mm, mer] = match;
-  let h = parseInt(hh, 10);
-  const m = parseInt(mm, 10);
-  if (mer.toUpperCase() === "PM" && h !== 12) h += 12;
-  if (mer.toUpperCase() === "AM" && h === 12) h = 0;
-  return { h, m };
-}
-
-// Parse event.time like "7:30 - 8:30 PM" or "12:00 - 3:00 PM" — meridiem from end token applies to start if missing
-function parseEventTimes(time: string): { start: { h: number; m: number }; end: { h: number; m: number } } {
-  if (time === "TBD") {
-    return { start: { h: 17, m: 0 }, end: { h: 18, m: 0 } };
-  }
-  // Accept hyphen or en-dash range separators (surrounded by spaces so
-  // clock values like "7:30" are never split).
-  const parts = time.split(/\s+[–-]\s+/).map((s) => s.trim());
-  if (parts.length !== 2) return { start: { h: 17, m: 0 }, end: { h: 18, m: 0 } };
-  let [startStr, endStr] = parts;
-  // If start lacks meridiem, inherit from end
-  if (!/AM|PM/i.test(startStr)) {
-    const merMatch = endStr.match(/AM|PM/i);
-    if (merMatch) startStr = `${startStr} ${merMatch[0]}`;
-  }
-  const start = parseTimeToken(startStr) ?? { h: 17, m: 0 };
-  const end = parseTimeToken(endStr) ?? { h: 18, m: 0 };
-  return { start, end };
-}
-
-function pad2(n: number) { return String(n).padStart(2, "0"); }
-
-// Returns "2026-08-25T19:30:00-04:00" (EDT for Aug/Sep 2026)
 function buildEventBody(event: Event): string {
   const prefix = event.time === "TBD"
     ? "Note: time TBD. Your specific interview slot will be communicated by email. Update this event when you receive your slot.\n\n"
@@ -446,7 +347,6 @@ function Recruiting() {
             );
           })}
         </RevealGroup>
-
 
         <p className="mt-6 text-sm text-muted-foreground">
           Locations and times subject to change. Email{" "}

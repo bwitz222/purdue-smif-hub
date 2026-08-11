@@ -66,14 +66,27 @@
   --gold-deep: #7F6335;
   --ink:       #0A0A0A;
   --ink-soft:  #1C1C1A;
-  /* Semantic financial colors — distinct from destructive (error) red */
-  --gain:      #2E7D52;
+  /* Semantic financial colors — distinct from destructive (error) red.
+     --gain was #2E7D52, which measures 4.38:1 against --secondary (#F2EFE7)
+     at 14px and fails WCAG AA. Like --gold-deep it is a derived semantic
+     color rather than a ratified Purdue brand color, so it is free to move:
+     #2A7049 clears it at 5.22:1 on the same ground. The grouped analytics
+     tiles and the holdings tfoot both put gain figures on that ground. */
+  --gain:      #2A7049;
   --loss:      #B94040;
   /* Semantic on-dark text tokens — replace ad-hoc text-background/[n] values */
   --text-on-dark-primary:   rgba(250,250,246,0.95);
   --text-on-dark-secondary: rgba(250,250,246,0.75);
   --text-on-dark-muted:     rgba(250,250,246,0.55);
   --text-on-dark-dim:       rgba(250,250,246,0.55);
+  /* Chart palette. These were hardcoded inside src/routes/performance.tsx
+     (SMIF_COLOR / BENCH_COLOR plus bare #E0DDD5 and #6B6860 literals), which
+     let the charts drift from the rest of the page. Read them with
+     chartColors() in src/lib/chart-theme.ts. */
+  --chart-smif:  #CEB888;
+  --chart-bench: #6B6860;
+  --chart-grid:  #E0DDD5;
+  --chart-axis:  #6B6860;
   --gradient-hero: linear-gradient(160deg, rgba(10,10,10,0.88) 0%, rgba(10,10,10,0.52) 100%);
   --gradient-gold: linear-gradient(135deg, #CEB888 0%, #8E6F3E 100%);
   --shadow-elegant: 0 24px 60px -20px rgba(10,10,10,0.22);
@@ -83,6 +96,12 @@
 
 @layer base {
   * { border-color: var(--color-border); }
+  /* Anything scrolled into view programmatically — an in-page anchor, a
+     focused control, a row the browser is revealing — must clear the sticky
+     56px site header and, on /holdings, the sticky table header under it.
+     Without this a target lands underneath them and is both unreadable and
+     unclickable. Individual anchors that want more still set scroll-mt-*. */
+  html { scroll-padding-top: 6rem; }
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);

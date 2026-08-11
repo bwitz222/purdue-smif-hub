@@ -1,0 +1,329 @@
+<title>Home — Purdue SMIF Mockup</title>
+<!--@include _shared/style.html-->
+
+<a class="skip-link" href="#main">Skip to content</a>
+<div class="progress" aria-hidden="true"></div>
+<!--@include _shared/header.html-->
+
+<main id="main">
+  <!-- ══ HERO A ══════════════════════════════════════════════════════════
+       The live hero is min-h-[100dvh], which puts the four proof stats below
+       the fold on every laptop. At 82vh the headline, both CTAs and the stat
+       rail land in one screen — the fund's whole argument, unscrolled. -->
+  <section class="section--dark" style="position: relative; isolation: isolate; overflow: hidden; min-height: 82vh; display: flex; flex-direction: column; border-top: 0">
+    <div aria-hidden="true" style="position: absolute; inset: 0; z-index: -1">
+      <img src="<!--@img src/assets/nyc-skyline.webp-->" alt="" width="1920" height="1080" class="kenburns" style="height: 100%; width: 100%; object-fit: cover; opacity: 0.3" />
+      <div style="position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(10,10,10,0.85), rgba(10,10,10,0.72) 55%, #0a0a0a)"></div>
+    </div>
+
+    <div class="wrap" style="flex: 1; display: flex; flex-direction: column; justify-content: center; padding-block: clamp(3rem, 8vw, 5rem)">
+      <div style="max-width: 56rem">
+        <p class="eyebrow fade-up" style="color: rgba(206,184,136,0.85)">Daniels School of Business · Est. 2009</p>
+        <h1 class="fade-up d1" style="font-size: var(--step-6); line-height: 1.02">
+          Purdue <span class="gold">Student</span> Managed<br />Investment Fund
+        </h1>
+        <p class="fade-up d3" style="margin-top: 1.75rem; max-width: 34rem; color: var(--on-dark-primary); line-height: 1.65">
+          A student-run fund managing real university capital, built on rigorous
+          research and a disciplined investment process.
+        </p>
+
+        <!-- One dominant action. "View Portfolio" stays, but demoted to a
+             text link so the gold button is unambiguously the next step. -->
+        <div class="fade-up d4" style="margin-top: 2.25rem; display: flex; align-items: center; gap: 2rem; flex-wrap: wrap">
+          <a class="btn btn--gold group" href="apply-contact.html">
+            Apply to Join <span class="arrow" aria-hidden="true">→</span>
+          </a>
+          <a class="link group" href="holdings.html" style="color: var(--on-dark-primary)">
+            View the portfolio <span class="arrow" aria-hidden="true">→</span>
+          </a>
+        </div>
+
+        <!-- Credibility, above the fold. Benchmarking, reporting cadence and
+             faculty oversight were all buried mid-page on the live site. -->
+        <ul class="fade-up d5" style="margin-top: 2.5rem; list-style: none; padding: 0; display: flex; gap: 1.75rem; flex-wrap: wrap">
+          <li class="meta" style="display: flex; align-items: center; gap: 0.5rem"><span class="gold" aria-hidden="true">●</span> Benchmarked to the S&amp;P 500</li>
+          <li class="meta" style="display: flex; align-items: center; gap: 0.5rem"><span class="gold" aria-hidden="true">●</span> Reported quarterly</li>
+          <li class="meta" style="display: flex; align-items: center; gap: 0.5rem"><span class="gold" aria-hidden="true">●</span> Faculty-supervised</li>
+        </ul>
+      </div>
+
+      <div class="hairline cols-4" style="margin-top: clamp(2.5rem, 5vw, 4rem); background: transparent; border: 0; gap: 2rem 2.5rem; max-width: 64rem" data-reveal data-stagger>
+        <div class="stat" data-reveal style="padding: 0; border-top-color: rgba(206,184,136,0.5)">
+          <div class="stat__value gold">$<span data-countup="638" data-duration="1.8">638</span>K</div>
+          <div class="stat__label">Assets Under Management</div>
+          <div class="stat__sub">actively deployed</div>
+        </div>
+        <div class="stat" data-reveal style="padding: 0; border-top-color: rgba(206,184,136,0.5)">
+          <div class="stat__value gold"><span data-countup="50" data-duration="1.4">50</span>+</div>
+          <div class="stat__label">Active Members</div>
+          <div class="stat__sub">across all years</div>
+        </div>
+        <div class="stat" data-reveal style="padding: 0; border-top-color: rgba(206,184,136,0.5)">
+          <div class="stat__value gold"><span data-countup="17" data-duration="1.2">17</span>Y+</div>
+          <div class="stat__label">Track Record</div>
+          <div class="stat__sub">since est. 2009</div>
+        </div>
+        <div class="stat" data-reveal style="padding: 0; border-top-color: rgba(206,184,136,0.5)">
+          <div class="stat__value gold"><span data-countup="10" data-duration="1">10</span></div>
+          <div class="stat__label">Sector Coverage Teams</div>
+          <div class="stat__sub">bottom-up research</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- The .ticker-wrap / .ticker-inner rules already exist in styles.css and
+         no route uses them. The portfolio is the product — this is where it
+         earns its keep. Pauses on hover and on keyboard focus. -->
+    <div class="ticker-wrap" tabindex="0" role="marquee" aria-label="Live portfolio quotes">
+      <div class="ticker-inner">
+        <span class="ticker-item"><b>SPY</b> 756.48 <span class="up">+0.25%</span></span>
+        <span class="ticker-item"><b>MNST</b> 88.08 <span class="up">+0.10%</span></span>
+        <span class="ticker-item"><b>USB</b> 54.85 <span class="up">+0.73%</span></span>
+        <span class="ticker-item"><b>BRK.B</b> 474.48 <span class="down">−0.62%</span></span>
+        <span class="ticker-item"><b>META</b> 632.51 <span class="down">−0.44%</span></span>
+        <span class="ticker-item"><b>AMZN</b> 270.64 <span class="down">−1.23%</span></span>
+        <span class="ticker-item"><b>MSFT</b> 450.24 <span class="up">+5.45%</span></span>
+        <span class="ticker-item"><b>PANW</b> 281.69 <span class="up">+9.28%</span></span>
+        <span class="ticker-item"><b>CMI</b> 646.63 <span class="down">−3.30%</span></span>
+        <span class="ticker-item"><b>CIFR</b> 23.65 <span class="down">−3.82%</span></span>
+        <span class="ticker-item"><b>LLY</b> 1105.00 <span class="down">−1.93%</span></span>
+        <span class="ticker-item"><b>STLD</b> 260.15 <span class="down">−0.23%</span></span>
+        <span class="ticker-item" aria-hidden="true"><b>SPY</b> 756.48 <span class="up">+0.25%</span></span>
+        <span class="ticker-item" aria-hidden="true"><b>MNST</b> 88.08 <span class="up">+0.10%</span></span>
+        <span class="ticker-item" aria-hidden="true"><b>USB</b> 54.85 <span class="up">+0.73%</span></span>
+        <span class="ticker-item" aria-hidden="true"><b>BRK.B</b> 474.48 <span class="down">−0.62%</span></span>
+        <span class="ticker-item" aria-hidden="true"><b>META</b> 632.51 <span class="down">−0.44%</span></span>
+        <span class="ticker-item" aria-hidden="true"><b>AMZN</b> 270.64 <span class="down">−1.23%</span></span>
+        <span class="ticker-item" aria-hidden="true"><b>MSFT</b> 450.24 <span class="up">+5.45%</span></span>
+        <span class="ticker-item" aria-hidden="true"><b>PANW</b> 281.69 <span class="up">+9.28%</span></span>
+        <span class="ticker-item" aria-hidden="true"><b>CMI</b> 646.63 <span class="down">−3.30%</span></span>
+        <span class="ticker-item" aria-hidden="true"><b>CIFR</b> 23.65 <span class="down">−3.82%</span></span>
+        <span class="ticker-item" aria-hidden="true"><b>LLY</b> 1105.00 <span class="down">−1.93%</span></span>
+        <span class="ticker-item" aria-hidden="true"><b>STLD</b> 260.15 <span class="down">−0.23%</span></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ HERO B ══════════════════════════════════════════════════════════ -->
+  <section class="section section--tight" style="border-top: 0">
+    <div class="wrap">
+      <div class="note" style="max-width: 62rem">
+        <b>Two hero directions, side by side.</b> Variant A above keeps the
+        photograph. Variant B below drops it entirely: the skyline image is a
+        1920×1080 LCP element rendered at 30% opacity behind a near-opaque
+        scrim, so it costs the page's largest paint for almost no visual
+        payoff. Variant B spends that budget on a live portfolio panel
+        instead — the one thing no peer club can fake. Pick one; they are not
+        meant to ship together.
+      </div>
+    </div>
+  </section>
+
+  <section class="section--dark" style="border-top: 1px solid var(--on-dark-hairline); position: relative; overflow: hidden">
+    <div aria-hidden="true" style="position: absolute; inset: 0; background: radial-gradient(120% 80% at 15% 0%, rgba(206,184,136,0.13), transparent 60%)"></div>
+    <div class="wrap" style="position: relative; padding-block: clamp(3.5rem, 7vw, 6rem)">
+      <div style="display: grid; gap: clamp(2.5rem, 5vw, 4rem); grid-template-columns: 1fr; align-items: center" class="hero-b">
+        <div data-reveal>
+          <p class="eyebrow">Variant B · No hero image</p>
+          <h2 style="font-size: var(--step-6); line-height: 1.02">
+            We manage<br /><span class="gold">$638,000</span><br />of Purdue's money.
+          </h2>
+          <p class="lead" style="margin-top: 1.5rem; max-width: 32rem; color: var(--on-dark-secondary)">
+            Fifty students. Ten sector teams. Every position debated, voted on,
+            and reported against the S&amp;P 500 — since 2009.
+          </p>
+          <div style="margin-top: 2rem; display: flex; align-items: center; gap: 2rem; flex-wrap: wrap">
+            <a class="btn btn--gold group" href="apply-contact.html">Apply to Join <span class="arrow" aria-hidden="true">→</span></a>
+            <a class="link group" href="performance.html" style="color: var(--on-dark-primary)">See the track record <span class="arrow" aria-hidden="true">→</span></a>
+          </div>
+        </div>
+
+        <!-- The proof panel: what the fund actually holds, right now. -->
+        <div class="card" data-reveal data-inview-watch style="background: rgba(255,255,255,0.03); border-color: var(--on-dark-hairline); padding: 1.75rem">
+          <div class="between" style="align-items: center; margin-bottom: 1.5rem">
+            <span class="meta" style="color: var(--gold)">Portfolio · Live</span>
+            <span class="meta">As of 11 Aug close</span>
+          </div>
+          <div class="stat" style="border-top: 0; padding-top: 0">
+            <div class="stat__value gold">$637,508</div>
+            <div class="stat__label" style="color: var(--on-dark-secondary)">Total value · <span class="up">+18.4%</span> since inception</div>
+          </div>
+          <svg class="spark" viewBox="0 0 320 72" style="width: 100%; height: 72px; margin-block: 1.5rem" role="img" aria-label="Fund value trend, up 18.4 percent since inception">
+            <path class="spark-draw" d="M0,58 L27,54 L53,57 L80,46 L107,49 L133,38 L160,41 L187,30 L213,33 L240,22 L267,26 L293,14 L320,8" />
+          </svg>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--on-dark-hairline)">
+            <div style="background: #0f0f0e; padding: 0.875rem">
+              <div class="meta">Day P&amp;L</div>
+              <div class="num up" style="font-size: 1.0625rem; margin-top: 0.25rem">+$1,354</div>
+            </div>
+            <div style="background: #0f0f0e; padding: 0.875rem">
+              <div class="meta">Beta</div>
+              <div class="num" style="font-size: 1.0625rem; margin-top: 0.25rem; color: var(--on-dark-primary)">1.02</div>
+            </div>
+            <div style="background: #0f0f0e; padding: 0.875rem">
+              <div class="meta">Positions</div>
+              <div class="num" style="font-size: 1.0625rem; margin-top: 0.25rem; color: var(--on-dark-primary)">23</div>
+            </div>
+          </div>
+          <a class="link group" href="holdings.html" style="margin-top: 1.5rem">Every position <span class="arrow" aria-hidden="true">→</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ MISSION ═════════════════════════════════════════════════════════ -->
+  <section class="section section--dark">
+    <div class="wrap">
+      <div data-reveal style="max-width: 40rem; margin-bottom: clamp(3rem, 6vw, 5rem)">
+        <p class="eyebrow">What we do</p>
+        <h2 style="font-size: var(--step-5)">
+          Real capital.<br />Real research.<br /><span style="color: rgba(206,184,136,0.7)">Real outcomes.</span>
+        </h2>
+      </div>
+      <div style="display: grid; gap: clamp(2.5rem, 5vw, 4rem); grid-template-columns: 1fr; align-items: start" class="mission-grid">
+        <div data-reveal>
+          <p class="lead" style="color: var(--on-dark-primary)">
+            SMIF is Purdue's student investment club with a real portfolio: it
+            gives students the rare opportunity to manage actual investment
+            capital under faculty mentorship. Our analysts apply
+            institutional-grade frameworks to fundamental equity research,
+            building skills that translate directly to careers in asset
+            management, investment banking, and equity research.
+          </p>
+          <p class="body-muted" style="margin-top: 1.25rem; max-width: 62ch">
+            Every semester, analysts pitch positions to the full fund. Accepted
+            ideas enter the real portfolio. Rejected ideas come with feedback
+            that sharpens the next pitch. This is the closest an undergraduate
+            education gets to the actual job.
+          </p>
+          <a class="link group" href="about.html" style="margin-top: 1.5rem">Learn about our process <span class="arrow" aria-hidden="true">→</span></a>
+        </div>
+        <div data-reveal style="position: relative">
+          <img src="<!--@img src/assets/hero-campus.webp-->" alt="Purdue's Daniels School of Business campus" loading="lazy" width="1600" height="1200" style="width: 100%; aspect-ratio: 3/4; object-fit: cover; box-shadow: var(--shadow-elegant)" />
+          <div style="position: absolute; bottom: -1.25rem; left: -1.25rem; background: var(--gold); color: #0a0a0a; padding: 1.25rem; box-shadow: var(--shadow-gold)">
+            <div style="font-family: var(--font-display); font-size: 1.875rem; font-weight: 700; line-height: 1">17Y+</div>
+            <div style="font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.14em; opacity: 0.75; margin-top: 0.25rem">Track record</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ PILLARS ═════════════════════════════════════════════════════════ -->
+  <section class="section">
+    <div class="wrap">
+      <div class="between" data-reveal style="margin-bottom: clamp(2.5rem, 5vw, 4rem)">
+        <div>
+          <p class="eyebrow">The offer</p>
+          <h2 style="font-size: var(--step-4)">Three pillars<br />of the fund</h2>
+        </div>
+        <a class="link group" href="apply-contact.html">Apply to join <span class="arrow" aria-hidden="true">→</span></a>
+      </div>
+      <div class="hairline cols-3" data-reveal data-stagger>
+        <div data-reveal class="pillar">
+          <div class="gold-deep" style="margin-bottom: 1.5rem" aria-hidden="true">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 20h18M6 20V10M11 20V4M16 20v-8M21 20v-5" /></svg>
+          </div>
+          <h3 class="h5">Investment Research</h3>
+          <p class="body-muted" style="margin-top: 0.75rem">
+            Bottom-up fundamental analysis across equity sector teams. Every
+            pitch is defended live before the full investment committee, with
+            the same rigor as a professional fund.
+          </p>
+        </div>
+        <div data-reveal class="pillar">
+          <div class="gold-deep" style="margin-bottom: 1.5rem" aria-hidden="true">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 19a4 4 0 0 0-8 0M12 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM21 19a4 4 0 0 0-3-3.9M18 11a3 3 0 0 0 0-6" /></svg>
+          </div>
+          <h3 class="h5">Mentorship &amp; Recruiting</h3>
+          <p class="body-muted" style="margin-top: 0.75rem">
+            Direct access to Purdue alumni at investment banks, hedge funds, and
+            asset managers, plus structured preparation to compete for those
+            seats.
+          </p>
+        </div>
+        <div data-reveal class="pillar">
+          <div class="gold-deep" style="margin-bottom: 1.5rem" aria-hidden="true">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="9" r="6" /><path d="M9 14.5 8 22l4-2.2L16 22l-1-7.5" /></svg>
+          </div>
+          <h3 class="h5">Real Portfolio</h3>
+          <p class="body-muted" style="margin-top: 0.75rem">
+            Students vote on every position. Performance is benchmarked against
+            the S&amp;P 500 and reported quarterly. No simulations: real
+            capital, real accountability.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ PERFORMANCE TEASER ══════════════════════════════════════════════ -->
+  <section class="section section--tight section--paper">
+    <div class="wrap between" data-reveal data-inview-watch style="align-items: center">
+      <div>
+        <p class="eyebrow">Accountability</p>
+        <h2 style="font-size: var(--step-3)">
+          Benchmarked against the S&amp;P 500.<br />Reported every quarter.
+        </h2>
+      </div>
+      <div class="row" style="gap: 2rem">
+        <div>
+          <svg class="spark" viewBox="0 0 260 60" style="width: 260px; max-width: 100%; height: 60px" role="img" aria-label="Fund value trend since inception">
+            <path class="spark-draw" d="M0,50 L22,47 L43,49 L65,40 L87,42 L108,33 L130,35 L152,26 L173,29 L195,18 L217,21 L238,11 L260,5" />
+          </svg>
+          <div class="meta" style="margin-top: 0.5rem">Growth of $1 · since inception</div>
+        </div>
+        <div class="row" style="gap: 0.75rem">
+          <a class="btn btn--ink group" href="performance.html">Performance <span class="arrow" aria-hidden="true">→</span></a>
+          <a class="btn btn--outline" href="holdings.html">Holdings</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ CTA ═════════════════════════════════════════════════════════════ -->
+  <section class="section section--dark" style="position: relative; overflow: hidden">
+    <div class="watermark" aria-hidden="true"></div>
+    <div class="wrap" data-reveal style="position: relative; text-align: center; max-width: 48rem; margin-inline: auto">
+      <h2 style="font-size: var(--step-5)">Ready to invest<br />in your future?</h2>
+      <p style="margin-top: 1.5rem; max-width: 32rem; margin-inline: auto; color: var(--on-dark-secondary); line-height: 1.7">
+        Applications open each fall and spring semester. We're looking for
+        curious, rigorous students from every college at Purdue.
+      </p>
+      <!-- Applications open in 11 days — stated, not implied. -->
+      <p class="meta gold" style="margin-top: 1.25rem">Fall 2026 applications open 22 August</p>
+      <div style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap">
+        <a class="btn btn--gold group" href="apply-contact.html">Apply to Join <span class="arrow" aria-hidden="true">→</span></a>
+        <a class="btn btn--outline" href="team.html">Meet the Team</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!--@include _shared/footer.html-->
+
+<!-- Mobile conversion bar. Slides in past the hero, where the header's Apply
+     button has scrolled away and there is nothing left to act on. -->
+<div class="apply-bar" data-visible="false">
+  <div>
+    <div class="apply-bar__meta">Fall 2026 recruiting</div>
+    <div class="apply-bar__count mono" data-countdown-mini>Opens 22 August</div>
+  </div>
+  <a class="btn btn--gold btn--sm" href="apply-contact.html">Apply</a>
+</div>
+
+<div class="mockup-flag">
+  <span>Mockup · Home</span>
+  <a href="index.html">All mockups ↗</a>
+</div>
+
+<style>
+  @media (min-width: 900px) {
+    .hero-b { grid-template-columns: 1.05fr 0.95fr }
+    .mission-grid { grid-template-columns: 3fr 2fr }
+  }
+  main { padding-bottom: 5rem }
+  @media (min-width: 1024px) { main { padding-bottom: 0 } }
+</style>
+
+<!--@include _shared/script.html-->

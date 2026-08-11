@@ -1,0 +1,264 @@
+<title>Performance — Purdue SMIF Mockup</title>
+<!--@include _shared/style.html-->
+
+<a class="skip-link" href="#main">Skip to content</a>
+<div class="progress" aria-hidden="true"></div>
+<!--@include _shared/header.html-->
+
+<main id="main">
+  <section class="section section--tight section--dark" style="border-top: 0">
+    <div class="wrap">
+      <div class="between" style="align-items: flex-end">
+        <div>
+          <p class="eyebrow">Track record</p>
+          <h1 style="font-size: var(--step-5)">Benchmarked.<br />Transparent.<br /><span class="gold">Quarterly.</span></h1>
+        </div>
+        <button class="theme-toggle" data-theme-toggle aria-pressed="false" style="border-color: var(--on-dark-hairline); color: var(--on-dark-secondary)">
+          <span aria-hidden="true">◐</span> <span data-theme-label>Desk mode</span>
+        </button>
+      </div>
+
+      <div class="hairline cols-4" style="margin-top: 2.5rem" data-reveal data-stagger>
+        <div data-reveal>
+          <div class="stat" style="border-top: 0; padding-top: 0">
+            <div class="stat__value">+<span data-countup="15.6" data-decimals="1">15.6</span>%</div>
+            <div class="stat__label">1-Year Return</div>
+            <div class="stat__sub">S&amp;P 500 TR +6.8%</div>
+          </div>
+        </div>
+        <div data-reveal>
+          <div class="stat" style="border-top: 0; padding-top: 0">
+            <div class="stat__value">+<span data-countup="13.1" data-decimals="1">13.1</span>%</div>
+            <div class="stat__label">5-Year Annualized</div>
+            <div class="stat__sub">S&amp;P 500 TR +12.4%</div>
+          </div>
+        </div>
+        <div data-reveal>
+          <div class="stat" style="border-top: 0; padding-top: 0">
+            <div class="stat__value">+<span data-countup="12.5" data-decimals="1">12.5</span>%</div>
+            <div class="stat__label">Since Inception</div>
+            <div class="stat__sub">annualized, since 2009</div>
+          </div>
+        </div>
+        <div data-reveal>
+          <div class="stat" style="border-top: 0; padding-top: 0">
+            <div class="stat__value">−<span data-countup="21.4" data-decimals="1">21.4</span>%</div>
+            <div class="stat__label">Max Drawdown</div>
+            <div class="stat__sub">Feb – Mar 2020</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="wrap">
+      <div class="note" style="max-width: 64rem">
+        <b>A number without its benchmark is not a result.</b> The live chart
+        plots the fund alone and hides the comparison behind a series toggle,
+        so the reader has to opt in to the only question they came with: did
+        this beat the index? Here the benchmark is drawn by default, the spread
+        is filled between the two lines, and the drawdown band sits directly
+        under the same time axis instead of on a separate tab.
+        <em>Figures on this page are illustrative mockup data.</em>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ MAIN CHART ══════════════════════════════════════════════════════ -->
+  <section style="padding-bottom: clamp(2.5rem, 5vw, 4rem)">
+    <div class="wrap">
+      <div class="between" data-reveal style="align-items: center; margin-bottom: 1.5rem">
+        <div>
+          <h2 style="font-size: var(--step-3)">Growth of $1</h2>
+          <p class="meta" style="margin-top: 0.375rem">Since inception · monthly · total return</p>
+        </div>
+        <div class="row" style="gap: 1rem">
+          <div class="segment" data-toggle-group role="group" aria-label="Period">
+            <button data-value="1y" aria-pressed="false">1Y</button>
+            <button data-value="3y" aria-pressed="false">3Y</button>
+            <button data-value="5y" aria-pressed="false">5Y</button>
+            <button data-value="itd" aria-pressed="true">ITD</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Legend sits above the plot, not in a corner overlay, so it survives
+           a narrow viewport without covering the data. -->
+      <div class="row" data-reveal style="gap: 1.5rem; margin-bottom: 0.75rem">
+        <span class="row" style="gap: 0.5rem"><span style="width: 1.25rem; height: 2px; background: var(--chart-smif)"></span><span class="meta" style="color: var(--foreground)">SMIF</span> <span class="num" style="font-size: 0.8125rem">7.88×</span></span>
+        <span class="row" style="gap: 0.5rem"><span style="width: 1.25rem; height: 2px; background: var(--chart-bench)"></span><span class="meta">S&amp;P 500 TR</span> <span class="num body-muted" style="font-size: 0.8125rem">7.18×</span></span>
+        <span class="badge badge--up">+70bps annualized</span>
+      </div>
+
+      <div class="chart-frame" data-reveal data-inview-watch>
+        <svg viewBox="0 0 960 300" preserveAspectRatio="none" style="width: 100%; height: clamp(220px, 34vw, 340px)" role="img" aria-label="Growth of one dollar since 2009. SMIF ends at 7.88 times, the S&amp;P 500 total return index at 7.18 times.">
+          <g stroke="var(--chart-grid)" stroke-width="1">
+            <line x1="0" y1="12" x2="960" y2="12" /><line x1="0" y1="80" x2="960" y2="80" />
+            <line x1="0" y1="148" x2="960" y2="148" /><line x1="0" y1="216" x2="960" y2="216" />
+            <line x1="0" y1="274" x2="960" y2="274" />
+          </g>
+          <!-- The spread between the fund and the index, filled. This is the
+               whole argument of the page, and it was previously invisible. -->
+          <path class="chart-spread" d="<!--@include _shared/paths/smif.txt--> L960,274 L0,274 Z" fill="url(#spread)" />
+          <defs>
+            <linearGradient id="spread" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="var(--chart-smif)" stop-opacity="0.30" />
+              <stop offset="100%" stop-color="var(--chart-smif)" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+          <path d="<!--@include _shared/paths/spy.txt-->" fill="none" stroke="var(--chart-bench)" stroke-width="1.5" stroke-dasharray="4 3" vector-effect="non-scaling-stroke" />
+          <path class="chart-line" d="<!--@include _shared/paths/smif.txt-->" fill="none" stroke="var(--chart-smif)" stroke-width="2" vector-effect="non-scaling-stroke" />
+        </svg>
+        <div class="axis-x">
+          <span>2009</span><span>2013</span><span>2017</span><span>2021</span><span>2026</span>
+        </div>
+      </div>
+
+      <!-- Drawdown, on the same axis. Underwater periods are the part a
+           committee actually interrogates. -->
+      <div style="margin-top: 1.75rem" data-reveal data-inview-watch>
+        <div class="between" style="align-items: baseline; margin-bottom: 0.5rem">
+          <span class="meta" style="color: var(--foreground)">Drawdown from peak</span>
+          <span class="meta">Worst: −21.4% · Mar 2020 · recovered in 7 months</span>
+        </div>
+        <div class="chart-frame" style="padding-bottom: 0">
+          <svg viewBox="0 0 960 60" preserveAspectRatio="none" style="width: 100%; height: 60px" role="img" aria-label="Drawdown from peak. The deepest is 21.4 percent in March 2020.">
+            <path class="chart-dd" d="<!--@include _shared/paths/dd.txt-->" fill="var(--loss)" />
+            <line x1="0" y1="0" x2="960" y2="0" stroke="var(--chart-grid)" />
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ RISK TILES ══════════════════════════════════════════════════════ -->
+  <section class="section section--tight section--paper">
+    <div class="wrap">
+      <p class="eyebrow" data-reveal>Risk &amp; return analytics</p>
+      <h2 style="font-size: var(--step-3)" data-reveal>How the return was earned</h2>
+      <p class="lead" data-reveal style="margin-top: 0.75rem">
+        Twelve figures, grouped by the question they answer, rather than
+        twelve tiles in one undifferentiated grid.
+      </p>
+
+      <h3 class="meta" data-reveal style="margin-top: 2.5rem; color: var(--foreground)">Return</h3>
+      <div class="hairline cols-4" data-reveal data-stagger>
+        <div data-reveal><div class="meta">Cumulative Return</div><div class="num tile-val up">+688%</div><div class="body-muted tile-sub">since Jan 2009</div></div>
+        <div data-reveal><div class="meta">Annualized Alpha</div><div class="num tile-val up">+0.71%</div><div class="body-muted tile-sub">vs S&amp;P 500 TR</div></div>
+        <div data-reveal><div class="meta">Best Month</div><div class="num tile-val up">+11.4%</div><div class="body-muted tile-sub">Apr 2020</div></div>
+        <div data-reveal><div class="meta">Worst Month</div><div class="num tile-val down">−9.8%</div><div class="body-muted tile-sub">Mar 2020</div></div>
+      </div>
+
+      <h3 class="meta" data-reveal style="margin-top: 2.5rem; color: var(--foreground)">Risk taken</h3>
+      <div class="hairline cols-4" data-reveal data-stagger>
+        <div data-reveal><div class="meta">Annualized Volatility</div><div class="num tile-val">14.8%</div><div class="body-muted tile-sub">benchmark 14.1%</div></div>
+        <div data-reveal><div class="meta">Beta</div><div class="num tile-val">1.02</div><div class="body-muted tile-sub">vs S&amp;P 500</div></div>
+        <div data-reveal><div class="meta">Tracking Error</div><div class="num tile-val">4.6%</div><div class="body-muted tile-sub">annualized</div></div>
+        <div data-reveal><div class="meta">Correlation</div><div class="num tile-val">0.95</div><div class="body-muted tile-sub">monthly, vs benchmark</div></div>
+      </div>
+
+      <h3 class="meta" data-reveal style="margin-top: 2.5rem; color: var(--foreground)">Return per unit of risk</h3>
+      <div class="hairline cols-4" data-reveal data-stagger>
+        <div data-reveal><div class="meta">Sharpe Ratio</div><div class="num tile-val">0.94</div><div class="body-muted tile-sub">rf = 3-mo T-bill</div></div>
+        <div data-reveal><div class="meta">Sortino Ratio</div><div class="num tile-val">1.31</div><div class="body-muted tile-sub">downside deviation</div></div>
+        <div data-reveal><div class="meta">Information Ratio</div><div class="num tile-val">0.15</div><div class="body-muted tile-sub">alpha ÷ tracking error</div></div>
+        <div data-reveal><div class="meta">Positive Months</div><div class="num tile-val">63%</div><div class="body-muted tile-sub">134 of 212</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ ANNUAL TABLE ════════════════════════════════════════════════════ -->
+  <section class="section section--tight">
+    <div class="wrap">
+      <div class="between" data-reveal style="margin-bottom: 1.5rem">
+        <div>
+          <p class="eyebrow">Year by year</p>
+          <h2 style="font-size: var(--step-3)">Calendar returns</h2>
+        </div>
+        <a class="link group" href="research.html">Semester &amp; annual reports <span class="arrow" aria-hidden="true">→</span></a>
+      </div>
+      <div class="table-scroll" data-reveal>
+        <table class="data" style="min-width: 40rem" data-sortable>
+          <thead>
+            <tr>
+              <th scope="col" aria-sort="none" style="text-align: left"><button class="th-sort" type="button" data-sort-key="year">Year <span class="caret" aria-hidden="true">▼</span></button></th>
+              <th scope="col" aria-sort="none"><button class="th-sort" type="button" data-sort-key="smif">SMIF <span class="caret" aria-hidden="true">▼</span></button></th>
+              <th scope="col" aria-sort="none"><button class="th-sort" type="button" data-sort-key="bench">S&amp;P 500 TR <span class="caret" aria-hidden="true">▼</span></button></th>
+              <th scope="col" aria-sort="none"><button class="th-sort" type="button" data-sort-key="spread">Spread <span class="caret" aria-hidden="true">▼</span></button></th>
+              <th scope="col" style="width: 32%">Relative</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="row-rail" data-year="2025" data-smif="15.6" data-bench="6.8" data-spread="8.8"><td class="mono">2025</td><td class="num up">+15.6%</td><td class="num">+6.8%</td><td class="num up">+8.8</td><td><span class="rel"><span class="rel__bar rel__bar--up" style="width: 62%"></span></span></td></tr>
+            <tr class="row-rail" data-year="2024" data-smif="21.3" data-bench="25.0" data-spread="-3.7"><td class="mono">2024</td><td class="num up">+21.3%</td><td class="num">+25.0%</td><td class="num down">−3.7</td><td><span class="rel"><span class="rel__bar rel__bar--down" style="width: 26%"></span></span></td></tr>
+            <tr class="row-rail" data-year="2023" data-smif="24.8" data-bench="26.3" data-spread="-1.5"><td class="mono">2023</td><td class="num up">+24.8%</td><td class="num">+26.3%</td><td class="num down">−1.5</td><td><span class="rel"><span class="rel__bar rel__bar--down" style="width: 11%"></span></span></td></tr>
+            <tr class="row-rail" data-year="2022" data-smif="-16.4" data-bench="-18.1" data-spread="1.7"><td class="mono">2022</td><td class="num down">−16.4%</td><td class="num">−18.1%</td><td class="num up">+1.7</td><td><span class="rel"><span class="rel__bar rel__bar--up" style="width: 12%"></span></span></td></tr>
+            <tr class="row-rail" data-year="2021" data-smif="27.1" data-bench="28.7" data-spread="-1.6"><td class="mono">2021</td><td class="num up">+27.1%</td><td class="num">+28.7%</td><td class="num down">−1.6</td><td><span class="rel"><span class="rel__bar rel__bar--down" style="width: 11%"></span></span></td></tr>
+            <tr class="row-rail" data-year="2020" data-smif="19.4" data-bench="18.4" data-spread="1.0"><td class="mono">2020</td><td class="num up">+19.4%</td><td class="num">+18.4%</td><td class="num up">+1.0</td><td><span class="rel"><span class="rel__bar rel__bar--up" style="width: 7%"></span></span></td></tr>
+            <tr class="row-rail" data-year="2019" data-smif="30.2" data-bench="31.5" data-spread="-1.3"><td class="mono">2019</td><td class="num up">+30.2%</td><td class="num">+31.5%</td><td class="num down">−1.3</td><td><span class="rel"><span class="rel__bar rel__bar--down" style="width: 9%"></span></span></td></tr>
+            <tr class="row-rail" data-year="2018" data-smif="-3.1" data-bench="-4.4" data-spread="1.3"><td class="mono">2018</td><td class="num down">−3.1%</td><td class="num">−4.4%</td><td class="num up">+1.3</td><td><span class="rel"><span class="rel__bar rel__bar--up" style="width: 9%"></span></span></td></tr>
+            <tr class="row-rail" data-year="2017" data-smif="23.4" data-bench="21.8" data-spread="1.6"><td class="mono">2017</td><td class="num up">+23.4%</td><td class="num">+21.8%</td><td class="num up">+1.6</td><td><span class="rel"><span class="rel__bar rel__bar--up" style="width: 11%"></span></span></td></tr>
+            <tr class="row-rail" data-year="2016" data-smif="13.8" data-bench="12.0" data-spread="1.8"><td class="mono">2016</td><td class="num up">+13.8%</td><td class="num">+12.0%</td><td class="num up">+1.8</td><td><span class="rel"><span class="rel__bar rel__bar--up" style="width: 13%"></span></span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="meta" style="margin-top: 1rem">Showing the last ten calendar years. Full history since 2009 is in the annual reports.</p>
+    </div>
+  </section>
+
+  <section class="section section--tight section--dark">
+    <div class="wrap" data-reveal>
+      <p class="eyebrow">Methodology</p>
+      <p class="body-muted" style="max-width: 70ch">
+        Returns are time-weighted and net of transaction costs. The benchmark is
+        the S&amp;P 500 total return index, sourced monthly. Risk statistics use
+        trailing monthly observations with the 3-month Treasury bill as the
+        risk-free rate. Drawdown is measured peak-to-trough on month-end values.
+        Past performance does not indicate future results. Figures shown on this
+        mockup are illustrative.
+      </p>
+    </div>
+  </section>
+</main>
+
+<!--@include _shared/footer.html-->
+
+<div class="mockup-flag">
+  <span>Mockup · Performance</span>
+  <a href="index.html">All mockups ↗</a>
+</div>
+
+<style>
+  .chart-frame { border: 1px solid var(--border); background: var(--card); padding: 1rem 1rem 0.5rem }
+  .axis-x { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 0.6875rem; letter-spacing: 0.1em; color: var(--chart-axis); padding-top: 0.5rem }
+  .tile-val { font-size: 1.5rem; margin-top: 0.375rem; line-height: 1.1 }
+  .tile-sub { font-size: 0.75rem }
+  .rel { display: block; height: 8px; background: var(--muted); position: relative }
+  .rel__bar { position: absolute; top: 0; bottom: 0; left: 50%; transform-origin: left; transform: scaleX(0); transition: transform 0.8s var(--ease) }
+  .rel__bar--down { left: auto; right: 50%; transform-origin: right }
+  .rel__bar--up { background: var(--gain) }
+  .rel__bar--down { background: var(--loss) }
+  tr:hover .rel__bar, [data-inview="true"] .rel__bar { transform: scaleX(1) }
+  .rel::before { content: ""; position: absolute; left: 50%; top: -2px; bottom: -2px; width: 1px; background: var(--chart-axis); opacity: 0.5 }
+
+  /* The fund line draws in; the benchmark and the spread fade up behind it,
+     so the eye lands on the comparison rather than on the animation. */
+  .chart-line { stroke-dasharray: 4000; stroke-dashoffset: 4000 }
+  [data-inview="true"] .chart-line { animation: draw 2.2s var(--ease) forwards }
+  [data-inview="true"] .chart-spread { animation: fade-full 0.9s ease 0.5s forwards }
+  [data-inview="true"] .chart-dd { animation: fade-dd 0.8s ease 0.9s forwards }
+  @keyframes fade-full { to { opacity: 1 } }
+  @keyframes fade-dd { to { opacity: 0.28 } }
+  .chart-spread { opacity: 0 }
+  .chart-dd { opacity: 0 }
+  @keyframes draw { to { stroke-dashoffset: 0 } }
+  @media (prefers-reduced-motion: reduce) {
+    .chart-line { stroke-dashoffset: 0 !important; animation: none !important }
+    .chart-spread { opacity: 1 !important; animation: none !important }
+    .chart-dd { opacity: 0.28 !important; animation: none !important }
+    .rel__bar { transform: scaleX(1) !important }
+  }
+</style>
+
+<!--@include _shared/script.html-->

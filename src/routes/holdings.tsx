@@ -1,17 +1,20 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useState, useMemo, useEffect } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { Fragment, useState, useMemo, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowUpDown, ArrowUp, ArrowDown, RefreshCw, AlertCircle, Filter, Search } from "lucide-react";
+import { ArrowUpDown, ArrowUp, ArrowDown, RefreshCw, AlertCircle, Filter, Search, ChevronRight, Download, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { holdings as baseHoldings, portfolioSummary as baseSummary, type Holding } from "@/data/holdings";
 import { getLiveQuotes, getCachedQuotes } from "@/lib/quotes.functions";
 import { getFundStats } from "@/lib/fund-stats.functions";
 import { getRiskMetrics } from "@/lib/risk.functions";
+import { getPriceHistory } from "@/lib/price-history.functions";
 import { CountUp } from "@/components/CountUp";
 import { Reveal } from "@/components/Reveal";
 import { socialMeta, canonical, breadcrumbLd, OG_HOLDINGS } from "@/lib/seo";
-import { applyQuotes, sectorPercentBreakdown } from "@/lib/portfolio";
+import { applyQuotes, sectorPercentBreakdown, teamForIndustry } from "@/lib/portfolio";
+import { Treemap, type TreemapCell } from "@/components/Treemap";
+import { Sparkline } from "@/components/Sparkline";
 import { liveQueryOptions } from "@/lib/live-query";
 
 export const Route = createFileRoute("/holdings")({
@@ -21,7 +24,12 @@ export const Route = createFileRoute("/holdings")({
   // a real Day P&L instead of the static baseline / $0. The client-side
   // getLiveQuotes query takes over after hydration (initialDataUpdatedAt
   // keeps it stale-aware, so the self-heal still fires when the cache is old).
-  loader: async () => ({ cachedQuotes: await getCachedQuotes() }),
+  // priceHistory is best-effort: getPriceHistory resolves to {} rather than
+  // throwing, and the sparkline column drops out entirely when it is empty.
+  loader: async () => ({
+    cachedQuotes: await getCachedQuotes(),
+    priceHistory: await getPriceHistory(),
+  }),
   head: () => ({
     meta: [
       { title: "Portfolio Holdings — Purdue Student Managed Investment Fund" },
@@ -111,6 +119,109 @@ function SortIcon({ active, dir }: { active: boolean; dir: "asc" | "desc" }) {
   return dir === "asc" ? <ArrowUp className="h-3 w-3 text-gold" /> : <ArrowDown className="h-3 w-3 text-gold" />;
 }
 
+/** Signed percentage with a direction arrow. Colour comes from the cell. */
+function Delta({ v }: { v: number }) {
+  return (
+    <span className="inline-flex items-center justify-end gap-0.5">
+      {v >= 0 ? <ArrowUp className="h-3 w-3" aria-hidden="true" /> : <ArrowDown className="h-3 w-3" aria-hidden="true" />}
+      {fmtPct(v)}
+    </span>
+  );
+}
+
+/**
+ * A table column. `k` doubles as the sort key for real Holding fields;
+ * decorative columns set sortable:false and are skipped by the CSV export.
+ */
+type ColumnKey = SortKey | "trend";
+type Column = {
+  k: ColumnKey;
+  label: string;
+  align?: "right";
+  sortable?: boolean;
+  cell: (h: Holding) => React.ReactNode;
+  /** Omitted for decorative columns; presence is what puts a column in the CSV. */
+  csv?: (h: Holding) => string;
+  cls?: string | ((h: Holding) => string);
+  foot?: (rows: Holding[]) => React.ReactNode;
+};
+
+/**
+ * The expanded row.
+ *
+ * Every figure here is derived from data the fund already maintains — shares,
+ * cost basis, live price, beta, and the industry-to-team map in
+ * src/lib/portfolio.ts. Nothing is editorial: there is no thesis text in the
+ * data model, so the panel does not pretend there is. It answers "what did we
+ * pay, what is it worth now, and who owns this position", then hands off to
+ * the sector team's page.
+ */
+function PositionDetail({ h }: { h: Holding }) {
+  const costPerShare = h.shares > 0 ? h.costBasis / h.shares : 0;
+  const team = teamForIndustry(h.industry);
+  const facts: { label: string; value: string; tone?: "gain" | "loss" }[] = [
+    { label: "Cost basis", value: fmtUSD(h.costBasis, { maximumFractionDigits: 0 }) },
+    { label: "Average cost", value: fmtUSD(costPerShare) },
+    { label: "Unrealized P&L", value: fmtUSD(h.totalReturn, { maximumFractionDigits: 0 }), tone: h.totalReturn >= 0 ? "gain" : "loss" },
+    { label: "Day P&L", value: fmtUSD(h.dayGain, { maximumFractionDigits: 0 }), tone: h.dayGain >= 0 ? "gain" : "loss" },
+    { label: "Beta", value: fmtNum(h.beta) },
+    { label: "Weight", value: `${h.allocation.toFixed(2)}%` },
+  ];
+  return (
+    <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+      <dl className="grid flex-1 grid-cols-2 gap-x-8 gap-y-4 sm:grid-cols-3 lg:grid-cols-6">
+        {facts.map((f) => (
+          <div key={f.label}>
+            <dt className="text-[10px] font-mono uppercase tracking-[0.18em] text-muted-foreground">{f.label}</dt>
+            <dd className={`mt-1 font-mono text-sm ${f.tone === "gain" ? "text-gain" : f.tone === "loss" ? "text-loss" : ""}`}>
+              {f.value}
+            </dd>
+          </div>
+        ))}
+      </dl>
+      <div className="flex shrink-0 flex-col gap-1 lg:items-end">
+        <span className="text-[10px] font-mono uppercase tracking-[0.18em] text-muted-foreground">
+          Covered by
+        </span>
+        {team ? (
+          <Link
+            to="/sectors"
+            className="group inline-flex items-center gap-1.5 text-sm font-semibold text-gold-deep hover:text-ink transition-colors duration-200"
+          >
+            {team}
+            <ArrowRight className="h-3.5 w-3.5 arrow-slide" aria-hidden="true" />
+          </Link>
+        ) : (
+          <span className="text-sm text-muted-foreground">Index sleeve — no single team</span>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/** RFC 4180 quoting — company names contain commas and ampersands. */
+function csvCell(v: string): string {
+  return /[",\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v;
+}
+
+function downloadCsv(rows: Holding[], columns: Column[], label: string) {
+  if (typeof window === "undefined") return;
+  const cols = columns.filter((c) => c.csv);
+  const lines = [
+    cols.map((c) => csvCell(c.label)).join(","),
+    ...rows.map((h) => cols.map((c) => csvCell(c.csv!(h))).join(",")),
+  ];
+  const blob = new Blob([lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `purdue-smif-holdings-${label}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
 function HoldingsPage() {
   const [sortKey, setSortKey] = useState<SortKey>("allocation");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
@@ -118,6 +229,9 @@ function HoldingsPage() {
   const [showSticky, setShowSticky] = useState(false);
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
+  // One row open at a time — a table with six panels open stops being a table.
+  const [expanded, setExpanded] = useState<string | null>(null);
+  const [allocView, setAllocView] = useState<"position" | "sector">("position");
   const fetchQuotes = useServerFn(getLiveQuotes);
   const symbols = useMemo(() => baseHoldings.map((h) => h.symbol), []);
   // The server serves the end-of-day cache and self-heals it when stale; the
@@ -126,6 +240,9 @@ function HoldingsPage() {
   // recomputes every derived value here (KPIs, weighted beta, sector
   // breakdown, leaders/laggards, table).
   const initial = Route.useLoaderData();
+  // Memoised so the `??` fallback doesn't mint a fresh {} each render and
+  // invalidate the columns memo that depends on it.
+  const priceHistory = useMemo(() => initial.priceHistory ?? {}, [initial.priceHistory]);
   const { data: quoteData, isFetching, error, refetch } = useQuery({
     queryKey: ["live-quotes", symbols],
     queryFn: () => fetchQuotes({ data: { symbols } }),
@@ -180,18 +297,11 @@ function HoldingsPage() {
     // Day P&L math: derive priorValue per position from (value / (1 + pct/100))
     // so the aggregate day-change dollar and percent are computed off the SAME
     // prior-day base and their signs always agree.
-    const updated: Holding[] = baseHoldings.map((h) => {
-      const q = quotes[h.symbol];
-      if (!q) return h;
-      const price = q.price;
-      const value = price * h.shares;
-      const totalReturn = value - h.costBasis;
-      const returnPct = h.costBasis > 0 ? (totalReturn / h.costBasis) * 100 : 0;
-      const dayChange = q.changePct;
-      const priorValue = 1 + dayChange / 100 !== 0 ? value / (1 + dayChange / 100) : value;
-      const dayGain = value - priorValue;
-      return { ...h, price, value, totalReturn, returnPct, dayChange, dayGain };
-    });
+    //
+    // applyQuotes was imported here but never called — the lines this replaces
+    // were a byte-for-byte copy of it, which is exactly how /holdings and
+    // /sectors would eventually disagree about the same numbers.
+    const updated: Holding[] = applyQuotes(baseHoldings, quotes);
     const investedValue = updated.reduce((s, r) => s + r.value, 0);
     const priorInvested = updated.reduce((s, r) => {
       const q = quotes[r.symbol];
@@ -210,6 +320,41 @@ function HoldingsPage() {
   }, [quoteData, cashHoldings]);
 
   const sectorBreakdown = useMemo(() => sectorPercentBreakdown(holdings), [holdings]);
+
+  // Both allocation views, built from the same numbers the table shows.
+  const allocationCells = useMemo<TreemapCell[]>(() => {
+    if (allocView === "sector") {
+      // sectorPercentBreakdown is % of INVESTED capital, so cash is out of
+      // scope here by definition — the caption says so.
+      return sectorBreakdown.map(([name, pct]) => ({ key: name, label: name, pct }));
+    }
+    const cells: TreemapCell[] = holdings
+      .slice()
+      .sort((a, b) => b.allocation - a.allocation)
+      .map((h) => ({
+        key: h.symbol,
+        label: h.symbol,
+        pct: h.allocation,
+        sub: fmtUSD(h.value, { maximumFractionDigits: 0, notation: "compact" }),
+      }));
+    // Cash is a real part of the portfolio and appears in neither the table
+    // nor the old bar list. If the picture is "where the money sits", the
+    // uninvested part belongs in it.
+    const cashPct =
+      portfolioSummary.portfolioValue > 0
+        ? (portfolioSummary.cashHoldings / portfolioSummary.portfolioValue) * 100
+        : 0;
+    if (cashPct > 0) {
+      cells.push({
+        key: "__cash",
+        label: "CASH",
+        pct: cashPct,
+        sub: fmtUSD(portfolioSummary.cashHoldings, { maximumFractionDigits: 0, notation: "compact" }),
+        hatched: true,
+      });
+    }
+    return cells;
+  }, [allocView, sectorBreakdown, holdings, portfolioSummary]);
 
   const sectors = useMemo<string[]>(() => ["All", ...Array.from(new Set(holdings.map((h) => h.industry)))], [holdings]);
   const rows = useMemo(() => {
@@ -230,7 +375,59 @@ function HoldingsPage() {
     ? `No positions match "${debouncedQuery}"`
     : `No positions in ${sector}`;
   const toggleSort = (k: SortKey) => { if (k === sortKey) setSortDir(sortDir === "asc" ? "desc" : "asc"); else { setSortKey(k); setSortDir(typeof holdings[0]?.[k] === "number" ? "desc" : "asc"); } };
-  const cols: { k: SortKey; label: string; align?: "right" }[] = [{ k: "company", label: "Company" },{ k: "symbol", label: "Ticker" },{ k: "industry", label: "Industry" },{ k: "price", label: "Price", align: "right" },{ k: "beta", label: "Beta", align: "right" },{ k: "shares", label: "Shares", align: "right" },{ k: "value", label: "Value", align: "right" },{ k: "dayChange", label: "Day", align: "right" },{ k: "totalReturn", label: "Return $", align: "right" },{ k: "returnPct", label: "Return %", align: "right" },{ k: "allocation", label: "Weight", align: "right" }];
+  // One config drives the header, the body cells, the CSV export and the
+  // footer. Adding, reordering or dropping a column is a single edit here
+  // instead of four coordinated ones, and the colSpan arithmetic in the
+  // footer can never drift out of step with the header.
+  const columns = useMemo<Column[]>(() => {
+    const base: Column[] = [
+      { k: "company", label: "Company", cell: (h) => h.company, csv: (h) => h.company,
+        cls: "px-4 py-3 font-medium" },
+      { k: "symbol", label: "Ticker", cell: (h) => h.symbol, csv: (h) => h.symbol,
+        cls: "px-4 py-3 font-mono font-bold text-gold-deep tracking-wider" },
+      { k: "industry", label: "Industry", cell: (h) => h.industry, csv: (h) => h.industry,
+        cls: "px-4 py-3 text-xs text-muted-foreground whitespace-nowrap" },
+      { k: "price", label: "Price", align: "right", cell: (h) => fmtUSD(h.price),
+        csv: (h) => h.price.toFixed(2), cls: "px-4 py-3 text-right font-mono" },
+      { k: "beta", label: "Beta", align: "right", cell: (h) => fmtNum(h.beta),
+        csv: (h) => h.beta.toFixed(2), cls: "px-4 py-3 text-right font-mono text-muted-foreground" },
+      { k: "shares", label: "Shares", align: "right", cell: (h) => h.shares.toLocaleString(),
+        csv: (h) => String(h.shares), cls: "px-4 py-3 text-right font-mono" },
+      { k: "value", label: "Value", align: "right",
+        cell: (h) => fmtUSD(h.value, { maximumFractionDigits: 0 }),
+        csv: (h) => h.value.toFixed(2), cls: "px-4 py-3 text-right font-mono",
+        foot: (rs) => fmtUSD(rs.reduce((t, r) => t + r.value, 0), { maximumFractionDigits: 0 }) },
+      { k: "dayChange", label: "Day", align: "right", cell: (h) => <Delta v={h.dayChange} />,
+        csv: (h) => h.dayChange.toFixed(2),
+        cls: (h) => `px-4 py-3 text-right font-mono font-medium ${h.dayChange >= 0 ? "text-gain" : "text-loss"}` },
+      { k: "totalReturn", label: "Return $", align: "right",
+        cell: (h) => fmtUSD(h.totalReturn, { maximumFractionDigits: 0 }),
+        csv: (h) => h.totalReturn.toFixed(2),
+        cls: (h) => `px-4 py-3 text-right font-mono ${h.totalReturn >= 0 ? "text-gain" : "text-loss"}`,
+        foot: (rs) => {
+          const t = rs.reduce((acc, r) => acc + r.totalReturn, 0);
+          return <span className={t >= 0 ? "text-gain" : "text-loss"}>{fmtUSD(t, { maximumFractionDigits: 0 })}</span>;
+        } },
+      { k: "returnPct", label: "Return %", align: "right", cell: (h) => <Delta v={h.returnPct} />,
+        csv: (h) => h.returnPct.toFixed(2),
+        cls: (h) => `px-4 py-3 text-right font-mono font-semibold ${h.returnPct >= 0 ? "text-gain" : "text-loss"}` },
+      { k: "allocation", label: "Weight", align: "right", cell: (h) => `${h.allocation.toFixed(2)}%`,
+        csv: (h) => h.allocation.toFixed(2), cls: "px-4 py-3 text-right font-mono text-muted-foreground",
+        foot: (rs) => `${rs.reduce((t, r) => t + r.allocation, 0).toFixed(2)}%` },
+    ];
+    // The sparkline needs stored history. When price_history is unreachable
+    // the column is dropped rather than rendering a row of blanks.
+    if (Object.keys(priceHistory).length > 0) {
+      base.splice(4, 0, {
+        k: "trend",
+        label: "30d",
+        sortable: false,
+        cell: (h) => <Sparkline values={priceHistory[h.symbol] ?? []} />,
+        cls: (h) => `px-4 py-3 ${(priceHistory[h.symbol]?.length ?? 0) > 1 && (priceHistory[h.symbol]!.at(-1)! >= priceHistory[h.symbol]![0]) ? "text-gain" : "text-loss"}`,
+      });
+    }
+    return base;
+  }, [priceHistory]);
   const dayAccent = portfolioSummary.totalDayGain >= 0 ? "positive" : "negative";
 
   // Risk-card display strings. Volatility/Sharpe/VaR need >=60 obs of history;
@@ -406,32 +603,37 @@ function HoldingsPage() {
           />
         </Reveal>
 
-        <h2 className="sr-only">Sector Allocation</h2>
+        <h2 className="sr-only">Allocation</h2>
         <Reveal className="grid gap-px bg-border md:grid-cols-3">
           <div className="md:col-span-2 bg-card border border-border p-6">
-            <div className="flex items-baseline justify-between mb-5 gap-3">
-              <div className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Sector Allocation</div>
-              <div className="text-[10px] font-mono uppercase tracking-[0.18em] text-muted-foreground">% of invested capital</div>
+            <div className="flex items-baseline justify-between mb-5 gap-3 flex-wrap">
+              <div className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Allocation</div>
+              {/* Area, not a bar list: "what dominates this book" is a question
+                  about size, and SPY at ~42% is the answer. */}
+              <div className="inline-flex border border-border" role="group" aria-label="Allocation view">
+                {([
+                  { k: "position" as const, label: "By position" },
+                  { k: "sector" as const, label: "By sector" },
+                ]).map((b) => (
+                  <button
+                    key={b.k}
+                    onClick={() => setAllocView(b.k)}
+                    aria-pressed={allocView === b.k}
+                    className={`press px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider cursor-pointer ${
+                      allocView === b.k ? "bg-ink text-background" : "bg-background text-ink hover:bg-secondary"
+                    }`}
+                  >
+                    {b.label}
+                  </button>
+                ))}
+              </div>
             </div>
-            <div className="space-y-2.5">
-              {sectorBreakdown.map(([s, pct], i) => (
-                <div key={s} className="flex items-center gap-3 text-sm">
-                  <span className="w-32 md:w-44 flex-shrink-0 truncate text-xs text-foreground/80" title={s}>{s}</span>
-                  <div className="flex-1 h-1.5 bg-muted relative">
-                    {/* True 0–100 scale: bar width = pct so visual length matches the actual weight. */}
-                    <motion.div
-                      className="h-full bg-gradient-gold origin-left"
-                      initial={{ scaleX: 0 }}
-                      whileInView={{ scaleX: 1 }}
-                      viewport={{ once: true, amount: 0.4 }}
-                      transition={{ duration: 0.9, delay: 0.04 * i, ease: [0.22, 1, 0.36, 1] }}
-                      style={{ width: `${Math.min(100, pct)}%` }}
-                    />
-                  </div>
-                  <span className="w-12 text-right font-mono text-xs text-muted-foreground tabular-nums">{pct.toFixed(1)}%</span>
-                </div>
-              ))}
-            </div>
+            <Treemap cells={allocationCells} />
+            <p className="mt-4 text-[10px] font-mono uppercase tracking-[0.18em] text-muted-foreground">
+              {allocView === "position"
+                ? "% of portfolio, cash included"
+                : "% of invested capital · SPY attributed across sectors by index weight"}
+            </p>
           </div>
           <div className="bg-card border border-border p-6 flex flex-col gap-6">
             <div>
@@ -489,53 +691,54 @@ function HoldingsPage() {
         )}
 
         <h2 className="sr-only">Holdings</h2>
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div className="relative w-full sm:max-w-xs">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" aria-hidden="true" />
-            <input
-              type="search"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search ticker or company…"
-              aria-label="Search holdings"
-              className="w-full border border-input bg-background py-2 pl-9 pr-3 text-sm outline-none focus:border-gold"
-            />
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div className="relative w-full sm:max-w-xs">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" aria-hidden="true" />
+              <input
+                type="search"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search ticker or company…"
+                aria-label="Search holdings"
+                className="w-full border border-input bg-background py-2 pl-9 pr-3 text-sm outline-none focus:border-gold"
+              />
+            </div>
+            <div className="text-[11px] font-mono uppercase tracking-[0.2em] text-muted-foreground whitespace-nowrap" role="status" aria-live="polite">
+              {rows.length} of {holdings.length} positions
+            </div>
           </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs uppercase tracking-[0.22em] text-muted-foreground mr-1">Sector</span>
-            {sectors.length > 8 ? (
-              <label className="inline-flex items-center gap-2">
-                <span className="sr-only">Filter by sector</span>
-                <select
-                  value={sector}
-                  onChange={(e) => setSector(e.target.value)}
-                  aria-label="Filter by sector"
-                  className="min-h-11 border border-border bg-background px-3 text-xs font-semibold uppercase tracking-wider text-foreground outline-none focus:border-ink"
-                >
-                  {sectors.map((s) => (
-                    <option key={s} value={s}>{s}</option>
-                  ))}
-                </select>
-              </label>
-            ) : (
-              sectors.map((s) => {
-                const active = sector === s;
-                return (
-                  <button
-                    key={s}
-                    onClick={() => setSector(s)}
-                    aria-pressed={active}
-                    // min-h-11 keeps the touch target ≥44px; py-2.5 makes the
-                    // visual block match that height so the hit area and the
-                    // rendered chip share the same bounds (no offset clicks).
-                    className={`inline-flex min-h-11 items-center px-3 py-2.5 text-xs font-semibold uppercase tracking-wider border press cursor-pointer ${active ? "bg-ink text-background border-ink" : "bg-background text-foreground border-border hover:border-ink hover:bg-secondary"}`}
-                  >
-                    {s}
-                  </button>
-                );
-              })
-            )}
-          </div>
+          <button
+            onClick={() => downloadCsv(rows, columns, sector === "All" ? "all" : sector.toLowerCase().replace(/[^a-z0-9]+/g, "-"))}
+            disabled={rows.length === 0}
+            className="press inline-flex min-h-11 shrink-0 items-center gap-2 self-start border border-border bg-background px-4 text-xs font-semibold uppercase tracking-wider text-foreground hover:border-ink hover:bg-secondary disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer lg:self-auto"
+          >
+            <Download className="h-3.5 w-3.5" aria-hidden="true" />
+            Export CSV
+          </button>
+        </div>
+
+        {/* Sector filter. This used to fall back to a <select> above eight
+            options — which, with ten industries in the data, meant the select
+            was what actually rendered. A scrolling chip row matches /team and
+            keeps every option one tap away. */}
+        <div className="-mx-4 flex gap-2 overflow-x-auto px-4 scrollbar-none md:mx-0 md:flex-wrap md:overflow-visible md:px-0" role="group" aria-label="Filter by sector">
+          {sectors.map((sec) => {
+            const active = sector === sec;
+            return (
+              <button
+                key={sec}
+                onClick={() => setSector(sec)}
+                aria-pressed={active}
+                // min-h-11 keeps the touch target ≥44px; py-2.5 makes the
+                // visual block match that height so the hit area and the
+                // rendered chip share the same bounds (no offset clicks).
+                className={`inline-flex min-h-11 shrink-0 items-center whitespace-nowrap px-3 py-2.5 text-xs font-semibold uppercase tracking-wider border press cursor-pointer ${active ? "bg-ink text-background border-ink" : "bg-background text-foreground border-border hover:border-ink hover:bg-secondary"}`}
+              >
+                {sec}
+              </button>
+            );
+          })}
         </div>
 
         {rows.length === 0 ? (
@@ -592,7 +795,111 @@ function HoldingsPage() {
             </div>
 
             {/* Desktop: full table */}
-            <div className="hidden md:block overflow-x-auto border border-border"><table className="w-full text-left text-sm"><caption className="sr-only">Portfolio holdings, sortable by column</caption><thead className="bg-ink text-background"><tr>{cols.map((c) => { const ariaSort: "ascending" | "descending" | "none" = sortKey === c.k ? (sortDir === "asc" ? "ascending" : "descending") : "none"; return (<th key={c.k} aria-sort={ariaSort} className={`px-4 py-3 text-xs font-semibold uppercase tracking-[0.14em] whitespace-nowrap ${c.align === "right" ? "text-right" : ""}`}><button onClick={() => toggleSort(c.k)} className={`inline-flex items-center gap-1.5 hover:text-gold transition-colors duration-150 cursor-pointer ${c.align === "right" ? "ml-auto" : ""}`}>{c.label}<SortIcon active={sortKey === c.k} dir={sortDir} /></button></th>); })}</tr></thead><tbody>{rows.map((h, idx) => (<tr key={h.symbol} className={`border-t border-border hover:bg-secondary/50 transition-colors duration-150 ${idx % 2 === 0 ? "" : "bg-secondary/20"}`}><td className="px-4 py-3 font-medium whitespace-nowrap">{h.company}</td><td className="px-4 py-3 font-mono font-bold text-gold-deep tracking-wider">{h.symbol}</td><td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">{h.industry}</td><td className="px-4 py-3 text-right font-mono">{fmtUSD(h.price)}</td><td className="px-4 py-3 text-right font-mono text-muted-foreground">{fmtNum(h.beta)}</td><td className="px-4 py-3 text-right font-mono">{h.shares.toLocaleString()}</td><td className="px-4 py-3 text-right font-mono">{fmtUSD(h.value, { maximumFractionDigits: 0 })}</td><td className={`px-4 py-3 text-right font-mono font-medium ${h.dayChange >= 0 ? "text-gain" : "text-loss"}`}><span className="inline-flex items-center justify-end gap-0.5">{h.dayChange >= 0 ? <ArrowUp className="h-3 w-3" aria-hidden="true" /> : <ArrowDown className="h-3 w-3" aria-hidden="true" />}{fmtPct(h.dayChange)}</span></td><td className={`px-4 py-3 text-right font-mono ${h.totalReturn >= 0 ? "text-gain" : "text-loss"}`}>{fmtUSD(h.totalReturn, { maximumFractionDigits: 0 })}</td><td className={`px-4 py-3 text-right font-mono font-semibold ${h.returnPct >= 0 ? "text-gain" : "text-loss"}`}><span className="inline-flex items-center justify-end gap-0.5">{h.returnPct >= 0 ? <ArrowUp className="h-3 w-3" aria-hidden="true" /> : <ArrowDown className="h-3 w-3" aria-hidden="true" />}{fmtPct(h.returnPct)}</span></td><td className="px-4 py-3 text-right font-mono text-muted-foreground">{h.allocation.toFixed(2)}%</td></tr>))}</tbody><tfoot className="bg-secondary/60 border-t-2 border-ink font-semibold"><tr><td className="px-4 py-4" colSpan={6}>Total · {rows.length} position{rows.length !== 1 ? "s" : ""}</td><td className="px-4 py-4 text-right font-mono">{fmtUSD(rows.reduce((s, r) => s + r.value, 0), { maximumFractionDigits: 0 })}</td><td className="px-4 py-4 text-right font-mono text-muted-foreground"><span aria-hidden="true">-</span><span className="sr-only">Not applicable</span></td><td className={`px-4 py-4 text-right font-mono ${rows.reduce((s, r) => s + r.totalReturn, 0) >= 0 ? "text-gain" : "text-loss"}`}>{fmtUSD(rows.reduce((s, r) => s + r.totalReturn, 0), { maximumFractionDigits: 0 })}</td><td className="px-4 py-4" /><td className="px-4 py-4 text-right font-mono">{rows.reduce((s, r) => s + r.allocation, 0).toFixed(2)}%</td></tr></tfoot></table></div>
+            <div className="hidden md:block overflow-x-auto [contain:paint] border border-border">
+                <table className="w-full text-left text-sm">
+                  <caption className="sr-only">
+                    Portfolio holdings, sortable by column. Each row expands to show cost basis and the coverage team that owns the position.
+                  </caption>
+                  {/* Sticky under the 56px site header so column meaning
+                      survives a scroll of 23 rows. */}
+                  <thead className="sticky top-14 z-20 bg-ink text-background">
+                    <tr>
+                      {columns.map((c) => {
+                        const sortable = c.sortable !== false;
+                        const active = sortable && sortKey === c.k;
+                        const ariaSort: "ascending" | "descending" | "none" =
+                          active ? (sortDir === "asc" ? "ascending" : "descending") : "none";
+                        return (
+                          <th
+                            key={c.k}
+                            scope="col"
+                            aria-sort={sortable ? ariaSort : undefined}
+                            className={`px-4 py-3 text-xs font-semibold uppercase tracking-[0.14em] whitespace-nowrap ${c.align === "right" ? "text-right" : ""}`}
+                          >
+                            {sortable ? (
+                              <button
+                                onClick={() => toggleSort(c.k as SortKey)}
+                                className={`inline-flex items-center gap-1.5 hover:text-gold transition-colors duration-150 cursor-pointer ${c.align === "right" ? "ml-auto" : ""}`}
+                              >
+                                {c.label}
+                                <SortIcon active={active} dir={sortDir} />
+                              </button>
+                            ) : (
+                              c.label
+                            )}
+                          </th>
+                        );
+                      })}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {rows.map((h, idx) => {
+                      const open = expanded === h.symbol;
+                      return (
+                        <Fragment key={h.symbol}>
+                          <tr className={`border-t border-border hover:bg-secondary/50 transition-colors duration-150 ${idx % 2 === 0 ? "" : "bg-secondary/20"} ${open ? "bg-secondary/50" : ""}`}>
+                            {columns.map((c, ci) => (
+                              <td key={c.k} className={typeof c.cls === "function" ? c.cls(h) : c.cls}>
+                                {ci === 0 ? (
+                                  // The disclosure lives in the first cell rather
+                                  // than a column of its own: a twelfth column
+                                  // pushed the table past its container at every
+                                  // width, and the company name is what a reader
+                                  // is pointing at when they want more anyway.
+                                  <button
+                                    onClick={() => setExpanded(open ? null : h.symbol)}
+                                    aria-expanded={open}
+                                    aria-controls={`detail-${h.symbol}`}
+                                    className="press -ml-1 inline-flex items-center gap-1.5 text-left hover:text-gold-deep cursor-pointer"
+                                  >
+                                    <ChevronRight
+                                      className={`h-3.5 w-3.5 shrink-0 text-gold-deep transition-transform duration-200 ${open ? "rotate-90" : ""} motion-reduce:transition-none`}
+                                      aria-hidden="true"
+                                    />
+                                    {c.cell(h)}
+                                    <span className="sr-only">— {open ? "hide" : "show"} detail</span>
+                                  </button>
+                                ) : (
+                                  c.cell(h)
+                                )}
+                              </td>
+                            ))}
+                          </tr>
+                          {open && (
+                            <tr id={`detail-${h.symbol}`} className="border-t border-border bg-secondary/50">
+                              <td colSpan={columns.length} className="px-4 py-5">
+                                <PositionDetail h={h} />
+                              </td>
+                            </tr>
+                          )}
+                        </Fragment>
+                      );
+                    })}
+                  </tbody>
+                  <tfoot className="bg-secondary/60 border-t-2 border-ink font-semibold">
+                    <tr>
+                      {columns.map((c, ci) =>
+                        ci === 0 ? (
+                          <td key={c.k} className="px-4 py-4">
+                            Total · {rows.length} position{rows.length !== 1 ? "s" : ""}
+                          </td>
+                        ) : (
+                          <td key={c.k} className={`px-4 py-4 font-mono ${c.align === "right" ? "text-right" : ""}`}>
+                            {c.foot ? (
+                              c.foot(rows)
+                            ) : (
+                              <>
+                                <span aria-hidden="true" className="text-muted-foreground">-</span>
+                                <span className="sr-only">Not applicable</span>
+                              </>
+                            )}
+                          </td>
+                        ),
+                      )}
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
           </>
         )}
 

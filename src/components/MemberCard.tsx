@@ -30,10 +30,24 @@ export const memberEmail = (m: Member) => m.email;
  * before falling back to initials. Bundled photos never needed either URL.
  */
 export const memberPhotoCandidates = (m: Member) => {
-  const slug = memberSlug(m.name);
-  const jpg = supabase.storage.from("team-headshots").getPublicUrl(`${slug}.jpg`).data.publicUrl;
-  const png = supabase.storage.from("team-headshots").getPublicUrl(`${slug}.png`).data.publicUrl;
-  return { jpg, png };
+  // The supabase export is a Proxy that constructs the client on first property
+  // access and THROWS when the env vars are absent. Guarding the call is what
+  // keeps a missing credential from taking the whole roster down: without it,
+  // the 7 members who have no bundled photo each throw during render, /team
+  // falls through to the error boundary, and the page serves 108 bytes of
+  // "something went wrong" instead of 54 people. Those members simply fall
+  // back to initials, which is the same thing that happens when the remote
+  // headshot 404s.
+  try {
+    const slug = memberSlug(m.name);
+    const storage = supabase.storage.from("team-headshots");
+    return {
+      jpg: storage.getPublicUrl(`${slug}.jpg`).data.publicUrl,
+      png: storage.getPublicUrl(`${slug}.png`).data.publicUrl,
+    };
+  } catch {
+    return null;
+  }
 };
 
 export function MemberCard({
