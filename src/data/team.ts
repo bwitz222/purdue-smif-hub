@@ -28,6 +28,7 @@ import danielFriedmanPhoto from "@/assets/team/daniel-friedman.webp";
 import alexBelangerPhoto from "@/assets/team/alex-belanger.webp";
 import alexanderBoquistPhoto from "@/assets/team/alexander-boquist.webp";
 import luluZengPhoto from "@/assets/team/lulu-zeng.webp";
+import hunterSpechtPhoto from "@/assets/team/hunter-specht.webp";
 
 const BIO_BY_NAME: Record<string, string> = {
   "Landon Haffner": "Landon Haffner is a sophomore in the Daniels School of Business, majoring in Finance with a minor in Real Estate Finance, Management Consulting and Entrepreneurship. He is interning at Lennar this summer in sales and land acquisition. In his free time, he enjoys going to the gym, golfing and playing rocket league with friends.",
@@ -57,6 +58,7 @@ const BIO_BY_NAME: Record<string, string> = {
   "Veer Sanyal": "Veer Sanyal is a junior in the Daniels School of Business, majoring in Integrated Business and Engineering. Outside of SMIF, he is currently working as a consulting extern with Scouting America through the Daniels Summer Externship Program. In his free time, he enjoys making origami, weightlifting, and photography.",
   "Anushka Patel": "Anushka Patel is a sophomore in the Daniels School of Business at Purdue University, pursuing a B.S. in Quantitative Business Economics and a B.A. in Global Studies with a certification in Data Science. She currently serves as a Portfolio Management Associate with the Student Managed Investment Fund and as a Senior Consultant with 180 Degrees Consulting. Outside of academics, she enjoys art, vintage and thrifted fashion, and public speaking.",
   "Abhipsa Prajapati": "Abhipsa Prajapati is a sophomore in the Daniels School of Business, majoring in Mathematics and Quantitative Economics with a minor in Political Science. She is currently conducting AI and finance research through the Wharton AI Research Fellowship at the University of Pennsylvania and previously worked as a Private Credit Analyst. Outside of SMIF, she serves as Corporate Partnership Chair for Women in Consulting and is an Equity Research Analyst with Investment and Trading at Purdue. In her free time, she enjoys bouldering, playing tennis, golfing, and sailing.",
+  "Hunter Specht": "Hunter Specht is a senior at Purdue University, majoring in Computer Science, Data Science, Applied Statistics, and Finance. He previously interned at MFS Investment Management as a Software Engineering Intern. In his free time, he enjoys playing chess, coding, and going to the gym.",
   "Fabian Segura Vargas": "Fabian Segura Vargas is a junior in the Daniels School of Business, majoring in Finance and Business Analytics & Information Management (BAIM). He previously interned at Cummins as a Finance Systems Intern. In his free time, he enjoys playing and watching sports, and filmmaking.",
 };
 
@@ -74,7 +76,7 @@ const SECONDARY_BIO_BY_NAME: Record<string, string> = {
 export const board: Member[] = [
   { name: "Andrew Lacambra", role: "Co-President", year: "Class of 2027", email: "alacambr@purdue.edu", photo: andrewLacambraPhoto, bio: BIO_BY_NAME["Andrew Lacambra"] },
   { name: "Ian Teh", role: "Co-President", year: "Class of 2027", email: "iteh@purdue.edu", photo: ianTehPhoto, bio: BIO_BY_NAME["Ian Teh"] },
-  { name: "Hunter Specht", role: "Co-CIO & Co-Head of Education", year: "Class of 2027", email: "hspecht@purdue.edu", bio: "Drives portfolio strategy and final investment decisions across all sectors, and co-leads the analyst education curriculum." },
+  { name: "Hunter Specht", role: "Co-CIO & Co-Head of Education", year: "Class of 2027", email: "hspecht@purdue.edu", photo: hunterSpechtPhoto, bio: BIO_BY_NAME["Hunter Specht"] },
   { name: "Sandhya Gopinath", role: "Co-CIO & Co-Head of Education", year: "Class of 2028", email: "gopinas@purdue.edu", photo: sandhyaGopinathPhoto, bio: BIO_BY_NAME["Sandhya Gopinath"] },
   { name: "Keren Wadhwani", role: "Treasurer and Director of Fundraising", year: "Class of 2028", email: "kwadhwan@purdue.edu", photo: kerenWadhwaniPhoto, bio: BIO_BY_NAME["Keren Wadhwani"] },
   { name: "Chris Andreou", role: "Director of Talent and Operations", year: "Class of 2028", email: "andreou@purdue.edu", photo: chrisAndreouPhoto, bio: BIO_BY_NAME["Chris Andreou"] },
@@ -110,6 +112,7 @@ const PHOTO_BY_NAME: Record<string, string> = {
   "Cooper Weiss": cooperWeissPhoto,
   "Daniel Friedman": danielFriedmanPhoto,
   "Alex Belanger": alexBelangerPhoto,
+  "Hunter Specht": hunterSpechtPhoto,
 };
 
 const PHOTO_POSITION_BY_NAME: Record<string, string> = {
