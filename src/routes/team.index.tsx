@@ -5,7 +5,7 @@ import { Search, X } from "lucide-react";
 import { MemberCard, OpenSeatsCard, type Member } from "@/components/MemberCard";
 import { MemberDetailSheet } from "@/components/MemberDetailSheet";
 import { RevealGroup, RevealItem } from "@/components/Reveal";
-import { board, sectorTeams, fixedIncomeMacro, portfolioManagers, facultyAdvisors } from "@/data/team";
+import { board, sectorTeams, fixedIncomeMacro, portfolioManagers, facultyAdvisors, studentCount, facultyCount, totalMemberCount } from "@/data/team";
 import { socialMeta, canonical, breadcrumbLd, OG_TEAM } from "@/lib/seo";
 
 const allMembers = [
@@ -30,7 +30,7 @@ export const Route = createFileRoute("/team/")({
       { name: "description", content: "Meet the executive board, sector teams, fixed income & macro team, and portfolio managers of the Purdue Student Managed Investment Fund." },
       ...socialMeta({
         title: "Meet the Team | Purdue SMIF",
-        description: "The 52 students behind Purdue SMIF: executive board, sector analysts, fixed income & macro, and portfolio managers.",
+        description: `The ${studentCount} students behind Purdue SMIF: executive board, sector analysts, fixed income & macro, and portfolio managers.`,
         url: canonical("/team"),
         image: OG_TEAM,
       }),
@@ -108,7 +108,7 @@ const SCOPE_OPTIONS: ScopeOption[] = [
 
 
 function Team() {
-  const totalMembers = 54;
+  const totalMembers = totalMemberCount;
   const search = Route.useSearch();
   const navigate = useNavigate({ from: "/team/" });
   const reduce = useReducedMotion();
@@ -209,7 +209,7 @@ function Team() {
             The people behind the portfolio.
           </h1>
           <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
-            52 students and 2 faculty advisors working together to manage real capital for Purdue. Executive board members also serve as sector leads or senior analysts across the eight sector teams, the Fixed Income &amp; Macro group, and the Portfolio + Risk Management team.
+            {studentCount} students and {facultyCount} faculty advisors working together to manage real capital for Purdue. Executive board members also serve as sector leads or senior analysts across the eight sector teams, the Fixed Income &amp; Macro group, and the Portfolio + Risk Management team.
           </p>
 
           <div className="mt-10 grid grid-cols-2 gap-6 md:grid-cols-4 max-w-3xl">

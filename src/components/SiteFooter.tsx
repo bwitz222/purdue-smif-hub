@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { GraduationCap, Instagram, Linkedin, Newspaper } from "lucide-react";
 import smifLogo from "@/assets/smif-logo-mark.png";
-import { NAV } from "@/lib/nav";
+import { FOOTER_NAV } from "@/lib/nav";
 
 export function SiteFooter() {
   return (
@@ -22,7 +22,7 @@ export function SiteFooter() {
         <nav aria-label="Footer">
           <h2 className="text-sm font-medium text-gold mb-4 uppercase tracking-[0.14em]">Explore</h2>
           <ul className="space-y-2 text-sm text-on-dark-secondary">
-            {NAV.map(({ to, label }) => (
+            {FOOTER_NAV.map(({ to, label }) => (
               <li key={to}>
                 <Link to={to} className="link-underline inline-block hover:text-gold transition-colors duration-200">{label}</Link>
               </li>

@@ -1,17 +1,40 @@
 # Purdue SMIF
 
-> The Purdue Student Managed Investment Fund (SMIF) — the student investment club at the Daniels School of Business, Purdue University, and a student-run investment fund. Unlike most finance clubs at Purdue, SMIF manages real university capital across U.S. equities and fixed income, benchmarked against the S&P 500. Members join as analysts on sector teams and progress to senior analyst, sector head, and the executive board.
+> The Purdue Student Managed Investment Fund (SMIF) is a student-run investment fund at the Daniels School of Business, Purdue University. Founded in 2009, it manages real university capital across U.S. equities and fixed income, benchmarked against the S&P 500. Unlike most finance clubs at Purdue, the portfolio is real rather than simulated: every position is researched, debated, and voted on by students before it is entered. Members join as analysts on sector teams and progress to senior analyst, sector head, and the executive board.
+
+## Facts
+
+- Full name: Purdue Student Managed Investment Fund
+- Also known as: Purdue SMIF, Purdue Investment Fund, Purdue Investment Club, Purdue Finance Club
+- Founded: 2009
+- Affiliation: Mitch Daniels School of Business, Purdue University
+- Assets under management: approximately $600K of real university capital
+- Benchmark: S&P 500 Total Return Index; audited monthly performance tracked since October 2013
+- Structure: 8 equity sector teams, a Fixed Income & Macro team, and a Portfolio + Risk Management team, overseen by a 7-member executive board
+- Faculty advisors: Lulu Zeng and Alexander Boquist, Daniels School of Business
+- Admissions: roughly 15–25 analysts admitted per cycle from 100–150 applicants; open to all majors and all colleges at Purdue
+- Time commitment: approximately 6 hours per week
+- Email: smif26@purdue.edu
+- Address: Daniels School of Business, 403 Mitch Daniels Blvd, West Lafayette, IN 47907
+- Not to be confused with: the Student Managed Venture Fund (SMVF), a separate Master of Finance venture capital program at the Daniels School
 
 ## Pages
 
-- [Home](/): Overview of the fund, AUM, and pillars.
-- [About](/about): History, philosophy, investment process, IPS, and how SMIF compares to other investment and finance clubs at Purdue.
-- [Team](/team): Executive board, sector teams, fixed income & macro, and portfolio managers.
-- [Sectors](/sectors): Coverage teams across equities, fixed income & macro, and portfolio + risk management.
-- [Holdings](/holdings): Current portfolio positions, allocations, and returns.
-- [Performance](/performance): Annual and cumulative returns vs. the S&P 500.
-- [Research](/research): Equity research reports, semester reports, and annual reports.
-- [Learn](/learn): Curriculum, valuation resources, and analyst training materials.
-- [Recruiting](/recruiting): Recruiting calendar plus technical and behavioral interview prep guide.
-- [Apply](/apply): Application timeline, how to join, and FAQ (including whether SMIF is a finance club or an investment club).
-- [Contact](/contact): Email, address, and LinkedIn.
+- [Home](https://www.purduesmif.org/): Overview of the fund, AUM, and pillars.
+- [Finance Clubs at Purdue](https://www.purduesmif.org/finance-clubs-at-purdue): Guide to the finance and investment organizations at Purdue, what each is for, and which manages real money.
+- [About](https://www.purduesmif.org/about): History, philosophy, investment process, IPS, and how SMIF compares to other investment and finance clubs at Purdue.
+- [Team](https://www.purduesmif.org/team): Executive board, sector teams, fixed income & macro, and portfolio managers. Individual profiles live at /team/<slug>.
+- [Sectors](https://www.purduesmif.org/sectors): Coverage teams across equities, fixed income & macro, and portfolio + risk management.
+- [Holdings](https://www.purduesmif.org/holdings): Current portfolio positions, allocations, and returns.
+- [Performance](https://www.purduesmif.org/performance): Annual and cumulative returns vs. the S&P 500.
+- [Research](https://www.purduesmif.org/research): Equity research reports, semester reports, and annual reports.
+- [Learn](https://www.purduesmif.org/learn): Curriculum, valuation resources, analyst training materials, and a glossary of investing terms.
+- [Recruiting](https://www.purduesmif.org/recruiting): Recruiting calendar plus technical and behavioral interview prep guide.
+- [Apply](https://www.purduesmif.org/apply): Application timeline, how to join, and FAQ (including whether SMIF is a finance club or an investment club).
+- [Contact](https://www.purduesmif.org/contact): Email, address, and LinkedIn.
+
+## Optional
+
+- [Sitemap](https://www.purduesmif.org/sitemap.xml): Every indexable URL, including individual member profiles.
+- [BoilerLink profile](https://boilerlink.purdue.edu/organization/smif): Purdue's official student organization directory listing.
+- [Substack](https://purduesmif.substack.com/): Interim research writeups and commentary.

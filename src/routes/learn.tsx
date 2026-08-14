@@ -61,9 +61,60 @@ export const Route = createFileRoute("/learn")({
       }),
     ],
     links: [{ rel: "canonical", href: canonical("/learn") }],
-    scripts: [breadcrumbLd("Learn", "/learn")],
+    scripts: [
+      // The glossary is the most quotable thing on the site — twelve terms,
+      // each with a one-sentence plain-English definition. DefinedTermSet is
+      // what lets an answer engine lift a single definition and attribute it,
+      // rather than treating the page as an undifferentiated wall of text.
+      // Generated from GLOSSARY so the schema can never drift from the copy.
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "DefinedTermSet",
+          "@id": `${canonical("/learn")}#glossary`,
+          name: "Purdue SMIF Investing Glossary",
+          description:
+            "Plain-English definitions of the valuation and portfolio terms Purdue SMIF analysts train on.",
+          publisher: { "@id": "https://www.purduesmif.org/#organization" },
+          hasDefinedTerm: GLOSSARY.map(({ term, def }) => ({
+            "@type": "DefinedTerm",
+            "@id": `${canonical("/learn")}#${termSlug(term)}`,
+            name: term,
+            description: def,
+            inDefinedTermSet: `${canonical("/learn")}#glossary`,
+          })),
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Course",
+          "@id": `${canonical("/learn")}#course`,
+          name: "Purdue SMIF Analyst Training",
+          description:
+            "A six-module analyst curriculum covering financial statements, valuation, competitive analysis, pitch construction, portfolio and risk, and macro and fixed income.",
+          provider: { "@id": "https://www.purduesmif.org/#organization" },
+          url: canonical("/learn"),
+          educationalLevel: "Undergraduate",
+          isAccessibleForFree: true,
+          teaches: CURRICULUM.map((m) => m.title),
+          hasCourseInstance: {
+            "@type": "CourseInstance",
+            courseMode: "Blended",
+            courseWorkload: "PT6H",
+          },
+        }),
+      },
+      breadcrumbLd("Learn", "/learn"),
+    ],
   }),
 });
+
+/** Stable fragment id for a glossary term, e.g. "EV / EBITDA" -> "ev-ebitda". */
+const termSlug = (term: string) =>
+  term.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
 const TRACKS = [
   {

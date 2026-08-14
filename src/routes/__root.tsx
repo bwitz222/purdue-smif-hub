@@ -10,6 +10,11 @@ import smifLogo from "@/assets/smif-logo-mark.png";
 function NotFoundComponent() {
   return (
     <div className="flex min-h-dvh items-center justify-center bg-ink px-4 py-16">
+      {/* React 19 hoists these into <head>. Without them a soft-404 inherits the
+          root title/description and stays indexable — unknown /team/<slug>
+          values land here, so that would publish an endless supply of them. */}
+      <title>Page not found — Purdue SMIF</title>
+      <meta name="robots" content="noindex, follow" />
       <div className="max-w-md text-center text-background">
         <span className="mx-auto mb-8 grid h-16 w-16 place-items-center bg-background p-2">
           <img src={smifLogo} alt="Purdue SMIF" width={64} height={64} decoding="async" className="h-full w-full object-contain" />
@@ -44,7 +49,7 @@ function NotFoundComponent() {
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
-  return (<div className="flex min-h-dvh items-center justify-center bg-ink px-4"><div className="max-w-md text-center text-background"><span className="rule-gold block mb-5 mx-auto" /><h1 className="font-display text-2xl font-bold text-background">This page didn't load</h1><p className="mt-3 text-sm text-on-dark-secondary">Something went wrong on our end. Try refreshing or head back home.</p><div className="mt-8 flex flex-wrap justify-center gap-3"><button onClick={() => { router.invalidate(); reset(); }} className="inline-flex items-center justify-center bg-gold px-6 py-3 text-sm font-semibold text-ink hover:bg-gold-mid transition-colors duration-200">Try again</button><a href="/" className="inline-flex items-center justify-center border border-background/25 px-6 py-3 text-sm font-semibold text-background hover:border-gold hover:text-gold transition-colors duration-200">Go home</a></div></div></div>);
+  return (<div className="flex min-h-dvh items-center justify-center bg-ink px-4"><title>Something went wrong — Purdue SMIF</title><meta name="robots" content="noindex, follow" /><div className="max-w-md text-center text-background"><span className="rule-gold block mb-5 mx-auto" /><h1 className="font-display text-2xl font-bold text-background">This page didn't load</h1><p className="mt-3 text-sm text-on-dark-secondary">Something went wrong on our end. Try refreshing or head back home.</p><div className="mt-8 flex flex-wrap justify-center gap-3"><button onClick={() => { router.invalidate(); reset(); }} className="inline-flex items-center justify-center bg-gold px-6 py-3 text-sm font-semibold text-ink hover:bg-gold-mid transition-colors duration-200">Try again</button><a href="/" className="inline-flex items-center justify-center border border-background/25 px-6 py-3 text-sm font-semibold text-background hover:border-gold hover:text-gold transition-colors duration-200">Go home</a></div></div></div>);
 }
 
 
@@ -55,13 +60,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Purdue Student Managed Investment Fund" },
       { name: "description", content: "Purdue SMIF — the student-managed investment fund at Purdue's Daniels School of Business, managing real capital since 2009." },
-      { name: "keywords", content: "Purdue SMIF, Purdue Student Managed Investment Fund, Purdue Investment Fund, Purdue Investment Club, Purdue Finance Club, Purdue investing club, Purdue finance organization, Daniels School of Business, student investment fund" },
+      // Opt into the largest available rich-result treatment. Without this,
+      // Google caps image previews and truncates snippets by default.
+      { name: "robots", content: "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" },
       { name: "author", content: "Purdue SMIF" },
       { name: "theme-color", content: "#0A0A0A" },
       { property: "og:site_name", content: "Purdue SMIF" },
-      { property: "og:type", content: "website" },
       { property: "og:locale", content: "en_US" },
-      { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@PurdueSMIF" },
     ],
     links: [
@@ -107,6 +112,23 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
                 "@type": "CollegeOrUniversity",
                 name: "Daniels School of Business, Purdue University",
               },
+              // Topical grounding: tells a knowledge graph what this entity is
+              // *about*, not just what it's called. Without it the org resolves
+              // as a generic student club rather than an investing entity.
+              knowsAbout: [
+                "Equity research",
+                "Fundamental analysis",
+                "Discounted cash flow valuation",
+                "Portfolio management",
+                "Risk management",
+                "Fixed income and macroeconomics",
+                "Student managed investment funds",
+              ],
+              foundingLocation: {
+                "@type": "Place",
+                name: "West Lafayette, Indiana, United States",
+              },
+              areaServed: { "@type": "Place", name: "Purdue University" },
               address: {
                 "@type": "PostalAddress",
                 streetAddress: "403 Mitch Daniels Blvd",
@@ -132,6 +154,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
               url: "https://www.purduesmif.org",
               name: "Purdue SMIF",
               publisher: { "@id": "https://www.purduesmif.org/#organization" },
+              potentialAction: {
+                "@type": "SearchAction",
+                target: {
+                  "@type": "EntryPoint",
+                  urlTemplate: "https://www.purduesmif.org/team?q={search_term_string}",
+                },
+                "query-input": "required name=search_term_string",
+              },
             },
           ],
         }),
