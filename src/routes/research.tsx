@@ -15,20 +15,75 @@ export const Route = createFileRoute("/research")({
   // returned array.
   loader: async (): Promise<{ pubs: PublicationRow[] }> => ({ pubs: await getPublications() }),
   component: Research,
-  head: () => ({
-    meta: [
-      { title: "Equity Research Reports & Publications | Purdue SMIF" },
-      { name: "description", content: "Equity research, single-name stock pitches, semester performance reviews, and annual reports authored by Purdue SMIF analysts and curated by fund leadership." },
-      ...socialMeta({
-        title: "Equity Research & Reports | Purdue SMIF",
-        description: "Read SMIF's equity research pitches, semester performance reviews, and annual reports.",
-        url: canonical("/research"),
-        image: OG_RESEARCH,
+  head: ({ loaderData }) => {
+    const pubs = loaderData?.pubs ?? [];
+    const url = canonical("/research");
+
+    // The publication library is the fund's actual research corpus, and it
+    // was previously invisible as content — the route emitted only a
+    // breadcrumb, so a crawler saw a page of links with no indication that
+    // each one is a dated, authored report. CollectionPage + one Report per
+    // publication makes the corpus itself addressable.
+    //
+    // Built from the loader's rows, so it stays empty (and honest) while the
+    // publications table is, and grows without another code change.
+    const collectionLd = {
+      type: "application/ld+json",
+      children: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        "@id": `${url}#library`,
+        name: "Purdue SMIF Research Library",
+        description:
+          "Equity research, single-name stock pitches, semester performance reviews, and annual reports authored by Purdue SMIF analysts.",
+        url,
+        isPartOf: { "@id": "https://www.purduesmif.org/#website" },
+        about: { "@id": "https://www.purduesmif.org/#organization" },
+        ...(pubs.length > 0 && {
+          mainEntity: {
+            "@type": "ItemList",
+            numberOfItems: pubs.length,
+            itemListElement: pubs.map((p, i) => ({
+              "@type": "ListItem",
+              position: i + 1,
+              item: {
+                "@type": "Report",
+                "@id": `${url}#pub-${p.id}`,
+                name: p.title,
+                ...(p.description && { description: p.description }),
+                datePublished: p.created_at,
+                url: p.url,
+                ...(p.mime_type && { encodingFormat: p.mime_type }),
+                genre: CATEGORY_LABEL[p.category as Category] ?? "Report",
+                isAccessibleForFree: true,
+                // Reports are published by the fund rather than credited to
+                // individual analysts in the data model, so the organization
+                // is both author and publisher. Attributing a Person we don't
+                // actually store would be fabricated provenance.
+                author: { "@id": "https://www.purduesmif.org/#organization" },
+                publisher: { "@id": "https://www.purduesmif.org/#organization" },
+              },
+            })),
+          },
+        }),
       }),
-    ],
-    links: [{ rel: "canonical", href: canonical("/research") }],
-    scripts: [breadcrumbLd("Research", "/research")],
-  }),
+    };
+
+    return {
+      meta: [
+        { title: "Equity Research Reports & Publications | Purdue SMIF" },
+        { name: "description", content: "Equity research, single-name stock pitches, semester performance reviews, and annual reports authored by Purdue SMIF analysts and curated by fund leadership." },
+        ...socialMeta({
+          title: "Equity Research & Reports | Purdue SMIF",
+          description: "Read SMIF's equity research pitches, semester performance reviews, and annual reports.",
+          url,
+          image: OG_RESEARCH,
+        }),
+      ],
+      links: [{ rel: "canonical", href: url }],
+      scripts: [collectionLd, breadcrumbLd("Research", "/research")],
+    };
+  },
 });
 
 type Category = "equity_research" | "semester" | "annual";

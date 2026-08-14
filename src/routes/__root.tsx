@@ -82,6 +82,25 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=IBM+Plex+Mono:wght@400&display=optional" },
     ],
     scripts: [
+      // Vercel Web Analytics + Speed Insights.
+      //
+      // Framework-agnostic script tags rather than the @vercel/analytics and
+      // @vercel/speed-insights React packages: identical endpoints, but no new
+      // dependency and therefore nothing to keep in step in bun.lock, which
+      // this environment cannot regenerate (its registry mirror is blocked).
+      //
+      // Both paths are served by Vercel's edge only once the matching toggle
+      // is switched on for the project — Analytics and Speed Insights in the
+      // project dashboard. Until then they 404 harmlessly and collect nothing,
+      // so turning them on is a dashboard action, not another deploy.
+      //
+      // Production only: these paths don't exist on a local dev server.
+      ...(import.meta.env.PROD
+        ? [
+            { src: "/_vercel/insights/script.js", defer: true },
+            { src: "/_vercel/speed-insights/script.js", defer: true },
+          ]
+        : []),
       {
         type: "application/ld+json",
         children: JSON.stringify({
