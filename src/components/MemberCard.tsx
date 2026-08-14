@@ -31,9 +31,19 @@ export const memberEmail = (m: Member) => m.email;
  */
 export const memberPhotoCandidates = (m: Member) => {
   const slug = memberSlug(m.name);
-  const jpg = supabase.storage.from("team-headshots").getPublicUrl(`${slug}.jpg`).data.publicUrl;
-  const png = supabase.storage.from("team-headshots").getPublicUrl(`${slug}.png`).data.publicUrl;
-  return { jpg, png };
+  try {
+    const jpg = supabase.storage.from("team-headshots").getPublicUrl(`${slug}.jpg`).data.publicUrl;
+    const png = supabase.storage.from("team-headshots").getPublicUrl(`${slug}.png`).data.publicUrl;
+    return { jpg, png };
+  } catch {
+    // The Supabase client throws on construction when its env vars are absent,
+    // and every caller reaches this during render — so an unconfigured
+    // environment took the whole /team route down through the error boundary
+    // rather than dropping a few headshots. These URLs are an optional
+    // fallback for members with no bundled photo; every caller already
+    // handles null by rendering initials. Never let them break the page.
+    return null;
+  }
 };
 
 export function MemberCard({

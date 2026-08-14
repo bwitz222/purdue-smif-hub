@@ -21,7 +21,8 @@ const { chromium } = require("playwright");
 const axeSource = readFileSync(require.resolve("axe-core/axe.min.js"), "utf8");
 
 const PAGES = ["/", "/about", "/team", "/sectors", "/holdings", "/performance",
-  "/research", "/recruiting", "/learn", "/apply", "/contact"];
+  "/research", "/recruiting", "/learn", "/apply", "/contact",
+  "/finance-clubs-at-purdue"];
 
 const results = [];
 const record = (name, ok, note = "") => {
