@@ -9,77 +9,28 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as AboutRouteImport } from './routes/about'
-import { Route as AlumniRouteImport } from './routes/alumni'
-import { Route as ApplyRouteImport } from './routes/apply'
-import { Route as ContactRouteImport } from './routes/contact'
-import { Route as HoldingsRouteImport } from './routes/holdings'
-import { Route as LearnRouteImport } from './routes/learn'
-import { Route as PerformanceRouteImport } from './routes/performance'
-import { Route as PublicationsRouteImport } from './routes/publications'
-import { Route as RecruitingRouteImport } from './routes/recruiting'
-import { Route as ResearchRouteImport } from './routes/research'
-import { Route as SectorsRouteImport } from './routes/sectors'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SectorsRouteImport } from './routes/sectors'
+import { Route as ResearchRouteImport } from './routes/research'
+import { Route as RecruitingRouteImport } from './routes/recruiting'
+import { Route as PublicationsRouteImport } from './routes/publications'
+import { Route as PerformanceRouteImport } from './routes/performance'
+import { Route as LearnRouteImport } from './routes/learn'
+import { Route as HoldingsRouteImport } from './routes/holdings'
+import { Route as FinanceClubsAtPurdueRouteImport } from './routes/finance-clubs-at-purdue'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as ApplyRouteImport } from './routes/apply'
+import { Route as AlumniRouteImport } from './routes/alumni'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as TeamIndexRouteImport } from './routes/team.index'
 import { Route as TeamSlugRouteImport } from './routes/team.$slug'
-import { Route as ApiPublicHooksComputeRiskRouteImport } from './routes/api/public/hooks/compute-risk'
 import { Route as ApiPublicHooksRefreshQuotesRouteImport } from './routes/api/public/hooks/refresh-quotes'
+import { Route as ApiPublicHooksComputeRiskRouteImport } from './routes/api/public/hooks/compute-risk'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AboutRoute = AboutRouteImport.update({
-  id: '/about',
-  path: '/about',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AlumniRoute = AlumniRouteImport.update({
-  id: '/alumni',
-  path: '/alumni',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApplyRoute = ApplyRouteImport.update({
-  id: '/apply',
-  path: '/apply',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContactRoute = ContactRouteImport.update({
-  id: '/contact',
-  path: '/contact',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HoldingsRoute = HoldingsRouteImport.update({
-  id: '/holdings',
-  path: '/holdings',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LearnRoute = LearnRouteImport.update({
-  id: '/learn',
-  path: '/learn',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PerformanceRoute = PerformanceRouteImport.update({
-  id: '/performance',
-  path: '/performance',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PublicationsRoute = PublicationsRouteImport.update({
-  id: '/publications',
-  path: '/publications',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RecruitingRoute = RecruitingRouteImport.update({
-  id: '/recruiting',
-  path: '/recruiting',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ResearchRoute = ResearchRouteImport.update({
-  id: '/research',
-  path: '/research',
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SectorsRoute = SectorsRouteImport.update({
@@ -87,9 +38,64 @@ const SectorsRoute = SectorsRouteImport.update({
   path: '/sectors',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
+const ResearchRoute = ResearchRouteImport.update({
+  id: '/research',
+  path: '/research',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RecruitingRoute = RecruitingRouteImport.update({
+  id: '/recruiting',
+  path: '/recruiting',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PublicationsRoute = PublicationsRouteImport.update({
+  id: '/publications',
+  path: '/publications',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PerformanceRoute = PerformanceRouteImport.update({
+  id: '/performance',
+  path: '/performance',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LearnRoute = LearnRouteImport.update({
+  id: '/learn',
+  path: '/learn',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HoldingsRoute = HoldingsRouteImport.update({
+  id: '/holdings',
+  path: '/holdings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FinanceClubsAtPurdueRoute = FinanceClubsAtPurdueRouteImport.update({
+  id: '/finance-clubs-at-purdue',
+  path: '/finance-clubs-at-purdue',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApplyRoute = ApplyRouteImport.update({
+  id: '/apply',
+  path: '/apply',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AlumniRoute = AlumniRouteImport.update({
+  id: '/alumni',
+  path: '/alumni',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TeamIndexRoute = TeamIndexRouteImport.update({
@@ -102,16 +108,16 @@ const TeamSlugRoute = TeamSlugRouteImport.update({
   path: '/team/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicHooksComputeRiskRoute =
-  ApiPublicHooksComputeRiskRouteImport.update({
-    id: '/api/public/hooks/compute-risk',
-    path: '/api/public/hooks/compute-risk',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const ApiPublicHooksRefreshQuotesRoute =
   ApiPublicHooksRefreshQuotesRouteImport.update({
     id: '/api/public/hooks/refresh-quotes',
     path: '/api/public/hooks/refresh-quotes',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksComputeRiskRoute =
+  ApiPublicHooksComputeRiskRouteImport.update({
+    id: '/api/public/hooks/compute-risk',
+    path: '/api/public/hooks/compute-risk',
     getParentRoute: () => rootRouteImport,
   } as any)
 
@@ -121,6 +127,7 @@ export interface FileRoutesByFullPath {
   '/alumni': typeof AlumniRoute
   '/apply': typeof ApplyRoute
   '/contact': typeof ContactRoute
+  '/finance-clubs-at-purdue': typeof FinanceClubsAtPurdueRoute
   '/holdings': typeof HoldingsRoute
   '/learn': typeof LearnRoute
   '/performance': typeof PerformanceRoute
@@ -140,6 +147,7 @@ export interface FileRoutesByTo {
   '/alumni': typeof AlumniRoute
   '/apply': typeof ApplyRoute
   '/contact': typeof ContactRoute
+  '/finance-clubs-at-purdue': typeof FinanceClubsAtPurdueRoute
   '/holdings': typeof HoldingsRoute
   '/learn': typeof LearnRoute
   '/performance': typeof PerformanceRoute
@@ -160,6 +168,7 @@ export interface FileRoutesById {
   '/alumni': typeof AlumniRoute
   '/apply': typeof ApplyRoute
   '/contact': typeof ContactRoute
+  '/finance-clubs-at-purdue': typeof FinanceClubsAtPurdueRoute
   '/holdings': typeof HoldingsRoute
   '/learn': typeof LearnRoute
   '/performance': typeof PerformanceRoute
@@ -181,6 +190,7 @@ export interface FileRouteTypes {
     | '/alumni'
     | '/apply'
     | '/contact'
+    | '/finance-clubs-at-purdue'
     | '/holdings'
     | '/learn'
     | '/performance'
@@ -200,6 +210,7 @@ export interface FileRouteTypes {
     | '/alumni'
     | '/apply'
     | '/contact'
+    | '/finance-clubs-at-purdue'
     | '/holdings'
     | '/learn'
     | '/performance'
@@ -219,6 +230,7 @@ export interface FileRouteTypes {
     | '/alumni'
     | '/apply'
     | '/contact'
+    | '/finance-clubs-at-purdue'
     | '/holdings'
     | '/learn'
     | '/performance'
@@ -239,6 +251,7 @@ export interface RootRouteChildren {
   AlumniRoute: typeof AlumniRoute
   ApplyRoute: typeof ApplyRoute
   ContactRoute: typeof ContactRoute
+  FinanceClubsAtPurdueRoute: typeof FinanceClubsAtPurdueRoute
   HoldingsRoute: typeof HoldingsRoute
   LearnRoute: typeof LearnRoute
   PerformanceRoute: typeof PerformanceRoute
@@ -255,81 +268,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/alumni': {
-      id: '/alumni'
-      path: '/alumni'
-      fullPath: '/alumni'
-      preLoaderRoute: typeof AlumniRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/apply': {
-      id: '/apply'
-      path: '/apply'
-      fullPath: '/apply'
-      preLoaderRoute: typeof ApplyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contact': {
-      id: '/contact'
-      path: '/contact'
-      fullPath: '/contact'
-      preLoaderRoute: typeof ContactRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/holdings': {
-      id: '/holdings'
-      path: '/holdings'
-      fullPath: '/holdings'
-      preLoaderRoute: typeof HoldingsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/learn': {
-      id: '/learn'
-      path: '/learn'
-      fullPath: '/learn'
-      preLoaderRoute: typeof LearnRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/performance': {
-      id: '/performance'
-      path: '/performance'
-      fullPath: '/performance'
-      preLoaderRoute: typeof PerformanceRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/publications': {
-      id: '/publications'
-      path: '/publications'
-      fullPath: '/publications'
-      preLoaderRoute: typeof PublicationsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/recruiting': {
-      id: '/recruiting'
-      path: '/recruiting'
-      fullPath: '/recruiting'
-      preLoaderRoute: typeof RecruitingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/research': {
-      id: '/research'
-      path: '/research'
-      fullPath: '/research'
-      preLoaderRoute: typeof ResearchRouteImport
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sectors': {
@@ -339,11 +282,88 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SectorsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
+    '/research': {
+      id: '/research'
+      path: '/research'
+      fullPath: '/research'
+      preLoaderRoute: typeof ResearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/recruiting': {
+      id: '/recruiting'
+      path: '/recruiting'
+      fullPath: '/recruiting'
+      preLoaderRoute: typeof RecruitingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/publications': {
+      id: '/publications'
+      path: '/publications'
+      fullPath: '/publications'
+      preLoaderRoute: typeof PublicationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/performance': {
+      id: '/performance'
+      path: '/performance'
+      fullPath: '/performance'
+      preLoaderRoute: typeof PerformanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/learn': {
+      id: '/learn'
+      path: '/learn'
+      fullPath: '/learn'
+      preLoaderRoute: typeof LearnRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/holdings': {
+      id: '/holdings'
+      path: '/holdings'
+      fullPath: '/holdings'
+      preLoaderRoute: typeof HoldingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/finance-clubs-at-purdue': {
+      id: '/finance-clubs-at-purdue'
+      path: '/finance-clubs-at-purdue'
+      fullPath: '/finance-clubs-at-purdue'
+      preLoaderRoute: typeof FinanceClubsAtPurdueRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/apply': {
+      id: '/apply'
+      path: '/apply'
+      fullPath: '/apply'
+      preLoaderRoute: typeof ApplyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/alumni': {
+      id: '/alumni'
+      path: '/alumni'
+      fullPath: '/alumni'
+      preLoaderRoute: typeof AlumniRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/team/': {
@@ -360,18 +380,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TeamSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/hooks/compute-risk': {
-      id: '/api/public/hooks/compute-risk'
-      path: '/api/public/hooks/compute-risk'
-      fullPath: '/api/public/hooks/compute-risk'
-      preLoaderRoute: typeof ApiPublicHooksComputeRiskRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/public/hooks/refresh-quotes': {
       id: '/api/public/hooks/refresh-quotes'
       path: '/api/public/hooks/refresh-quotes'
       fullPath: '/api/public/hooks/refresh-quotes'
       preLoaderRoute: typeof ApiPublicHooksRefreshQuotesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/compute-risk': {
+      id: '/api/public/hooks/compute-risk'
+      path: '/api/public/hooks/compute-risk'
+      fullPath: '/api/public/hooks/compute-risk'
+      preLoaderRoute: typeof ApiPublicHooksComputeRiskRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -383,6 +403,7 @@ const rootRouteChildren: RootRouteChildren = {
   AlumniRoute: AlumniRoute,
   ApplyRoute: ApplyRoute,
   ContactRoute: ContactRoute,
+  FinanceClubsAtPurdueRoute: FinanceClubsAtPurdueRoute,
   HoldingsRoute: HoldingsRoute,
   LearnRoute: LearnRoute,
   PerformanceRoute: PerformanceRoute,

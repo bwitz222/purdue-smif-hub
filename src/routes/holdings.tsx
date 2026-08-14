@@ -89,7 +89,7 @@ function KpiCard({
 }) {
   const valueColor = accent === "positive" ? "text-gain" : accent === "negative" ? "text-loss" : "text-ink";
   return (
-    <div className="border border-border bg-card p-6 flex flex-col gap-1 hover-lift-sm" title={hint}>
+    <div className="border border-border bg-card p-6 flex flex-col gap-1 hover-lift-sm">
       <div className="text-xs uppercase tracking-[0.22em] text-muted-foreground">{label}</div>
       {muted ? (
         <div className="text-lg font-semibold text-muted-foreground mt-2">{value}</div>
@@ -101,6 +101,15 @@ function KpiCard({
         <div className="text-[10px] font-mono uppercase tracking-[0.18em] text-muted-foreground mt-1">
           As of {asOf}
         </div>
+      )}
+      {/* Rendered as real copy rather than a title attribute. These plain-English
+          one-liners are the clearest explanations of Sharpe, VaR, and exposure
+          anywhere on the site, and as tooltips they were invisible to text
+          extraction — and unreachable for anyone not using a mouse. */}
+      {hint && (
+        <p className="mt-3 border-t border-border pt-3 text-xs leading-relaxed text-muted-foreground">
+          {hint}
+        </p>
       )}
     </div>
   );
@@ -335,7 +344,11 @@ function HoldingsPage() {
             </button>
           </div>
         )}
-        <h2 className="sr-only">Portfolio Summary</h2>
+        {/* Section headings are visible rather than sr-only. The page
+            previously had no rendered h2 at all, which left it with no outline
+            for a reader and nothing for a parser to segment on. Styled with the
+            page's own label typography so they read as native furniture. */}
+        <h2 className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">Portfolio Summary</h2>
         <Reveal className="grid gap-px bg-border sm:grid-cols-2 lg:grid-cols-4">
           <KpiCard
             label="Portfolio Value"
@@ -406,11 +419,12 @@ function HoldingsPage() {
           />
         </Reveal>
 
-        <h2 className="sr-only">Sector Allocation</h2>
         <Reveal className="grid gap-px bg-border md:grid-cols-3">
           <div className="md:col-span-2 bg-card border border-border p-6">
             <div className="flex items-baseline justify-between mb-5 gap-3">
-              <div className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Sector Allocation</div>
+              {/* Was a div duplicated by an sr-only h2 above the grid, which
+                  announced the same text twice. One real heading instead. */}
+              <h2 className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Sector Allocation</h2>
               <div className="text-[10px] font-mono uppercase tracking-[0.18em] text-muted-foreground">% of invested capital</div>
             </div>
             <div className="space-y-2.5">
@@ -452,7 +466,7 @@ function HoldingsPage() {
 
         {!(isFetching && !quoteData) && (
           <Reveal>
-            <h2 className="sr-only">Today's Movers</h2>
+            <h2 className="mb-4 text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">Today's Movers</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-border">
               {[
                 { title: "Today's Leaders", items: movers.gainers },
@@ -488,7 +502,7 @@ function HoldingsPage() {
           </Reveal>
         )}
 
-        <h2 className="sr-only">Holdings</h2>
+        <h2 className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">Holdings</h2>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="relative w-full sm:max-w-xs">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" aria-hidden="true" />

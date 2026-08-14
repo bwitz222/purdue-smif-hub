@@ -383,5 +383,18 @@ function buildDirectory(): DirectoryEntry[] {
 
 export const memberDirectory: DirectoryEntry[] = buildDirectory();
 
+/**
+ * Single source of truth for headcount, derived from the deduped directory.
+ *
+ * Every surface that quotes a member number — the /team hero, the filter
+ * counter, OG copy — must read these. Hardcoding it separately in each place
+ * is how the site ended up claiming 52, 54, and "50+" at the same time, which
+ * is exactly the kind of inconsistency that makes an answer engine trust a
+ * third-party listing over the fund's own page.
+ */
+export const facultyCount: number = facultyAdvisors.length;
+export const totalMemberCount: number = memberDirectory.length;
+export const studentCount: number = totalMemberCount - facultyCount;
+
 export const findMemberBySlug = (slug: string): DirectoryEntry | undefined =>
   memberDirectory.find((e) => e.slug === slug);

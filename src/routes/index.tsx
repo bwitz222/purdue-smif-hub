@@ -41,7 +41,7 @@ export const Route = createFileRoute("/")({
 // latest quotes + cash). Refresh these numbers whenever the fund's stats
 // move materially so a failed fetch still shows a reasonable approximation.
 const FALLBACK_STATS = {
-  aum_display: "$638K",
+  aum_display: "$600K",
   active_members: "50+",
   founded_year: 2009,
   sector_teams: 10,
@@ -109,8 +109,19 @@ function Index() {
             >
               Purdue <span className="text-gold">Student</span> Managed<br />Investment Fund
             </h1>
-            <p className="animate-fade-up delay-400 mt-8 max-w-xl text-on-dark-primary text-base leading-relaxed">
-              A student-run fund managing real university capital, built on rigorous research and a disciplined investment process.
+            {/* Direct-answer paragraph. This is the featured-snippet / AI Overview
+                extraction zone, so it names the entity, its category, the
+                university, and the hard facts in plain prose — a crawler that
+                reads nothing else should still be able to answer "what is
+                Purdue SMIF" and "how much does it manage" from these two
+                sentences. Keep it declarative; do not turn it back into a
+                tagline. */}
+            <p className="animate-fade-up delay-400 mt-8 max-w-2xl text-on-dark-primary text-base leading-relaxed">
+              The Purdue Student Managed Investment Fund (SMIF) is a student-run investment
+              fund at Purdue University's Daniels School of Business. Founded in{" "}
+              {s.founded_year}, SMIF manages {s.aum_display} of real university capital across
+              U.S. equities and fixed income, benchmarked against the S&amp;P 500 and reported
+              quarterly.
             </p>
             <div className="animate-fade-up delay-500 mt-10 flex flex-wrap gap-4">
               <a

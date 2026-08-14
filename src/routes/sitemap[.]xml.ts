@@ -1,8 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 import { memberDirectory } from "@/data/team";
+import { SITE_URL } from "@/lib/seo";
 
-const BASE_URL = "https://www.purduesmif.org";
+// Single host constant, shared with every canonical/og:url the site emits.
+// A second hardcoded copy here would silently drift the day the domain moves.
+const BASE_URL = SITE_URL;
 
 interface SitemapEntry {
   path: string;
@@ -29,6 +32,7 @@ export const Route = createFileRoute("/sitemap.xml")({
           { path: "/learn",        changefreq: "monthly", priority: "0.6" },
           { path: "/apply",        changefreq: "monthly", priority: "0.7" },
           { path: "/contact",      changefreq: "yearly",  priority: "0.5" },
+          { path: "/finance-clubs-at-purdue", changefreq: "monthly", priority: "0.9" },
         ];
 
         // One entry per member profile. These are the pages a recruiter
