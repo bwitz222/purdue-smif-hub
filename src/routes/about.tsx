@@ -384,11 +384,16 @@ function About() {
               Questions about the fund.
             </h2>
           </Reveal>
-          <RevealGroup className="grid gap-x-14 gap-y-10 md:grid-cols-2" stagger={0.06}>
+          {/* Same card treatment as the IPS grid above: hairline dividers from
+              gap-px over bg-border, each answer on its own bg-background tile. */}
+          <RevealGroup className="grid gap-px bg-border sm:grid-cols-2" stagger={0.06}>
             {FAQ.map(({ q, a }) => (
-              <RevealItem key={q}>
-                <h3 className="font-display text-lg font-bold text-ink">{q}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{a}</p>
+              <RevealItem
+                key={q}
+                className="bg-background p-6 hover:bg-secondary/50 transition-colors duration-200"
+              >
+                <h3 className="font-display text-base font-bold text-ink mb-2">{q}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">{a}</p>
               </RevealItem>
             ))}
           </RevealGroup>
