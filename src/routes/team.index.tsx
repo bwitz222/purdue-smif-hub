@@ -7,6 +7,7 @@ import { MemberDetailSheet } from "@/components/MemberDetailSheet";
 import { RevealGroup, RevealItem } from "@/components/Reveal";
 import { board, sectorTeams, fixedIncomeMacro, portfolioManagers, facultyAdvisors, studentCount, facultyCount, totalMemberCount } from "@/data/team";
 import { socialMeta, canonical, breadcrumbLd, OG_TEAM } from "@/lib/seo";
+import { jumpToSection } from "@/lib/jump-to";
 
 const allMembers = [
   ...board,
@@ -129,11 +130,16 @@ function Team() {
     setSectorFilter(opt.sector);
     // Defer scroll until layout settles after state update.
     const id = requestAnimationFrame(() => {
-      const target = document.getElementById(opt.anchor) ?? gridRef.current;
-      target?.scrollIntoView({
-        behavior: reduce ? "auto" : "smooth",
-        block: "start",
-      });
+      // Moves focus as well as the viewport — a keyboard user arriving on a
+      // ?sector= URL previously had the page jump under them with focus still
+      // at the top of the document. Falls back to the grid when the target
+      // section is filtered out of the DOM.
+      if (!jumpToSection(opt.anchor, { reduce, updateHash: false })) {
+        gridRef.current?.scrollIntoView({
+          behavior: reduce ? "auto" : "smooth",
+          block: "start",
+        });
+      }
     });
     return () => cancelAnimationFrame(id);
   }, [search.sector, reduce]);
@@ -187,13 +193,21 @@ function Team() {
       search: () => (val === "all" ? {} : { sector: opt.label }),
       replace: true,
     });
-    // Anchor-jump filtering: scroll to the matching section after render.
+    // Anchor-jump filtering: scroll to the matching section after render, and
+    // take focus with it. Without the focus move a keyboard user stays on the
+    // chip while the page scrolls away beneath them, and a screen reader
+    // announces nothing about where they landed.
+    //
+    // updateHash is off here because this control already writes its state to
+    // the URL as ?sector=… — adding a fragment would give the same position
+    // two competing representations.
     requestAnimationFrame(() => {
-      const target = document.getElementById(opt.anchor) ?? gridRef.current;
-      target?.scrollIntoView({
-        behavior: reduce ? "auto" : "smooth",
-        block: "start",
-      });
+      if (!jumpToSection(opt.anchor, { reduce, updateHash: false })) {
+        gridRef.current?.scrollIntoView({
+          behavior: reduce ? "auto" : "smooth",
+          block: "start",
+        });
+      }
     });
   };
 

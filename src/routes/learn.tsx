@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ExternalLink, Download } from "lucide-react";
 import { socialMeta, canonical, breadcrumbLd, OG_LEARN } from "@/lib/seo";
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
+import { OnThisPage, type PageSection } from "@/components/OnThisPage";
 import { applyUrl } from "@/lib/apply-url";
 import dcfAmzn from "@/assets/dcf-model-amzn.xlsx?url";
 import amznThesis from "@/assets/amzn-investment-thesis.docx?url";
@@ -9,6 +10,16 @@ import amznCca from "@/assets/amzn-cca.xlsx?url";
 import amznCcaCommentary from "@/assets/amzn-cca-commentary.docx?url";
 
 const APPLICATION_URL = applyUrl("learn-cta");
+
+/** Anchors for the in-page nav. Each id must match a <section id> below. */
+const SECTIONS: readonly PageSection[] = [
+  { id: "tracks", label: "Two tracks" },
+  { id: "path", label: "Learning path" },
+  { id: "reading", label: "Reading list" },
+  { id: "tools", label: "Tools" },
+  { id: "models", label: "Example models" },
+  { id: "glossary", label: "Key terms" },
+];
 
 const EXAMPLES = [
   {
@@ -196,11 +207,13 @@ function Learn() {
       </section>
 
       {/* Two tracks */}
-      <section className="bg-background border-t border-border py-28">
+      <OnThisPage sections={SECTIONS} />
+
+      <section id="tracks" aria-labelledby="tracks-h" className="bg-background border-t border-border py-28 section-anchor">
         <div className="container-prose">
           <Reveal className="max-w-2xl mb-14">
             <span className="rule-gold mb-5 block" />
-            <h2 className="font-display font-bold text-ink" style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>
+            <h2 id="tracks-h" className="font-display font-bold text-ink" style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>
               Two tracks,<br />one standard.
             </h2>
           </Reveal>
@@ -219,10 +232,10 @@ function Learn() {
       </section>
 
       {/* Curriculum / learning path */}
-      <section className="bg-secondary/40 border-t border-border py-28">
+      <section id="path" aria-labelledby="path-h" className="bg-secondary/40 border-t border-border py-28 section-anchor">
         <div className="container-prose">
           <Reveal className="max-w-2xl mb-14">
-            <h2 className="font-display font-bold text-ink" style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>
+            <h2 id="path-h" className="font-display font-bold text-ink" style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>
               The learning path.
             </h2>
           </Reveal>
@@ -246,11 +259,11 @@ function Learn() {
       </section>
 
       {/* Reading list */}
-      <section className="bg-background border-t border-border py-28">
+      <section id="reading" aria-labelledby="reading-h" className="bg-background border-t border-border py-28 section-anchor">
         <div className="container-prose">
           <Reveal className="max-w-2xl mb-14">
             <span className="rule-gold mb-5 block" />
-            <h2 className="font-display font-bold text-ink" style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>
+            <h2 id="reading-h" className="font-display font-bold text-ink" style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>
               Reading list.
             </h2>
           </Reveal>
@@ -267,10 +280,10 @@ function Learn() {
       </section>
 
       {/* Resources & tools */}
-      <section className="bg-background border-t border-border py-28">
+      <section id="tools" aria-labelledby="tools-h" className="bg-background border-t border-border py-28 section-anchor">
         <div className="container-prose">
           <Reveal className="max-w-2xl mb-14">
-            <h2 className="font-display font-bold text-ink" style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>
+            <h2 id="tools-h" className="font-display font-bold text-ink" style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>
               Tools we use.
             </h2>
           </Reveal>
@@ -298,11 +311,11 @@ function Learn() {
       </section>
 
       {/* Example models */}
-      <section className="bg-background border-t border-border py-28">
+      <section id="models" aria-labelledby="models-h" className="bg-background border-t border-border py-28 section-anchor">
         <div className="container-prose">
           <Reveal className="max-w-2xl mb-14">
             <span className="rule-gold mb-5 block" />
-            <h2 className="font-display font-bold text-ink" style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>
+            <h2 id="models-h" className="font-display font-bold text-ink" style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>
               Example models.
             </h2>
             <p className="mt-5 text-muted-foreground leading-relaxed">
@@ -331,11 +344,11 @@ function Learn() {
       </section>
 
       {/* Glossary */}
-      <section className="bg-secondary/40 border-t border-border py-28">
+      <section id="glossary" aria-labelledby="glossary-h" className="bg-secondary/40 border-t border-border py-28 section-anchor">
 
         <div className="container-prose">
           <Reveal className="max-w-2xl mb-14">
-            <h2 className="font-display font-bold text-ink" style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>
+            <h2 id="glossary-h" className="font-display font-bold text-ink" style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>
               Key terms.
             </h2>
           </Reveal>

@@ -3,6 +3,16 @@ import { ArrowRight, ExternalLink } from "lucide-react";
 import { socialMeta, canonical, breadcrumbLd, OG_ABOUT } from "@/lib/seo";
 import { applyUrl } from "@/lib/apply-url";
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
+import { OnThisPage, type PageSection } from "@/components/OnThisPage";
+
+/** Anchors for the in-page nav. Each id must match a <section id> below. */
+const SECTIONS: readonly PageSection[] = [
+  { id: "short-answer", label: "The short answer" },
+  { id: "organizations", label: "The organizations" },
+  { id: "where-we-fit", label: "Where SMIF fits" },
+  { id: "how-to-choose", label: "How to choose" },
+  { id: "faq", label: "FAQ" },
+];
 
 const PAGE_TITLE = "Finance & Investment Clubs at Purdue: A Complete Guide | Purdue SMIF";
 const PAGE_DESCRIPTION =
@@ -189,13 +199,15 @@ function FinanceClubs() {
       </section>
 
       {/* ── The short answer ──────────────────────────────────────── */}
-      <section className="border-b border-border bg-secondary/40">
+      <OnThisPage sections={SECTIONS} />
+
+      <section id="short-answer" aria-labelledby="short-answer-h" className="border-b border-border bg-secondary/40 section-anchor">
         <div className="container-prose py-24">
           <Reveal className="max-w-3xl">
             <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">
               The short answer
             </span>
-            <h2 className="mt-4 font-display text-3xl font-bold md:text-4xl">
+            <h2 id="short-answer-h" className="mt-4 font-display text-3xl font-bold md:text-4xl">
               Pick by the work, not the name.
             </h2>
             <div className="mt-8 space-y-5 text-muted-foreground leading-relaxed">
@@ -228,13 +240,13 @@ function FinanceClubs() {
       </section>
 
       {/* ── Comparison table ──────────────────────────────────────── */}
-      <section className="border-b border-border">
+      <section id="organizations" aria-labelledby="organizations-h" className="border-b border-border section-anchor">
         <div className="container-prose py-24">
           <Reveal className="max-w-3xl mb-12">
             <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">
               At a glance
             </span>
-            <h2 className="mt-4 font-display text-3xl font-bold md:text-4xl">
+            <h2 id="organizations-h" className="mt-4 font-display text-3xl font-bold md:text-4xl">
               The main organizations.
             </h2>
             <p className="mt-6 text-muted-foreground leading-relaxed">
@@ -283,13 +295,13 @@ function FinanceClubs() {
       </section>
 
       {/* ── Where SMIF fits ───────────────────────────────────────── */}
-      <section className="border-b border-border bg-secondary/40">
+      <section id="where-we-fit" aria-labelledby="where-we-fit-h" className="border-b border-border bg-secondary/40 section-anchor">
         <div className="container-prose py-24">
           <Reveal className="max-w-3xl">
             <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">
               Where we fit
             </span>
-            <h2 className="mt-4 font-display text-3xl font-bold md:text-4xl">
+            <h2 id="where-we-fit-h" className="mt-4 font-display text-3xl font-bold md:text-4xl">
               What the Student Managed Investment Fund is.
             </h2>
             <div className="mt-8 space-y-5 text-muted-foreground leading-relaxed">
@@ -340,13 +352,13 @@ function FinanceClubs() {
       </section>
 
       {/* ── How to choose ─────────────────────────────────────────── */}
-      <section className="border-b border-border">
+      <section id="how-to-choose" aria-labelledby="how-to-choose-h" className="border-b border-border section-anchor">
         <div className="container-prose py-24">
           <Reveal className="max-w-3xl mb-12">
             <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">
               How to choose
             </span>
-            <h2 className="mt-4 font-display text-3xl font-bold md:text-4xl">
+            <h2 id="how-to-choose-h" className="mt-4 font-display text-3xl font-bold md:text-4xl">
               Three questions worth answering first.
             </h2>
           </Reveal>
@@ -375,13 +387,13 @@ function FinanceClubs() {
       </section>
 
       {/* ── FAQ ───────────────────────────────────────────────────── */}
-      <section className="border-b border-border bg-secondary/40">
+      <section id="faq" aria-labelledby="faq-h" className="border-b border-border bg-secondary/40 section-anchor">
         <div className="container-prose py-24">
           <Reveal className="max-w-3xl mb-12">
             <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">
               Common questions
             </span>
-            <h2 className="mt-4 font-display text-3xl font-bold md:text-4xl">
+            <h2 id="faq-h" className="mt-4 font-display text-3xl font-bold md:text-4xl">
               Questions, answered.
             </h2>
           </Reveal>
