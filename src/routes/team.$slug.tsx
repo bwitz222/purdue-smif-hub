@@ -3,7 +3,7 @@ import { ArrowLeft, Mail, Linkedin } from "lucide-react";
 import { useState } from "react";
 import { memberPhotoCandidates } from "@/components/MemberCard";
 import { Reveal } from "@/components/Reveal";
-import { findMemberBySlug, memberDirectory, type DirectoryEntry } from "@/data/team";
+import { findMemberBySlug, hasIndexableProfile, memberDirectory, type DirectoryEntry } from "@/data/team";
 import { socialMeta, canonical, SITE_URL, OG_TEAM } from "@/lib/seo";
 
 /**
@@ -38,6 +38,11 @@ export const Route = createFileRoute("/team/$slug")({
         { title },
         { name: "description", content: description },
         ...socialMeta({ title, description, url, type: "profile", image: OG_TEAM }),
+        // A profile with no bio is ~40 words. Keep it live and followed so it
+        // still passes link equity through to teammates, but keep it out of
+        // the index until it has something to say. Writing the bio reverses
+        // this automatically — see hasIndexableProfile in src/data/team.ts.
+        ...(hasIndexableProfile(m) ? [] : [{ name: "robots", content: "noindex, follow" }]),
       ],
       links: [{ rel: "canonical", href: url }],
       scripts: [

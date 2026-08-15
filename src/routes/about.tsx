@@ -3,6 +3,7 @@ import { ArrowRight } from "lucide-react";
 import { socialMeta, canonical, breadcrumbLd, OG_ABOUT } from "@/lib/seo";
 import { applyUrl } from "@/lib/apply-url";
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
+import { facultyAdvisors } from "@/data/team";
 
 const PAGE_TITLE = "About Purdue SMIF — Student Investment Club & Fund";
 const PAGE_DESCRIPTION = "How Purdue's student investment club works: the history, philosophy, and process behind every real-money position, and what sets it apart from other clubs.";
@@ -32,10 +33,60 @@ export const Route = createFileRoute("/about")({
           about: { "@id": "https://www.purduesmif.org/#organization" },
         }),
       },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "@id": "https://www.purduesmif.org/about#faq",
+          mainEntity: FAQ.map(({ q, a }) => ({
+            "@type": "Question",
+            name: q,
+            acceptedAnswer: { "@type": "Answer", text: a },
+          })),
+        }),
+      },
       breadcrumbLd("About", "/about"),
     ],
   }),
 });
+
+/**
+ * Questions about the fund itself — how it is governed, measured, and funded.
+ *
+ * Deliberately disjoint from the other two FAQ sets on the site: /apply covers
+ * joining, and /finance-clubs-at-purdue covers choosing between organizations.
+ * Duplicating questions across pages would make them compete with each other.
+ *
+ * Every answer restates a fact published elsewhere on this site (the IPS, the
+ * performance methodology, the roster) rather than introducing a new claim.
+ */
+const FAQ = [
+  {
+    q: "When was the Purdue Student Managed Investment Fund founded?",
+    a: "SMIF was founded in 2009 at Purdue University's Daniels School of Business. Audited monthly performance has been tracked since October 2013, and the full return history is published on the performance page.",
+  },
+  {
+    q: "Does Purdue SMIF invest real money?",
+    a: "Yes. The fund manages real capital on behalf of the university rather than a simulated portfolio. Every position is researched, debated, and voted on before it is entered, and the complete holdings list — with cost basis, weights, and returns — is published on this site.",
+  },
+  {
+    q: "Who oversees the fund?",
+    a: "An executive board of seven students, elected each spring, runs strategy, research, risk, recruiting, education, and operations. That sits inside faculty oversight: holdings, factor exposures, drawdowns, and concentration are reviewed with the faculty advisor quarterly, and performance is reported each semester to the Daniels School and university stakeholders.",
+  },
+  {
+    q: "How does SMIF decide what to buy?",
+    a: "Four steps. Analysts screen their sector for mispricing or structural change, build the financial model and stress-test the assumptions, defend the thesis live before the full investment committee, and then the members vote. Nothing enters the portfolio without a written thesis, a valuation, and a majority vote, and every holding is reviewed quarterly against its original thesis.",
+  },
+  {
+    q: "How is performance measured and reported?",
+    a: "Returns are benchmarked against the S&P 500 Total Return Index and calculated using the Modified Dietz method, which adjusts for the timing of cash flows. Performance is reported quarterly, with annual and cumulative returns, volatility, Sharpe, alpha, beta, and drawdown published on the performance page.",
+  },
+  {
+    q: "What can the fund invest in?",
+    a: "Primarily U.S.-listed equities and fixed income, with ADRs permitted. The investment policy statement prohibits options, futures, leverage, and short positions, caps position sizes per name and per sector, and requires meaningful exposure across all covered sectors.",
+  },
+];
 
 const PROCESS = [
   { n: "01", t: "Idea Generation",  d: "Analysts screen their sectors for compelling setups: catalysts, mispricing, or structural change the market hasn't priced." },
@@ -88,16 +139,27 @@ function About() {
         <div className="md:col-span-2 space-y-6 text-lg text-muted-foreground">
           <Reveal delay={0.1}>
             <p>
-              Founded at the Daniels School of Business, the Purdue Student Managed
+              Founded in 2009 at the Daniels School of Business, the Purdue Student Managed
               Investment Fund began as a small group of finance students with a single
               conviction: that the best way to learn investing is to invest. From an
               initial capital allocation, the fund has grown to manage real assets on
               behalf of the university.
             </p>
             <p className="mt-6">
+              The record is public and it is long. Audited monthly performance has been
+              tracked since October 2013, and every position the fund holds is published
+              on this site alongside the returns it has produced. Few student
+              organizations open their book that way; we do it because a portfolio that
+              claims to be real should be inspectable.
+            </p>
+            <p className="mt-6">
               Each cycle, the fund admits 15 to 25 analysts from a pool of more than 100
               applicants. Members have placed at Morgan Stanley, Barclays, BMO Capital
-              Markets, Wells Fargo, and Big 4 accounting firms.
+              Markets, Wells Fargo, and Big 4 accounting firms. Analysts arrive from
+              across the university — finance and accounting, but also engineering,
+              computer science, agricultural economics, mathematics, and the liberal
+              arts — because the work rewards curiosity and argument more than it
+              rewards a particular major.
             </p>
           </Reveal>
 
@@ -259,6 +321,77 @@ function About() {
               The full IPS is reviewed annually and available on request from the executive board.
             </p>
           </div>
+        </div>
+      </section>
+
+      {/* ── Governance ────────────────────────────────────────────────
+          Who is accountable for real university money, and to whom. This
+          was absent from the site: the advisors appeared only as two cards
+          on /team, and nothing explained the oversight structure at all. */}
+      <section className="container-prose py-24 grid gap-16 md:grid-cols-3">
+        <Reveal className="md:col-span-1">
+          <span className="rule-gold block mb-5" />
+          <h2 className="font-display text-2xl font-bold">Governance &amp; oversight</h2>
+        </Reveal>
+        <div className="md:col-span-2 space-y-6 text-lg text-muted-foreground">
+          <Reveal delay={0.1}>
+            <p>
+              The fund manages university money, so the accountability is real and the
+              structure is deliberate. Day-to-day decisions sit with the students: an
+              executive board of seven, elected each spring, owns strategy, research,
+              risk, recruiting, education, and operations. Every position still requires
+              a written thesis, a valuation, and a majority vote of the investment
+              committee before it enters the portfolio.
+            </p>
+            <p className="mt-6">
+              That student authority operates inside faculty oversight. Holdings, factor
+              exposures, drawdowns, and concentration are reviewed with the faculty
+              advisor each quarter, and performance and attribution are reported every
+              semester to the Daniels School and to university stakeholders.
+            </p>
+          </Reveal>
+
+          <Reveal delay={0.15}>
+            <h3 className="text-xs font-semibold uppercase tracking-[0.32em] text-gold-deep mb-6 pt-2">
+              Faculty Advisors
+            </h3>
+            <ul className="grid gap-px bg-border border border-border sm:grid-cols-2">
+              {facultyAdvisors.map((f) => (
+                <li key={f.name} className="bg-background p-6">
+                  <div className="font-display text-base font-bold text-ink">{f.name}</div>
+                  <div className="mt-1 font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                    {f.year}
+                  </div>
+                  {f.bio && (
+                    <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{f.bio}</p>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ── FAQ ───────────────────────────────────────────────────────
+          Answers rendered as visible prose, not a collapsed accordion, so
+          plain-text extractors see them and not just the questions. The
+          FAQPage schema in head() carries the same text verbatim. */}
+      <section className="border-t border-border bg-secondary/40">
+        <div className="container-prose py-24">
+          <Reveal className="max-w-3xl mb-12">
+            <span className="rule-gold block mb-5" />
+            <h2 className="font-display text-3xl font-bold md:text-4xl">
+              Questions about the fund.
+            </h2>
+          </Reveal>
+          <RevealGroup className="grid gap-x-14 gap-y-10 md:grid-cols-2" stagger={0.06}>
+            {FAQ.map(({ q, a }) => (
+              <RevealItem key={q}>
+                <h3 className="font-display text-lg font-bold text-ink">{q}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{a}</p>
+              </RevealItem>
+            ))}
+          </RevealGroup>
         </div>
       </section>
 
