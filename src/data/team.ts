@@ -392,6 +392,24 @@ export const memberDirectory: DirectoryEntry[] = buildDirectory();
  * is exactly the kind of inconsistency that makes an answer engine trust a
  * third-party listing over the fund's own page.
  */
+/**
+ * Whether a member's profile page carries enough content to be worth indexing.
+ *
+ * Without a bio the page is a name, a role, a class year, and two links — 40-ish
+ * words. Submitting a handful of those dilutes the roster in search rather than
+ * extending its reach, and they are the kind of page that gets classified as
+ * thin. Five of the current 36 members are in that state.
+ *
+ * The pages stay live, stay linked from /team, and are marked `follow`, so link
+ * equity still flows to the teammates and sections they point at. They are
+ * simply not submitted or indexed until there is something to read. Writing a
+ * bio flips them back on at the next deploy with no code change — which is the
+ * right fix, and the only one that doesn't involve inventing biographical
+ * claims about real students.
+ */
+export const hasIndexableProfile = (m: Member): boolean =>
+  Boolean(m.bio && m.bio.trim().length > 0);
+
 export const facultyCount: number = facultyAdvisors.length;
 export const totalMemberCount: number = memberDirectory.length;
 export const studentCount: number = totalMemberCount - facultyCount;

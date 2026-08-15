@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
-import { memberDirectory } from "@/data/team";
+import { hasIndexableProfile, memberDirectory } from "@/data/team";
 import { SITE_URL } from "@/lib/seo";
 
 // Single host constant, shared with every canonical/og:url the site emits.
@@ -38,7 +38,12 @@ export const Route = createFileRoute("/sitemap.xml")({
         // One entry per member profile. These are the pages a recruiter
         // searching an analyst's name can actually land on, so they belong in
         // the sitemap rather than relying on discovery through /team alone.
-        for (const { slug } of memberDirectory) {
+        // Bio-less profiles are excluded rather than submitted and then
+        // ignored: they carry a noindex, so listing them here would ask
+        // crawlers to fetch pages we have already told them not to index.
+        // The predicate is shared with the route so the two cannot disagree.
+        for (const { slug, member } of memberDirectory) {
+          if (!hasIndexableProfile(member)) continue;
           entries.push({ path: `/team/${slug}`, changefreq: "monthly", priority: "0.5" });
         }
 
