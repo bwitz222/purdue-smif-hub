@@ -274,6 +274,12 @@
   .delay-700 { animation-delay: 700ms; }
   .scrollbar-none { scrollbar-width: none; -ms-overflow-style: none; }
   .scrollbar-none::-webkit-scrollbar { display: none; }
+  /* Fragment targets clear the sticky header instead of landing under it.
+     The header bar is h-14 (56px) plus a 1px border; 5rem leaves the anchored
+     heading a little breathing room above it. /team sets its own scroll-mt-40
+     because that page stacks a second sticky bar (the filter chips) below the
+     header — don't fold the two together. */
+  .section-anchor { scroll-margin-top: 5rem; }
   @media (prefers-reduced-motion: reduce) {
     .animate-fade-up,
     .animate-fade-in,

@@ -218,6 +218,31 @@ try {
     await page.waitForTimeout(250);
     const focused = await page.evaluate(() => document.activeElement?.textContent?.trim());
     record("skip link is the first tab stop", focused === "Skip to main content", focused ?? "");
+
+    // Activating it must actually land focus in <main>. The check above only
+    // proves the link is reachable; for most of this site's life <main> had no
+    // tabindex, so pressing Enter moved the sequential-focus start point in
+    // some browsers and did nothing observable in others.
+    await page.keyboard.press("Enter");
+    await page.waitForTimeout(400);
+    const landed = await page.evaluate(() => document.activeElement?.id ?? "");
+    record("skip link moves focus into main", landed === "main-content", landed || "(body)");
+    await ctx.close();
+  }
+
+  // ── In-page "On this page" navigation ────────────────────────────────────
+  for (const [path, anchor] of [["/about", "governance"], ["/learn", "glossary"],
+                                ["/finance-clubs-at-purdue", "faq"], ["/recruiting", "technical"]]) {
+    const { page, ctx } = await open(path);
+    const nav = page.locator('nav[aria-label="On this page"]');
+    record(`${path} has an On this page nav`, (await nav.count()) === 1);
+
+    // Clicking a jump link must move focus, not just the viewport — otherwise
+    // a keyboard user's next Tab continues from the link they just left.
+    await nav.locator(`a[href="#${anchor}"]`).click();
+    await page.waitForTimeout(700);
+    const active = await page.evaluate(() => document.activeElement?.id ?? "");
+    record(`${path} jump moves focus to #${anchor}`, active === anchor, active || "(body)");
     await ctx.close();
   }
 

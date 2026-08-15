@@ -3,7 +3,19 @@ import { ArrowRight } from "lucide-react";
 import { socialMeta, canonical, breadcrumbLd, OG_ABOUT } from "@/lib/seo";
 import { applyUrl } from "@/lib/apply-url";
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
+import { OnThisPage, type PageSection } from "@/components/OnThisPage";
 import { facultyAdvisors } from "@/data/team";
+
+/** Anchors for the in-page nav. Each id must match a <section id> below. */
+const SECTIONS: readonly PageSection[] = [
+  { id: "history", label: "History" },
+  { id: "real-money", label: "Real money" },
+  { id: "philosophy", label: "Philosophy" },
+  { id: "process", label: "Process" },
+  { id: "ips", label: "Policy" },
+  { id: "governance", label: "Governance" },
+  { id: "faq", label: "FAQ" },
+];
 
 const PAGE_TITLE = "About Purdue SMIF — Student Investment Club & Fund";
 const PAGE_DESCRIPTION = "How Purdue's student investment club works: the history, philosophy, and process behind every real-money position, and what sets it apart from other clubs.";
@@ -130,11 +142,13 @@ function About() {
         <div className="absolute bottom-0 left-0 right-0 h-px bg-white/10" />
       </section>
 
+      <OnThisPage sections={SECTIONS} />
+
       {/* ── History ───────────────────────────────────────────────── */}
-      <section className="container-prose py-24 grid gap-16 md:grid-cols-3">
+      <section id="history" aria-labelledby="history-h" className="container-prose py-24 grid gap-16 md:grid-cols-3 section-anchor">
         <Reveal className="md:col-span-1">
           <span className="rule-gold block mb-5" />
-          <h2 className="font-display text-2xl font-bold">Our History</h2>
+          <h2 id="history-h" className="font-display text-2xl font-bold">Our History</h2>
         </Reveal>
         <div className="md:col-span-2 space-y-6 text-lg text-muted-foreground">
           <Reveal delay={0.1}>
@@ -195,11 +209,11 @@ function About() {
       {/* ── Where SMIF fits ───────────────────────────────────────────
           Answers the question prospective members actually arrive with —
           "which finance club should I join?" — in the words they search. */}
-      <section className="border-t border-border bg-secondary/40">
+      <section id="real-money" aria-labelledby="real-money-h" className="border-t border-border bg-secondary/40 section-anchor">
         <div className="container-prose py-24 grid gap-16 md:grid-cols-3">
           <Reveal className="md:col-span-1">
             <span className="rule-gold block mb-5" />
-            <h2 className="font-display text-2xl font-bold">
+            <h2 id="real-money-h" className="font-display text-2xl font-bold">
               An investment club that manages real money
             </h2>
           </Reveal>
@@ -252,11 +266,11 @@ function About() {
       </section>
 
       {/* ── Philosophy ────────────────────────────────────────────── */}
-      <section className="bg-ink text-background py-24">
+      <section id="philosophy" aria-labelledby="philosophy-h" className="bg-ink text-background py-24 section-anchor">
         <div className="container-prose grid gap-16 md:grid-cols-3">
           <Reveal>
             <span className="rule-gold block mb-5" />
-            <h2 className="font-display text-2xl font-bold text-gold">Philosophy</h2>
+            <h2 id="philosophy-h" className="font-display text-2xl font-bold text-gold">Philosophy</h2>
           </Reveal>
           <Reveal className="md:col-span-2 space-y-6 text-lg text-background/70" delay={0.1}>
             <p>
@@ -274,10 +288,11 @@ function About() {
       </section>
 
       {/* ── Process ───────────────────────────────────────────────── */}
-      <section className="container-prose py-24">
+      <section id="process" aria-labelledby="process-h" className="container-prose py-24 section-anchor">
         <Reveal className="mb-16">
           <span className="rule-gold block mb-5" />
           <h2
+            id="process-h"
             className="font-display font-bold text-ink"
             style={{ fontSize: "clamp(2rem, 4vw, 3.25rem)" }}
           >
@@ -298,11 +313,11 @@ function About() {
       </section>
 
       {/* ── IPS ───────────────────────────────────────────────────── */}
-      <section className="bg-secondary/40 border-t border-border py-24">
+      <section id="ips" aria-labelledby="ips-h" className="bg-secondary/40 border-t border-border py-24 section-anchor">
         <div className="container-prose grid gap-16 md:grid-cols-3">
           <Reveal className="md:col-span-1">
             <span className="rule-gold block mb-5" />
-            <h2 className="font-display text-2xl font-bold">Investment Policy Statement</h2>
+            <h2 id="ips-h" className="font-display text-2xl font-bold">Investment Policy Statement</h2>
             <p className="mt-4 text-sm text-muted-foreground leading-relaxed">
               The governing document defining our objectives, eligible investments,
               risk parameters, and member responsibilities.
@@ -328,10 +343,10 @@ function About() {
           Who is accountable for real university money, and to whom. This
           was absent from the site: the advisors appeared only as two cards
           on /team, and nothing explained the oversight structure at all. */}
-      <section className="container-prose py-24 grid gap-16 md:grid-cols-3">
+      <section id="governance" aria-labelledby="governance-h" className="container-prose py-24 grid gap-16 md:grid-cols-3 section-anchor">
         <Reveal className="md:col-span-1">
           <span className="rule-gold block mb-5" />
-          <h2 className="font-display text-2xl font-bold">Governance &amp; oversight</h2>
+          <h2 id="governance-h" className="font-display text-2xl font-bold">Governance &amp; oversight</h2>
         </Reveal>
         <div className="md:col-span-2 space-y-6 text-lg text-muted-foreground">
           <Reveal delay={0.1}>
@@ -376,11 +391,11 @@ function About() {
           Answers rendered as visible prose, not a collapsed accordion, so
           plain-text extractors see them and not just the questions. The
           FAQPage schema in head() carries the same text verbatim. */}
-      <section className="border-t border-border bg-secondary/40">
+      <section id="faq" aria-labelledby="faq-h" className="border-t border-border bg-secondary/40 section-anchor">
         <div className="container-prose py-24">
           <Reveal className="max-w-3xl mb-12">
             <span className="rule-gold block mb-5" />
-            <h2 className="font-display text-3xl font-bold md:text-4xl">
+            <h2 id="faq-h" className="font-display text-3xl font-bold md:text-4xl">
               Questions about the fund.
             </h2>
           </Reveal>

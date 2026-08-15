@@ -3,9 +3,26 @@ import { ArrowRight, Calendar, CalendarPlus, MapPin, Clock, Download } from "luc
 import { useEffect, useState } from "react";
 import { socialMeta, canonical, breadcrumbLd, OG_RECRUITING } from "@/lib/seo";
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
+import { OnThisPage, type PageSection } from "@/components/OnThisPage";
 import { PrepCard } from "@/components/PrepCard";
 
 import { applyUrl } from "@/lib/apply-url";
+
+/**
+ * Anchors for the in-page nav.
+ *
+ * This page is the longest on the site, and the prep guide is most of it — so
+ * the nav reaches down to the h3 subsections inside it rather than stopping at
+ * the two h2s, which would leave a two-item list pointing at a 600-line page.
+ */
+const SECTIONS: readonly PageSection[] = [
+  { id: "calendar", label: "Calendar" },
+  { id: "prep", label: "Prep guide" },
+  { id: "behavioral", label: "Behavioral" },
+  { id: "technical", label: "Technical" },
+  { id: "day-of", label: "Day-of" },
+  { id: "reading", label: "Reading" },
+];
 
 // Countdown is data-driven from the CALENDAR (defined below) — we pick
 // the next upcoming event and count down to its start. When all events
@@ -347,11 +364,13 @@ function Recruiting() {
       </section>
 
       {/* Calendar */}
-      <section className="container-prose py-20">
+      <OnThisPage sections={SECTIONS} />
+
+      <section id="calendar" aria-labelledby="calendar-h" className="container-prose py-20 section-anchor">
         <Reveal className="flex items-end justify-between gap-6 border-b border-border pb-6">
           <div>
             <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">Fall 2026</span>
-            <h2 className="mt-3 font-display text-3xl font-bold md:text-4xl">Recruiting Calendar</h2>
+            <h2 id="calendar-h" className="mt-3 font-display text-3xl font-bold md:text-4xl">Recruiting Calendar</h2>
           </div>
           <span className="hidden md:inline font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
             All times Eastern
@@ -458,10 +477,10 @@ function Recruiting() {
       </section>
 
       {/* Prep Guide */}
-      <section id="prep" className="border-t border-border bg-secondary/40">
+      <section id="prep" aria-labelledby="prep-h" className="border-t border-border bg-secondary/40 section-anchor">
         <div className="container-prose py-20">
           <Reveal>
-            <h2 className="font-display text-3xl font-bold md:text-4xl">Tips &amp; Tricks to Prep</h2>
+            <h2 id="prep-h" className="font-display text-3xl font-bold md:text-4xl">Tips &amp; Tricks to Prep</h2>
           </Reveal>
           <Reveal delay={0.06}>
             <p className="mt-4 max-w-3xl text-muted-foreground">
@@ -476,7 +495,7 @@ function Recruiting() {
               <span className="font-mono text-xs uppercase tracking-[0.3em] text-gold-deep">Round 1</span>
             </Reveal>
             <Reveal>
-              <h3 className="mt-3 font-display text-2xl font-bold md:text-3xl">Behavioral Interview</h3>
+              <h3 id="behavioral" className="section-anchor mt-3 font-display text-2xl font-bold md:text-3xl">Behavioral Interview</h3>
               <p className="mt-3 max-w-3xl text-muted-foreground">
                 We want to understand who you are, why you're interested in markets, and how you work with others. Be specific, be honest, and have stories ready.
               </p>
@@ -537,7 +556,7 @@ function Recruiting() {
               <span className="font-mono text-xs uppercase tracking-[0.3em] text-gold-deep">Round 2</span>
             </Reveal>
             <Reveal>
-              <h3 className="mt-3 font-display text-2xl font-bold md:text-3xl">Technical Interview</h3>
+              <h3 id="technical" className="section-anchor mt-3 font-display text-2xl font-bold md:text-3xl">Technical Interview</h3>
               <p className="mt-3 max-w-3xl text-muted-foreground">
                 You don't need to be an investment banking analyst already. We test fundamentals, market awareness, and your ability to defend an investment thesis.
               </p>
@@ -593,7 +612,7 @@ function Recruiting() {
 
           {/* Day-of */}
           <Reveal className="mt-14 border border-gold/30 bg-background p-6 md:p-8 hover-lift-sm">
-            <h3 className="font-display text-xl font-bold">Day-Of Checklist</h3>
+            <h3 id="day-of" className="section-anchor font-display text-xl font-bold">Day-Of Checklist</h3>
             <ul className="mt-4 grid gap-2 text-sm text-muted-foreground md:grid-cols-2 list-disc pl-5 marker:text-gold-deep">
               <li>Business professional dress: suit and tie or equivalent.</li>
               <li>Arrive 10 minutes early. Silence your phone.</li>
@@ -606,7 +625,7 @@ function Recruiting() {
 
           {/* Reading list */}
           <Reveal className="mt-10 border border-border bg-background p-6 md:p-8 hover-lift-sm">
-            <h3 className="font-display text-xl font-bold">Recommended Reading</h3>
+            <h3 id="reading" className="section-anchor font-display text-xl font-bold">Recommended Reading</h3>
             <ul className="mt-4 space-y-2 text-sm text-muted-foreground list-disc pl-5 marker:text-gold-deep">
               <li><span className="font-medium text-foreground">The Intelligent Investor</span>, Benjamin Graham: foundational value investing.</li>
               <li><span className="font-medium text-foreground">One Up On Wall Street</span>, Peter Lynch: intuitive intro to stock picking.</li>

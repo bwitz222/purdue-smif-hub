@@ -230,7 +230,13 @@ function RootComponent() {
       </a>
       <div className="flex min-h-screen flex-col">
         <SiteHeader />
-        <main id="main-content" className="flex-1">
+        {/* tabIndex={-1} is what makes the skip link above actually work.
+            Browsers only move focus to a fragment target when that target is
+            focusable, and <main> is not by default — so activating "Skip to
+            main content" shifted the sequential-focus start point in some
+            browsers and did nothing observable in others. This adds no tab
+            stop; it only makes the element programmatically focusable. */}
+        <main id="main-content" tabIndex={-1} className="flex-1 section-anchor focus:outline-none">
           <RouteTransition>
             <Outlet />
           </RouteTransition>
