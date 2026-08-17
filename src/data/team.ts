@@ -29,6 +29,7 @@ import alexBelangerPhoto from "@/assets/team/alex-belanger.webp";
 import alexanderBoquistPhoto from "@/assets/team/alexander-boquist.webp";
 import luluZengPhoto from "@/assets/team/lulu-zeng.webp";
 import hunterSpechtPhoto from "@/assets/team/hunter-specht.webp";
+import rileyCollinsPhoto from "@/assets/team/riley-collins.webp";
 
 const BIO_BY_NAME: Record<string, string> = {
   "Landon Haffner": "Landon Haffner is a sophomore in the Daniels School of Business, majoring in Finance with a minor in Real Estate Finance, Management Consulting and Entrepreneurship. He is interning at Lennar this summer in sales and land acquisition. In his free time, he enjoys going to the gym, golfing and playing rocket league with friends.",
@@ -113,6 +114,7 @@ const PHOTO_BY_NAME: Record<string, string> = {
   "Daniel Friedman": danielFriedmanPhoto,
   "Alex Belanger": alexBelangerPhoto,
   "Hunter Specht": hunterSpechtPhoto,
+  "Riley Collins": rileyCollinsPhoto,
 };
 
 const PHOTO_POSITION_BY_NAME: Record<string, string> = {
