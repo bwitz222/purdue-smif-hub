@@ -255,7 +255,6 @@ export const sectorTeams = [
 export const fixedIncomeMacro: Member[] = make("Fixed Income & Macro", [
   ["Andrew Lacambra", "Head, Fixed Income & Macro", "alacambr@purdue.edu", "2027"],
   ["Keren Wadhwani", "Senior Analyst, Rates", "kwadhwan@purdue.edu", "2028"],
-  ["Aditya Balaji", "Analyst, Credit", "balaji57@purdue.edu", "2028"],
   ["Balthazar Schmitt", "Analyst, FX & Macro", "bschm@purdue.edu", "2028"],
 ]).map((m) => (m.name === "Andrew Lacambra" ? { ...m, photo: andrewLacambraPhoto } : m));
 
@@ -303,7 +302,6 @@ const LINKEDIN_BY_NAME: Record<string, string> = {
   "Logan Friedman": "https://www.linkedin.com/in/loganfriedman",
   "Alex Belanger": "https://www.linkedin.com/in/belangeralexander",
   "Daniel Friedman": "https://www.linkedin.com/in/daniel-friedman-7072aa292",
-  "Aditya Balaji": "https://www.linkedin.com/in/aditya-balaji-a5452b22a",
   "Balthazar Schmitt": "https://www.linkedin.com/in/balthazarschmitt",
   "Andrew Lacambra": "https://www.linkedin.com/in/andrew-lacambra-241a96314",
   "Keren Wadhwani": "https://www.linkedin.com/in/keren-wadhwani",
