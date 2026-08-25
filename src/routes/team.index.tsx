@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useReducedMotion } from "framer-motion";
 import { Search, X } from "lucide-react";
-import { MemberCard, OpenSeatsCard, type Member } from "@/components/MemberCard";
+import { MemberCard, type Member } from "@/components/MemberCard";
 import { MemberDetailSheet } from "@/components/MemberDetailSheet";
 import { RevealGroup, RevealItem } from "@/components/Reveal";
 import { board, sectorTeams, fixedIncomeMacro, portfolioManagers, facultyAdvisors, studentCount, facultyCount, totalMemberCount } from "@/data/team";
@@ -15,7 +15,7 @@ const allMembers = [
   ...fixedIncomeMacro,
   ...portfolioManagers,
   ...facultyAdvisors,
-].filter((m) => !m.placeholder);
+];
 
 
 type TeamSearch = { sector?: string };
@@ -154,16 +154,12 @@ function Team() {
   const filteredSectors = useMemo(() => {
     const teams = sectorTeams
       .filter((t) => sectorFilter === "all" || t.name === sectorFilter)
-      .map((t) => {
-        const real = t.members.filter((m) => !m.placeholder && matches(m, query));
-        const openSeats = t.members.filter((m) => m.placeholder).length;
-        return { ...t, members: real, openSeats };
-      })
-      .filter((t) => t.members.length > 0 || t.openSeats > 0);
+      .map((t) => ({ ...t, members: t.members.filter((m) => matches(m, query)) }))
+      .filter((t) => t.members.length > 0);
     return teams;
   }, [query, sectorFilter]);
-  const filteredFim = useMemo(() => fixedIncomeMacro.filter((m) => !m.placeholder && matches(m, query)), [query]);
-  const filteredPm = useMemo(() => portfolioManagers.filter((m) => !m.placeholder && matches(m, query)), [query]);
+  const filteredFim = useMemo(() => fixedIncomeMacro.filter((m) => matches(m, query)), [query]);
+  const filteredPm = useMemo(() => portfolioManagers.filter((m) => matches(m, query)), [query]);
   const filteredFaculty = useMemo(() => facultyAdvisors.filter((m) => matches(m, query)), [query]);
 
   const totalResults =
@@ -349,16 +345,10 @@ function Team() {
                     </div>
                     <span className="text-xs uppercase tracking-[0.18em] text-gold-deep">
                       {team.members.length} {team.members.length === 1 ? "member" : "members"}
-                      {team.openSeats > 0 && (
-                        <> · {team.openSeats} open</>
-                      )}
                     </span>
                   </div>
                   <RevealGroup className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" stagger={0.05}>
                     {team.members.map((m) => <RevealItem key={m.name} className="h-full [&>div]:h-full"><MemberCard m={m} onSelect={setSelected} /></RevealItem>)}
-                    {team.openSeats > 0 && !query && (
-                      <RevealItem className="h-full [&>a]:h-full"><OpenSeatsCard count={team.openSeats} role="Analyst" /></RevealItem>
-                    )}
                   </RevealGroup>
                 </div>
               ))}

@@ -147,23 +147,22 @@ type Entry = [name: string, role: string, email?: string, gradYear?: string];
 
 const make = (team: string, members: Entry[]): Member[] =>
   members.map(([name, role, email, gradYear]) => ({
-    name: name || "Open Position",
+    name,
     role,
     year: gradYear ? `Class of ${gradYear}` : "",
     email: email || undefined,
-    placeholder: !name,
-    photo: name ? PHOTO_BY_NAME[name] : undefined,
-    photoPosition: name ? PHOTO_POSITION_BY_NAME[name] : undefined,
-    photoScale: name ? PHOTO_SCALE_BY_NAME[name] : undefined,
+    photo: PHOTO_BY_NAME[name],
+    photoPosition: PHOTO_POSITION_BY_NAME[name],
+    photoScale: PHOTO_SCALE_BY_NAME[name],
     // Personal bios only — we no longer ship the copy-paste analyst
     // boilerplate. Sector leads keep their generic leadership line when
     // they don't have a personal bio; everyone else shows name · role ·
     // class year · links cleanly. (F9 of the audit.)
-    bio: (name && BIO_BY_NAME[name] && !BOARD_NAMES.has(name))
+    bio: BIO_BY_NAME[name] && !BOARD_NAMES.has(name)
       ? BIO_BY_NAME[name]
-      : name && SECONDARY_BIO_BY_NAME[name]
+      : SECONDARY_BIO_BY_NAME[name]
         ? SECONDARY_BIO_BY_NAME[name]
-        : role === LEAD_ROLE && name
+        : role === LEAD_ROLE
           ? `Leads the ${team} team, driving sector strategy, idea generation, and final pitch review.`
           : "",
   }));
@@ -177,7 +176,6 @@ export const sectorTeams = [
       ["Parth Dama", "Senior Analyst", "damap@purdue.edu", "2029"],
       ["Shaheera Ali", "Analyst", "ali251@purdue.edu", "2028"],
       ["Landon Haffner", "Analyst", "haffnel@purdue.edu", "2029"],
-      ["", "Analyst"],
     ]),
   },
   {
@@ -188,7 +186,6 @@ export const sectorTeams = [
       ["Riley Collins", "Senior Analyst", "colli571@purdue.edu", "2028"],
       ["Karanvir Singh", "Senior Analyst", "sing2553@purdue.edu", "2028"],
       ["Fabian Segura Vargas", "Senior Analyst", "fsegurav@purdue.edu", "2028"],
-      ["", "Analyst"],
     ]),
   },
   {
@@ -198,8 +195,6 @@ export const sectorTeams = [
       ["Alex Belanger", "Portfolio Manager", "belangea@purdue.edu", "2027"],
       ["Daniel Friedman", "Senior Analyst", "friedmd@purdue.edu", "Dec 2026"],
       ["Mikhail Bilokin", "Analyst", "mbilokin@purdue.edu", "2029"],
-      ["", "Analyst"],
-      ["", "Analyst"],
     ]),
   },
   {
@@ -208,9 +203,6 @@ export const sectorTeams = [
     members: make("Consumer Staples", [
       ["Evan Wright", "Portfolio Manager", "wrigh712@purdue.edu", "2027"],
       ["Logan Friedman", "Senior Analyst", "friedml@purdue.edu", "2028"],
-      ["", "Analyst"],
-      ["", "Analyst"],
-      ["", "Analyst"],
     ]),
   },
   {
@@ -221,7 +213,6 @@ export const sectorTeams = [
       ["Dallas White", "Senior Analyst", "whit1259@purdue.edu", "2029"],
       ["Cooper Weiss", "Senior Analyst", "weiss109@purdue.edu", "2028"],
       ["Augustus Matushek", "Senior Analyst", "amatush@purdue.edu", "2029"],
-      ["", "Analyst"],
     ]),
   },
   {
@@ -231,19 +222,13 @@ export const sectorTeams = [
       ["Sid Voona", "Portfolio Manager", "voona@purdue.edu", "2028"],
       ["Gautham Santhanam", "Senior Analyst", "gsanthan@purdue.edu", "2028"],
       ["Brock Heller", "Senior Analyst", "baheller@purdue.edu", "2027"],
-      ["", "Analyst"],
-      ["", "Analyst"],
     ]),
   },
   {
     name: "Communications",
     description: "Telecom, media, interactive entertainment, and select platform names.",
     members: make("Communications", [
-      ["", "Portfolio Manager"],
       ["Gabriel Fridman", "Senior Analyst", "gfridman@purdue.edu", "2028"],
-      ["", "Analyst"],
-      ["", "Analyst"],
-      ["", "Analyst"],
     ]),
   },
   {
@@ -254,7 +239,6 @@ export const sectorTeams = [
       ["Alejandro Cabrales", "Senior Analyst", "acabrale@purdue.edu", "2028"],
       ["Arav Ginde", "Senior Analyst", "aginde@purdue.edu", "2027"],
       ["Veer Sanyal", "Senior Analyst", "vsanyal@purdue.edu", "2028"],
-      ["", "Analyst"],
     ]),
   },
 ];
@@ -271,7 +255,6 @@ export const portfolioManagers: Member[] = make("Portfolio + Risk Management", [
   ["Yashita Pujari", "Portfolio Management Associate", "ypujari@purdue.edu", "2028"],
   ["Anushka Patel", "Portfolio Management Associate", "pate3115@purdue.edu", "2029"],
   ["Abhipsa Prajapati", "Portfolio Management Associate", "aprajap@purdue.edu", "2029"],
-  ["", "Portfolio Management Associate"],
 ]);
 
 // Faculty Advisors — Daniels School professors who advise SMIF. Photos are
@@ -347,7 +330,6 @@ sectorTeams.forEach((t) => { t.members.forEach((m, i) => { t.members[i] = attach
 // One flattened, slugged list of every real person on the site, built from the
 // same collections /team renders. Both the roster page and the per-member
 // routes read this, so a name can never exist in one place and not the other.
-// Placeholders (open seats) are excluded — they aren't people.
 
 /** URL-safe slug for a member name. "Sid Voona" -> "sid-voona". */
 export const memberSlug = (name: string) =>
@@ -377,7 +359,7 @@ function buildDirectory(): DirectoryEntry[] {
   const out: DirectoryEntry[] = [];
   for (const [team, members] of groups) {
     for (const member of members) {
-      if (member.placeholder || !member.name) continue;
+      if (!member.name) continue;
       const slug = memberSlug(member.name);
       // A person can sit on the board AND a sector team. First appearance wins,
       // so each member resolves to exactly one canonical URL.

@@ -93,7 +93,7 @@ const fmtUSD0 = (n: number) => n.toLocaleString("en-US", { style: "currency", cu
 // vacant must return [] and render "Open seat", never promote whoever happens
 // to sit first in the list.
 const leadsOf = (members: Member[]): string[] =>
-  members.filter((m) => !m.placeholder && m.name && m.role === LEAD_ROLE).map((m) => m.name);
+  members.filter((m) => m.role === LEAD_ROLE).map((m) => m.name);
 
 function pmsForEquityTeam(name: string): string[] {
   const t = sectorTeams.find((s) => s.name === name);
