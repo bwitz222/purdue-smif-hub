@@ -22,7 +22,8 @@ import { getLiveQuotes } from "@/lib/quotes.functions";
 import { getRiskMetrics } from "@/lib/risk.functions";
 import { applyQuotes, teamAllocations, baseHoldings } from "@/lib/portfolio";
 import { liveQueryOptions } from "@/lib/live-query";
-import { sectorTeams, fixedIncomeMacro, portfolioManagers } from "@/data/team";
+import { sectorTeams, fixedIncomeMacro, portfolioManagers, LEAD_ROLE } from "@/data/team";
+import type { Member } from "@/components/MemberCard";
 
 type EquityTeam = {
   Icon: typeof Cpu;
@@ -87,29 +88,21 @@ export const Route = createFileRoute("/sectors")({
 const fmtPct = (n: number) => `${n.toFixed(1)}%`;
 const fmtUSD0 = (n: number) => n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
 
-// Portfolio manager name(s) for a given equity team, pulled from team.ts.
-// make() sets the first member of each sector team's `members` to role
-// "Portfolio Manager", so we look at that leading entry (and skip
-// unfilled placeholder seats).
+// Portfolio manager name(s) for a given team, pulled from team.ts. Matched on
+// the declared role rather than on array position: a team whose lead seat is
+// vacant must return [] and render "Open seat", never promote whoever happens
+// to sit first in the list.
+const leadsOf = (members: Member[]): string[] =>
+  members.filter((m) => !m.placeholder && m.name && m.role === LEAD_ROLE).map((m) => m.name);
+
 function pmsForEquityTeam(name: string): string[] {
   const t = sectorTeams.find((s) => s.name === name);
-  if (!t) return [];
-  const first = t.members[0];
-  if (first && !first.placeholder && first.name) return [first.name];
-  return [];
+  return t ? leadsOf(t.members) : [];
 }
 
 function pmsForProcessTeam(name: string): string[] {
-  if (name === "Fixed Income & Macro") {
-    return fixedIncomeMacro
-      .filter((m) => !m.placeholder && m.role === "Portfolio Manager")
-      .map((m) => m.name);
-  }
-  if (name === "Portfolio + Risk Management") {
-    return portfolioManagers
-      .filter((m) => !m.placeholder && m.role === "Portfolio Manager")
-      .map((m) => m.name);
-  }
+  if (name === "Fixed Income & Macro") return leadsOf(fixedIncomeMacro);
+  if (name === "Portfolio + Risk Management") return leadsOf(portfolioManagers);
   return [];
 }
 
