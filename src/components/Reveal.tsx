@@ -6,7 +6,6 @@ interface RevealProps {
   delay?: number;
   y?: number;
   className?: string;
-  as?: "div" | "section" | "li" | "span";
 }
 
 /**
@@ -22,10 +21,10 @@ function useHasMounted() {
   return mounted;
 }
 
-export function Reveal({ children, delay = 0, y = 24, className, as = "div" }: RevealProps) {
+export function Reveal({ children, delay = 0, y = 24, className }: RevealProps) {
   const reduce = useReducedMotion();
   const mounted = useHasMounted();
-  const Tag = motion[as] as typeof motion.div;
+  const Tag = motion.div;
 
   if (reduce || !mounted) {
     return <div className={className}>{children}</div>;

@@ -355,7 +355,9 @@ function Learn() {
           <RevealGroup className="grid md:grid-cols-2 gap-px bg-border border border-border" stagger={0.04}>
             {GLOSSARY.map((g) => (
               <RevealItem key={g.term} className="bg-background p-7 lg:p-8">
-                <h3 className="font-display text-lg font-semibold text-ink mb-2">{g.term}</h3>
+                {/* id matches the DefinedTerm @id minted above, which pointed
+                    at twelve fragments that did not exist in the document. */}
+                <h3 id={termSlug(g.term)} className="scroll-mt-24 font-display text-lg font-semibold text-ink mb-2">{g.term}</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">{g.def}</p>
               </RevealItem>
             ))}

@@ -144,7 +144,7 @@ function Index() {
           <div className="mt-16 grid grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-10 max-w-5xl">
             {STATS.map((stat) => (
               <div key={stat.label} className="border-t border-gold/50 pt-4">
-                <div className="font-display text-5xl lg:text-6xl font-bold text-gold leading-none">
+                <div suppressHydrationWarning className="font-display text-5xl lg:text-6xl font-bold text-gold leading-none">
                   {stat.kind === "aum" ? (<>{aum.prefix && <span>{aum.prefix}</span>}<CountUp to={aum.value} duration={1.8} /><span>{aum.suffix}</span></>) :
                    stat.kind === "members" ? (<>{members.prefix && <span>{members.prefix}</span>}<CountUp to={members.value} duration={1.4} /><span>{members.suffix}</span></>) :
                    stat.kind === "track" ? (<><CountUp to={trackRecordYears} duration={1.2} /><span>Y+</span></>) :
@@ -191,7 +191,9 @@ function Index() {
                 className="w-full aspect-[3/4] object-cover shadow-elegant"
               />
               <div className="absolute -bottom-5 -left-5 bg-gold p-5 shadow-gold hidden lg:block">
-                <div className="font-display text-3xl font-bold text-ink leading-none">{trackRecordYears}Y+</div>
+                {/* Derived from the current year at render time — see the
+                    footer note; same hydration caveat. */}
+                <div suppressHydrationWarning className="font-display text-3xl font-bold text-ink leading-none">{trackRecordYears}Y+</div>
                 <div className="text-xs uppercase tracking-wider text-ink/75 mt-1">Track record</div>
               </div>
             </Reveal>

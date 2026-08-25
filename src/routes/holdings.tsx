@@ -251,7 +251,11 @@ function HoldingsPage() {
   }, [sortKey, sortDir, sector, holdings, debouncedQuery]);
   const movers = useMemo(() => {
     const sorted = [...holdings].sort((a, b) => b.dayChange - a.dayChange);
-    return { gainers: sorted.slice(0, 3), losers: sorted.slice(-3).reverse() };
+    // Split the book rather than taking slice(0,3) and slice(-3) blind: with
+    // fewer than six positions those windows overlap and the same ticker is
+    // listed as both a leader and a laggard.
+    const half = Math.min(3, Math.floor(sorted.length / 2));
+    return { gainers: sorted.slice(0, half), losers: sorted.slice(sorted.length - half).reverse() };
   }, [holdings]);
   const emptyMessage = sector !== "All" && debouncedQuery
     ? `No positions match "${debouncedQuery}" in ${sector}`
@@ -269,19 +273,28 @@ function HoldingsPage() {
     : undefined;
   const noRisk = !risk;
   const insufficient = !!risk && !risk.sufficient;
-  const volDisplay = noRisk ? "Not yet computed" : insufficient ? "Insufficient history" : `${risk!.annualizedVolPct!.toFixed(1)}%`;
-  const sharpeDisplay = noRisk
-    ? "Not yet computed"
-    : insufficient
-    ? "Insufficient history"
-    : risk!.sharpe == null
-    ? "Rate unavailable"
-    : risk!.sharpe.toFixed(2);
-  const varDisplay = noRisk ? "Not yet computed" : insufficient ? "Insufficient history" : fmtUSD(risk!.var95Dollar!, { maximumFractionDigits: 0 });
-  const exposureDisplay = noRisk || risk!.grossExposurePct == null ? "Not yet computed" : `${risk!.grossExposurePct.toFixed(1)}%`;
-  const varLookbackNote = risk?.sufficient
-    ? `${risk.var95Pct!.toFixed(2)}% · trailing ${risk.lookbackDays} trading days${risk.fullYear ? "" : " (<1yr)"}`
-    : "95% confidence, 1-day horizon";
+  // Each metric is guarded on its own value, not on `sufficient`. They are
+  // separate nullable columns read with select("*"), and numOrNull maps any
+  // non-finite value to null — so a row with sufficient = true but a null
+  // metric used to throw inside render and take the whole page to the error
+  // boundary instead of degrading one card.
+  const metric = <T,>(v: T | null | undefined, render: (v: T) => string) =>
+    noRisk ? "Not yet computed" : insufficient ? "Insufficient history" : v == null ? "Not yet computed" : render(v);
+
+  const volDisplay = metric(risk?.annualizedVolPct, (v) => `${v.toFixed(1)}%`);
+  const sharpeDisplay =
+    noRisk || insufficient
+      ? metric(risk?.sharpe, (v) => v.toFixed(2))
+      : risk?.sharpe == null
+      ? "Rate unavailable"
+      : risk.sharpe.toFixed(2);
+  const varDisplay = metric(risk?.var95Dollar, (v) => fmtUSD(v, { maximumFractionDigits: 0 }));
+  const exposureDisplay =
+    risk?.grossExposurePct == null ? "Not yet computed" : `${risk.grossExposurePct.toFixed(1)}%`;
+  const varLookbackNote =
+    risk?.sufficient && risk.var95Pct != null
+      ? `${risk.var95Pct.toFixed(2)}% · trailing ${risk.lookbackDays} trading days${risk.fullYear ? "" : " (<1yr)"}`
+      : "95% confidence, 1-day horizon";
 
   return (
     <>

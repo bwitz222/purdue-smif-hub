@@ -180,15 +180,35 @@ function Research() {
 
         <Tabs defaultValue="equity_research" className="w-full">
           <TabsList className="h-auto flex-wrap gap-1 bg-secondary/60 p-1">
-            {CATEGORIES.map((c) => (
-              <TabsTrigger key={c.value} value={c.value} className="px-4 py-2 text-sm">
-                {c.label}
-              </TabsTrigger>
-            ))}
+            {CATEGORIES.map((c) => {
+              // Search filters across every category but only one tab is
+              // visible, so a query matching an Annual Report while the
+              // Equity Research tab is open used to read 'No equity research
+              // match "…"' with nothing to suggest the hit existed elsewhere.
+              const n = filtered.filter((p) => p.category === c.value).length;
+              return (
+                <TabsTrigger key={c.value} value={c.value} className="px-4 py-2 text-sm">
+                  {c.label}
+                  {query && (
+                    <span
+                      className={`ml-2 font-mono text-[10px] ${n > 0 ? "text-gold-deep" : "text-muted-foreground/60"}`}
+                    >
+                      {n}
+                    </span>
+                  )}
+                </TabsTrigger>
+              );
+            })}
           </TabsList>
 
-          {CATEGORIES.map((c) => {
-            const items = filtered.filter((p) => p.category === c.value);
+          {CATEGORIES.map((c, ci) => {
+            // Anything with an unrecognised category would otherwise render in
+            // no tab at all and silently disappear from the site. Park it in
+            // the first tab rather than dropping it.
+            const known = new Set<string>(CATEGORIES.map((x) => x.value));
+            const items = filtered.filter(
+              (p) => p.category === c.value || (ci === 0 && !known.has(p.category)),
+            );
             return (
               <TabsContent key={c.value} value={c.value} className="mt-8">
                 <div className="mb-6 flex items-baseline justify-between gap-4">
@@ -223,7 +243,11 @@ function Research() {
 }
 
 function PublicationCard({ pub }: { pub: PublicationRow }) {
-  const isSample = /sample/i.test(pub.title);
+  // Matches a title that IS a sample, not one that merely uses the word:
+  // "Sample selection bias in small-cap screens" is a real report and was
+  // getting both the Sample badge and a fabricated "Spring 2026" date in
+  // place of its actual created_at.
+  const isSample = /(^|\W)sample(\W|$)/i.test(pub.title) && /^sample\b/i.test(pub.title.trim());
   return (
     <div className="group flex flex-col border border-border bg-card hover-lift">
       <div className="relative aspect-[3/4] overflow-hidden border-b border-border bg-secondary/40">
@@ -236,7 +260,7 @@ function PublicationCard({ pub }: { pub: PublicationRow }) {
         <div className="flex h-full flex-col items-center justify-center gap-4 p-6 text-center">
           <FileText className="h-12 w-12 text-gold-deep/70" aria-hidden="true" />
           <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-            {CATEGORY_LABEL[pub.category]}
+            {CATEGORY_LABEL[pub.category as Category] ?? "Report"}
           </span>
         </div>
       </div>
@@ -246,7 +270,7 @@ function PublicationCard({ pub }: { pub: PublicationRow }) {
           <p className="mt-2 text-sm text-muted-foreground">{pub.description}</p>
         )}
         <div className="mt-2 text-xs text-muted-foreground">
-          {isSample ? "Spring 2026" : new Date(pub.created_at).toLocaleDateString()}
+          {new Date(pub.created_at).toLocaleDateString()}
           {formatBytes(pub.file_size) && ` · ${formatBytes(pub.file_size)}`}
         </div>
         <div className="mt-4 flex items-center gap-3 border-t border-border pt-3 text-xs">

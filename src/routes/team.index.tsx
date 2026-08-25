@@ -110,7 +110,7 @@ type ScopeOption = {
 const sectorSlug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 /** Resolve a ?sector= value to its scope. Accepts the chip label, the option
  *  value, or any declared alias, so every inbound link shape works. */
-export const findScope = (s: string): ScopeOption | undefined =>
+const findScope = (s: string): ScopeOption | undefined =>
   SCOPE_OPTIONS.find((o) => o.label === s || o.value === s || o.aliases?.includes(s));
 
 const SCOPE_OPTIONS: ScopeOption[] = [
@@ -270,7 +270,7 @@ function Team() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search by name, role, year…"
-                className="w-full border border-border bg-background pl-10 pr-9 py-2 text-sm font-mono placeholder:text-muted-foreground/60 focus:outline-none focus:border-ink transition-colors min-h-11"
+                className="w-full border border-border bg-background pl-10 pr-9 py-2 text-sm font-mono placeholder:text-muted-foreground/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:border-ink focus:border-ink transition-colors min-h-11"
                 aria-label="Search team members"
               />
               {query && (

@@ -204,7 +204,7 @@ export const getLiveQuotes = createServerFn({ method: "POST" })
   .inputValidator((data: { symbols: string[] }) => {
     if (!data || !Array.isArray(data.symbols)) throw new Error("symbols required");
     const symbols = data.symbols
-      .filter((s) => typeof s === "string" && /^[A-Z.\-]{1,10}$/.test(s))
+      .filter((s) => typeof s === "string" && /^[A-Z.-]{1,10}$/.test(s))
       .slice(0, 100);
     return { symbols };
   })

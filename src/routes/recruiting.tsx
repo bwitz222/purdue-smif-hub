@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowRight, Calendar, CalendarPlus, MapPin, Clock, Download } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useReducedMotion } from "framer-motion";
+import { jumpToSection } from "@/lib/jump-to";
 import { socialMeta, canonical, breadcrumbLd, OG_RECRUITING } from "@/lib/seo";
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import { OnThisPage, type PageSection } from "@/components/OnThisPage";
@@ -177,7 +179,8 @@ function parseEventTimes(time: string): { start: { h: number; m: number }; end: 
   // clock values like "7:30" are never split).
   const parts = time.split(/\s+[–-]\s+/).map((s) => s.trim());
   if (parts.length !== 2) return { start: { h: 17, m: 0 }, end: { h: 18, m: 0 } };
-  let [startStr, endStr] = parts;
+  const [rawStart, endStr] = parts;
+  let startStr = rawStart;
   // If start lacks meridiem, inherit from end
   if (!/AM|PM/i.test(startStr)) {
     const merMatch = endStr.match(/AM|PM/i);
@@ -330,6 +333,7 @@ function Recruiting() {
   // SSR-safe "now" — null on server, set on client mount
   const [nowMs, setNowMs] = useState<number | null>(null);
   useEffect(() => { setNowMs(Date.now()); }, []);
+  const reduce = useReducedMotion();
 
   return (
     <>
@@ -353,7 +357,10 @@ function Recruiting() {
             </a>
             <a
               href="#prep"
-              className="press inline-flex items-center gap-2 border border-background/30 px-6 py-3 text-sm font-semibold text-background hover:border-gold hover:text-gold"
+              onClick={(e) => {
+                if (jumpToSection("prep", { reduce })) e.preventDefault();
+              }}
+              className="press inline-flex items-center gap-2 border border-background/30 px-6 py-3 text-sm font-semibold text-background hover:border-gold hover:text-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
             >
               Jump to Prep Guide
             </a>

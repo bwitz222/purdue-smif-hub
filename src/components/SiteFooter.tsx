@@ -82,7 +82,12 @@ export function SiteFooter() {
       </div>
       <div className="border-t border-background/10">
         <div className="container-prose flex flex-col md:flex-row items-center justify-between gap-2 py-6 text-xs text-on-dark-dim">
-          <span>© {new Date().getFullYear()} Purdue Student Managed Investment Fund. All rights reserved.</span>
+          {/* suppressHydrationWarning: the year is read at render time, so a
+              page cached by the CDN from last December hydrates against a
+              different value. React's documented handling for timestamps. */}
+          <span suppressHydrationWarning>
+            © {new Date().getFullYear()} Purdue Student Managed Investment Fund. All rights reserved.
+          </span>
           <span>Boiler Up. Hammer Down.</span>
         </div>
       </div>
