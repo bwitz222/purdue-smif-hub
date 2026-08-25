@@ -15,6 +15,7 @@ import { CountUp } from "@/components/CountUp";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getFundStats } from "@/lib/fund-stats.functions";
+import { sectorTeams, totalMemberCount } from "@/data/team";
 import { liveQueryOptions } from "@/lib/live-query";
 
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
@@ -46,13 +47,19 @@ export const Route = createFileRoute("/")({
 
 // Last-resort fallback used ONLY when the fund_stats table fetch fails.
 // The live values come from the DB (computed server-side from holdings ×
-// latest quotes + cash). Refresh these numbers whenever the fund's stats
-// move materially so a failed fetch still shows a reasonable approximation.
+// latest quotes + cash). Refresh aum_display whenever the fund's assets move
+// materially so a failed fetch still shows a reasonable approximation.
+//
+// Headcount and team count are DERIVED, not typed in. team.ts warns that
+// hardcoding the roster size "is how the site ended up claiming 52, 54, and
+// '50+' at the same time" — and this object was still the one saying "50+"
+// against an actual 35. Deriving them means the roster is the single source
+// of truth and these can never drift again.
 const FALLBACK_STATS = {
   aum_display: "$600K",
-  active_members: "50+",
+  active_members: String(totalMemberCount),
   founded_year: 2009,
-  sector_teams: 10,
+  sector_teams: sectorTeams.length,
 };
 
 // Parse a display string like "$600K" or "50+" into { prefix, value, suffix }

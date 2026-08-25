@@ -142,7 +142,7 @@ export const holdings: Holding[] = [
     allocation: 2.54,
   },
   {
-    company: "Cipher Digital",
+    company: "Cipher Mining",
     symbol: "CIFR",
     industry: "Technology",
     price: 23.65,
@@ -174,7 +174,10 @@ export const holdings: Holding[] = [
   {
     company: "Constellation Energy",
     symbol: "CEG",
-    industry: "Energy",
+    // GICS Utilities, not Energy. As "Energy" it routed to the Energy & Real
+    // Estate coverage team via TEAM_INDUSTRIES; Utilities belongs to
+    // Healthcare & Utilities.
+    industry: "Utilities",
     price: 287.75,
     beta: 1.09,
     shares: 51,

@@ -33,8 +33,10 @@ const SECTIONS: readonly PageSection[] = [
 // no-JS / SSR.
 
 function parseEventStartMs(event: Event): number {
-  const { start } = parseEventTimes(event.time);
-  // Eastern offset for the Aug–Sep recruiting window is EDT (-04:00).
+  const times = parseEventTimes(event.time);
+  // Eastern offset for the Aug–Sep recruiting window is EDT (-04:00). A TBD
+  // slot has no hour, so it sorts from the start of its day.
+  const start = times ? times.start : { h: 0, m: 0 };
   const iso = `${event.iso}T${pad2(start.h)}:${pad2(start.m)}:00-04:00`;
   return new Date(iso).getTime();
 }
@@ -239,10 +241,13 @@ function parseTimeToken(t: string): { h: number; m: number } | null {
 function parseEventTimes(time: string): {
   start: { h: number; m: number };
   end: { h: number; m: number };
-} {
-  if (time === "TBD") {
-    return { start: { h: 17, m: 0 }, end: { h: 18, m: 0 } };
-  }
+} | null {
+  // A TBD slot has no time. It used to return 17:00-18:00, and that invented
+  // hour was published as a real 5 PM event in the .ics, the Google Calendar
+  // link and the Event structured data — so a student who clicked "add to
+  // Google Calendar" got a fabricated interview time on their calendar.
+  // Callers render these as all-day events instead.
+  if (time === "TBD") return null;
   // Accept hyphen or en-dash range separators (surrounded by spaces so
   // clock values like "7:30" are never split).
   const parts = time.split(/\s+[–-]\s+/).map((s) => s.trim());
@@ -293,6 +298,18 @@ function toIcsLocal(iso: string, t: { h: number; m: number }): string {
   return `${ymd}T${pad2(t.h)}${pad2(t.m)}00`;
 }
 
+/** "2026-09-08" -> "20260908" (ICS DATE value). */
+function icsDate(iso: string): string {
+  return iso.replace(/-/g, "");
+}
+
+/** Next calendar day, in UTC so no local-timezone shift can occur. */
+function nextDayIso(iso: string): string {
+  const d = new Date(`${iso}T00:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + 1);
+  return d.toISOString().slice(0, 10);
+}
+
 function nowUtcStamp(): string {
   const d = new Date();
   return `${d.getUTCFullYear()}${pad2(d.getUTCMonth() + 1)}${pad2(d.getUTCDate())}T${pad2(d.getUTCHours())}${pad2(d.getUTCMinutes())}${pad2(d.getUTCSeconds())}Z`;
@@ -310,13 +327,19 @@ function generateICS(events: Event[] = CALENDAR): string {
     "X-WR-TIMEZONE:America/New_York",
   ];
   for (const e of events) {
-    const { start, end } = parseEventTimes(e.time);
+    const times = parseEventTimes(e.time);
+    const when = times
+      ? [
+          `DTSTART;TZID=America/New_York:${toIcsLocal(e.iso, times.start)}`,
+          `DTEND;TZID=America/New_York:${toIcsLocal(e.iso, times.end)}`,
+        ]
+      : // All-day: DTEND is exclusive, so it is the following day.
+        [`DTSTART;VALUE=DATE:${icsDate(e.iso)}`, `DTEND;VALUE=DATE:${icsDate(nextDayIso(e.iso))}`];
     lines.push(
       "BEGIN:VEVENT",
       `UID:${e.iso}-${slugify(e.name)}@purduesmif.org`,
       `DTSTAMP:${stamp}`,
-      `DTSTART;TZID=America/New_York:${toIcsLocal(e.iso, start)}`,
-      `DTEND;TZID=America/New_York:${toIcsLocal(e.iso, end)}`,
+      ...when,
       `SUMMARY:${icsEscape(e.name)}`,
       `LOCATION:${icsEscape(e.location)}`,
       `DESCRIPTION:${icsEscape(buildEventBody(e))}`,
@@ -343,10 +366,14 @@ function downloadICS() {
 // Google Calendar render URL — opens a prefilled event the user just clicks "Save" on.
 // Works for any Google account (personal Gmail or Purdue's Google Workspace).
 function toGoogleCalendarLink(event: Event): string {
-  const { start, end } = parseEventTimes(event.time);
-  const ymd = event.iso.replace(/-/g, "");
-  // Floating local time + ctz tells Google to interpret it in Eastern.
-  const dates = `${ymd}T${pad2(start.h)}${pad2(start.m)}00/${ymd}T${pad2(end.h)}${pad2(end.m)}00`;
+  const times = parseEventTimes(event.time);
+  const ymd = icsDate(event.iso);
+  // Floating local time + ctz tells Google to interpret it in Eastern. A TBD
+  // slot becomes an all-day entry (YYYYMMDD/YYYYMMDD, end exclusive) rather
+  // than a made-up hour.
+  const dates = times
+    ? `${ymd}T${pad2(times.start.h)}${pad2(times.start.m)}00/${ymd}T${pad2(times.end.h)}${pad2(times.end.m)}00`
+    : `${ymd}/${icsDate(nextDayIso(event.iso))}`;
   const params = new URLSearchParams({
     action: "TEMPLATE",
     text: event.name,
@@ -382,13 +409,19 @@ export const Route = createFileRoute("/recruiting")({
         type: "application/ld+json",
         children: JSON.stringify(
           CALENDAR.map((e) => {
-            const { start, end } = parseEventTimes(e.time);
+            const times = parseEventTimes(e.time);
             return {
               "@context": "https://schema.org",
               "@type": "Event",
               name: `Purdue SMIF: ${e.name}`,
-              startDate: `${e.iso}T${pad2(start.h)}:${pad2(start.m)}:00-04:00`,
-              endDate: `${e.iso}T${pad2(end.h)}:${pad2(end.m)}:00-04:00`,
+              // Date-only when the slot is still TBD — schema.org accepts a
+              // bare date, and it is the honest statement of what is known.
+              startDate: times
+                ? `${e.iso}T${pad2(times.start.h)}:${pad2(times.start.m)}:00-04:00`
+                : e.iso,
+              endDate: times
+                ? `${e.iso}T${pad2(times.end.h)}:${pad2(times.end.m)}:00-04:00`
+                : e.iso,
               eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
               eventStatus: "https://schema.org/EventScheduled",
               location: {
