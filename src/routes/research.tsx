@@ -129,34 +129,8 @@ function Research() {
     return sorted;
   }, [pubs, query, sort]);
 
-  const jsonLd = useMemo(() => {
-    if (pubs.length === 0) return null;
-    const ld = JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "ItemList",
-      itemListElement: pubs.map((p: PublicationRow, i: number) => ({
-        "@type": "ListItem",
-        position: i + 1,
-        item: {
-          "@type": "Article",
-          headline: p.title,
-          description: p.description ?? "",
-          datePublished: p.created_at,
-          publisher: { "@id": "https://www.purduesmif.org/#organization" },
-        },
-      })),
-    });
-    // Escape "<" so a "</script>" sequence inside any title/description can't
-    // break out of the ld+json <script> block (defense-in-depth; publication
-    // content is admin-curated, but writes could be re-opened in future).
-    return ld.replace(/</g, "\\u003c");
-  }, [pubs]);
-
   return (
     <>
-      {jsonLd && (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
-      )}
       <section className="border-b border-border bg-secondary/40">
         <div className="container-prose py-24">
           <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">Research</span>

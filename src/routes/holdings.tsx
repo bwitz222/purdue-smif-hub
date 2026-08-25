@@ -170,18 +170,38 @@ function HoldingsPage() {
 
   // Sticky compact summary appears after the hero scrolls past — md+ only.
   // On mobile the sticky bar would stack under the site header and eat
-  // viewport, so we skip the listener entirely below md.
+  // viewport, so we skip the scroll listener entirely below md.
+  //
+  // The breakpoint is re-checked on change, not just once on mount. Reading
+  // matchMedia a single time meant rotating a phone to landscape never brought
+  // the bar back for the rest of the session, and narrowing a desktop window
+  // left the scroll listener attached with the bar overlapping the mobile
+  // header.
   useEffect(() => {
     if (typeof window === "undefined") return;
     const mq = window.matchMedia("(min-width: 768px)");
-    if (!mq.matches) {
-      setShowSticky(false);
-      return;
-    }
+    let detachScroll: (() => void) | undefined;
+
     const onScroll = () => setShowSticky(window.scrollY > 420);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+
+    const sync = () => {
+      detachScroll?.();
+      detachScroll = undefined;
+      if (!mq.matches) {
+        setShowSticky(false);
+        return;
+      }
+      onScroll();
+      window.addEventListener("scroll", onScroll, { passive: true });
+      detachScroll = () => window.removeEventListener("scroll", onScroll);
+    };
+
+    sync();
+    mq.addEventListener("change", sync);
+    return () => {
+      mq.removeEventListener("change", sync);
+      detachScroll?.();
+    };
   }, []);
 
   const { holdings, portfolioSummary } = useMemo(() => {

@@ -67,7 +67,8 @@ export const getFundPerformance = createServerFn({ method: "GET" }).handler(
 export type MonthlyPoint = {
   month: string; // YYYY-MM-DD (first of month)
   smif_return_pct: number; // monthly return, 0 for transition months
-  bench_return_pct: number; // SPY total-return monthly, 0 if missing
+  /** SPY total-return monthly %. null when that month has no benchmark row. */
+  bench_return_pct: number | null;
   smif_growth: number; // cumulative growth-of-$1
   bench_growth: number; // cumulative growth-of-$1
   smif_drawdown_pct: number; // peak-to-current drawdown
@@ -76,8 +77,10 @@ export type MonthlyPoint = {
 };
 
 type MonthlyHistoryKpis = {
-  one_year_pct: number;
-  five_year_annualized_pct: number;
+  /** null when there is less than a full 12-month window. */
+  one_year_pct: number | null;
+  /** null when there is less than a full 60-month window. */
+  five_year_annualized_pct: number | null;
   inception_annualized_pct: number;
   max_drawdown_pct: number;
   bench_inception_annualized_pct: number;
@@ -184,18 +187,26 @@ export const getFundMonthlyHistory = createServerFn({ method: "GET" }).handler(
           }
         }
 
+        // A month with no benchmark row, or a null return_pct, is MISSING —
+        // not a flat month. benchmark_monthly is written two rows at a time
+        // and the earlier row's return_pct is null by construction, so gaps
+        // are normal. Coercing them to 0 drew a flat segment on the SPY line
+        // and, worse, fed beta / correlation / tracking error / alpha a
+        // fabricated zero-return observation, biasing all four toward zero.
         const benchRow = benchMap.get(raw.month);
-        const benchRet = benchRow ? n(benchRow.return_pct) / 100 : 0;
+        const rawBenchRet = benchRow?.return_pct;
+        const benchRet =
+          rawBenchRet === null || rawBenchRet === undefined ? null : n(rawBenchRet) / 100;
 
         smifGrowth *= 1 + smifRet;
-        benchGrowth *= 1 + benchRet;
+        if (benchRet !== null) benchGrowth *= 1 + benchRet;
         if (smifGrowth > smifPeak) smifPeak = smifGrowth;
         if (benchGrowth > benchPeak) benchPeak = benchGrowth;
 
         series.push({
           month: raw.month,
           smif_return_pct: smifRet * 100,
-          bench_return_pct: benchRet * 100,
+          bench_return_pct: benchRet === null ? null : benchRet * 100,
           smif_growth: Number(smifGrowth.toFixed(4)),
           bench_growth: Number(benchGrowth.toFixed(4)),
           smif_drawdown_pct: Number((((smifGrowth - smifPeak) / smifPeak) * 100).toFixed(3)),
@@ -213,14 +224,20 @@ export const getFundMonthlyHistory = createServerFn({ method: "GET" }).handler(
       const cumProd = (arr: MonthlyPoint[], pick: (p: MonthlyPoint) => number) =>
         arr.reduce((acc, p) => acc * (1 + pick(p) / 100), 1);
 
+      // Both windows return null rather than a number when the history is too
+      // short to support the label. slice(-12) on 6 months of data is 6 months,
+      // and slice(-60) on 36 months annualized a three-year figure under a
+      // "5Y Annualized" heading — a real number, quietly measuring something
+      // other than what it claimed.
       const last12 = series.slice(-12);
-      const oneYearPct = (cumProd(last12, (p) => p.smif_return_pct) - 1) * 100;
+      const oneYearPct =
+        last12.length >= 12 ? (cumProd(last12, (p) => p.smif_return_pct) - 1) * 100 : null;
 
       const last60 = series.slice(-60);
       const fiveYearAnnPct =
-        last60.length >= 12
+        last60.length >= 60
           ? (Math.pow(cumProd(last60, (p) => p.smif_return_pct), 12 / last60.length) - 1) * 100
-          : 0;
+          : null;
 
       const inceptionAnnPct =
         totalYears > 0 ? (Math.pow(last.smif_growth, 1 / totalYears) - 1) * 100 : 0;
@@ -234,8 +251,18 @@ export const getFundMonthlyHistory = createServerFn({ method: "GET" }).handler(
       // so volatility, beta, and the ratios reflect real market months only.
       const real = series.filter((p) => !p.is_transition);
       const rs = real.map((p) => p.smif_return_pct); // monthly %, SMIF
-      const rb = real.map((p) => p.bench_return_pct); // monthly %, SPY total return
       const nObs = rs.length;
+
+      // Beta, correlation, tracking error and alpha are all two-series
+      // statistics, so they use only the months where BOTH series reported.
+      // Previously a missing benchmark month became a 0% observation and was
+      // fed in as though it were real, pulling every one of them toward zero.
+      const paired = real.filter(
+        (p): p is (typeof real)[number] & { bench_return_pct: number } =>
+          p.bench_return_pct !== null,
+      );
+      const ps = paired.map((p) => p.smif_return_pct);
+      const rb = paired.map((p) => p.bench_return_pct);
 
       const mean = (a: number[]) => (a.length ? a.reduce((s, x) => s + x, 0) / a.length : 0);
       const sampVar = (a: number[]) => {
@@ -262,12 +289,14 @@ export const getFundMonthlyHistory = createServerFn({ method: "GET" }).handler(
         Math.sqrt(rs.reduce((s, x) => s + Math.min(0, x) * Math.min(0, x), 0) / (nObs || 1)) *
         SQRT12; // %
       const varB = sampVar(rb);
-      const beta = varB > 0 ? cov(rs, rb) / varB : 0;
-      const diff = rs.map((x, i) => x - (rb[i] ?? 0));
+      const beta = varB > 0 ? cov(ps, rb) / varB : 0;
+      const diff = ps.map((x, i) => x - rb[i]);
       const trackingError = std(diff) * SQRT12; // %
-      const sdS = std(rs);
+      // Correlation is paired too — both standard deviations must be measured
+      // over the same months as the covariance.
+      const sdS = std(ps);
       const sdB = std(rb);
-      const correlation = sdS > 0 && sdB > 0 ? cov(rs, rb) / (sdS * sdB) : 0;
+      const correlation = sdS > 0 && sdB > 0 ? cov(ps, rb) / (sdS * sdB) : 0;
 
       const analytics: PerfAnalytics = {
         cumulative_return_pct: (last.smif_growth - 1) * 100,

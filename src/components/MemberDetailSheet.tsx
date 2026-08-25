@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Mail, Linkedin } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Link } from "@tanstack/react-router";
@@ -16,7 +16,7 @@ export function MemberDetailSheet({
   return (
     <Sheet open={open} onOpenChange={(o) => !o && onClose()}>
       <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto p-0">
-        {member && <MemberDetail m={member} />}
+        {member && <MemberDetail key={member.name} m={member} />}
       </SheetContent>
     </Sheet>
   );
@@ -29,11 +29,6 @@ function MemberDetail({ m }: { m: Member }) {
   const [triedPng, setTriedPng] = useState(false);
   const email = memberEmail(m);
   const initials = m.name.split(" ").map((p) => p[0]).slice(0, 2).join("");
-
-  useEffect(() => {
-    setSrc(m.photo ?? remote?.jpg ?? null);
-    setTriedPng(false);
-  }, [m.name, m.photo, remote?.jpg]);
 
   return (
     <div className="flex flex-col">

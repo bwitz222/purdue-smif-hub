@@ -53,6 +53,12 @@ export const portfolioSummary = {
   totalDayGain: 428.09,
   totalDayChange: 0.07,
   totalReturn: 162660.51,
-  totalReturnPct: 25.52,
-  weightedBeta: 1.02,
+  // Return over COST BASIS (459,362.99), which is what holdings.tsx computes
+  // from live quotes. This read 25.52, which is the return over portfolio
+  // value — a different denominator, and 10 points lower.
+  totalReturnPct: 35.41,
+  // Value-weighted mean of the position betas over invested capital. Read
+  // 1.02; the rows sum to 1.048. Live: holdings.tsx falls back to this
+  // whenever invested value is 0.
+  weightedBeta: 1.048,
 };

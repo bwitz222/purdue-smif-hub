@@ -150,7 +150,13 @@ function MemberProfile() {
         <div className="grid gap-12 md:grid-cols-5">
           <Reveal className="md:col-span-2">
             <div className="border border-border bg-card overflow-hidden">
-              <ProfilePhoto entry={entry} />
+              {/* Keyed on the slug so navigating between two profiles remounts
+                  the photo. ProfilePhoto seeds `src` from useState and never
+                  syncs on prop change; the route crossfade normally remounts
+                  it, but that whole block is skipped under
+                  prefers-reduced-motion (see RouteTransition in __root), which
+                  left the previous member's headshot beside the new name. */}
+              <ProfilePhoto key={entry.slug} entry={entry} />
             </div>
           </Reveal>
 

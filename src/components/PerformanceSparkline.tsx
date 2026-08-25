@@ -4,14 +4,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getFundMonthlyHistory } from "@/lib/fund-performance.functions";
+import { formatMonth } from "@/lib/format-month";
 
 const WIDTH = 260;
 const HEIGHT = 60;
-
-const MONTH_YEAR = (iso: string) => {
-  const d = new Date(iso);
-  return d.toLocaleDateString("en-US", { month: "short", year: "numeric" });
-};
 
 export function PerformanceSparkline() {
   const fetchHistory = useServerFn(getFundMonthlyHistory);
@@ -65,7 +61,7 @@ export function PerformanceSparkline() {
         <circle cx={lastX} cy={lastY} r={2.75} fill="var(--gold)" />
       </svg>
       <div className="text-[11px] font-mono uppercase tracking-[0.18em] text-muted-foreground">
-        $1 → ${multiple.toFixed(2)} since {MONTH_YEAR(data.inceptionMonth)}
+        $1 → ${multiple.toFixed(2)} since {formatMonth(data.inceptionMonth)}
       </div>
     </div>
   );

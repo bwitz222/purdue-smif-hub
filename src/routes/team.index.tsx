@@ -5,25 +5,28 @@ import { Search, X } from "lucide-react";
 import { MemberCard, type Member } from "@/components/MemberCard";
 import { MemberDetailSheet } from "@/components/MemberDetailSheet";
 import { RevealGroup, RevealItem } from "@/components/Reveal";
-import { board, sectorTeams, fixedIncomeMacro, portfolioManagers, facultyAdvisors, studentCount, facultyCount, totalMemberCount } from "@/data/team";
+import { board, sectorTeams, fixedIncomeMacro, portfolioManagers, facultyAdvisors, memberDirectory, studentCount, facultyCount, totalMemberCount } from "@/data/team";
 import { socialMeta, canonical, breadcrumbLd, OG_TEAM } from "@/lib/seo";
 import { jumpToSection } from "@/lib/jump-to";
 
-const allMembers = [
-  ...board,
-  ...sectorTeams.flatMap((t) => t.members),
-  ...fixedIncomeMacro,
-  ...portfolioManagers,
-  ...facultyAdvisors,
-];
+// Built from memberDirectory, not by concatenating the groups: seven people
+// sit on the executive board AND a sector/FIM/PM team, so a plain concat
+// emitted each of them as two Person entries with different jobTitles.
+// memberDirectory already dedupes by slug, first appearance winning.
+const allMembers = memberDirectory.map((e) => e.member);
 
 
-type TeamSearch = { sector?: string };
+type TeamSearch = { sector?: string; q?: string };
 
 export const Route = createFileRoute("/team/")({
   component: Team,
+  // `q` backs the sitelinks SearchAction declared in __root's WebSite JSON-LD
+  // (urlTemplate: /team?q={search_term_string}). That declaration shipped
+  // before the param existed, so a search engine honoring it sent visitors to
+  // /team?q=… and they landed on the unfiltered roster.
   validateSearch: (search: Record<string, unknown>): TeamSearch => ({
     sector: typeof search.sector === "string" ? search.sector : undefined,
+    q: typeof search.q === "string" && search.q.trim() ? search.q : undefined,
   }),
   head: () => ({
     meta: [
@@ -133,7 +136,7 @@ function Team() {
   const reduce = useReducedMotion();
   const gridRef = useRef<HTMLDivElement | null>(null);
 
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(search.q ?? "");
   const [group, setGroup] = useState<Group>("all");
   const [sectorFilter, setSectorFilter] = useState<string>("all");
   const [selected, setSelected] = useState<Member | null>(null);
@@ -204,7 +207,7 @@ function Team() {
     setGroup(opt.group);
     setSectorFilter(opt.sector);
     navigate({
-      search: () => (val === "all" ? {} : { sector: opt.label }),
+      search: (prev) => (val === "all" ? { q: prev.q } : { q: prev.q, sector: opt.label }),
       replace: true,
     });
     // Anchor-jump filtering: scroll to the matching section after render, and
@@ -287,8 +290,12 @@ function Team() {
             </div>
           </div>
           {/* Chip row: horizontal scroll on mobile, wraps on desktop. */}
+          {/* role="group" + aria-pressed, not tablist/tab: these chips have no
+              tabpanels, no aria-controls and no roving tabindex, so announcing
+              them as tabs promised arrow-key navigation that does not exist.
+              Same pattern /holdings uses for its sector filter. */}
           <div
-            role="tablist"
+            role="group"
             aria-label="Filter team by group"
             className="-mx-4 flex gap-2 overflow-x-auto px-4 snap-x scrollbar-hide md:mx-0 md:flex-wrap md:overflow-visible md:px-0"
           >
@@ -298,8 +305,7 @@ function Team() {
                 <button
                   key={o.value}
                   type="button"
-                  role="tab"
-                  aria-selected={active}
+                  aria-pressed={active}
                   onClick={() => handleScopeChange(o.value)}
                   className={`press shrink-0 snap-start min-h-9 rounded-full border px-3.5 text-[11px] font-semibold uppercase tracking-[0.14em] focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-1 ${
                     active
@@ -321,7 +327,12 @@ function Team() {
         <section className="container-prose py-24 text-center">
           <p className="font-display text-2xl text-muted-foreground">No members match your search.</p>
           <button
-            onClick={() => { setQuery(""); setGroup("all"); setSectorFilter("all"); navigate({ search: () => ({}), replace: true }); }}
+            onClick={() => {
+              setQuery("");
+              setGroup("all");
+              setSectorFilter("all");
+              navigate({ search: () => ({}), replace: true });
+            }}
             className="press mt-6 inline-flex items-center px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] border border-ink hover:bg-ink hover:text-background cursor-pointer"
           >
             Reset filters

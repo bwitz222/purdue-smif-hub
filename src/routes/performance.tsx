@@ -7,6 +7,7 @@ import {
   LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid,
   Tooltip, Legend, ResponsiveContainer, ReferenceLine,
 } from "recharts";
+import { formatMonth } from "@/lib/format-month";
 import { socialMeta, canonical, breadcrumbLd, OG_PERFORMANCE } from "@/lib/seo";
 import { Reveal } from "@/components/Reveal";
 import {
@@ -64,16 +65,13 @@ type IncMode = "growth" | "drawdown" | "rolling";
 const fmtPct  = (v: number) => `${v > 0 ? "+" : ""}${v.toFixed(1)}%`;
 const fmtMult = (v: number) => `${v.toFixed(2)}×`;
 const fmtPctPlain = (v: number) => `${v.toFixed(1)}%`; // no leading + (vol, tracking error…)
+// A KPI whose window isn't fully populated renders "—" rather than a number
+// measuring a shorter period than its label claims.
+const fmtPctOrDash = (v: number | null) => (v === null ? "—" : fmtPct(v));
 const fmtRatio    = (v: number) => v.toFixed(2);       // Sharpe, beta, correlation…
 
 const SMIF_COLOR  = "#CEB888";
 const BENCH_COLOR = "#6B6860";
-
-const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-function formatMonth(iso: string): string {
-  const [y, m] = iso.split("-");
-  return `${MONTH_NAMES[Number(m) - 1]} ${y}`;
-}
 
 function ChartTooltip({ active, payload, label, mode }: {
   active?: boolean;
@@ -162,8 +160,8 @@ function Performance() {
     if (monthlyData) {
       const k = monthlyData.kpis;
       return [
-        { l: "1Y Return",            v: fmtPct(k.one_year_pct),             pos: k.one_year_pct >= 0 },
-        { l: "5Y Annualized",        v: fmtPct(k.five_year_annualized_pct), pos: k.five_year_annualized_pct >= 0 },
+        { l: "1Y Return",            v: fmtPctOrDash(k.one_year_pct),             pos: (k.one_year_pct ?? 0) >= 0 },
+        { l: "5Y Annualized",        v: fmtPctOrDash(k.five_year_annualized_pct), pos: (k.five_year_annualized_pct ?? 0) >= 0 },
         { l: "Inception Annualized", v: fmtPct(k.inception_annualized_pct), pos: k.inception_annualized_pct >= 0 },
         { l: "Max Drawdown",         v: fmtPct(k.max_drawdown_pct),         pos: false },
       ];
@@ -225,7 +223,7 @@ function Performance() {
         let s = 1, b = 1;
         for (let j = i - 11; j <= i; j++) {
           s *= 1 + pts[j].smif_return_pct / 100;
-          b *= 1 + pts[j].bench_return_pct / 100;
+          b *= 1 + (pts[j].bench_return_pct ?? 0) / 100;
         }
         out.push({ month: pts[i].month, smif: (s - 1) * 100, bench: (b - 1) * 100 });
       }
