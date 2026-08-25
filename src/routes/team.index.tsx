@@ -361,7 +361,7 @@ function Team() {
             <SectionHeader
               kicker="Equity Research"
               title="Sector Teams"
-              blurb="Eight teams cover the equity universe. Each team is led by a Sector Head with senior analysts and rotating junior analysts."
+              blurb="Eight teams cover the equity universe. Each team is led by a Portfolio Manager with senior analysts and rotating junior analysts."
               count={hasFilter ? filteredSectors.reduce((s, t) => s + t.members.length, 0) : undefined}
             />
             <div className="space-y-16">

@@ -77,7 +77,7 @@ const FAQ = [
   },
   {
     q: "How is SMIF different from other finance clubs at Purdue?",
-    a: "Real money and a formal process. Analysts join a sector team, publish written research, and defend pitches before a committee vote. Current holdings and performance against the S&P 500 are published on this site. Members progress from analyst to senior analyst to sector head and the executive board.",
+    a: "Real money and a formal process. Analysts join a sector team, publish written research, and defend pitches before a committee vote. Current holdings and performance against the S&P 500 are published on this site. Members progress from analyst to senior analyst to portfolio manager and the executive board.",
   },
   {
     q: "Can I be in SMIF and other clubs at the same time?",

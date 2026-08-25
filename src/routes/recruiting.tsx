@@ -537,7 +537,7 @@ function Recruiting() {
                   title="Know SMIF"
                   items={[
                     "Read our About, Sectors, and Holdings pages before you walk in.",
-                    "Understand the structure: analyst → senior analyst → sector head → executive board.",
+                    "Understand the structure: analyst → senior analyst → portfolio manager → executive board.",
                     "Reference a recent publication or holding that genuinely caught your interest.",
                   ]}
                 />

@@ -230,7 +230,7 @@ function About() {
                 That one difference shapes the rest. Analysts join a sector team rather than a
                 general meeting. Positions are governed by a written investment policy statement.
                 Nothing enters the portfolio without a researched thesis and a committee vote. The
-                path runs analyst, senior analyst, sector head, executive board — and the work at
+                path runs analyst, senior analyst, portfolio manager, executive board — and the work at
                 each step is the work an investment professional actually does.
               </p>
               <p className="mt-6">

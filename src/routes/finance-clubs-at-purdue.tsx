@@ -49,7 +49,7 @@ const FAQ = [
   },
   {
     q: "Can freshmen join finance clubs at Purdue?",
-    a: "Yes. SMIF accepts first-year students who are ready to commit the time, and several current analysts joined as freshmen. Applying early is generally an advantage, because the analyst path runs analyst to senior analyst to sector head to executive board, and that progression takes semesters.",
+    a: "Yes. SMIF accepts first-year students who are ready to commit the time, and several current analysts joined as freshmen. Applying early is generally an advantage, because the analyst path runs analyst to senior analyst to portfolio manager to executive board, and that progression takes semesters.",
   },
   {
     q: "How many finance clubs should I join at Purdue?",
