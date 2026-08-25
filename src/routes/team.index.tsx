@@ -90,8 +90,26 @@ const matches = (m: Member, q: string) => {
 
 // Unified scope options: drives both group + sector state and anchor jumps
 // from a single chip row. `anchor` is the DOM id of the section heading.
-type ScopeOption = { value: string; label: string; group: Group; sector: string; anchor: string };
+type ScopeOption = {
+  value: string;
+  label: string;
+  group: Group;
+  sector: string;
+  anchor: string;
+  /**
+   * Extra ?sector= values that resolve to this scope. /sectors links to
+   * ?sector=<full team name>, and for the two process teams that name is not
+   * the chip label ("FI & Macro", "PM + Risk"), so without these the link
+   * matched nothing and dumped the visitor on the unfiltered roster.
+   */
+  aliases?: string[];
+};
 const sectorSlug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+/** Resolve a ?sector= value to its scope. Accepts the chip label, the option
+ *  value, or any declared alias, so every inbound link shape works. */
+export const findScope = (s: string): ScopeOption | undefined =>
+  SCOPE_OPTIONS.find((o) => o.label === s || o.value === s || o.aliases?.includes(s));
+
 const SCOPE_OPTIONS: ScopeOption[] = [
   { value: "all", label: "All", group: "all", sector: "all", anchor: "leadership" },
   { value: "leadership", label: "Leadership", group: "board", sector: "all", anchor: "leadership" },
@@ -102,8 +120,8 @@ const SCOPE_OPTIONS: ScopeOption[] = [
     sector: t.name,
     anchor: `sector-${sectorSlug(t.name)}`,
   })),
-  { value: "fim", label: "FI & Macro", group: "fim", sector: "all", anchor: "fim" },
-  { value: "pm", label: "PM + Risk", group: "pm", sector: "all", anchor: "pm" },
+  { value: "fim", label: "FI & Macro", group: "fim", sector: "all", anchor: "fim", aliases: ["Fixed Income & Macro"] },
+  { value: "pm", label: "PM + Risk", group: "pm", sector: "all", anchor: "pm", aliases: ["Portfolio + Risk Management"] },
   { value: "faculty", label: "Faculty", group: "faculty", sector: "all", anchor: "faculty" },
 ];
 
@@ -124,7 +142,7 @@ function Team() {
   useEffect(() => {
     const s = search.sector;
     if (!s) return;
-    const opt = SCOPE_OPTIONS.find((o) => o.label === s);
+    const opt = findScope(s);
     if (!opt) return;
     setGroup(opt.group);
     setSectorFilter(opt.sector);

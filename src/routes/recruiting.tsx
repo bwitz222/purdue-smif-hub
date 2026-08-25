@@ -152,8 +152,8 @@ const CALENDAR: Event[] = [
   { iso: "2026-08-31", date: "Mon, Aug 31", name: "SMIF Finance Club Consortium", time: "12:00 - 2:30 PM", location: "Rawls Atrium" },
   { iso: "2026-08-31", date: "Mon, Aug 31", name: "SMIF Coffee Chats 2",       time: "7:00 - 8:00 PM",   location: "Rawls 1086" },
   { iso: "2026-09-01", date: "Tue, Sep 1",  name: "SMIF Callout 3",            time: "7:30 - 8:30 PM",   location: "Rawls 1086" },
-  { iso: "2026-09-08", date: "Mon, Sep 8",  name: "SMIF Interviews, Day A",    time: "TBD",              location: "Young Hall 223, 217, 219, 213" },
-  { iso: "2026-09-09", date: "Tue, Sep 9",  name: "SMIF Interviews, Day B",    time: "TBD",              location: "Young Hall 223, 217, 219, 213" },
+  { iso: "2026-09-08", date: "Tue, Sep 8",  name: "SMIF Interviews, Day A",    time: "TBD",              location: "Young Hall 223, 217, 219, 213" },
+  { iso: "2026-09-09", date: "Wed, Sep 9",  name: "SMIF Interviews, Day B",    time: "TBD",              location: "Young Hall 223, 217, 219, 213" },
 ];
 
 // Parse "7:30 PM" / "12:00 PM" — returns { h, m } in 24h, or null
@@ -385,7 +385,7 @@ function Recruiting() {
           <button
             type="button"
             onClick={downloadICS}
-            aria-label="Download all 10 events as iCal file"
+            aria-label={`Download all ${CALENDAR.length} events as iCal file`}
             className="press group inline-flex items-center gap-2 border border-ink px-4 py-2 text-xs font-semibold uppercase tracking-wider hover:bg-ink hover:text-background cursor-pointer"
           >
             <Download className="h-3.5 w-3.5 icon-pop" />
