@@ -4,85 +4,86 @@
 
 @theme inline {
   --font-display: "Cormorant Garamond", "Georgia", serif;
-  --font-body:    "IBM Plex Sans", system-ui, sans-serif;
-  --font-mono:    "IBM Plex Mono", "Menlo", monospace;
+  --font-body: "IBM Plex Sans", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", "Menlo", monospace;
   --radius-sm: 0px;
   --radius-md: 0px;
   --radius-lg: 0px;
   --radius-xl: 0px;
-  --color-background:           var(--background);
-  --color-foreground:           var(--foreground);
-  --color-card:                 var(--card);
-  --color-card-foreground:      var(--card-foreground);
-  --color-popover:              var(--popover);
-  --color-popover-foreground:   var(--popover-foreground);
-  --color-primary:              var(--primary);
-  --color-primary-foreground:   var(--primary-foreground);
-  --color-secondary:            var(--secondary);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted:                var(--muted);
-  --color-muted-foreground:     var(--muted-foreground);
-  --color-accent:               var(--accent);
-  --color-accent-foreground:    var(--accent-foreground);
-  --color-destructive:          var(--destructive);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
-  --color-border:               var(--border);
-  --color-input:                var(--input);
-  --color-ring:                 var(--ring);
-  --color-gold:                 var(--gold);
-  --color-gold-deep:            var(--gold-deep);
-  --color-ink:                  var(--ink);
-  --color-gain:                 var(--gain);
-  --color-loss:                 var(--loss);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-gold: var(--gold);
+  --color-gold-deep: var(--gold-deep);
+  --color-ink: var(--ink);
+  --color-gain: var(--gain);
+  --color-loss: var(--loss);
 }
 
 :root {
-  --background:         #FAFAF6;
-  --foreground:         #0A0A0A;
-  --card:               #FFFFFF;
-  --card-foreground:    #0A0A0A;
-  --popover:            #FFFFFF;
-  --popover-foreground: #0A0A0A;
-  --primary:            #0A0A0A;
-  --primary-foreground: #FAFAF6;
-  --secondary:          #F2EFE7;
-  --secondary-foreground: #0A0A0A;
-  --muted:              #EDEDEA;
-  --muted-foreground:   #5A5955;
-  --accent:             #CEB888;
-  --accent-foreground:  #0A0A0A;
-  --destructive:        #C0392B;
-  --destructive-foreground: #FAFAF6;
-  --border:             #E0DDD5;
-  --input:              #E0DDD5;
-  --ring:               #CEB888;
+  --background: #fafaf6;
+  --foreground: #0a0a0a;
+  --card: #ffffff;
+  --card-foreground: #0a0a0a;
+  --popover: #ffffff;
+  --popover-foreground: #0a0a0a;
+  --primary: #0a0a0a;
+  --primary-foreground: #fafaf6;
+  --secondary: #f2efe7;
+  --secondary-foreground: #0a0a0a;
+  --muted: #ededea;
+  --muted-foreground: #5a5955;
+  --accent: #ceb888;
+  --accent-foreground: #0a0a0a;
+  --destructive: #c0392b;
+  --destructive-foreground: #fafaf6;
+  --border: #e0ddd5;
+  --input: #e0ddd5;
+  --ring: #ceb888;
   /* #CEB888 is the official Purdue "Boilermaker Gold" (ratified brand color).
      --gold-deep is a derived shade, not the ratified color, so it is free to move:
      it was #8E6F3E, which measured 4.31-4.47:1 on the light grounds and failed
      WCAG AA (4.5:1) on every page. #7F6335 clears it at 5.19:1 worst case, and
      also as a background under paper-colored text. */
-  --gold:      #CEB888;
-  --gold-mid:  #B8975A;
-  --gold-deep: #7F6335;
-  --ink:       #0A0A0A;
-  --ink-soft:  #1C1C1A;
+  --gold: #ceb888;
+  --gold-mid: #b8975a;
+  --gold-deep: #7f6335;
+  --ink: #0a0a0a;
+  --ink-soft: #1c1c1a;
   /* Semantic financial colors — distinct from destructive (error) red */
-  --gain:      #2E7D52;
-  --loss:      #B94040;
+  --gain: #2e7d52;
+  --loss: #b94040;
   /* Semantic on-dark text tokens — replace ad-hoc text-background/[n] values */
-  --text-on-dark-primary:   rgba(250,250,246,0.95);
-  --text-on-dark-secondary: rgba(250,250,246,0.75);
-  --text-on-dark-muted:     rgba(250,250,246,0.55);
-  --text-on-dark-dim:       rgba(250,250,246,0.55);
-  --gradient-hero: linear-gradient(160deg, rgba(10,10,10,0.88) 0%, rgba(10,10,10,0.52) 100%);
-  --gradient-gold: linear-gradient(135deg, #CEB888 0%, #8E6F3E 100%);
-  --shadow-elegant: 0 24px 60px -20px rgba(10,10,10,0.22);
-  --shadow-gold:    0 10px 40px -10px rgba(142,111,62,0.35);
+  --text-on-dark-primary: rgba(250, 250, 246, 0.95);
+  --text-on-dark-secondary: rgba(250, 250, 246, 0.75);
+  --text-on-dark-muted: rgba(250, 250, 246, 0.55);
+  --text-on-dark-dim: rgba(250, 250, 246, 0.55);
+  --gradient-hero: linear-gradient(160deg, rgba(10, 10, 10, 0.88) 0%, rgba(10, 10, 10, 0.52) 100%);
+  --gradient-gold: linear-gradient(135deg, #ceb888 0%, #8e6f3e 100%);
+  --shadow-elegant: 0 24px 60px -20px rgba(10, 10, 10, 0.22);
+  --shadow-gold: 0 10px 40px -10px rgba(142, 111, 62, 0.35);
 }
 
-
 @layer base {
-  * { border-color: var(--color-border); }
+  * {
+    border-color: var(--color-border);
+  }
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
@@ -92,18 +93,26 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
-  h1, h2, h3, h4 {
+  h1,
+  h2,
+  h3,
+  h4 {
     font-family: var(--font-display);
     letter-spacing: -0.02em;
     line-height: 1.05;
     text-wrap: balance;
   }
-  p { text-wrap: pretty; }
+  p {
+    text-wrap: pretty;
+  }
   ::selection {
     background: var(--gold);
     color: var(--ink);
   }
-  table, .font-mono { font-variant-numeric: tabular-nums; }
+  table,
+  .font-mono {
+    font-variant-numeric: tabular-nums;
+  }
   /* Global keyboard-focus indicator */
   :focus-visible {
     outline: 2px solid var(--gold);
@@ -112,44 +121,100 @@
   /* Smooth every interactive hover/focus state site-wide. Deliberately does NOT
      include transform/opacity so it never fights framer-motion (which animates
      those inline per-frame); transform effects are opt-in via .press/.hover-lift. */
-  a, button, [role="button"], summary, label, input, select, textarea {
-    transition: color 0.18s ease, background-color 0.18s ease,
-                border-color 0.18s ease, box-shadow 0.18s ease;
+  a,
+  button,
+  [role="button"],
+  summary,
+  label,
+  input,
+  select,
+  textarea {
+    transition:
+      color 0.18s ease,
+      background-color 0.18s ease,
+      border-color 0.18s ease,
+      box-shadow 0.18s ease;
   }
   /* Pause the ticker when any keyboard focus lands inside it */
-  .ticker-wrap:focus-within .ticker-inner { animation-play-state: paused; }
+  .ticker-wrap:focus-within .ticker-inner {
+    animation-play-state: paused;
+  }
 }
 
 @layer utilities {
-  .text-gold      { color: var(--gold); }
-  .text-gold-mid  { color: var(--gold-mid); }
-  .text-gold-deep { color: var(--gold-deep); }
-  .text-ink       { color: var(--ink); }
-  .text-gain      { color: var(--gain); }
-  .text-loss      { color: var(--loss); }
-  .bg-gain        { background-color: var(--gain); }
-  .bg-loss        { background-color: var(--loss); }
-  .bg-gold        { background-color: var(--gold); }
-  .bg-gold-mid    { background-color: var(--gold-mid); }
-  .bg-ink         { background-color: var(--ink); }
-  .bg-ink-soft    { background-color: var(--ink-soft); }
-  .border-gold    { border-color: var(--gold); }
-  .bg-gradient-gold { background-image: var(--gradient-gold); }
-  .bg-gradient-hero { background-image: var(--gradient-hero); }
-  .shadow-elegant   { box-shadow: var(--shadow-elegant); }
-  .shadow-gold      { box-shadow: var(--shadow-gold); }
+  .text-gold {
+    color: var(--gold);
+  }
+  .text-gold-mid {
+    color: var(--gold-mid);
+  }
+  .text-gold-deep {
+    color: var(--gold-deep);
+  }
+  .text-ink {
+    color: var(--ink);
+  }
+  .text-gain {
+    color: var(--gain);
+  }
+  .text-loss {
+    color: var(--loss);
+  }
+  .bg-gain {
+    background-color: var(--gain);
+  }
+  .bg-loss {
+    background-color: var(--loss);
+  }
+  .bg-gold {
+    background-color: var(--gold);
+  }
+  .bg-gold-mid {
+    background-color: var(--gold-mid);
+  }
+  .bg-ink {
+    background-color: var(--ink);
+  }
+  .bg-ink-soft {
+    background-color: var(--ink-soft);
+  }
+  .border-gold {
+    border-color: var(--gold);
+  }
+  .bg-gradient-gold {
+    background-image: var(--gradient-gold);
+  }
+  .bg-gradient-hero {
+    background-image: var(--gradient-hero);
+  }
+  .shadow-elegant {
+    box-shadow: var(--shadow-elegant);
+  }
+  .shadow-gold {
+    box-shadow: var(--shadow-gold);
+  }
   /* Semantic on-dark text utilities */
-  .text-on-dark-primary   { color: var(--text-on-dark-primary); }
-  .text-on-dark-secondary { color: var(--text-on-dark-secondary); }
-  .text-on-dark-muted     { color: var(--text-on-dark-muted); }
-  .text-on-dark-dim       { color: var(--text-on-dark-dim); }
+  .text-on-dark-primary {
+    color: var(--text-on-dark-primary);
+  }
+  .text-on-dark-secondary {
+    color: var(--text-on-dark-secondary);
+  }
+  .text-on-dark-muted {
+    color: var(--text-on-dark-muted);
+  }
+  .text-on-dark-dim {
+    color: var(--text-on-dark-dim);
+  }
   .container-prose {
     max-width: 1280px;
     margin-inline: auto;
     padding-inline: 1.5rem;
   }
   @media (min-width: 768px) {
-    .container-prose { padding-inline: 3rem; }
+    .container-prose {
+      padding-inline: 3rem;
+    }
   }
   .rule-gold {
     display: block;
@@ -163,17 +228,24 @@
 
   /* Tactile press for buttons, chips, and clickable rows. */
   .press {
-    transition: transform 0.12s cubic-bezier(0.22, 1, 0.36, 1),
-                box-shadow 0.2s ease, background-color 0.2s ease,
-                border-color 0.2s ease, color 0.2s ease;
+    transition:
+      transform 0.12s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.2s ease,
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      color 0.2s ease;
   }
-  .press:active { transform: scale(0.97); }
+  .press:active {
+    transform: scale(0.97);
+  }
 
   /* Card elevation on hover — gold border + elegant shadow, matches MemberCard. */
   .hover-lift,
   .hover-lift-sm {
-    transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
-                box-shadow 0.22s ease, border-color 0.22s ease;
+    transition:
+      transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.22s ease,
+      border-color 0.22s ease;
   }
   .hover-lift:hover {
     transform: translateY(-3px);
@@ -186,7 +258,9 @@
   }
 
   /* Left-anchored underline that wipes in on hover/focus (for text links). */
-  .link-underline { position: relative; }
+  .link-underline {
+    position: relative;
+  }
   .link-underline::after {
     content: "";
     position: absolute;
@@ -200,25 +274,44 @@
     transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
   }
   .link-underline:hover::after,
-  .link-underline:focus-visible::after { transform: scaleX(1); }
+  .link-underline:focus-visible::after {
+    transform: scaleX(1);
+  }
 
   /* Arrow/icon that nudges forward when its .group parent is hovered. */
-  .arrow-slide { transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1); }
-  .group:hover .arrow-slide { transform: translateX(4px); }
+  .arrow-slide {
+    transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .group:hover .arrow-slide {
+    transform: translateX(4px);
+  }
 
   /* Icon that swells slightly with its .group parent — for links whose
      affordance is the glyph (social, download, external) rather than an arrow. */
-  .icon-pop { transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1); }
-  .group:hover .icon-pop { transform: scale(1.12); }
+  .icon-pop {
+    transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .group:hover .icon-pop {
+    transform: scale(1.12);
+  }
 
   /* Numeric/stat surfaces: a restrained lift with no border recolor, so dense
      data grids don't strobe gold on every pointer move. */
-  .hover-raise { transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.22s ease; }
-  .hover-raise:hover { transform: translateY(-2px); box-shadow: var(--shadow-gold); }
+  .hover-raise {
+    transition:
+      transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.22s ease;
+  }
+  .hover-raise:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-gold);
+  }
 
   /* Row hover for tabular/list data — a gold rail wipes down the left edge
      instead of a transform, which would misalign columns mid-scan. */
-  .row-rail { position: relative; }
+  .row-rail {
+    position: relative;
+  }
   .row-rail::before {
     content: "";
     position: absolute;
@@ -232,60 +325,123 @@
     transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
   }
   .row-rail:hover::before,
-  .row-rail:focus-visible::before { transform: scaleY(1); }
-  .ticker-wrap  { overflow: hidden; white-space: nowrap; }
+  .row-rail:focus-visible::before {
+    transform: scaleY(1);
+  }
+  .ticker-wrap {
+    overflow: hidden;
+    white-space: nowrap;
+  }
   .ticker-inner {
     display: inline-flex;
     animation: ticker 32s linear infinite;
   }
-  .ticker-inner:hover { animation-play-state: paused; }
+  .ticker-inner:hover {
+    animation-play-state: paused;
+  }
   @keyframes ticker {
-    0%   { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
   }
   @keyframes fade-up {
-    from { opacity: 0; transform: translateY(20px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
   @keyframes fade-in {
-    from { opacity: 0; }
-    to   { opacity: 1; }
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
   @keyframes expand-x {
-    from { transform: scaleX(0); transform-origin: left; }
-    to   { transform: scaleX(1); transform-origin: left; }
+    from {
+      transform: scaleX(0);
+      transform-origin: left;
+    }
+    to {
+      transform: scaleX(1);
+      transform-origin: left;
+    }
   }
   /* Slow drift for hero imagery — paired with an opacity overlay so the
      scale never reads as zoom-jank. transform-only: no layout cost. */
   @keyframes ken-burns {
-    from { transform: scale(1); }
-    to   { transform: scale(1.07); }
+    from {
+      transform: scale(1);
+    }
+    to {
+      transform: scale(1.07);
+    }
   }
-  .animate-fade-up   { animation: fade-up   0.72s cubic-bezier(0.22,1,0.36,1) both; }
-  .animate-fade-in   { animation: fade-in   0.55s ease both; }
-  .animate-expand-x  { animation: expand-x  0.65s cubic-bezier(0.22,1,0.36,1) both; }
-  .animate-ken-burns { animation: ken-burns 24s cubic-bezier(0.22,1,0.36,1) both; }
-  .delay-100 { animation-delay: 100ms; }
-  .delay-200 { animation-delay: 200ms; }
-  .delay-300 { animation-delay: 300ms; }
-  .delay-400 { animation-delay: 400ms; }
-  .delay-500 { animation-delay: 500ms; }
-  .delay-600 { animation-delay: 600ms; }
-  .delay-700 { animation-delay: 700ms; }
-  .scrollbar-none { scrollbar-width: none; -ms-overflow-style: none; }
-  .scrollbar-none::-webkit-scrollbar { display: none; }
+  .animate-fade-up {
+    animation: fade-up 0.72s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .animate-fade-in {
+    animation: fade-in 0.55s ease both;
+  }
+  .animate-expand-x {
+    animation: expand-x 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .animate-ken-burns {
+    animation: ken-burns 24s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .delay-100 {
+    animation-delay: 100ms;
+  }
+  .delay-200 {
+    animation-delay: 200ms;
+  }
+  .delay-300 {
+    animation-delay: 300ms;
+  }
+  .delay-400 {
+    animation-delay: 400ms;
+  }
+  .delay-500 {
+    animation-delay: 500ms;
+  }
+  .delay-600 {
+    animation-delay: 600ms;
+  }
+  .delay-700 {
+    animation-delay: 700ms;
+  }
+  .scrollbar-none {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
   /* Fragment targets clear the sticky header instead of landing under it.
      The header bar is h-14 (56px) plus a 1px border; 5rem leaves the anchored
      heading a little breathing room above it. /team sets its own scroll-mt-40
      because that page stacks a second sticky bar (the filter chips) below the
      header — don't fold the two together. */
-  .section-anchor { scroll-margin-top: 5rem; }
+  .section-anchor {
+    scroll-margin-top: 5rem;
+  }
   @media (prefers-reduced-motion: reduce) {
     .animate-fade-up,
     .animate-fade-in,
     .animate-expand-x,
     .animate-ken-burns,
-    .ticker-inner { animation: none !important; opacity: 1 !important; }
+    .ticker-inner {
+      animation: none !important;
+      opacity: 1 !important;
+    }
     .press,
     .hover-lift,
     .hover-lift-sm,
@@ -293,16 +449,22 @@
     .arrow-slide,
     .icon-pop,
     .row-rail::before,
-    .link-underline::after { transition: none !important; }
+    .link-underline::after {
+      transition: none !important;
+    }
     .press:active,
     .hover-lift:hover,
     .hover-lift-sm:hover,
     .hover-raise:hover,
     .group:hover .arrow-slide,
-    .group:hover .icon-pop { transform: none !important; }
+    .group:hover .icon-pop {
+      transform: none !important;
+    }
     /* The rail stays a hover affordance under reduced motion — it just
        appears instead of wiping in. */
     .row-rail:hover::before,
-    .row-rail:focus-visible::before { transform: scaleY(1) !important; }
+    .row-rail:focus-visible::before {
+      transform: scaleY(1) !important;
+    }
   }
 }

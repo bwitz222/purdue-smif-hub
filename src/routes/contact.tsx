@@ -22,10 +22,15 @@ export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
       { title: "Contact Purdue SMIF — Student Managed Investment Fund" },
-      { name: "description", content: "Get in touch with the Purdue Student Managed Investment Fund — prospective members, alumni, sponsors, and recruiters. We reply within two business days." },
+      {
+        name: "description",
+        content:
+          "Get in touch with the Purdue Student Managed Investment Fund — prospective members, alumni, sponsors, and recruiters. We reply within two business days.",
+      },
       ...socialMeta({
         title: "Contact Purdue SMIF",
-        description: "Get in touch with the Purdue Student Managed Investment Fund — prospective members, alumni, sponsors, and recruiters. We reply within two business days.",
+        description:
+          "Get in touch with the Purdue Student Managed Investment Fund — prospective members, alumni, sponsors, and recruiters. We reply within two business days.",
         url: canonical("/contact"),
         image: OG_CONTACT,
       }),
@@ -59,13 +64,7 @@ export const Route = createFileRoute("/contact")({
   }),
 });
 
-const TOPICS = [
-  "Prospective member",
-  "Alumni",
-  "Sponsor / Recruiter",
-  "Press",
-  "Other",
-] as const;
+const TOPICS = ["Prospective member", "Alumni", "Sponsor / Recruiter", "Press", "Other"] as const;
 
 const inquirySchema = z.object({
   topic: z.enum(TOPICS, { errorMap: () => ({ message: "Please choose a topic" }) }),
@@ -164,7 +163,10 @@ function Contact() {
             <Mail className="h-6 w-6 text-gold-deep flex-shrink-0 mt-1 icon-pop" />
             <div>
               <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Email</div>
-              <a href="mailto:smif26@purdue.edu" className="link-underline mt-1 inline-block font-display text-lg font-semibold hover:text-gold-deep">
+              <a
+                href="mailto:smif26@purdue.edu"
+                className="link-underline mt-1 inline-block font-display text-lg font-semibold hover:text-gold-deep"
+              >
                 smif26@purdue.edu
               </a>
             </div>
@@ -172,15 +174,25 @@ function Contact() {
           <RevealItem className="flex gap-5">
             <MapPin className="h-6 w-6 text-gold-deep flex-shrink-0 mt-1 icon-pop" />
             <div>
-              <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Address</div>
-              <div className="mt-1 font-display text-lg font-semibold">Daniels School of Business</div>
-              <div className="text-muted-foreground">403 Mitch Daniels Blvd<br />West Lafayette, IN 47907</div>
+              <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                Address
+              </div>
+              <div className="mt-1 font-display text-lg font-semibold">
+                Daniels School of Business
+              </div>
+              <div className="text-muted-foreground">
+                403 Mitch Daniels Blvd
+                <br />
+                West Lafayette, IN 47907
+              </div>
             </div>
           </RevealItem>
           <RevealItem className="flex gap-5">
             <Linkedin className="h-6 w-6 text-gold-deep flex-shrink-0 mt-1 icon-pop" />
             <div>
-              <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">LinkedIn</div>
+              <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                LinkedIn
+              </div>
               <a
                 href="https://www.linkedin.com/company/purdue-smif/"
                 target="_blank"
@@ -200,10 +212,13 @@ function Contact() {
           <Reveal className="lg:col-span-2">
             <span className="rule-gold mb-5 block" />
             <h2 className="font-display text-4xl font-bold text-ink leading-tight">
-              Tell us why<br />you're writing.
+              Tell us why
+              <br />
+              you're writing.
             </h2>
             <p className="mt-5 text-muted-foreground leading-relaxed">
-              The fastest path to a thoughtful reply. We read every message and respond within two business days.
+              The fastest path to a thoughtful reply. We read every message and respond within two
+              business days.
             </p>
           </Reveal>
 
@@ -234,7 +249,11 @@ function Contact() {
                     ))}
                   </SelectContent>
                 </Select>
-                {errors.topic && <p id="topic-error" role="alert" className="mt-1.5 text-xs text-destructive">{errors.topic}</p>}
+                {errors.topic && (
+                  <p id="topic-error" role="alert" className="mt-1.5 text-xs text-destructive">
+                    {errors.topic}
+                  </p>
+                )}
               </div>
 
               <div className="grid gap-6 sm:grid-cols-2">
@@ -252,7 +271,11 @@ function Contact() {
                     aria-describedby={errors.name ? "name-error" : undefined}
                     className="mt-2 rounded-none"
                   />
-                  {errors.name && <p id="name-error" role="alert" className="mt-1.5 text-xs text-destructive">{errors.name}</p>}
+                  {errors.name && (
+                    <p id="name-error" role="alert" className="mt-1.5 text-xs text-destructive">
+                      {errors.name}
+                    </p>
+                  )}
                 </div>
                 <div>
                   <Label htmlFor="email" className="text-xs uppercase tracking-[0.16em] text-ink">
@@ -269,7 +292,11 @@ function Contact() {
                     aria-describedby={errors.email ? "email-error" : undefined}
                     className="mt-2 rounded-none"
                   />
-                  {errors.email && <p id="email-error" role="alert" className="mt-1.5 text-xs text-destructive">{errors.email}</p>}
+                  {errors.email && (
+                    <p id="email-error" role="alert" className="mt-1.5 text-xs text-destructive">
+                      {errors.email}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -289,7 +316,9 @@ function Contact() {
                   className="mt-2 rounded-none"
                 />
                 <div className="mt-1.5 flex justify-between text-xs">
-                  <span id="message-error" role="alert" className="text-destructive">{errors.message ?? ""}</span>
+                  <span id="message-error" role="alert" className="text-destructive">
+                    {errors.message ?? ""}
+                  </span>
                   <span className="text-muted-foreground font-mono">{message.length}/4000</span>
                 </div>
               </div>

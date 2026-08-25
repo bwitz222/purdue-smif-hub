@@ -1,5 +1,13 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Outlet, Link, createRootRouteWithContext, useRouter, useLocation, HeadContent, Scripts } from "@tanstack/react-router";
+import {
+  Outlet,
+  Link,
+  createRootRouteWithContext,
+  useRouter,
+  useLocation,
+  HeadContent,
+  Scripts,
+} from "@tanstack/react-router";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import appCss from "../styles.css?url";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -17,15 +25,27 @@ function NotFoundComponent() {
       <meta name="robots" content="noindex, follow" />
       <div className="max-w-md text-center text-background">
         <span className="mx-auto mb-8 grid h-16 w-16 place-items-center bg-background p-2">
-          <img src={smifLogo} alt="Purdue SMIF" width={64} height={64} decoding="async" className="h-full w-full object-contain" />
+          <img
+            src={smifLogo}
+            alt="Purdue SMIF"
+            width={64}
+            height={64}
+            decoding="async"
+            className="h-full w-full object-contain"
+          />
         </span>
-        <div className="font-display text-[8rem] font-bold text-gold/20 leading-none select-none">404</div>
+        <div className="font-display text-[8rem] font-bold text-gold/20 leading-none select-none">
+          404
+        </div>
         <h1 className="font-display text-3xl font-bold text-background mt-4">Page not found</h1>
         <p className="mt-3 text-sm text-on-dark-secondary">
           The page you're looking for doesn't exist or has been moved.
         </p>
         <div className="mt-8">
-          <Link to="/" className="inline-flex items-center justify-center bg-gold px-6 py-3 text-sm font-semibold text-ink hover:bg-gold-mid transition-colors duration-200">
+          <Link
+            to="/"
+            className="inline-flex items-center justify-center bg-gold px-6 py-3 text-sm font-semibold text-ink hover:bg-gold-mid transition-colors duration-200"
+          >
             Go home
           </Link>
         </div>
@@ -34,10 +54,26 @@ function NotFoundComponent() {
             Or visit
           </div>
           <ul className="flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm">
-            <li><Link to="/about" className="text-on-dark-secondary hover:text-gold">About</Link></li>
-            <li><Link to="/team" className="text-on-dark-secondary hover:text-gold">Team</Link></li>
-            <li><Link to="/holdings" className="text-on-dark-secondary hover:text-gold">Holdings</Link></li>
-            <li><Link to="/recruiting" className="text-on-dark-secondary hover:text-gold">Recruiting</Link></li>
+            <li>
+              <Link to="/about" className="text-on-dark-secondary hover:text-gold">
+                About
+              </Link>
+            </li>
+            <li>
+              <Link to="/team" className="text-on-dark-secondary hover:text-gold">
+                Team
+              </Link>
+            </li>
+            <li>
+              <Link to="/holdings" className="text-on-dark-secondary hover:text-gold">
+                Holdings
+              </Link>
+            </li>
+            <li>
+              <Link to="/recruiting" className="text-on-dark-secondary hover:text-gold">
+                Recruiting
+              </Link>
+            </li>
           </ul>
         </div>
       </div>
@@ -45,13 +81,40 @@ function NotFoundComponent() {
   );
 }
 
-
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
-  return (<div className="flex min-h-dvh items-center justify-center bg-ink px-4"><title>Something went wrong — Purdue SMIF</title><meta name="robots" content="noindex, follow" /><div className="max-w-md text-center text-background"><span className="rule-gold block mb-5 mx-auto" /><h1 className="font-display text-2xl font-bold text-background">This page didn't load</h1><p className="mt-3 text-sm text-on-dark-secondary">Something went wrong on our end. Try refreshing or head back home.</p><div className="mt-8 flex flex-wrap justify-center gap-3"><button onClick={() => { router.invalidate(); reset(); }} className="inline-flex items-center justify-center bg-gold px-6 py-3 text-sm font-semibold text-ink hover:bg-gold-mid transition-colors duration-200">Try again</button><a href="/" className="inline-flex items-center justify-center border border-background/25 px-6 py-3 text-sm font-semibold text-background hover:border-gold hover:text-gold transition-colors duration-200">Go home</a></div></div></div>);
+  return (
+    <div className="flex min-h-dvh items-center justify-center bg-ink px-4">
+      <title>Something went wrong — Purdue SMIF</title>
+      <meta name="robots" content="noindex, follow" />
+      <div className="max-w-md text-center text-background">
+        <span className="rule-gold block mb-5 mx-auto" />
+        <h1 className="font-display text-2xl font-bold text-background">This page didn't load</h1>
+        <p className="mt-3 text-sm text-on-dark-secondary">
+          Something went wrong on our end. Try refreshing or head back home.
+        </p>
+        <div className="mt-8 flex flex-wrap justify-center gap-3">
+          <button
+            onClick={() => {
+              router.invalidate();
+              reset();
+            }}
+            className="inline-flex items-center justify-center bg-gold px-6 py-3 text-sm font-semibold text-ink hover:bg-gold-mid transition-colors duration-200"
+          >
+            Try again
+          </button>
+          <a
+            href="/"
+            className="inline-flex items-center justify-center border border-background/25 px-6 py-3 text-sm font-semibold text-background hover:border-gold hover:text-gold transition-colors duration-200"
+          >
+            Go home
+          </a>
+        </div>
+      </div>
+    </div>
+  );
 }
-
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
@@ -59,10 +122,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Purdue Student Managed Investment Fund" },
-      { name: "description", content: "Purdue SMIF — the student-managed investment fund at Purdue's Daniels School of Business, managing real capital since 2009." },
+      {
+        name: "description",
+        content:
+          "Purdue SMIF — the student-managed investment fund at Purdue's Daniels School of Business, managing real capital since 2009.",
+      },
       // Opt into the largest available rich-result treatment. Without this,
       // Google caps image previews and truncates snippets by default.
-      { name: "robots", content: "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" },
+      {
+        name: "robots",
+        content: "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+      },
       { name: "author", content: "Purdue SMIF" },
       { name: "theme-color", content: "#0A0A0A" },
       { property: "og:site_name", content: "Purdue SMIF" },
@@ -77,9 +147,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "dns-prefetch", href: "https://mxjrtmratusuxhpxtwmg.supabase.co" },
       // Body font — must render fast
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&display=swap" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&display=swap",
+      },
       // Display + mono — decorative, can wait for the real face
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=IBM+Plex+Mono:wght@400&display=optional" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=IBM+Plex+Mono:wght@400&display=optional",
+      },
     ],
     scripts: [
       // Vercel Web Analytics + Speed Insights.
@@ -126,7 +202,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
               email: "smif26@purdue.edu",
               foundingDate: "2009",
               slogan: "Real capital. Real research. Real outcomes.",
-              description: "Purdue's premier student investment club and finance club — a student-run investment fund at the Mitch Daniels School of Business, Purdue University, managing real capital across global markets since 2009.",
+              description:
+                "Purdue's premier student investment club and finance club — a student-run investment fund at the Mitch Daniels School of Business, Purdue University, managing real capital across global markets since 2009.",
               parentOrganization: {
                 "@type": "CollegeOrUniversity",
                 name: "Daniels School of Business, Purdue University",
@@ -195,7 +272,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 });
 
 function RootShell({ children }: { children: React.ReactNode }) {
-  return (<html lang="en"><head><HeadContent /></head><body>{children}<Scripts /></body></html>);
+  return (
+    <html lang="en">
+      <head>
+        <HeadContent />
+      </head>
+      <body>
+        {children}
+        <Scripts />
+      </body>
+    </html>
+  );
 }
 
 /** Short crossfade between routes — keeps transitions feeling deliberate, not jumpy. */

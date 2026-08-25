@@ -153,11 +153,7 @@ async function upsertPriceRows(
   }
 }
 
-async function backfill(
-  supabaseAdmin: Admin,
-  symbols: string[],
-  apiKey: string,
-): Promise<number> {
+async function backfill(supabaseAdmin: Admin, symbols: string[], apiKey: string): Promise<number> {
   const to = ymd(Date.now());
   const from = ymd(Date.now() - HISTORY_BACKDAYS * 24 * 60 * 60 * 1000);
   const rows: Array<{ symbol: string; date: string; close: number }> = [];
@@ -233,7 +229,8 @@ async function computeAndStore(
   const cash = await getCashHoldings(supabaseAdmin);
   const nav = commonDates.map((d) => {
     let invested = 0;
-    for (const s of pricedSymbols) invested += (sharesBySymbol.get(s) ?? 0) * bySymbol.get(s)!.get(d)!;
+    for (const s of pricedSymbols)
+      invested += (sharesBySymbol.get(s) ?? 0) * bySymbol.get(s)!.get(d)!;
     return invested + cash;
   });
 

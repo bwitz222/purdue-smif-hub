@@ -69,8 +69,12 @@ function useCountdown() {
 function CountdownUnit({ value, label }: { value: number | string; label: string }) {
   return (
     <div className="flex flex-1 sm:flex-none flex-col items-center border border-gold/30 bg-ink/40 px-4 py-3 min-w-[72px] hover-raise">
-      <span className="font-display text-3xl font-bold text-gold tabular-nums md:text-4xl">{value}</span>
-      <span className="mt-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-on-dark-secondary">{label}</span>
+      <span className="font-display text-3xl font-bold text-gold tabular-nums md:text-4xl">
+        {value}
+      </span>
+      <span className="mt-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-on-dark-secondary">
+        {label}
+      </span>
     </div>
   );
 }
@@ -102,7 +106,8 @@ function Countdown() {
           Applications Closed
         </div>
         <p className="mt-2 text-sm text-on-dark-secondary">
-          Applications for the Fall 2026 cycle are closed. Watch this page or follow us on Instagram for the next application window.
+          Applications for the Fall 2026 cycle are closed. Watch this page or follow us on Instagram
+          for the next application window.
         </p>
       </div>
     );
@@ -124,7 +129,9 @@ function Countdown() {
       <p className="mt-1 text-sm text-on-dark-secondary">{sub}</p>
       {/* Accessible plain-text countdown, hidden visually. Always present
           so screen readers + no-JS users get a complete sentence. */}
-      <span className="sr-only" aria-live="polite">{srLabel}</span>
+      <span className="sr-only" aria-live="polite">
+        {srLabel}
+      </span>
       <div className="mt-5 flex flex-wrap gap-3" aria-hidden="true">
         <CountdownUnit value={c ? c.days : "--"} label="Days" />
         <CountdownUnit value={c ? pad(c.hours) : "--"} label="Hours" />
@@ -135,27 +142,85 @@ function Countdown() {
   );
 }
 
-
-
 type Event = {
   date: string; // display date
-  iso: string;  // for sorting
+  iso: string; // for sorting
   name: string;
   time: string;
   location: string;
 };
 
 const CALENDAR: Event[] = [
-  { iso: "2026-08-22", date: "Sat, Aug 22", name: "B-Involved Fair",          time: "12:00 - 3:00 PM",  location: "Memorial Mall (TBD)" },
-  { iso: "2026-08-25", date: "Tue, Aug 25", name: "SMIF Callout 1",            time: "7:30 - 8:30 PM",   location: "Rawls 1086" },
-  { iso: "2026-08-26", date: "Wed, Aug 26", name: "SMIF Coffee Chats 1",       time: "7:15 - 8:00 PM",   location: "Rawls 1011" },
-  { iso: "2026-08-27", date: "Thu, Aug 27", name: "Daniels Club Expo",         time: "12:00 - 4:00 PM",  location: "Rawls Atrium" },
-  { iso: "2026-08-27", date: "Thu, Aug 27", name: "SMIF Callout 2",            time: "7:30 - 8:30 PM",   location: "Rawls 1086" },
-  { iso: "2026-08-31", date: "Mon, Aug 31", name: "SMIF Finance Club Consortium", time: "12:00 - 2:30 PM", location: "Rawls Atrium" },
-  { iso: "2026-08-31", date: "Mon, Aug 31", name: "SMIF Coffee Chats 2",       time: "7:00 - 8:00 PM",   location: "Rawls 1086" },
-  { iso: "2026-09-01", date: "Tue, Sep 1",  name: "SMIF Callout 3",            time: "7:30 - 8:30 PM",   location: "Rawls 1086" },
-  { iso: "2026-09-08", date: "Tue, Sep 8",  name: "SMIF Interviews, Day A",    time: "TBD",              location: "Young Hall 223, 217, 219, 213" },
-  { iso: "2026-09-09", date: "Wed, Sep 9",  name: "SMIF Interviews, Day B",    time: "TBD",              location: "Young Hall 223, 217, 219, 213" },
+  {
+    iso: "2026-08-22",
+    date: "Sat, Aug 22",
+    name: "B-Involved Fair",
+    time: "12:00 - 3:00 PM",
+    location: "Memorial Mall (TBD)",
+  },
+  {
+    iso: "2026-08-25",
+    date: "Tue, Aug 25",
+    name: "SMIF Callout 1",
+    time: "7:30 - 8:30 PM",
+    location: "Rawls 1086",
+  },
+  {
+    iso: "2026-08-26",
+    date: "Wed, Aug 26",
+    name: "SMIF Coffee Chats 1",
+    time: "7:15 - 8:00 PM",
+    location: "Rawls 1011",
+  },
+  {
+    iso: "2026-08-27",
+    date: "Thu, Aug 27",
+    name: "Daniels Club Expo",
+    time: "12:00 - 4:00 PM",
+    location: "Rawls Atrium",
+  },
+  {
+    iso: "2026-08-27",
+    date: "Thu, Aug 27",
+    name: "SMIF Callout 2",
+    time: "7:30 - 8:30 PM",
+    location: "Rawls 1086",
+  },
+  {
+    iso: "2026-08-31",
+    date: "Mon, Aug 31",
+    name: "SMIF Finance Club Consortium",
+    time: "12:00 - 2:30 PM",
+    location: "Rawls Atrium",
+  },
+  {
+    iso: "2026-08-31",
+    date: "Mon, Aug 31",
+    name: "SMIF Coffee Chats 2",
+    time: "7:00 - 8:00 PM",
+    location: "Rawls 1086",
+  },
+  {
+    iso: "2026-09-01",
+    date: "Tue, Sep 1",
+    name: "SMIF Callout 3",
+    time: "7:30 - 8:30 PM",
+    location: "Rawls 1086",
+  },
+  {
+    iso: "2026-09-08",
+    date: "Tue, Sep 8",
+    name: "SMIF Interviews, Day A",
+    time: "TBD",
+    location: "Young Hall 223, 217, 219, 213",
+  },
+  {
+    iso: "2026-09-09",
+    date: "Wed, Sep 9",
+    name: "SMIF Interviews, Day B",
+    time: "TBD",
+    location: "Young Hall 223, 217, 219, 213",
+  },
 ];
 
 // Parse "7:30 PM" / "12:00 PM" — returns { h, m } in 24h, or null
@@ -171,7 +236,10 @@ function parseTimeToken(t: string): { h: number; m: number } | null {
 }
 
 // Parse event.time like "7:30 - 8:30 PM" or "12:00 - 3:00 PM" — meridiem from end token applies to start if missing
-function parseEventTimes(time: string): { start: { h: number; m: number }; end: { h: number; m: number } } {
+function parseEventTimes(time: string): {
+  start: { h: number; m: number };
+  end: { h: number; m: number };
+} {
   if (time === "TBD") {
     return { start: { h: 17, m: 0 }, end: { h: 18, m: 0 } };
   }
@@ -191,22 +259,32 @@ function parseEventTimes(time: string): { start: { h: number; m: number }; end: 
   return { start, end };
 }
 
-function pad2(n: number) { return String(n).padStart(2, "0"); }
+function pad2(n: number) {
+  return String(n).padStart(2, "0");
+}
 
 // Returns "2026-08-25T19:30:00-04:00" (EDT for Aug/Sep 2026)
 function buildEventBody(event: Event): string {
-  const prefix = event.time === "TBD"
-    ? "Note: time TBD. Your specific interview slot will be communicated by email. Update this event when you receive your slot.\n\n"
-    : "";
+  const prefix =
+    event.time === "TBD"
+      ? "Note: time TBD. Your specific interview slot will be communicated by email. Update this event when you receive your slot.\n\n"
+      : "";
   return `${prefix}Purdue SMIF recruiting event.\n\nLocation: ${event.location}\nRecruiting page: https://www.purduesmif.org/recruiting\nQuestions: smif26@purdue.edu`;
 }
 
 function slugify(s: string): string {
-  return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  return s
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 }
 
 function icsEscape(s: string): string {
-  return s.replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\r?\n/g, "\\n");
+  return s
+    .replace(/\\/g, "\\\\")
+    .replace(/;/g, "\\;")
+    .replace(/,/g, "\\,")
+    .replace(/\r?\n/g, "\\n");
 }
 
 function toIcsLocal(iso: string, t: { h: number; m: number }): string {
@@ -285,10 +363,15 @@ export const Route = createFileRoute("/recruiting")({
   head: () => ({
     meta: [
       { title: "Recruiting Calendar & Interview Prep | Purdue SMIF" },
-      { name: "description", content: "How to join Purdue's student investment club: the Fall 2026 calendar of callouts, coffee chats, and interviews, plus a full interview prep guide." },
+      {
+        name: "description",
+        content:
+          "How to join Purdue's student investment club: the Fall 2026 calendar of callouts, coffee chats, and interviews, plus a full interview prep guide.",
+      },
       ...socialMeta({
         title: "Recruiting Calendar & Interview Prep | Purdue SMIF",
-        description: "Callouts, coffee chats, interviews, and a behavioral + technical interview prep guide for joining Purdue SMIF.",
+        description:
+          "Callouts, coffee chats, interviews, and a behavioral + technical interview prep guide for joining Purdue SMIF.",
         url: canonical("/recruiting"),
         image: OG_RECRUITING,
       }),
@@ -332,19 +415,24 @@ export const Route = createFileRoute("/recruiting")({
 function Recruiting() {
   // SSR-safe "now" — null on server, set on client mount
   const [nowMs, setNowMs] = useState<number | null>(null);
-  useEffect(() => { setNowMs(Date.now()); }, []);
+  useEffect(() => {
+    setNowMs(Date.now());
+  }, []);
   const reduce = useReducedMotion();
 
   return (
     <>
       <section className="border-b border-border bg-ink text-background">
         <div className="container-prose py-24">
-          <span className="animate-fade-in text-xs font-semibold uppercase tracking-[0.3em] text-gold">Recruiting</span>
+          <span className="animate-fade-in text-xs font-semibold uppercase tracking-[0.3em] text-gold">
+            Recruiting
+          </span>
           <h1 className="animate-fade-up mt-4 font-display text-5xl font-bold md:text-6xl max-w-3xl">
             Join the Fund.
           </h1>
           <p className="animate-fade-up delay-100 mt-6 max-w-2xl text-lg text-background/70">
-            Our recruiting calendar, plus a complete guide to preparing for both behavioral and technical interviews with SMIF.
+            Our recruiting calendar, plus a complete guide to preparing for both behavioral and
+            technical interviews with SMIF.
           </p>
           <div className="animate-fade-up delay-200 mt-8 flex flex-wrap gap-3">
             <a
@@ -367,17 +455,24 @@ function Recruiting() {
           </div>
           <Countdown />
         </div>
-
       </section>
 
       {/* Calendar */}
       <OnThisPage sections={SECTIONS} />
 
-      <section id="calendar" aria-labelledby="calendar-h" className="container-prose py-20 section-anchor">
+      <section
+        id="calendar"
+        aria-labelledby="calendar-h"
+        className="container-prose py-20 section-anchor"
+      >
         <Reveal className="flex items-end justify-between gap-6 border-b border-border pb-6">
           <div>
-            <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">Fall 2026</span>
-            <h2 id="calendar-h" className="mt-3 font-display text-3xl font-bold md:text-4xl">Recruiting Calendar</h2>
+            <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">
+              Fall 2026
+            </span>
+            <h2 id="calendar-h" className="mt-3 font-display text-3xl font-bold md:text-4xl">
+              Recruiting Calendar
+            </h2>
           </div>
           <span className="hidden md:inline font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
             All times Eastern
@@ -385,7 +480,8 @@ function Recruiting() {
         </Reveal>
 
         <p className="mt-4 text-sm text-muted-foreground">
-          Select any event to open it prefilled in Google Calendar, or download the full schedule below.
+          Select any event to open it prefilled in Google Calendar, or download the full schedule
+          below.
         </p>
 
         <div className="mt-6">
@@ -424,10 +520,18 @@ function Recruiting() {
                           </span>
                         )}
                       </div>
-                      <div className="mt-1 font-display text-base font-bold leading-tight">{e.name}</div>
+                      <div className="mt-1 font-display text-base font-bold leading-tight">
+                        {e.name}
+                      </div>
                       <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-muted-foreground">
-                        <span className="inline-flex items-center gap-1"><Clock className="h-3 w-3" />{e.time}</span>
-                        <span className="inline-flex items-center gap-1"><MapPin className="h-3 w-3" />{e.location}</span>
+                        <span className="inline-flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
+                          {e.time}
+                        </span>
+                        <span className="inline-flex items-center gap-1">
+                          <MapPin className="h-3 w-3" />
+                          {e.location}
+                        </span>
                       </div>
                     </div>
                     <span
@@ -473,10 +577,12 @@ function Recruiting() {
           })}
         </RevealGroup>
 
-
         <p className="mt-6 text-sm text-muted-foreground">
           Locations and times subject to change. Email{" "}
-          <a href="mailto:smif26@purdue.edu" className="link-underline text-gold-deep font-medium hover:text-gold">
+          <a
+            href="mailto:smif26@purdue.edu"
+            className="link-underline text-gold-deep font-medium hover:text-gold"
+          >
             smif26@purdue.edu
           </a>{" "}
           to be added to our mailing list for updates.
@@ -484,14 +590,22 @@ function Recruiting() {
       </section>
 
       {/* Prep Guide */}
-      <section id="prep" aria-labelledby="prep-h" className="border-t border-border bg-secondary/40 section-anchor">
+      <section
+        id="prep"
+        aria-labelledby="prep-h"
+        className="border-t border-border bg-secondary/40 section-anchor"
+      >
         <div className="container-prose py-20">
           <Reveal>
-            <h2 id="prep-h" className="font-display text-3xl font-bold md:text-4xl">Tips &amp; Tricks to Prep</h2>
+            <h2 id="prep-h" className="font-display text-3xl font-bold md:text-4xl">
+              Tips &amp; Tricks to Prep
+            </h2>
           </Reveal>
           <Reveal delay={0.06}>
             <p className="mt-4 max-w-3xl text-muted-foreground">
-              We recruit for curiosity, work ethic, and intellectual honesty, not pedigree. A finance background helps, but we've taken students from every major. Use the guide below to walk in confident and prepared.
+              We recruit for curiosity, work ethic, and intellectual honesty, not pedigree. A
+              finance background helps, but we've taken students from every major. Use the guide
+              below to walk in confident and prepared.
             </p>
           </Reveal>
 
@@ -499,12 +613,20 @@ function Recruiting() {
           <div className="mt-14">
             <Reveal className="flex items-center gap-3">
               <span className="animate-expand-x h-px w-10 bg-gold" />
-              <span className="font-mono text-xs uppercase tracking-[0.3em] text-gold-deep">Round 1</span>
+              <span className="font-mono text-xs uppercase tracking-[0.3em] text-gold-deep">
+                Round 1
+              </span>
             </Reveal>
             <Reveal>
-              <h3 id="behavioral" className="section-anchor mt-3 font-display text-2xl font-bold md:text-3xl">Behavioral Interview</h3>
+              <h3
+                id="behavioral"
+                className="section-anchor mt-3 font-display text-2xl font-bold md:text-3xl"
+              >
+                Behavioral Interview
+              </h3>
               <p className="mt-3 max-w-3xl text-muted-foreground">
-                We want to understand who you are, why you're interested in markets, and how you work with others. Be specific, be honest, and have stories ready.
+                We want to understand who you are, why you're interested in markets, and how you
+                work with others. Be specific, be honest, and have stories ready.
               </p>
             </Reveal>
 
@@ -560,12 +682,20 @@ function Recruiting() {
           <div className="mt-16">
             <Reveal className="flex items-center gap-3">
               <span className="animate-expand-x h-px w-10 bg-gold" />
-              <span className="font-mono text-xs uppercase tracking-[0.3em] text-gold-deep">Round 2</span>
+              <span className="font-mono text-xs uppercase tracking-[0.3em] text-gold-deep">
+                Round 2
+              </span>
             </Reveal>
             <Reveal>
-              <h3 id="technical" className="section-anchor mt-3 font-display text-2xl font-bold md:text-3xl">Technical Interview</h3>
+              <h3
+                id="technical"
+                className="section-anchor mt-3 font-display text-2xl font-bold md:text-3xl"
+              >
+                Technical Interview
+              </h3>
               <p className="mt-3 max-w-3xl text-muted-foreground">
-                You don't need to be an investment banking analyst already. We test fundamentals, market awareness, and your ability to defend an investment thesis.
+                You don't need to be an investment banking analyst already. We test fundamentals,
+                market awareness, and your ability to defend an investment thesis.
               </p>
             </Reveal>
 
@@ -619,7 +749,9 @@ function Recruiting() {
 
           {/* Day-of */}
           <Reveal className="mt-14 border border-gold/30 bg-background p-6 md:p-8 hover-lift-sm">
-            <h3 id="day-of" className="section-anchor font-display text-xl font-bold">Day-Of Checklist</h3>
+            <h3 id="day-of" className="section-anchor font-display text-xl font-bold">
+              Day-Of Checklist
+            </h3>
             <ul className="mt-4 grid gap-2 text-sm text-muted-foreground md:grid-cols-2 list-disc pl-5 marker:text-gold-deep">
               <li>Business professional dress: suit and tie or equivalent.</li>
               <li>Arrive 10 minutes early. Silence your phone.</li>
@@ -632,19 +764,39 @@ function Recruiting() {
 
           {/* Reading list */}
           <Reveal className="mt-10 border border-border bg-background p-6 md:p-8 hover-lift-sm">
-            <h3 id="reading" className="section-anchor font-display text-xl font-bold">Recommended Reading</h3>
+            <h3 id="reading" className="section-anchor font-display text-xl font-bold">
+              Recommended Reading
+            </h3>
             <ul className="mt-4 space-y-2 text-sm text-muted-foreground list-disc pl-5 marker:text-gold-deep">
-              <li><span className="font-medium text-foreground">The Intelligent Investor</span>, Benjamin Graham: foundational value investing.</li>
-              <li><span className="font-medium text-foreground">One Up On Wall Street</span>, Peter Lynch: intuitive intro to stock picking.</li>
-              <li><span className="font-medium text-foreground">Investment Banking</span>, Rosenbaum &amp; Pearl: valuation reference.</li>
-              <li><span className="font-medium text-foreground">Damodaran Online</span>: free valuation resources from NYU Stern.</li>
-              <li><span className="font-medium text-foreground">Money Stuff</span>: Matt Levine's daily Bloomberg newsletter.</li>
+              <li>
+                <span className="font-medium text-foreground">The Intelligent Investor</span>,
+                Benjamin Graham: foundational value investing.
+              </li>
+              <li>
+                <span className="font-medium text-foreground">One Up On Wall Street</span>, Peter
+                Lynch: intuitive intro to stock picking.
+              </li>
+              <li>
+                <span className="font-medium text-foreground">Investment Banking</span>, Rosenbaum
+                &amp; Pearl: valuation reference.
+              </li>
+              <li>
+                <span className="font-medium text-foreground">Damodaran Online</span>: free
+                valuation resources from NYU Stern.
+              </li>
+              <li>
+                <span className="font-medium text-foreground">Money Stuff</span>: Matt Levine's
+                daily Bloomberg newsletter.
+              </li>
             </ul>
           </Reveal>
 
           <p className="mt-10 text-sm text-muted-foreground">
             Questions? Reach out at{" "}
-            <a href="mailto:smif26@purdue.edu" className="link-underline text-gold-deep font-medium hover:text-gold">
+            <a
+              href="mailto:smif26@purdue.edu"
+              className="link-underline text-gold-deep font-medium hover:text-gold"
+            >
               smif26@purdue.edu
             </a>
             .

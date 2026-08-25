@@ -236,7 +236,12 @@ export const getFundMonthlyHistory = createServerFn({ method: "GET" }).handler(
       const last60 = series.slice(-60);
       const fiveYearAnnPct =
         last60.length >= 60
-          ? (Math.pow(cumProd(last60, (p) => p.smif_return_pct), 12 / last60.length) - 1) * 100
+          ? (Math.pow(
+              cumProd(last60, (p) => p.smif_return_pct),
+              12 / last60.length,
+            ) -
+              1) *
+            100
           : null;
 
       const inceptionAnnPct =

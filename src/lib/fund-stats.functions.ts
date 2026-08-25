@@ -26,9 +26,7 @@ export const getFundStats = createServerFn({ method: "GET" }).handler(
           .select("aum_display, active_members, founded_year, sector_teams, cash_holdings")
           .eq("id", true)
           .maybeSingle(),
-        supabaseAdmin
-          .from("quote_cache")
-          .select("symbol, price"),
+        supabaseAdmin.from("quote_cache").select("symbol, price"),
       ]);
       const data = statsRes.data;
       if (statsRes.error || !data) return null;
@@ -52,9 +50,10 @@ export const getFundStats = createServerFn({ method: "GET" }).handler(
       const computedAum = invested + cash;
       // Only override the hand-entered aum_display when we have a real
       // computed total AND at least the majority of positions are priced.
-      const aumDisplay = computedAum > 0 && (allPriced || quotes.size >= baseHoldings.length * 0.5)
-        ? formatAumK(computedAum)
-        : data.aum_display;
+      const aumDisplay =
+        computedAum > 0 && (allPriced || quotes.size >= baseHoldings.length * 0.5)
+          ? formatAumK(computedAum)
+          : data.aum_display;
 
       return {
         aum_display: aumDisplay,

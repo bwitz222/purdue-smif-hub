@@ -53,7 +53,11 @@ export function MemberCard({
   variant?: "default" | "board";
   onSelect?: (m: Member) => void;
 }) {
-  const initials = m.name.split(" ").map((p) => p[0]).slice(0, 2).join("");
+  const initials = m.name
+    .split(" ")
+    .map((p) => p[0])
+    .slice(0, 2)
+    .join("");
   const email = memberEmail(m);
   // Bundled photo wins outright; only members without one consult storage.
   const remote = m.photo ? null : memberPhotoCandidates(m);
@@ -110,7 +114,9 @@ export function MemberCard({
         )}
       </div>
       <div className="flex flex-1 flex-col p-6">
-        <div className="text-xs font-semibold uppercase tracking-[0.18em] text-gold-deep">{m.role}</div>
+        <div className="text-xs font-semibold uppercase tracking-[0.18em] text-gold-deep">
+          {m.role}
+        </div>
         <Link
           to="/team/$slug"
           params={{ slug: memberSlug(m.name) }}
@@ -126,12 +132,22 @@ export function MemberCard({
           style={{ marginTop: m.bio ? undefined : "1.25rem" }}
         >
           {email && (
-            <a href={`mailto:${email}`} onClick={stop} className="link-underline inline-flex items-center gap-1.5 min-h-11 text-muted-foreground transition-colors hover:text-gold-deep">
+            <a
+              href={`mailto:${email}`}
+              onClick={stop}
+              className="link-underline inline-flex items-center gap-1.5 min-h-11 text-muted-foreground transition-colors hover:text-gold-deep"
+            >
               <Mail className="h-3.5 w-3.5" /> Email
             </a>
           )}
           {m.linkedin && (
-            <a href={m.linkedin} onClick={stop} target="_blank" rel="noopener noreferrer" className="link-underline inline-flex items-center gap-1.5 min-h-11 text-muted-foreground transition-colors hover:text-gold-deep">
+            <a
+              href={m.linkedin}
+              onClick={stop}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="link-underline inline-flex items-center gap-1.5 min-h-11 text-muted-foreground transition-colors hover:text-gold-deep"
+            >
               <Linkedin className="h-3.5 w-3.5" /> LinkedIn
             </a>
           )}

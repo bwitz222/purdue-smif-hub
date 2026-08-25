@@ -2,7 +2,15 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import tradingImg from "@/assets/nyc-skyline.webp";
 import campusImg from "@/assets/hero-campus.webp";
 import { applyUrl } from "@/lib/apply-url";
-import { ArrowRight, TrendingUp, Users, Award, BarChart3, ChevronRight, ExternalLink } from "lucide-react";
+import {
+  ArrowRight,
+  TrendingUp,
+  Users,
+  Award,
+  BarChart3,
+  ChevronRight,
+  ExternalLink,
+} from "lucide-react";
 import { CountUp } from "@/components/CountUp";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -14,8 +22,8 @@ import { socialMeta, canonical } from "@/lib/seo";
 import { PerformanceSparkline } from "@/components/PerformanceSparkline";
 
 const HOME_TITLE = "Purdue SMIF — Student Managed Investment Fund";
-const HOME_DESCRIPTION = "Purdue SMIF is the student investment club at the Daniels School of Business: the university's student-managed fund, where analysts invest real capital.";
-
+const HOME_DESCRIPTION =
+  "Purdue SMIF is the student investment club at the Daniels School of Business: the university's student-managed fund, where analysts invest real capital.";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -56,9 +64,21 @@ function parseStatDisplay(display: string): { prefix: string; value: number; suf
 }
 
 const PILLARS = [
-  { Icon: BarChart3, title: "Investment Research", body: "Bottom-up fundamental analysis across equity sector teams. Every pitch is defended live before the full investment committee, with the same rigor as a professional fund." },
-  { Icon: Users, title: "Mentorship & Recruiting", body: "Direct access to Purdue alumni at investment banks, hedge funds, and asset managers, plus structured preparation to compete for those seats." },
-  { Icon: Award, title: "Real Portfolio", body: "Students vote on every position. Performance is benchmarked against the S&P 500 and reported quarterly. No simulations: real capital, real accountability." },
+  {
+    Icon: BarChart3,
+    title: "Investment Research",
+    body: "Bottom-up fundamental analysis across equity sector teams. Every pitch is defended live before the full investment committee, with the same rigor as a professional fund.",
+  },
+  {
+    Icon: Users,
+    title: "Mentorship & Recruiting",
+    body: "Direct access to Purdue alumni at investment banks, hedge funds, and asset managers, plus structured preparation to compete for those seats.",
+  },
+  {
+    Icon: Award,
+    title: "Real Portfolio",
+    body: "Students vote on every position. Performance is benchmarked against the S&P 500 and reported quarterly. No simulations: real capital, real accountability.",
+  },
 ];
 
 function Index() {
@@ -107,7 +127,9 @@ function Index() {
               className="animate-fade-up delay-200 font-display font-bold text-background"
               style={{ fontSize: "clamp(2.5rem, 7vw, 5.5rem)", lineHeight: "1.02" }}
             >
-              Purdue <span className="text-gold">Student</span> Managed<br />Investment Fund
+              Purdue <span className="text-gold">Student</span> Managed
+              <br />
+              Investment Fund
             </h1>
             {/* Direct-answer paragraph. This is the featured-snippet / AI Overview
                 extraction zone, so it names the entity, its category, the
@@ -117,11 +139,10 @@ function Index() {
                 sentences. Keep it declarative; do not turn it back into a
                 tagline. */}
             <p className="animate-fade-up delay-400 mt-8 max-w-2xl text-on-dark-primary text-base leading-relaxed">
-              The Purdue Student Managed Investment Fund (SMIF) is a student-run investment
-              fund at Purdue University's Daniels School of Business. Founded in{" "}
-              {s.founded_year}, SMIF manages {s.aum_display} of real university capital across
-              U.S. equities and fixed income, benchmarked against the S&amp;P 500 and reported
-              quarterly.
+              The Purdue Student Managed Investment Fund (SMIF) is a student-run investment fund at
+              Purdue University's Daniels School of Business. Founded in {s.founded_year}, SMIF
+              manages {s.aum_display} of real university capital across U.S. equities and fixed
+              income, benchmarked against the S&amp;P 500 and reported quarterly.
             </p>
             <div className="animate-fade-up delay-500 mt-10 flex flex-wrap gap-4">
               <a
@@ -134,7 +155,10 @@ function Index() {
                 <ExternalLink className="h-4 w-4" aria-hidden="true" />
                 <span className="sr-only">(opens application form in new tab)</span>
               </a>
-              <Link to="/holdings" className="press inline-flex items-center gap-2.5 border border-background/25 px-8 py-3.5 text-sm font-semibold text-background hover:border-gold hover:text-gold">
+              <Link
+                to="/holdings"
+                className="press inline-flex items-center gap-2.5 border border-background/25 px-8 py-3.5 text-sm font-semibold text-background hover:border-gold hover:text-gold"
+              >
                 View Portfolio
               </Link>
             </div>
@@ -144,14 +168,37 @@ function Index() {
           <div className="mt-16 grid grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-10 max-w-5xl">
             {STATS.map((stat) => (
               <div key={stat.label} className="border-t border-gold/50 pt-4">
-                <div suppressHydrationWarning className="font-display text-5xl lg:text-6xl font-bold text-gold leading-none">
-                  {stat.kind === "aum" ? (<>{aum.prefix && <span>{aum.prefix}</span>}<CountUp to={aum.value} duration={1.8} /><span>{aum.suffix}</span></>) :
-                   stat.kind === "members" ? (<>{members.prefix && <span>{members.prefix}</span>}<CountUp to={members.value} duration={1.4} /><span>{members.suffix}</span></>) :
-                   stat.kind === "track" ? (<><CountUp to={trackRecordYears} duration={1.2} /><span>Y+</span></>) :
-                                           (<CountUp to={s.sector_teams} duration={1.0} />)}
+                <div
+                  suppressHydrationWarning
+                  className="font-display text-5xl lg:text-6xl font-bold text-gold leading-none"
+                >
+                  {stat.kind === "aum" ? (
+                    <>
+                      {aum.prefix && <span>{aum.prefix}</span>}
+                      <CountUp to={aum.value} duration={1.8} />
+                      <span>{aum.suffix}</span>
+                    </>
+                  ) : stat.kind === "members" ? (
+                    <>
+                      {members.prefix && <span>{members.prefix}</span>}
+                      <CountUp to={members.value} duration={1.4} />
+                      <span>{members.suffix}</span>
+                    </>
+                  ) : stat.kind === "track" ? (
+                    <>
+                      <CountUp to={trackRecordYears} duration={1.2} />
+                      <span>Y+</span>
+                    </>
+                  ) : (
+                    <CountUp to={s.sector_teams} duration={1.0} />
+                  )}
                 </div>
-                <div className="mt-4 text-[10px] uppercase tracking-[0.24em] text-on-dark-secondary font-medium">{stat.label}</div>
-                <div className="mt-1 text-[10px] text-on-dark-dim font-mono uppercase tracking-[0.18em]">{stat.sub}</div>
+                <div className="mt-4 text-[10px] uppercase tracking-[0.24em] text-on-dark-secondary font-medium">
+                  {stat.label}
+                </div>
+                <div className="mt-1 text-[10px] text-on-dark-dim font-mono uppercase tracking-[0.18em]">
+                  {stat.sub}
+                </div>
               </div>
             ))}
           </div>
@@ -163,20 +210,35 @@ function Index() {
         <div className="container-prose">
           <Reveal className="max-w-2xl mb-20">
             <span className="rule-gold mb-5 block" />
-            <h2 className="font-display font-bold text-background" style={{ fontSize: "clamp(2.4rem, 5vw, 4.5rem)" }}>
-              Real capital.<br />Real research.<br />
+            <h2
+              className="font-display font-bold text-background"
+              style={{ fontSize: "clamp(2.4rem, 5vw, 4.5rem)" }}
+            >
+              Real capital.
+              <br />
+              Real research.
+              <br />
               <span className="text-gold/70">Real outcomes.</span>
             </h2>
           </Reveal>
           <div className="grid md:grid-cols-5 gap-16 items-start">
             <Reveal className="md:col-span-3 space-y-5" delay={0.1}>
               <p className="text-background/85 text-lg leading-relaxed">
-                SMIF is Purdue's student investment club with a real portfolio: it gives students the rare opportunity to manage actual investment capital under faculty mentorship. Our analysts apply institutional-grade frameworks to fundamental equity research, building skills that translate directly to careers in asset management, investment banking, and equity research.
+                SMIF is Purdue's student investment club with a real portfolio: it gives students
+                the rare opportunity to manage actual investment capital under faculty mentorship.
+                Our analysts apply institutional-grade frameworks to fundamental equity research,
+                building skills that translate directly to careers in asset management, investment
+                banking, and equity research.
               </p>
               <p className="text-background/75 leading-relaxed">
-                Every semester, analysts pitch positions to the full fund. Accepted ideas enter the real portfolio. Rejected ideas come with feedback that sharpens the next pitch. This is the closest an undergraduate education gets to the actual job.
+                Every semester, analysts pitch positions to the full fund. Accepted ideas enter the
+                real portfolio. Rejected ideas come with feedback that sharpens the next pitch. This
+                is the closest an undergraduate education gets to the actual job.
               </p>
-              <Link to="/about" className="group inline-flex items-center gap-2 text-sm font-semibold text-gold hover:text-gold-mid transition-colors duration-200 mt-2 cursor-pointer">
+              <Link
+                to="/about"
+                className="group inline-flex items-center gap-2 text-sm font-semibold text-gold hover:text-gold-mid transition-colors duration-200 mt-2 cursor-pointer"
+              >
                 Learn about our process
                 <ChevronRight className="h-4 w-4 arrow-slide" />
               </Link>
@@ -193,8 +255,15 @@ function Index() {
               <div className="absolute -bottom-5 -left-5 bg-gold p-5 shadow-gold hidden lg:block">
                 {/* Derived from the current year at render time — see the
                     footer note; same hydration caveat. */}
-                <div suppressHydrationWarning className="font-display text-3xl font-bold text-ink leading-none">{trackRecordYears}Y+</div>
-                <div className="text-xs uppercase tracking-wider text-ink/75 mt-1">Track record</div>
+                <div
+                  suppressHydrationWarning
+                  className="font-display text-3xl font-bold text-ink leading-none"
+                >
+                  {trackRecordYears}Y+
+                </div>
+                <div className="text-xs uppercase tracking-wider text-ink/75 mt-1">
+                  Track record
+                </div>
               </div>
             </Reveal>
           </div>
@@ -206,11 +275,19 @@ function Index() {
         <div className="container-prose">
           <Reveal className="flex items-end justify-between mb-16 gap-8 flex-wrap">
             <div>
-              <h2 className="font-display font-bold text-ink" style={{ fontSize: "clamp(2.2rem, 4.5vw, 3.75rem)" }}>
-                Three pillars<br />of the fund
+              <h2
+                className="font-display font-bold text-ink"
+                style={{ fontSize: "clamp(2.2rem, 4.5vw, 3.75rem)" }}
+              >
+                Three pillars
+                <br />
+                of the fund
               </h2>
             </div>
-            <Link to="/apply" className="group hidden md:inline-flex items-center gap-2 text-sm font-semibold text-ink border-b-2 border-gold pb-1 hover:text-gold-deep transition-colors duration-200 cursor-pointer">
+            <Link
+              to="/apply"
+              className="group hidden md:inline-flex items-center gap-2 text-sm font-semibold text-ink border-b-2 border-gold pb-1 hover:text-gold-deep transition-colors duration-200 cursor-pointer"
+            >
               Apply to join
               <ArrowRight className="h-4 w-4 arrow-slide" />
             </Link>
@@ -237,18 +314,25 @@ function Index() {
         <Reveal className="container-prose flex flex-col md:flex-row items-start md:items-center justify-between gap-10">
           <div>
             <h2 className="font-display text-3xl md:text-4xl font-bold text-ink">
-              Benchmarked against the S&amp;P 500.<br className="hidden md:block" />
+              Benchmarked against the S&amp;P 500.
+              <br className="hidden md:block" />
               Reported every quarter.
             </h2>
           </div>
           <div className="flex flex-col md:flex-row items-start md:items-center gap-8 md:gap-10 flex-shrink-0 w-full md:w-auto">
             <PerformanceSparkline />
             <div className="flex gap-4 flex-shrink-0">
-              <Link to="/performance" className="press group inline-flex items-center gap-2 bg-ink px-7 py-3.5 text-sm font-semibold text-background hover:bg-ink/85 cursor-pointer">
+              <Link
+                to="/performance"
+                className="press group inline-flex items-center gap-2 bg-ink px-7 py-3.5 text-sm font-semibold text-background hover:bg-ink/85 cursor-pointer"
+              >
                 Performance
                 <ArrowRight className="h-4 w-4 arrow-slide" />
               </Link>
-              <Link to="/holdings" className="press inline-flex items-center gap-2 border border-ink px-7 py-3.5 text-sm font-semibold text-ink hover:bg-ink hover:text-background cursor-pointer">
+              <Link
+                to="/holdings"
+                className="press inline-flex items-center gap-2 border border-ink px-7 py-3.5 text-sm font-semibold text-ink hover:bg-ink hover:text-background cursor-pointer"
+              >
                 Holdings
               </Link>
             </div>
@@ -258,7 +342,10 @@ function Index() {
 
       {/* CTA */}
       <section className="bg-ink text-background py-32 relative overflow-hidden">
-        <div aria-hidden="true" className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden"
+        >
           <span
             className="font-display font-bold text-white/[0.03] leading-none whitespace-nowrap"
             style={{ fontSize: "clamp(5rem, 20vw, 16rem)" }}
@@ -268,11 +355,17 @@ function Index() {
         </div>
         <Reveal className="relative container-prose text-center max-w-3xl mx-auto">
           <TrendingUp className="mx-auto h-7 w-7 text-gold mb-8 opacity-75" />
-          <h2 className="font-display font-bold text-background" style={{ fontSize: "clamp(2.4rem, 5.5vw, 4.5rem)" }}>
-            Ready to invest<br />in your future?
+          <h2
+            className="font-display font-bold text-background"
+            style={{ fontSize: "clamp(2.4rem, 5.5vw, 4.5rem)" }}
+          >
+            Ready to invest
+            <br />
+            in your future?
           </h2>
           <p className="mt-6 max-w-lg mx-auto text-background/75 leading-relaxed">
-            Applications open each fall and spring semester. We're looking for curious, rigorous students from every college at Purdue.
+            Applications open each fall and spring semester. We're looking for curious, rigorous
+            students from every college at Purdue.
           </p>
           <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
             <a
@@ -285,7 +378,10 @@ function Index() {
               <ExternalLink className="h-4 w-4" aria-hidden="true" />
               <span className="sr-only">(opens application form in new tab)</span>
             </a>
-            <Link to="/team" className="press inline-flex items-center justify-center gap-2 border border-background/20 px-9 py-4 text-sm font-semibold text-background hover:border-gold hover:text-gold cursor-pointer">
+            <Link
+              to="/team"
+              className="press inline-flex items-center justify-center gap-2 border border-background/20 px-9 py-4 text-sm font-semibold text-background hover:border-gold hover:text-gold cursor-pointer"
+            >
               Meet the Team
             </Link>
           </div>

@@ -3,7 +3,12 @@ import { ArrowLeft, Mail, Linkedin } from "lucide-react";
 import { useState } from "react";
 import { memberPhotoCandidates } from "@/components/MemberCard";
 import { Reveal } from "@/components/Reveal";
-import { findMemberBySlug, hasIndexableProfile, memberDirectory, type DirectoryEntry } from "@/data/team";
+import {
+  findMemberBySlug,
+  hasIndexableProfile,
+  memberDirectory,
+  type DirectoryEntry,
+} from "@/data/team";
 import { socialMeta, canonical, SITE_URL, OG_TEAM } from "@/lib/seo";
 
 /**
@@ -89,7 +94,11 @@ function ProfilePhoto({ entry }: { entry: DirectoryEntry }) {
   const remote = m.photo ? null : memberPhotoCandidates(m);
   const [src, setSrc] = useState<string | null>(m.photo ?? remote?.jpg ?? null);
   const [triedPng, setTriedPng] = useState(false);
-  const initials = m.name.split(" ").map((p) => p[0]).slice(0, 2).join("");
+  const initials = m.name
+    .split(" ")
+    .map((p) => p[0])
+    .slice(0, 2)
+    .join("");
 
   if (!src) {
     return (
@@ -128,9 +137,7 @@ function MemberProfile() {
   const { member: m, team, slug } = entry;
 
   // Teammates from the same group, for lateral navigation and internal linking.
-  const teammates = memberDirectory
-    .filter((e) => e.team === team && e.slug !== slug)
-    .slice(0, 6);
+  const teammates = memberDirectory.filter((e) => e.team === team && e.slug !== slug).slice(0, 6);
 
   return (
     <>
@@ -171,7 +178,9 @@ function MemberProfile() {
             </p>
 
             {m.bio && (
-              <p className="mt-8 max-w-2xl text-lg leading-relaxed text-muted-foreground">{m.bio}</p>
+              <p className="mt-8 max-w-2xl text-lg leading-relaxed text-muted-foreground">
+                {m.bio}
+              </p>
             )}
 
             {(m.email || m.linkedin) && (

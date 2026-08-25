@@ -18,10 +18,15 @@ export const Route = createFileRoute("/apply")({
   head: () => ({
     meta: [
       { title: "Apply to Join — Purdue Student Managed Investment Fund" },
-      { name: "description", content: "Apply to join Purdue's student investment club: the application portal, what we look for, the timeline, and how SMIF differs from other finance clubs at Purdue." },
+      {
+        name: "description",
+        content:
+          "Apply to join Purdue's student investment club: the application portal, what we look for, the timeline, and how SMIF differs from other finance clubs at Purdue.",
+      },
       ...socialMeta({
         title: "Apply to Join Purdue SMIF",
-        description: "Application portal, what we look for, timeline, and FAQ for joining the Purdue Student Managed Investment Fund.",
+        description:
+          "Application portal, what we look for, timeline, and FAQ for joining the Purdue Student Managed Investment Fund.",
         url: canonical("/apply"),
         image: OG_APPLY,
       }),
@@ -121,10 +126,13 @@ function Apply() {
               className="font-display text-5xl font-bold md:text-6xl"
               style={{ lineHeight: "1.02" }}
             >
-              We can't wait<br />to meet you.
+              We can't wait
+              <br />
+              to meet you.
             </h1>
             <p className="mt-6 text-lg text-on-dark-secondary">
-              Applications are open. Submit through the official portal, then explore what we look for, how the process works, and answers to the questions we hear most often.
+              Applications are open. Submit through the official portal, then explore what we look
+              for, how the process works, and answers to the questions we hear most often.
             </p>
           </Reveal>
         </div>
@@ -138,8 +146,13 @@ function Apply() {
             <span className="text-xs font-semibold uppercase tracking-[0.32em] text-gold-deep block mb-4">
               What we look for
             </span>
-            <h2 className="font-display font-bold text-ink" style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>
-              The bar is high.<br />The path is open.
+            <h2
+              className="font-display font-bold text-ink"
+              style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}
+            >
+              The bar is high.
+              <br />
+              The path is open.
             </h2>
           </Reveal>
           <RevealGroup className="grid md:grid-cols-3 border-t border-border" stagger={0.1}>
@@ -161,11 +174,19 @@ function Apply() {
       <section className="bg-secondary/40 border-t border-border py-28">
         <div className="container-prose">
           <Reveal className="max-w-2xl mb-14">
-            <h2 className="font-display font-bold text-ink" style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>
-              Four steps,<br />about three weeks.
+            <h2
+              className="font-display font-bold text-ink"
+              style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}
+            >
+              Four steps,
+              <br />
+              about three weeks.
             </h2>
           </Reveal>
-          <RevealGroup className="grid md:grid-cols-4 gap-px bg-border border border-border" stagger={0.08}>
+          <RevealGroup
+            className="grid md:grid-cols-4 gap-px bg-border border border-border"
+            stagger={0.08}
+          >
             {TIMELINE.map((step) => (
               <RevealItem key={step.n} className="bg-background p-8 lg:p-10">
                 <div className="font-mono text-xs uppercase tracking-[0.22em] text-gold-deep mb-4">
@@ -184,7 +205,10 @@ function Apply() {
         <div className="container-prose max-w-3xl">
           <Reveal className="mb-12">
             <span className="rule-gold mb-5 block" />
-            <h2 className="font-display font-bold text-ink" style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>
+            <h2
+              className="font-display font-bold text-ink"
+              style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}
+            >
               Questions, answered.
             </h2>
           </Reveal>
@@ -209,11 +233,15 @@ function Apply() {
       <section className="bg-ink text-background py-32">
         <Reveal className="container-prose max-w-3xl text-center">
           <span className="rule-gold block mb-6 mx-auto" />
-          <h2 className="font-display font-bold text-background" style={{ fontSize: "clamp(2rem, 4.5vw, 3.5rem)" }}>
+          <h2
+            className="font-display font-bold text-background"
+            style={{ fontSize: "clamp(2rem, 4.5vw, 3.5rem)" }}
+          >
             Ready when you are.
           </h2>
           <p className="mt-6 text-on-dark-secondary max-w-xl mx-auto">
-            Submit the official application, or head to recruiting for the full event calendar and interview prep guide.
+            Submit the official application, or head to recruiting for the full event calendar and
+            interview prep guide.
           </p>
           <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
             <a

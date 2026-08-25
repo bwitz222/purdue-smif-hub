@@ -21,17 +21,17 @@ export const Route = createFileRoute("/sitemap.xml")({
         // No lastmod: stamping every URL with the request date trains crawlers
         // to distrust it. changefreq/priority carry the freshness hints instead.
         const entries: SitemapEntry[] = [
-          { path: "/",             changefreq: "weekly",  priority: "1.0" },
-          { path: "/about",        changefreq: "monthly", priority: "0.8" },
-          { path: "/team",         changefreq: "monthly", priority: "0.8" },
-          { path: "/sectors",      changefreq: "monthly", priority: "0.6" },
-          { path: "/holdings",     changefreq: "daily",   priority: "0.8" },
-          { path: "/performance",  changefreq: "monthly", priority: "0.6" },
-          { path: "/research",     changefreq: "weekly",  priority: "0.7" },
-          { path: "/recruiting",   changefreq: "monthly", priority: "0.7" },
-          { path: "/learn",        changefreq: "monthly", priority: "0.6" },
-          { path: "/apply",        changefreq: "monthly", priority: "0.7" },
-          { path: "/contact",      changefreq: "yearly",  priority: "0.5" },
+          { path: "/", changefreq: "weekly", priority: "1.0" },
+          { path: "/about", changefreq: "monthly", priority: "0.8" },
+          { path: "/team", changefreq: "monthly", priority: "0.8" },
+          { path: "/sectors", changefreq: "monthly", priority: "0.6" },
+          { path: "/holdings", changefreq: "daily", priority: "0.8" },
+          { path: "/performance", changefreq: "monthly", priority: "0.6" },
+          { path: "/research", changefreq: "weekly", priority: "0.7" },
+          { path: "/recruiting", changefreq: "monthly", priority: "0.7" },
+          { path: "/learn", changefreq: "monthly", priority: "0.6" },
+          { path: "/apply", changefreq: "monthly", priority: "0.7" },
+          { path: "/contact", changefreq: "yearly", priority: "0.5" },
           { path: "/finance-clubs-at-purdue", changefreq: "monthly", priority: "0.9" },
         ];
 

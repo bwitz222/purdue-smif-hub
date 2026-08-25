@@ -72,10 +72,15 @@ export const Route = createFileRoute("/research")({
     return {
       meta: [
         { title: "Equity Research Reports & Publications | Purdue SMIF" },
-        { name: "description", content: "Equity research, single-name stock pitches, semester performance reviews, and annual reports authored by Purdue SMIF analysts and curated by fund leadership." },
+        {
+          name: "description",
+          content:
+            "Equity research, single-name stock pitches, semester performance reviews, and annual reports authored by Purdue SMIF analysts and curated by fund leadership.",
+        },
         ...socialMeta({
           title: "Equity Research & Reports | Purdue SMIF",
-          description: "Read SMIF's equity research pitches, semester performance reviews, and annual reports.",
+          description:
+            "Read SMIF's equity research pitches, semester performance reviews, and annual reports.",
           url,
           image: OG_RESEARCH,
         }),
@@ -90,9 +95,21 @@ type Category = "equity_research" | "semester" | "annual";
 type SortKey = "newest" | "oldest" | "title";
 
 const CATEGORIES: { value: Category; label: string; description: string }[] = [
-  { value: "equity_research", label: "Equity Research", description: "Single-name pitches and deep-dive analyst reports." },
-  { value: "semester", label: "Semester Reports", description: "End-of-semester performance and attribution reviews." },
-  { value: "annual", label: "Annual Reports", description: "Comprehensive yearly reports to the Daniels School and stakeholders." },
+  {
+    value: "equity_research",
+    label: "Equity Research",
+    description: "Single-name pitches and deep-dive analyst reports.",
+  },
+  {
+    value: "semester",
+    label: "Semester Reports",
+    description: "End-of-semester performance and attribution reviews.",
+  },
+  {
+    value: "annual",
+    label: "Annual Reports",
+    description: "Comprehensive yearly reports to the Daniels School and stakeholders.",
+  },
 ];
 
 const CATEGORY_LABEL: Record<Category, string> = {
@@ -118,13 +135,13 @@ function Research() {
     const base = q
       ? pubs.filter(
           (p: PublicationRow) =>
-            p.title.toLowerCase().includes(q) ||
-            (p.description ?? "").toLowerCase().includes(q),
+            p.title.toLowerCase().includes(q) || (p.description ?? "").toLowerCase().includes(q),
         )
       : pubs;
     const sorted = [...base];
     if (sort === "newest") sorted.sort((a, b) => +new Date(b.created_at) - +new Date(a.created_at));
-    else if (sort === "oldest") sorted.sort((a, b) => +new Date(a.created_at) - +new Date(b.created_at));
+    else if (sort === "oldest")
+      sorted.sort((a, b) => +new Date(a.created_at) - +new Date(b.created_at));
     else sorted.sort((a, b) => a.title.localeCompare(b.title));
     return sorted;
   }, [pubs, query, sort]);
@@ -133,10 +150,15 @@ function Research() {
     <>
       <section className="border-b border-border bg-secondary/40">
         <div className="container-prose py-24">
-          <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">Research</span>
-          <h1 className="mt-4 font-display text-5xl font-bold md:text-6xl max-w-3xl">Reports & research from the fund.</h1>
+          <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">
+            Research
+          </span>
+          <h1 className="mt-4 font-display text-5xl font-bold md:text-6xl max-w-3xl">
+            Reports & research from the fund.
+          </h1>
           <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
-            Browse equity research, semester performance reviews, and annual reports authored by SMIF members. This library is view-only and curated by fund leadership.
+            Browse equity research, semester performance reviews, and annual reports authored by
+            SMIF members. This library is view-only and curated by fund leadership.
           </p>
           <a
             href={SUBSTACK_URL}
@@ -232,7 +254,6 @@ function Research() {
                     ))
                   )}
                 </RevealGroup>
-
               </TabsContent>
             );
           })}
@@ -266,15 +287,18 @@ function PublicationCard({ pub }: { pub: PublicationRow }) {
       </div>
       <div className="flex flex-1 flex-col p-5">
         <h3 className="font-display text-lg font-bold leading-tight">{pub.title}</h3>
-        {pub.description && (
-          <p className="mt-2 text-sm text-muted-foreground">{pub.description}</p>
-        )}
+        {pub.description && <p className="mt-2 text-sm text-muted-foreground">{pub.description}</p>}
         <div className="mt-2 text-xs text-muted-foreground">
           {new Date(pub.created_at).toLocaleDateString()}
           {formatBytes(pub.file_size) && ` · ${formatBytes(pub.file_size)}`}
         </div>
         <div className="mt-4 flex items-center gap-3 border-t border-border pt-3 text-xs">
-          <a href={pub.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-muted-foreground transition hover:text-gold-deep">
+          <a
+            href={pub.url}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1.5 text-muted-foreground transition hover:text-gold-deep"
+          >
             <Download className="h-3.5 w-3.5" /> View / Download
           </a>
         </div>
@@ -283,7 +307,15 @@ function PublicationCard({ pub }: { pub: PublicationRow }) {
   );
 }
 
-function EmptyState({ category, label, query }: { category: Category; label: string; query: string }) {
+function EmptyState({
+  category,
+  label,
+  query,
+}: {
+  category: Category;
+  label: string;
+  query: string;
+}) {
   if (query) {
     return (
       <div className="col-span-full border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
@@ -298,11 +330,13 @@ function EmptyState({ category, label, query }: { category: Category; label: str
     },
     semester: {
       headline: "First semester report publishes December 2026.",
-      support: "End-of-term performance and attribution reviews will land here after each semester closes.",
+      support:
+        "End-of-term performance and attribution reviews will land here after each semester closes.",
     },
     annual: {
       headline: "The next annual report will be published here after the fiscal-year audit.",
-      support: "Full reports to the Daniels School and stakeholders are posted once audited each year.",
+      support:
+        "Full reports to the Daniels School and stakeholders are posted once audited each year.",
     },
   };
   const c = copy[category];
@@ -321,4 +355,3 @@ function EmptyState({ category, label, query }: { category: Category; label: str
     </div>
   );
 }
-

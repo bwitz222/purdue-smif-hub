@@ -46,16 +46,17 @@ describe("/sectors -> /team links", () => {
   // findScope, which matches on label, value or alias. The two process teams
   // are the ones that used to fall through: their chip labels are "FI & Macro"
   // and "PM + Risk", not their full names, so the links went nowhere.
-  const linkedNames = [
-    ...sectorsSrc.matchAll(/\{ Icon: \w+, name: "([^"]+)"/g),
-  ].map((m) => m[1]);
+  const linkedNames = [...sectorsSrc.matchAll(/\{ Icon: \w+, name: "([^"]+)"/g)].map((m) => m[1]);
 
   it("links ten teams", () => {
     expect(linkedNames).toHaveLength(10);
   });
 
   it.each(linkedNames)('"%s" resolves to a /team scope', (name) => {
-    const isSectorTeam = new RegExp(`^    name: "${name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}",$`, "m").test(teamSrc);
+    const isSectorTeam = new RegExp(
+      `^    name: "${name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}",$`,
+      "m",
+    ).test(teamSrc);
     const isAlias = teamRouteSrc.includes(`aliases: ["${name}"]`);
     const isLabel = teamRouteSrc.includes(`label: "${name}"`);
     expect(isSectorTeam || isAlias || isLabel).toBe(true);

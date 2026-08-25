@@ -2,8 +2,7 @@
 // parameters via applyUrl(placement) so the team can attribute signups
 // by placement in Qualtrics' source data.
 
-const APPLY_BASE_URL =
-  "https://purdue.ca1.qualtrics.com/jfe/form/SV_1G5FfwJUc1cGJ2m";
+const APPLY_BASE_URL = "https://purdue.ca1.qualtrics.com/jfe/form/SV_1G5FfwJUc1cGJ2m";
 
 export type ApplyPlacement =
   | "header-apply"

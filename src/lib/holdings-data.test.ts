@@ -18,11 +18,17 @@ describe("portfolioSummary ties to its rows", () => {
   });
 
   it("portfolio value = invested + cash", () => {
-    expect(portfolioSummary.portfolioValue).toBeCloseTo(investedValue + portfolioSummary.cashHoldings, 2);
+    expect(portfolioSummary.portfolioValue).toBeCloseTo(
+      investedValue + portfolioSummary.cashHoldings,
+      2,
+    );
   });
 
   it("day gain", () => {
-    expect(portfolioSummary.totalDayGain).toBeCloseTo(sum((h) => h.dayGain), 2);
+    expect(portfolioSummary.totalDayGain).toBeCloseTo(
+      sum((h) => h.dayGain),
+      2,
+    );
   });
 
   it("total return", () => {
@@ -31,12 +37,18 @@ describe("portfolioSummary ties to its rows", () => {
 
   // holdings.tsx:214 — (totalReturn / costBasisTotal) * 100
   it("total return % is measured over cost basis, not portfolio value", () => {
-    expect(portfolioSummary.totalReturnPct).toBeCloseTo(((investedValue - costBasis) / costBasis) * 100, 2);
+    expect(portfolioSummary.totalReturnPct).toBeCloseTo(
+      ((investedValue - costBasis) / costBasis) * 100,
+      2,
+    );
   });
 
   // holdings.tsx:216 — value-weighted over invested value
   it("weighted beta", () => {
-    expect(portfolioSummary.weightedBeta).toBeCloseTo(sum((h) => h.beta * h.value) / investedValue, 3);
+    expect(portfolioSummary.weightedBeta).toBeCloseTo(
+      sum((h) => h.beta * h.value) / investedValue,
+      3,
+    );
   });
 });
 

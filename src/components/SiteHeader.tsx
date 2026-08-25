@@ -39,7 +39,14 @@ export function SiteHeader() {
       >
         <div className="container-prose flex h-14 items-center justify-between gap-4">
           <Link to="/" className="group flex items-center gap-2.5 shrink-0">
-            <img src={smifLogo} alt="Purdue SMIF" width={28} height={28} decoding="async" className="h-7 w-7 object-contain select-none icon-pop" />
+            <img
+              src={smifLogo}
+              alt="Purdue SMIF"
+              width={28}
+              height={28}
+              decoding="async"
+              className="h-7 w-7 object-contain select-none icon-pop"
+            />
             <span className="font-mono text-xs uppercase tracking-[0.18em] text-on-dark-secondary group-hover:text-gold transition-colors duration-300">
               Purdue SMIF
             </span>
@@ -79,9 +86,7 @@ export function SiteHeader() {
       </header>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent
-          className="!fixed !inset-0 !left-0 !top-0 !translate-x-0 !translate-y-0 !max-w-none !w-screen !h-dvh !rounded-none !border-0 !p-0 bg-ink flex flex-col [&>button.absolute]:hidden"
-        >
+        <DialogContent className="!fixed !inset-0 !left-0 !top-0 !translate-x-0 !translate-y-0 !max-w-none !w-screen !h-dvh !rounded-none !border-0 !p-0 bg-ink flex flex-col [&>button.absolute]:hidden">
           <VisuallyHidden asChild>
             <DialogTitle>Navigation menu</DialogTitle>
           </VisuallyHidden>
@@ -89,7 +94,9 @@ export function SiteHeader() {
             <DialogDescription>Site navigation links</DialogDescription>
           </VisuallyHidden>
           <div className="container-prose flex h-14 items-center justify-between border-b border-white/10 shrink-0">
-            <span className="font-mono text-xs uppercase tracking-[0.18em] text-on-dark-secondary">Purdue SMIF</span>
+            <span className="font-mono text-xs uppercase tracking-[0.18em] text-on-dark-secondary">
+              Purdue SMIF
+            </span>
             <button
               onClick={() => setOpen(false)}
               className="press inline-flex items-center justify-center min-h-11 min-w-11 -mr-2 text-background/70 hover:text-background"
@@ -127,7 +134,7 @@ export function SiteHeader() {
                     {label}
                   </Link>
                 </motion.div>
-              )
+              ),
             )}
             {reduce ? (
               <a
@@ -147,7 +154,11 @@ export function SiteHeader() {
                 onClick={() => setOpen(false)}
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.35, delay: 0.05 + NAV.length * 0.05, ease: [0.22, 1, 0.36, 1] }}
+                transition={{
+                  duration: 0.35,
+                  delay: 0.05 + NAV.length * 0.05,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
                 className="mt-10 inline-flex items-center justify-center py-4 text-sm font-semibold uppercase tracking-[0.16em] bg-gold text-ink hover:bg-gold-mid transition-colors duration-150"
               >
                 Apply to Join

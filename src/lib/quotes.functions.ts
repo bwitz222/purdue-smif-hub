@@ -37,9 +37,7 @@ function toYmd(d: Date): string {
 
 // Walk back up to 10 days to find the TWO most recent trading days
 // (skipping weekends/holidays/not-yet-published days).
-async function fetchTwoDaysGroupedBars(
-  apiKey: string,
-): Promise<{
+async function fetchTwoDaysGroupedBars(apiKey: string): Promise<{
   latest: Map<string, PolygonBar> | null;
   prior: Map<string, PolygonBar> | null;
   rateLimited: boolean;
@@ -59,10 +57,20 @@ async function fetchTwoDaysGroupedBars(
     try {
       const res = await fetch(url);
       if (res.status === 429) {
-        return { latest: found[0] ?? null, prior: found[1] ?? null, rateLimited: true, unauthorized: false };
+        return {
+          latest: found[0] ?? null,
+          prior: found[1] ?? null,
+          rateLimited: true,
+          unauthorized: false,
+        };
       }
       if (res.status === 401) {
-        return { latest: found[0] ?? null, prior: found[1] ?? null, rateLimited: false, unauthorized: true };
+        return {
+          latest: found[0] ?? null,
+          prior: found[1] ?? null,
+          rateLimited: false,
+          unauthorized: true,
+        };
       }
       // 403 NOT_AUTHORIZED means this particular (too-recent) day isn't available
       // on the current Polygon plan — skip it and fall through to the most recent
@@ -102,10 +110,7 @@ async function getCooldownUntil(supabaseAdmin: SupabaseAdmin): Promise<number> {
   return isFinite(t) ? t : 0;
 }
 
-async function setCooldownUntil(
-  supabaseAdmin: SupabaseAdmin,
-  untilMs: number,
-): Promise<void> {
+async function setCooldownUntil(supabaseAdmin: SupabaseAdmin, untilMs: number): Promise<void> {
   await supabaseAdmin
     .from("quote_meta")
     .upsert(
@@ -151,54 +156,50 @@ async function refreshFromPolygon(
     });
   }
   if (upserts.length > 0) {
-    await supabaseAdmin
-      .from("quote_cache")
-      .upsert(upserts, { onConflict: "symbol" });
+    await supabaseAdmin.from("quote_cache").upsert(upserts, { onConflict: "symbol" });
   }
 }
 
 // Read-only snapshot of quote_cache for SSR loaders. Never touches the
 // provider (no self-heal, no timeout risk on the SSR path) — the client-side
 // getLiveQuotes query takes over after hydration and owns refreshing.
-export const getCachedQuotes = createServerFn({ method: "GET" }).handler(
-  async () => {
-    // Degrade, never throw. This runs in the /holdings route loader, so a
-    // rejection here 500s the entire page — even though the page ships a
-    // static baseline (shares and cost basis from src/data/holdings.ts) that
-    // renders perfectly well without live prices. A stale or missing
-    // service-role key has taken this path in production before; the right
-    // outcome is the baseline table, not an error page.
-    let rows: Array<{ symbol: string; price: number; change_pct: number; fetched_at: string }> = [];
-    try {
-      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-      const res = await supabaseAdmin
-        .from("quote_cache")
-        .select("symbol, price, change_pct, fetched_at");
-      if (res.error) throw res.error;
-      rows = res.data ?? [];
-    } catch (err) {
-      console.error("[quotes] cached-quote read failed, serving baseline:", err);
-    }
-    const quotes: Record<string, Quote> = {};
-    let newest = 0;
-    for (const r of rows) {
-      quotes[r.symbol] = {
-        symbol: r.symbol,
-        price: Number(r.price),
-        changePct: Number(r.change_pct),
-      };
-      const ts = new Date(r.fetched_at).getTime();
-      if (ts > newest) newest = ts;
-    }
-    const ageMs = newest > 0 ? Date.now() - newest : Infinity;
-    return {
-      quotes,
-      cachedAt: newest > 0 ? newest : Date.now(),
-      fresh: ageMs <= REFRESH_AFTER_MS,
-      stale: ageMs > 24 * 60 * 60 * 1000,
+export const getCachedQuotes = createServerFn({ method: "GET" }).handler(async () => {
+  // Degrade, never throw. This runs in the /holdings route loader, so a
+  // rejection here 500s the entire page — even though the page ships a
+  // static baseline (shares and cost basis from src/data/holdings.ts) that
+  // renders perfectly well without live prices. A stale or missing
+  // service-role key has taken this path in production before; the right
+  // outcome is the baseline table, not an error page.
+  let rows: Array<{ symbol: string; price: number; change_pct: number; fetched_at: string }> = [];
+  try {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const res = await supabaseAdmin
+      .from("quote_cache")
+      .select("symbol, price, change_pct, fetched_at");
+    if (res.error) throw res.error;
+    rows = res.data ?? [];
+  } catch (err) {
+    console.error("[quotes] cached-quote read failed, serving baseline:", err);
+  }
+  const quotes: Record<string, Quote> = {};
+  let newest = 0;
+  for (const r of rows) {
+    quotes[r.symbol] = {
+      symbol: r.symbol,
+      price: Number(r.price),
+      changePct: Number(r.change_pct),
     };
-  },
-);
+    const ts = new Date(r.fetched_at).getTime();
+    if (ts > newest) newest = ts;
+  }
+  const ageMs = newest > 0 ? Date.now() - newest : Infinity;
+  return {
+    quotes,
+    cachedAt: newest > 0 ? newest : Date.now(),
+    fresh: ageMs <= REFRESH_AFTER_MS,
+    stale: ageMs > 24 * 60 * 60 * 1000,
+  };
+});
 
 export const getLiveQuotes = createServerFn({ method: "POST" })
   .inputValidator((data: { symbols: string[] }) => {

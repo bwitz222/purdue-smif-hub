@@ -18,7 +18,8 @@ const SECTIONS: readonly PageSection[] = [
 ];
 
 const PAGE_TITLE = "About Purdue SMIF — Student Investment Club & Fund";
-const PAGE_DESCRIPTION = "How Purdue's student investment club works: the history, philosophy, and process behind every real-money position, and what sets it apart from other clubs.";
+const PAGE_DESCRIPTION =
+  "How Purdue's student investment club works: the history, philosophy, and process behind every real-money position, and what sets it apart from other clubs.";
 
 export const Route = createFileRoute("/about")({
   component: About,
@@ -101,19 +102,53 @@ const FAQ = [
 ];
 
 const PROCESS = [
-  { n: "01", t: "Idea Generation",  d: "Analysts screen their sectors for compelling setups: catalysts, mispricing, or structural change the market hasn't priced." },
-  { n: "02", t: "Deep Research",    d: "Financial modeling, channel checks, and management review. Every assumption documented, every risk stress-tested." },
-  { n: "03", t: "Pitch & Debate",   d: "Theses defended live before the full investment committee. Pushback is expected. Weak arguments don't survive." },
-  { n: "04", t: "Vote & Monitor",   d: "Members vote. Accepted positions enter the real portfolio. Every holding reviewed quarterly against its original thesis." },
+  {
+    n: "01",
+    t: "Idea Generation",
+    d: "Analysts screen their sectors for compelling setups: catalysts, mispricing, or structural change the market hasn't priced.",
+  },
+  {
+    n: "02",
+    t: "Deep Research",
+    d: "Financial modeling, channel checks, and management review. Every assumption documented, every risk stress-tested.",
+  },
+  {
+    n: "03",
+    t: "Pitch & Debate",
+    d: "Theses defended live before the full investment committee. Pushback is expected. Weak arguments don't survive.",
+  },
+  {
+    n: "04",
+    t: "Vote & Monitor",
+    d: "Members vote. Accepted positions enter the real portfolio. Every holding reviewed quarterly against its original thesis.",
+  },
 ];
 
 const IPS = [
-  { t: "Objective",        d: "Long-term capital appreciation benchmarked against the S&P 500, while providing an authentic asset-management learning experience." },
-  { t: "Eligible Universe",d: "Primarily U.S.-listed equities and fixed income; ADRs permitted. No options, futures, leverage, or short positions." },
-  { t: "Diversification",  d: "Position sizes capped per name and per sector. Maintain meaningful exposure across all covered sectors." },
-  { t: "Risk Controls",    d: "Ongoing monitoring of factor exposures, drawdowns, and concentration. Quarterly reviews with the faculty advisor." },
-  { t: "Decision Process", d: "Every trade requires a written thesis, valuation, and a majority vote of the investment committee." },
-  { t: "Reporting",        d: "Performance and attribution reported each semester to the Daniels School and university stakeholders." },
+  {
+    t: "Objective",
+    d: "Long-term capital appreciation benchmarked against the S&P 500, while providing an authentic asset-management learning experience.",
+  },
+  {
+    t: "Eligible Universe",
+    d: "Primarily U.S.-listed equities and fixed income; ADRs permitted. No options, futures, leverage, or short positions.",
+  },
+  {
+    t: "Diversification",
+    d: "Position sizes capped per name and per sector. Maintain meaningful exposure across all covered sectors.",
+  },
+  {
+    t: "Risk Controls",
+    d: "Ongoing monitoring of factor exposures, drawdowns, and concentration. Quarterly reviews with the faculty advisor.",
+  },
+  {
+    t: "Decision Process",
+    d: "Every trade requires a written thesis, valuation, and a majority vote of the investment committee.",
+  },
+  {
+    t: "Reporting",
+    d: "Performance and attribution reported each semester to the Daniels School and university stakeholders.",
+  },
 ];
 
 function About() {
@@ -128,13 +163,15 @@ function About() {
               className="font-display font-bold text-background max-w-3xl"
               style={{ fontSize: "clamp(2.8rem, 6vw, 5.5rem)", lineHeight: "1.02" }}
             >
-              A legacy of<br />
-              disciplined<br />
+              A legacy of
+              <br />
+              disciplined
+              <br />
               <span className="text-gold/80">investing.</span>
             </h1>
             <p className="mt-8 max-w-xl text-on-dark-secondary leading-relaxed text-lg">
-              Founded at the Daniels School of Business. Built on the conviction
-              that the best way to learn investing is to actually invest.
+              Founded at the Daniels School of Business. Built on the conviction that the best way
+              to learn investing is to actually invest.
             </p>
           </Reveal>
         </div>
@@ -145,35 +182,38 @@ function About() {
       <OnThisPage sections={SECTIONS} />
 
       {/* ── History ───────────────────────────────────────────────── */}
-      <section id="history" aria-labelledby="history-h" className="container-prose py-24 grid gap-16 md:grid-cols-3 section-anchor">
+      <section
+        id="history"
+        aria-labelledby="history-h"
+        className="container-prose py-24 grid gap-16 md:grid-cols-3 section-anchor"
+      >
         <Reveal className="md:col-span-1">
           <span className="rule-gold block mb-5" />
-          <h2 id="history-h" className="font-display text-2xl font-bold">Our History</h2>
+          <h2 id="history-h" className="font-display text-2xl font-bold">
+            Our History
+          </h2>
         </Reveal>
         <div className="md:col-span-2 space-y-6 text-lg text-muted-foreground">
           <Reveal delay={0.1}>
             <p>
               Founded in 2009 at the Daniels School of Business, the Purdue Student Managed
-              Investment Fund began as a small group of finance students with a single
-              conviction: that the best way to learn investing is to invest. From an
-              initial capital allocation, the fund has grown to manage real assets on
-              behalf of the university.
+              Investment Fund began as a small group of finance students with a single conviction:
+              that the best way to learn investing is to invest. From an initial capital allocation,
+              the fund has grown to manage real assets on behalf of the university.
             </p>
             <p className="mt-6">
-              The record is public and it is long. Audited monthly performance has been
-              tracked since October 2013, and every position the fund holds is published
-              on this site alongside the returns it has produced. Few student
-              organizations open their book that way; we do it because a portfolio that
-              claims to be real should be inspectable.
+              The record is public and it is long. Audited monthly performance has been tracked
+              since October 2013, and every position the fund holds is published on this site
+              alongside the returns it has produced. Few student organizations open their book that
+              way; we do it because a portfolio that claims to be real should be inspectable.
             </p>
             <p className="mt-6">
-              Each cycle, the fund admits 15 to 25 analysts from a pool of more than 100
-              applicants. Members have placed at Morgan Stanley, Barclays, BMO Capital
-              Markets, Wells Fargo, and Big 4 accounting firms. Analysts arrive from
-              across the university — finance and accounting, but also engineering,
-              computer science, agricultural economics, mathematics, and the liberal
-              arts — because the work rewards curiosity and argument more than it
-              rewards a particular major.
+              Each cycle, the fund admits 15 to 25 analysts from a pool of more than 100 applicants.
+              Members have placed at Morgan Stanley, Barclays, BMO Capital Markets, Wells Fargo, and
+              Big 4 accounting firms. Analysts arrive from across the university — finance and
+              accounting, but also engineering, computer science, agricultural economics,
+              mathematics, and the liberal arts — because the work rewards curiosity and argument
+              more than it rewards a particular major.
             </p>
           </Reveal>
 
@@ -181,7 +221,10 @@ function About() {
             <h3 className="text-xs font-semibold uppercase tracking-[0.32em] text-gold-deep mb-6">
               Where Our Members Go
             </h3>
-            <RevealGroup className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-border border border-border" stagger={0.05}>
+            <RevealGroup
+              className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-border border border-border"
+              stagger={0.05}
+            >
               {[
                 "Morgan Stanley",
                 "Barclays",
@@ -209,7 +252,11 @@ function About() {
       {/* ── Where SMIF fits ───────────────────────────────────────────
           Answers the question prospective members actually arrive with —
           "which finance club should I join?" — in the words they search. */}
-      <section id="real-money" aria-labelledby="real-money-h" className="border-t border-border bg-secondary/40 section-anchor">
+      <section
+        id="real-money"
+        aria-labelledby="real-money-h"
+        className="border-t border-border bg-secondary/40 section-anchor"
+      >
         <div className="container-prose py-24 grid gap-16 md:grid-cols-3">
           <Reveal className="md:col-span-1">
             <span className="rule-gold block mb-5" />
@@ -223,15 +270,15 @@ function About() {
                 Purdue has a number of student finance and investment organizations, and most
                 students find several worth joining. What separates SMIF from the other finance
                 clubs at Purdue is the capital: the portfolio holds real university money, not a
-                simulated book. Every holding and every quarter of performance is published on
-                this site.
+                simulated book. Every holding and every quarter of performance is published on this
+                site.
               </p>
               <p className="mt-6">
                 That one difference shapes the rest. Analysts join a sector team rather than a
                 general meeting. Positions are governed by a written investment policy statement.
                 Nothing enters the portfolio without a researched thesis and a committee vote. The
-                path runs analyst, senior analyst, portfolio manager, executive board — and the work at
-                each step is the work an investment professional actually does.
+                path runs analyst, senior analyst, portfolio manager, executive board — and the work
+                at each step is the work an investment professional actually does.
               </p>
               <p className="mt-6">
                 SMIF is a registered student organization, listed in{" "}
@@ -243,8 +290,8 @@ function About() {
                 >
                   BoilerLink
                 </a>
-                , Purdue's official student organization directory. If you're comparing
-                investment clubs at Purdue, the{" "}
+                , Purdue's official student organization directory. If you're comparing investment
+                clubs at Purdue, the{" "}
                 <Link
                   to="/recruiting"
                   className="link-underline font-medium text-gold-deep hover:text-gold"
@@ -266,29 +313,38 @@ function About() {
       </section>
 
       {/* ── Philosophy ────────────────────────────────────────────── */}
-      <section id="philosophy" aria-labelledby="philosophy-h" className="bg-ink text-background py-24 section-anchor">
+      <section
+        id="philosophy"
+        aria-labelledby="philosophy-h"
+        className="bg-ink text-background py-24 section-anchor"
+      >
         <div className="container-prose grid gap-16 md:grid-cols-3">
           <Reveal>
             <span className="rule-gold block mb-5" />
-            <h2 id="philosophy-h" className="font-display text-2xl font-bold text-gold">Philosophy</h2>
+            <h2 id="philosophy-h" className="font-display text-2xl font-bold text-gold">
+              Philosophy
+            </h2>
           </Reveal>
           <Reveal className="md:col-span-2 space-y-6 text-lg text-background/70" delay={0.1}>
             <p>
-              We are long-term, fundamentally-driven investors. Every position must
-              be supported by a rigorous thesis: a differentiated view, a defensible
-              valuation, and a clearly-articulated catalyst path.
+              We are long-term, fundamentally-driven investors. Every position must be supported by
+              a rigorous thesis: a differentiated view, a defensible valuation, and a
+              clearly-articulated catalyst path.
             </p>
             <p>
-              We invest with patience, manage risk with discipline, and prize
-              intellectual honesty above all else. When the facts change, we change
-              our minds.
+              We invest with patience, manage risk with discipline, and prize intellectual honesty
+              above all else. When the facts change, we change our minds.
             </p>
           </Reveal>
         </div>
       </section>
 
       {/* ── Process ───────────────────────────────────────────────── */}
-      <section id="process" aria-labelledby="process-h" className="container-prose py-24 section-anchor">
+      <section
+        id="process"
+        aria-labelledby="process-h"
+        className="container-prose py-24 section-anchor"
+      >
         <Reveal className="mb-16">
           <span className="rule-gold block mb-5" />
           <h2
@@ -301,7 +357,10 @@ function About() {
         </Reveal>
         <RevealGroup className="grid gap-px bg-border md:grid-cols-4" stagger={0.1}>
           {PROCESS.map(({ n, t, d }) => (
-            <RevealItem key={n} className="bg-background p-8 lg:p-10 group hover:bg-secondary/50 transition-colors duration-300">
+            <RevealItem
+              key={n}
+              className="bg-background p-8 lg:p-10 group hover:bg-secondary/50 transition-colors duration-300"
+            >
               <div className="font-display text-5xl font-bold text-gold-deep/80 leading-none mb-6 group-hover:text-gold-deep transition-colors duration-300">
                 {n}
               </div>
@@ -313,20 +372,29 @@ function About() {
       </section>
 
       {/* ── IPS ───────────────────────────────────────────────────── */}
-      <section id="ips" aria-labelledby="ips-h" className="bg-secondary/40 border-t border-border py-24 section-anchor">
+      <section
+        id="ips"
+        aria-labelledby="ips-h"
+        className="bg-secondary/40 border-t border-border py-24 section-anchor"
+      >
         <div className="container-prose grid gap-16 md:grid-cols-3">
           <Reveal className="md:col-span-1">
             <span className="rule-gold block mb-5" />
-            <h2 id="ips-h" className="font-display text-2xl font-bold">Investment Policy Statement</h2>
+            <h2 id="ips-h" className="font-display text-2xl font-bold">
+              Investment Policy Statement
+            </h2>
             <p className="mt-4 text-sm text-muted-foreground leading-relaxed">
-              The governing document defining our objectives, eligible investments,
-              risk parameters, and member responsibilities.
+              The governing document defining our objectives, eligible investments, risk parameters,
+              and member responsibilities.
             </p>
           </Reveal>
           <div className="md:col-span-2">
             <RevealGroup className="grid gap-px bg-border sm:grid-cols-2" stagger={0.06}>
               {IPS.map(({ t, d }) => (
-                <RevealItem key={t} className="bg-background p-6 hover:bg-secondary/50 transition-colors duration-200">
+                <RevealItem
+                  key={t}
+                  className="bg-background p-6 hover:bg-secondary/50 transition-colors duration-200"
+                >
                   <h3 className="font-display text-base font-bold text-ink mb-2">{t}</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">{d}</p>
                 </RevealItem>
@@ -343,26 +411,31 @@ function About() {
           Who is accountable for real university money, and to whom. This
           was absent from the site: the advisors appeared only as two cards
           on /team, and nothing explained the oversight structure at all. */}
-      <section id="governance" aria-labelledby="governance-h" className="container-prose py-24 grid gap-16 md:grid-cols-3 section-anchor">
+      <section
+        id="governance"
+        aria-labelledby="governance-h"
+        className="container-prose py-24 grid gap-16 md:grid-cols-3 section-anchor"
+      >
         <Reveal className="md:col-span-1">
           <span className="rule-gold block mb-5" />
-          <h2 id="governance-h" className="font-display text-2xl font-bold">Governance &amp; oversight</h2>
+          <h2 id="governance-h" className="font-display text-2xl font-bold">
+            Governance &amp; oversight
+          </h2>
         </Reveal>
         <div className="md:col-span-2 space-y-6 text-lg text-muted-foreground">
           <Reveal delay={0.1}>
             <p>
-              The fund manages university money, so the accountability is real and the
-              structure is deliberate. Day-to-day decisions sit with the students: an
-              executive board of seven, elected each spring, owns strategy, research,
-              risk, recruiting, education, and operations. Every position still requires
-              a written thesis, a valuation, and a majority vote of the investment
-              committee before it enters the portfolio.
+              The fund manages university money, so the accountability is real and the structure is
+              deliberate. Day-to-day decisions sit with the students: an executive board of seven,
+              elected each spring, owns strategy, research, risk, recruiting, education, and
+              operations. Every position still requires a written thesis, a valuation, and a
+              majority vote of the investment committee before it enters the portfolio.
             </p>
             <p className="mt-6">
-              That student authority operates inside faculty oversight. Holdings, factor
-              exposures, drawdowns, and concentration are reviewed with the faculty
-              advisor each quarter, and performance and attribution are reported every
-              semester to the Daniels School and to university stakeholders.
+              That student authority operates inside faculty oversight. Holdings, factor exposures,
+              drawdowns, and concentration are reviewed with the faculty advisor each quarter, and
+              performance and attribution are reported every semester to the Daniels School and to
+              university stakeholders.
             </p>
           </Reveal>
 
@@ -391,7 +464,11 @@ function About() {
           Answers rendered as visible prose, not a collapsed accordion, so
           plain-text extractors see them and not just the questions. The
           FAQPage schema in head() carries the same text verbatim. */}
-      <section id="faq" aria-labelledby="faq-h" className="border-t border-border bg-secondary/40 section-anchor">
+      <section
+        id="faq"
+        aria-labelledby="faq-h"
+        className="border-t border-border bg-secondary/40 section-anchor"
+      >
         <div className="container-prose py-24">
           <Reveal className="max-w-3xl mb-12">
             <span className="rule-gold block mb-5" />
@@ -422,7 +499,9 @@ function About() {
             <h2 className="font-display text-3xl font-bold text-background">
               Ready to put our process to work?
             </h2>
-            <p className="mt-3 max-w-md text-sm text-background/65">Apply to be part of the research process — from pitch to portfolio decision.</p>
+            <p className="mt-3 max-w-md text-sm text-background/65">
+              Apply to be part of the research process — from pitch to portfolio decision.
+            </p>
           </div>
           <div className="flex gap-4 shrink-0">
             <a

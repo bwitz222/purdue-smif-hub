@@ -5,7 +5,17 @@ import { Search, X } from "lucide-react";
 import { MemberCard, type Member } from "@/components/MemberCard";
 import { MemberDetailSheet } from "@/components/MemberDetailSheet";
 import { RevealGroup, RevealItem } from "@/components/Reveal";
-import { board, sectorTeams, fixedIncomeMacro, portfolioManagers, facultyAdvisors, memberDirectory, studentCount, facultyCount, totalMemberCount } from "@/data/team";
+import {
+  board,
+  sectorTeams,
+  fixedIncomeMacro,
+  portfolioManagers,
+  facultyAdvisors,
+  memberDirectory,
+  studentCount,
+  facultyCount,
+  totalMemberCount,
+} from "@/data/team";
 import { socialMeta, canonical, breadcrumbLd, OG_TEAM } from "@/lib/seo";
 import { jumpToSection } from "@/lib/jump-to";
 
@@ -14,7 +24,6 @@ import { jumpToSection } from "@/lib/jump-to";
 // emitted each of them as two Person entries with different jobTitles.
 // memberDirectory already dedupes by slug, first appearance winning.
 const allMembers = memberDirectory.map((e) => e.member);
-
 
 type TeamSearch = { sector?: string; q?: string };
 
@@ -31,7 +40,11 @@ export const Route = createFileRoute("/team/")({
   head: () => ({
     meta: [
       { title: "Meet the Team — Purdue Student Managed Investment Fund" },
-      { name: "description", content: "Meet the executive board, sector teams, fixed income & macro team, and portfolio managers of the Purdue Student Managed Investment Fund." },
+      {
+        name: "description",
+        content:
+          "Meet the executive board, sector teams, fixed income & macro team, and portfolio managers of the Purdue Student Managed Investment Fund.",
+      },
       ...socialMeta({
         title: "Meet the Team | Purdue SMIF",
         description: `The ${studentCount} students behind Purdue SMIF: executive board, sector analysts, fixed income & macro, and portfolio managers.`,
@@ -63,13 +76,27 @@ export const Route = createFileRoute("/team/")({
   }),
 });
 
-function SectionHeader({ kicker, title, blurb, count }: { kicker: string; title: string; blurb?: string; count?: number }) {
+function SectionHeader({
+  kicker,
+  title,
+  blurb,
+  count,
+}: {
+  kicker: string;
+  title: string;
+  blurb?: string;
+  count?: number;
+}) {
   return (
     <div className="mb-12 max-w-3xl">
       <div className="flex items-center gap-3">
-        <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">{kicker}</span>
+        <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">
+          {kicker}
+        </span>
         {typeof count === "number" && (
-          <span className="text-[10px] font-mono uppercase tracking-[0.22em] text-muted-foreground">{count} {count === 1 ? "result" : "results"}</span>
+          <span className="text-[10px] font-mono uppercase tracking-[0.22em] text-muted-foreground">
+            {count} {count === 1 ? "result" : "results"}
+          </span>
         )}
       </div>
       <h2 className="mt-3 font-display text-3xl font-bold md:text-4xl">{title}</h2>
@@ -107,7 +134,11 @@ type ScopeOption = {
    */
   aliases?: string[];
 };
-const sectorSlug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+const sectorSlug = (s: string) =>
+  s
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
 /** Resolve a ?sector= value to its scope. Accepts the chip label, the option
  *  value, or any declared alias, so every inbound link shape works. */
 const findScope = (s: string): ScopeOption | undefined =>
@@ -123,11 +154,24 @@ const SCOPE_OPTIONS: ScopeOption[] = [
     sector: t.name,
     anchor: `sector-${sectorSlug(t.name)}`,
   })),
-  { value: "fim", label: "FI & Macro", group: "fim", sector: "all", anchor: "fim", aliases: ["Fixed Income & Macro"] },
-  { value: "pm", label: "PM + Risk", group: "pm", sector: "all", anchor: "pm", aliases: ["Portfolio + Risk Management"] },
+  {
+    value: "fim",
+    label: "FI & Macro",
+    group: "fim",
+    sector: "all",
+    anchor: "fim",
+    aliases: ["Fixed Income & Macro"],
+  },
+  {
+    value: "pm",
+    label: "PM + Risk",
+    group: "pm",
+    sector: "all",
+    anchor: "pm",
+    aliases: ["Portfolio + Risk Management"],
+  },
   { value: "faculty", label: "Faculty", group: "faculty", sector: "all", anchor: "faculty" },
 ];
-
 
 function Team() {
   const totalMembers = totalMemberCount;
@@ -228,19 +272,21 @@ function Team() {
     });
   };
 
-
-
-
   return (
     <>
       <section className="border-b border-border bg-secondary/40">
         <div className="container-prose py-24">
-          <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">Team</span>
+          <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">
+            Team
+          </span>
           <h1 className="mt-4 font-display text-5xl font-bold md:text-6xl max-w-3xl">
             The people behind the portfolio.
           </h1>
           <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
-            {studentCount} students and {facultyCount} faculty advisors working together to manage real capital for Purdue. Executive board members also serve as sector leads or senior analysts across the eight sector teams, the Fixed Income &amp; Macro group, and the Portfolio + Risk Management team.
+            {studentCount} students and {facultyCount} faculty advisors working together to manage
+            real capital for Purdue. Executive board members also serve as sector leads or senior
+            analysts across the eight sector teams, the Fixed Income &amp; Macro group, and the
+            Portfolio + Risk Management team.
           </p>
 
           <div className="mt-10 grid grid-cols-2 gap-6 md:grid-cols-4 max-w-3xl">
@@ -252,7 +298,9 @@ function Team() {
             ].map(([n, l]) => (
               <div key={l} className="border-t-2 border-gold pt-3">
                 <div className="font-display text-3xl font-bold">{n}</div>
-                <div className="text-xs uppercase tracking-wider text-muted-foreground mt-1">{l}</div>
+                <div className="text-xs uppercase tracking-wider text-muted-foreground mt-1">
+                  {l}
+                </div>
               </div>
             ))}
           </div>
@@ -321,120 +369,150 @@ function Team() {
         </div>
       </div>
 
-
       <div ref={gridRef}>
-      {totalResults === 0 && (
-        <section className="container-prose py-24 text-center">
-          <p className="font-display text-2xl text-muted-foreground">No members match your search.</p>
-          <button
-            onClick={() => {
-              setQuery("");
-              setGroup("all");
-              setSectorFilter("all");
-              navigate({ search: () => ({}), replace: true });
-            }}
-            className="press mt-6 inline-flex items-center px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] border border-ink hover:bg-ink hover:text-background cursor-pointer"
-          >
-            Reset filters
-          </button>
-        </section>
-      )}
+        {totalResults === 0 && (
+          <section className="container-prose py-24 text-center">
+            <p className="font-display text-2xl text-muted-foreground">
+              No members match your search.
+            </p>
+            <button
+              onClick={() => {
+                setQuery("");
+                setGroup("all");
+                setSectorFilter("all");
+                navigate({ search: () => ({}), replace: true });
+              }}
+              className="press mt-6 inline-flex items-center px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] border border-ink hover:bg-ink hover:text-background cursor-pointer"
+            >
+              Reset filters
+            </button>
+          </section>
+        )}
 
-
-      {showBoard && filteredBoard.length > 0 && (
-        <section id="leadership" className="container-prose py-20 scroll-mt-40">
-          <SectionHeader
-            kicker="Leadership"
-            title="Executive Board"
-            blurb="Seven students elected each spring to lead the fund's strategy, research, risk, recruiting, education, and operations."
-            count={hasFilter ? filteredBoard.length : undefined}
-          />
-          <RevealGroup className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" stagger={0.06}>
-            {filteredBoard.map((m) => <RevealItem key={m.name} className="h-full [&>div]:h-full"><MemberCard m={m} variant="board" onSelect={setSelected} /></RevealItem>)}
-          </RevealGroup>
-        </section>
-      )}
-
-      {showSectors && filteredSectors.length > 0 && (
-        <section className="border-y border-border bg-secondary/30 py-20">
-          <div className="container-prose">
+        {showBoard && filteredBoard.length > 0 && (
+          <section id="leadership" className="container-prose py-20 scroll-mt-40">
             <SectionHeader
-              kicker="Equity Research"
-              title="Sector Teams"
-              blurb="Eight teams cover the equity universe. Each team is led by a Portfolio Manager with senior analysts and rotating junior analysts."
-              count={hasFilter ? filteredSectors.reduce((s, t) => s + t.members.length, 0) : undefined}
+              kicker="Leadership"
+              title="Executive Board"
+              blurb="Seven students elected each spring to lead the fund's strategy, research, risk, recruiting, education, and operations."
+              count={hasFilter ? filteredBoard.length : undefined}
             />
-            <div className="space-y-16">
-              {filteredSectors.map((team) => (
-                <div key={team.name} id={`sector-${sectorSlug(team.name)}`} className="scroll-mt-40">
-                  <div className="mb-8 flex flex-wrap items-end justify-between gap-4 border-b border-border pb-4">
-                    <div>
-                      <h3 className="font-display text-2xl font-bold">{team.name}</h3>
-                      <p className="mt-1 max-w-2xl text-sm text-muted-foreground">{team.description}</p>
-                    </div>
-                    <span className="text-xs uppercase tracking-[0.18em] text-gold-deep">
-                      {team.members.length} {team.members.length === 1 ? "member" : "members"}
-                    </span>
-                  </div>
-                  <RevealGroup className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" stagger={0.05}>
-                    {team.members.map((m) => <RevealItem key={m.name} className="h-full [&>div]:h-full"><MemberCard m={m} onSelect={setSelected} /></RevealItem>)}
-                  </RevealGroup>
-                </div>
+            <RevealGroup className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" stagger={0.06}>
+              {filteredBoard.map((m) => (
+                <RevealItem key={m.name} className="h-full [&>div]:h-full">
+                  <MemberCard m={m} variant="board" onSelect={setSelected} />
+                </RevealItem>
               ))}
+            </RevealGroup>
+          </section>
+        )}
+
+        {showSectors && filteredSectors.length > 0 && (
+          <section className="border-y border-border bg-secondary/30 py-20">
+            <div className="container-prose">
+              <SectionHeader
+                kicker="Equity Research"
+                title="Sector Teams"
+                blurb="Eight teams cover the equity universe. Each team is led by a Portfolio Manager with senior analysts and rotating junior analysts."
+                count={
+                  hasFilter ? filteredSectors.reduce((s, t) => s + t.members.length, 0) : undefined
+                }
+              />
+              <div className="space-y-16">
+                {filteredSectors.map((team) => (
+                  <div
+                    key={team.name}
+                    id={`sector-${sectorSlug(team.name)}`}
+                    className="scroll-mt-40"
+                  >
+                    <div className="mb-8 flex flex-wrap items-end justify-between gap-4 border-b border-border pb-4">
+                      <div>
+                        <h3 className="font-display text-2xl font-bold">{team.name}</h3>
+                        <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
+                          {team.description}
+                        </p>
+                      </div>
+                      <span className="text-xs uppercase tracking-[0.18em] text-gold-deep">
+                        {team.members.length} {team.members.length === 1 ? "member" : "members"}
+                      </span>
+                    </div>
+                    <RevealGroup
+                      className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+                      stagger={0.05}
+                    >
+                      {team.members.map((m) => (
+                        <RevealItem key={m.name} className="h-full [&>div]:h-full">
+                          <MemberCard m={m} onSelect={setSelected} />
+                        </RevealItem>
+                      ))}
+                    </RevealGroup>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        </section>
-      )}
+          </section>
+        )}
 
-      {showFim && filteredFim.length > 0 && (
-        <section id="fim" className="container-prose py-20 scroll-mt-40">
-          <SectionHeader
-            kicker="Cross-Asset"
-            title="Fixed Income & Macro Team"
-            blurb="Covers rates, credit, FX, and global macro themes, informing both the fixed income sleeve and the equity portfolio's macro overlay."
-            count={hasFilter ? filteredFim.length : undefined}
-          />
-          <RevealGroup className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" stagger={0.06}>
-            {filteredFim.map((m) => <RevealItem key={m.name} className="h-full [&>div]:h-full"><MemberCard m={m} onSelect={setSelected} /></RevealItem>)}
-          </RevealGroup>
-        </section>
-      )}
-
-      {showPm && filteredPm.length > 0 && (
-        <section id="pm" className="border-t border-border bg-secondary/30 py-20 scroll-mt-40">
-          <div className="container-prose">
+        {showFim && filteredFim.length > 0 && (
+          <section id="fim" className="container-prose py-20 scroll-mt-40">
             <SectionHeader
-              kicker="Portfolio + Risk Management"
-              title="Portfolio + Risk Management"
-              blurb="Implement allocation decisions, monitor portfolio risk, manage trading and rebalancing, and own performance attribution."
-              count={hasFilter ? filteredPm.length : undefined}
+              kicker="Cross-Asset"
+              title="Fixed Income & Macro Team"
+              blurb="Covers rates, credit, FX, and global macro themes, informing both the fixed income sleeve and the equity portfolio's macro overlay."
+              count={hasFilter ? filteredFim.length : undefined}
             />
             <RevealGroup className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" stagger={0.06}>
-              {filteredPm.map((m) => <RevealItem key={m.name} className="h-full [&>div]:h-full"><MemberCard m={m} onSelect={setSelected} /></RevealItem>)}
+              {filteredFim.map((m) => (
+                <RevealItem key={m.name} className="h-full [&>div]:h-full">
+                  <MemberCard m={m} onSelect={setSelected} />
+                </RevealItem>
+              ))}
             </RevealGroup>
-          </div>
-        </section>
-      )}
+          </section>
+        )}
 
-      {showFaculty && filteredFaculty.length > 0 && (
-        <section id="faculty" className="border-t border-border py-20 scroll-mt-40">
-          <div className="container-prose">
-            <SectionHeader
-              kicker="Faculty"
-              title="Faculty Advisors"
-              blurb="Daniels School of Business faculty who advise SMIF on curriculum, risk, and investment process."
-              count={hasFilter ? filteredFaculty.length : undefined}
-            />
-            <RevealGroup className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" stagger={0.06}>
-              {filteredFaculty.map((m) => <RevealItem key={m.name} className="h-full [&>div]:h-full"><MemberCard m={m} onSelect={setSelected} /></RevealItem>)}
-            </RevealGroup>
-          </div>
-        </section>
-      )}
+        {showPm && filteredPm.length > 0 && (
+          <section id="pm" className="border-t border-border bg-secondary/30 py-20 scroll-mt-40">
+            <div className="container-prose">
+              <SectionHeader
+                kicker="Portfolio + Risk Management"
+                title="Portfolio + Risk Management"
+                blurb="Implement allocation decisions, monitor portfolio risk, manage trading and rebalancing, and own performance attribution."
+                count={hasFilter ? filteredPm.length : undefined}
+              />
+              <RevealGroup className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" stagger={0.06}>
+                {filteredPm.map((m) => (
+                  <RevealItem key={m.name} className="h-full [&>div]:h-full">
+                    <MemberCard m={m} onSelect={setSelected} />
+                  </RevealItem>
+                ))}
+              </RevealGroup>
+            </div>
+          </section>
+        )}
+
+        {showFaculty && filteredFaculty.length > 0 && (
+          <section id="faculty" className="border-t border-border py-20 scroll-mt-40">
+            <div className="container-prose">
+              <SectionHeader
+                kicker="Faculty"
+                title="Faculty Advisors"
+                blurb="Daniels School of Business faculty who advise SMIF on curriculum, risk, and investment process."
+                count={hasFilter ? filteredFaculty.length : undefined}
+              />
+              <RevealGroup className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" stagger={0.06}>
+                {filteredFaculty.map((m) => (
+                  <RevealItem key={m.name} className="h-full [&>div]:h-full">
+                    <MemberCard m={m} onSelect={setSelected} />
+                  </RevealItem>
+                ))}
+              </RevealGroup>
+            </div>
+          </section>
+        )}
       </div>
 
       <MemberDetailSheet member={selected} onClose={() => setSelected(null)} />
     </>
   );
 }
-
