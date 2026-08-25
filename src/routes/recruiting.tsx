@@ -539,7 +539,12 @@ function Recruiting() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={`Add ${e.name} on ${e.date} at ${e.time} to Google Calendar (opens in new tab)`}
-                  className={`group row-rail block w-full text-left transition hover:bg-secondary/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 px-2 -mx-2 cursor-pointer ${isPast ? "opacity-50" : ""}`}
+                  // Past rows are dimmed, but not with opacity alone: at 50%
+                  // the already-muted text fell to 2.2:1 against the page
+                  // (5 axe color-contrast failures on this route). Lifting
+                  // muted text to the foreground token inside past rows keeps
+                  // the de-emphasised look above 4.5:1.
+                  className={`group row-rail block w-full text-left transition hover:bg-secondary/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 px-2 -mx-2 cursor-pointer ${isPast ? "opacity-70 [&_.text-muted-foreground]:text-foreground" : ""}`}
                 >
                   {/* Mobile: single ≥44px stacked tap block with right-aligned add-to-cal affordance. */}
                   <div className="md:hidden flex items-start gap-3 py-4 min-h-[64px]">
