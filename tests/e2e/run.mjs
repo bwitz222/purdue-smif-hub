@@ -169,14 +169,20 @@ try {
     await search.fill("");
     await page.waitForTimeout(600);
 
-    const tab = page.locator('[role="tab"]').nth(2);
-    const label = (await tab.textContent()).trim();
-    await tab.click();
+    // The scope chips are role="group" + aria-pressed, not a tablist: they
+    // have no tabpanels, no aria-controls and no roving tabindex, so
+    // announcing them as tabs promised arrow-key navigation that never
+    // existed. Scoped by the group's own label so this can't match a
+    // toggle elsewhere on the page.
+    const chips = page.locator('[aria-label="Filter team by group"] button');
+    const chip = chips.nth(2);
+    const label = (await chip.textContent()).trim();
+    await chip.click();
     await page.waitForTimeout(900);
+    const pressed = page.locator('[aria-label="Filter team by group"] button[aria-pressed="true"]');
     record(
-      "/team scope tab selects and deep-links",
-      (await page.locator('[role="tab"][aria-selected="true"]').textContent()).trim() === label &&
-        page.url().includes("sector="),
+      "/team scope chip selects and deep-links",
+      (await pressed.textContent()).trim() === label && page.url().includes("sector="),
       label,
     );
 
