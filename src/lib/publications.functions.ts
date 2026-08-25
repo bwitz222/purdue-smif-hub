@@ -33,8 +33,7 @@ export const getPublications = createServerFn({ method: "GET" }).handler(
       const rows = (data ?? []) as Omit<PublicationRow, "url">[];
       return rows.map((p) => ({
         ...p,
-        url: supabase.storage.from("publications").getPublicUrl(p.file_path).data
-          .publicUrl,
+        url: supabase.storage.from("publications").getPublicUrl(p.file_path).data.publicUrl,
       }));
     } catch (err) {
       console.error("[publications] fetch failed, serving empty list:", err);

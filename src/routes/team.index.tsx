@@ -2,33 +2,49 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useReducedMotion } from "framer-motion";
 import { Search, X } from "lucide-react";
-import { MemberCard, OpenSeatsCard, type Member } from "@/components/MemberCard";
+import { MemberCard, type Member } from "@/components/MemberCard";
 import { MemberDetailSheet } from "@/components/MemberDetailSheet";
 import { RevealGroup, RevealItem } from "@/components/Reveal";
-import { board, sectorTeams, fixedIncomeMacro, portfolioManagers, facultyAdvisors, studentCount, facultyCount, totalMemberCount } from "@/data/team";
+import {
+  board,
+  sectorTeams,
+  fixedIncomeMacro,
+  portfolioManagers,
+  facultyAdvisors,
+  memberDirectory,
+  studentCount,
+  facultyCount,
+  totalMemberCount,
+} from "@/data/team";
 import { socialMeta, canonical, breadcrumbLd, OG_TEAM } from "@/lib/seo";
 import { jumpToSection } from "@/lib/jump-to";
 
-const allMembers = [
-  ...board,
-  ...sectorTeams.flatMap((t) => t.members),
-  ...fixedIncomeMacro,
-  ...portfolioManagers,
-  ...facultyAdvisors,
-].filter((m) => !m.placeholder);
+// Built from memberDirectory, not by concatenating the groups: seven people
+// sit on the executive board AND a sector/FIM/PM team, so a plain concat
+// emitted each of them as two Person entries with different jobTitles.
+// memberDirectory already dedupes by slug, first appearance winning.
+const allMembers = memberDirectory.map((e) => e.member);
 
-
-type TeamSearch = { sector?: string };
+type TeamSearch = { sector?: string; q?: string };
 
 export const Route = createFileRoute("/team/")({
   component: Team,
+  // `q` backs the sitelinks SearchAction declared in __root's WebSite JSON-LD
+  // (urlTemplate: /team?q={search_term_string}). That declaration shipped
+  // before the param existed, so a search engine honoring it sent visitors to
+  // /team?q=… and they landed on the unfiltered roster.
   validateSearch: (search: Record<string, unknown>): TeamSearch => ({
     sector: typeof search.sector === "string" ? search.sector : undefined,
+    q: typeof search.q === "string" && search.q.trim() ? search.q : undefined,
   }),
   head: () => ({
     meta: [
       { title: "Meet the Team — Purdue Student Managed Investment Fund" },
-      { name: "description", content: "Meet the executive board, sector teams, fixed income & macro team, and portfolio managers of the Purdue Student Managed Investment Fund." },
+      {
+        name: "description",
+        content:
+          "Meet the executive board, sector teams, fixed income & macro team, and portfolio managers of the Purdue Student Managed Investment Fund.",
+      },
       ...socialMeta({
         title: "Meet the Team | Purdue SMIF",
         description: `The ${studentCount} students behind Purdue SMIF: executive board, sector analysts, fixed income & macro, and portfolio managers.`,
@@ -60,13 +76,27 @@ export const Route = createFileRoute("/team/")({
   }),
 });
 
-function SectionHeader({ kicker, title, blurb, count }: { kicker: string; title: string; blurb?: string; count?: number }) {
+function SectionHeader({
+  kicker,
+  title,
+  blurb,
+  count,
+}: {
+  kicker: string;
+  title: string;
+  blurb?: string;
+  count?: number;
+}) {
   return (
     <div className="mb-12 max-w-3xl">
       <div className="flex items-center gap-3">
-        <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">{kicker}</span>
+        <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">
+          {kicker}
+        </span>
         {typeof count === "number" && (
-          <span className="text-[10px] font-mono uppercase tracking-[0.22em] text-muted-foreground">{count} {count === 1 ? "result" : "results"}</span>
+          <span className="text-[10px] font-mono uppercase tracking-[0.22em] text-muted-foreground">
+            {count} {count === 1 ? "result" : "results"}
+          </span>
         )}
       </div>
       <h2 className="mt-3 font-display text-3xl font-bold md:text-4xl">{title}</h2>
@@ -90,8 +120,30 @@ const matches = (m: Member, q: string) => {
 
 // Unified scope options: drives both group + sector state and anchor jumps
 // from a single chip row. `anchor` is the DOM id of the section heading.
-type ScopeOption = { value: string; label: string; group: Group; sector: string; anchor: string };
-const sectorSlug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+type ScopeOption = {
+  value: string;
+  label: string;
+  group: Group;
+  sector: string;
+  anchor: string;
+  /**
+   * Extra ?sector= values that resolve to this scope. /sectors links to
+   * ?sector=<full team name>, and for the two process teams that name is not
+   * the chip label ("FI & Macro", "PM + Risk"), so without these the link
+   * matched nothing and dumped the visitor on the unfiltered roster.
+   */
+  aliases?: string[];
+};
+const sectorSlug = (s: string) =>
+  s
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+/** Resolve a ?sector= value to its scope. Accepts the chip label, the option
+ *  value, or any declared alias, so every inbound link shape works. */
+const findScope = (s: string): ScopeOption | undefined =>
+  SCOPE_OPTIONS.find((o) => o.label === s || o.value === s || o.aliases?.includes(s));
+
 const SCOPE_OPTIONS: ScopeOption[] = [
   { value: "all", label: "All", group: "all", sector: "all", anchor: "leadership" },
   { value: "leadership", label: "Leadership", group: "board", sector: "all", anchor: "leadership" },
@@ -102,11 +154,24 @@ const SCOPE_OPTIONS: ScopeOption[] = [
     sector: t.name,
     anchor: `sector-${sectorSlug(t.name)}`,
   })),
-  { value: "fim", label: "FI & Macro", group: "fim", sector: "all", anchor: "fim" },
-  { value: "pm", label: "PM + Risk", group: "pm", sector: "all", anchor: "pm" },
+  {
+    value: "fim",
+    label: "FI & Macro",
+    group: "fim",
+    sector: "all",
+    anchor: "fim",
+    aliases: ["Fixed Income & Macro"],
+  },
+  {
+    value: "pm",
+    label: "PM + Risk",
+    group: "pm",
+    sector: "all",
+    anchor: "pm",
+    aliases: ["Portfolio + Risk Management"],
+  },
   { value: "faculty", label: "Faculty", group: "faculty", sector: "all", anchor: "faculty" },
 ];
-
 
 function Team() {
   const totalMembers = totalMemberCount;
@@ -115,7 +180,7 @@ function Team() {
   const reduce = useReducedMotion();
   const gridRef = useRef<HTMLDivElement | null>(null);
 
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(search.q ?? "");
   const [group, setGroup] = useState<Group>("all");
   const [sectorFilter, setSectorFilter] = useState<string>("all");
   const [selected, setSelected] = useState<Member | null>(null);
@@ -124,7 +189,7 @@ function Team() {
   useEffect(() => {
     const s = search.sector;
     if (!s) return;
-    const opt = SCOPE_OPTIONS.find((o) => o.label === s);
+    const opt = findScope(s);
     if (!opt) return;
     setGroup(opt.group);
     setSectorFilter(opt.sector);
@@ -154,16 +219,12 @@ function Team() {
   const filteredSectors = useMemo(() => {
     const teams = sectorTeams
       .filter((t) => sectorFilter === "all" || t.name === sectorFilter)
-      .map((t) => {
-        const real = t.members.filter((m) => !m.placeholder && matches(m, query));
-        const openSeats = t.members.filter((m) => m.placeholder).length;
-        return { ...t, members: real, openSeats };
-      })
-      .filter((t) => t.members.length > 0 || t.openSeats > 0);
+      .map((t) => ({ ...t, members: t.members.filter((m) => matches(m, query)) }))
+      .filter((t) => t.members.length > 0);
     return teams;
   }, [query, sectorFilter]);
-  const filteredFim = useMemo(() => fixedIncomeMacro.filter((m) => !m.placeholder && matches(m, query)), [query]);
-  const filteredPm = useMemo(() => portfolioManagers.filter((m) => !m.placeholder && matches(m, query)), [query]);
+  const filteredFim = useMemo(() => fixedIncomeMacro.filter((m) => matches(m, query)), [query]);
+  const filteredPm = useMemo(() => portfolioManagers.filter((m) => matches(m, query)), [query]);
   const filteredFaculty = useMemo(() => facultyAdvisors.filter((m) => matches(m, query)), [query]);
 
   const totalResults =
@@ -190,7 +251,7 @@ function Team() {
     setGroup(opt.group);
     setSectorFilter(opt.sector);
     navigate({
-      search: () => (val === "all" ? {} : { sector: opt.label }),
+      search: (prev) => (val === "all" ? { q: prev.q } : { q: prev.q, sector: opt.label }),
       replace: true,
     });
     // Anchor-jump filtering: scroll to the matching section after render, and
@@ -211,19 +272,21 @@ function Team() {
     });
   };
 
-
-
-
   return (
     <>
       <section className="border-b border-border bg-secondary/40">
         <div className="container-prose py-24">
-          <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">Team</span>
+          <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">
+            Team
+          </span>
           <h1 className="mt-4 font-display text-5xl font-bold md:text-6xl max-w-3xl">
             The people behind the portfolio.
           </h1>
           <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
-            {studentCount} students and {facultyCount} faculty advisors working together to manage real capital for Purdue. Executive board members also serve as sector leads or senior analysts across the eight sector teams, the Fixed Income &amp; Macro group, and the Portfolio + Risk Management team.
+            {studentCount} students and {facultyCount} faculty advisors working together to manage
+            real capital for Purdue. Executive board members also serve as sector leads or senior
+            analysts across the eight sector teams, the Fixed Income &amp; Macro group, and the
+            Portfolio + Risk Management team.
           </p>
 
           <div className="mt-10 grid grid-cols-2 gap-6 md:grid-cols-4 max-w-3xl">
@@ -235,7 +298,9 @@ function Team() {
             ].map(([n, l]) => (
               <div key={l} className="border-t-2 border-gold pt-3">
                 <div className="font-display text-3xl font-bold">{n}</div>
-                <div className="text-xs uppercase tracking-wider text-muted-foreground mt-1">{l}</div>
+                <div className="text-xs uppercase tracking-wider text-muted-foreground mt-1">
+                  {l}
+                </div>
               </div>
             ))}
           </div>
@@ -253,7 +318,7 @@ function Team() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search by name, role, year…"
-                className="w-full border border-border bg-background pl-10 pr-9 py-2 text-sm font-mono placeholder:text-muted-foreground/60 focus:outline-none focus:border-ink transition-colors min-h-11"
+                className="w-full border border-border bg-background pl-10 pr-9 py-2 text-sm font-mono placeholder:text-muted-foreground/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:border-ink focus:border-ink transition-colors min-h-11"
                 aria-label="Search team members"
               />
               {query && (
@@ -273,8 +338,12 @@ function Team() {
             </div>
           </div>
           {/* Chip row: horizontal scroll on mobile, wraps on desktop. */}
+          {/* role="group" + aria-pressed, not tablist/tab: these chips have no
+              tabpanels, no aria-controls and no roving tabindex, so announcing
+              them as tabs promised arrow-key navigation that does not exist.
+              Same pattern /holdings uses for its sector filter. */}
           <div
-            role="tablist"
+            role="group"
             aria-label="Filter team by group"
             className="-mx-4 flex gap-2 overflow-x-auto px-4 snap-x scrollbar-hide md:mx-0 md:flex-wrap md:overflow-visible md:px-0"
           >
@@ -284,8 +353,7 @@ function Team() {
                 <button
                   key={o.value}
                   type="button"
-                  role="tab"
-                  aria-selected={active}
+                  aria-pressed={active}
                   onClick={() => handleScopeChange(o.value)}
                   className={`press shrink-0 snap-start min-h-9 rounded-full border px-3.5 text-[11px] font-semibold uppercase tracking-[0.14em] focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-1 ${
                     active
@@ -301,121 +369,150 @@ function Team() {
         </div>
       </div>
 
-
       <div ref={gridRef}>
-      {totalResults === 0 && (
-        <section className="container-prose py-24 text-center">
-          <p className="font-display text-2xl text-muted-foreground">No members match your search.</p>
-          <button
-            onClick={() => { setQuery(""); setGroup("all"); setSectorFilter("all"); navigate({ search: () => ({}), replace: true }); }}
-            className="press mt-6 inline-flex items-center px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] border border-ink hover:bg-ink hover:text-background cursor-pointer"
-          >
-            Reset filters
-          </button>
-        </section>
-      )}
+        {totalResults === 0 && (
+          <section className="container-prose py-24 text-center">
+            <p className="font-display text-2xl text-muted-foreground">
+              No members match your search.
+            </p>
+            <button
+              onClick={() => {
+                setQuery("");
+                setGroup("all");
+                setSectorFilter("all");
+                navigate({ search: () => ({}), replace: true });
+              }}
+              className="press mt-6 inline-flex items-center px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] border border-ink hover:bg-ink hover:text-background cursor-pointer"
+            >
+              Reset filters
+            </button>
+          </section>
+        )}
 
-
-      {showBoard && filteredBoard.length > 0 && (
-        <section id="leadership" className="container-prose py-20 scroll-mt-40">
-          <SectionHeader
-            kicker="Leadership"
-            title="Executive Board"
-            blurb="Seven students elected each spring to lead the fund's strategy, research, risk, recruiting, education, and operations."
-            count={hasFilter ? filteredBoard.length : undefined}
-          />
-          <RevealGroup className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" stagger={0.06}>
-            {filteredBoard.map((m) => <RevealItem key={m.name} className="h-full [&>div]:h-full"><MemberCard m={m} variant="board" onSelect={setSelected} /></RevealItem>)}
-          </RevealGroup>
-        </section>
-      )}
-
-      {showSectors && filteredSectors.length > 0 && (
-        <section className="border-y border-border bg-secondary/30 py-20">
-          <div className="container-prose">
+        {showBoard && filteredBoard.length > 0 && (
+          <section id="leadership" className="container-prose py-20 scroll-mt-40">
             <SectionHeader
-              kicker="Equity Research"
-              title="Sector Teams"
-              blurb="Eight teams cover the equity universe. Each team is led by a Sector Head with senior analysts and rotating junior analysts."
-              count={hasFilter ? filteredSectors.reduce((s, t) => s + t.members.length, 0) : undefined}
+              kicker="Leadership"
+              title="Executive Board"
+              blurb="Seven students elected each spring to lead the fund's strategy, research, risk, recruiting, education, and operations."
+              count={hasFilter ? filteredBoard.length : undefined}
             />
-            <div className="space-y-16">
-              {filteredSectors.map((team) => (
-                <div key={team.name} id={`sector-${sectorSlug(team.name)}`} className="scroll-mt-40">
-                  <div className="mb-8 flex flex-wrap items-end justify-between gap-4 border-b border-border pb-4">
-                    <div>
-                      <h3 className="font-display text-2xl font-bold">{team.name}</h3>
-                      <p className="mt-1 max-w-2xl text-sm text-muted-foreground">{team.description}</p>
-                    </div>
-                    <span className="text-xs uppercase tracking-[0.18em] text-gold-deep">
-                      {team.members.length} {team.members.length === 1 ? "member" : "members"}
-                      {team.openSeats > 0 && (
-                        <> · {team.openSeats} open</>
-                      )}
-                    </span>
-                  </div>
-                  <RevealGroup className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" stagger={0.05}>
-                    {team.members.map((m) => <RevealItem key={m.name} className="h-full [&>div]:h-full"><MemberCard m={m} onSelect={setSelected} /></RevealItem>)}
-                    {team.openSeats > 0 && !query && (
-                      <RevealItem className="h-full [&>a]:h-full"><OpenSeatsCard count={team.openSeats} role="Analyst" /></RevealItem>
-                    )}
-                  </RevealGroup>
-                </div>
+            <RevealGroup className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" stagger={0.06}>
+              {filteredBoard.map((m) => (
+                <RevealItem key={m.name} className="h-full [&>div]:h-full">
+                  <MemberCard m={m} variant="board" onSelect={setSelected} />
+                </RevealItem>
               ))}
+            </RevealGroup>
+          </section>
+        )}
+
+        {showSectors && filteredSectors.length > 0 && (
+          <section className="border-y border-border bg-secondary/30 py-20">
+            <div className="container-prose">
+              <SectionHeader
+                kicker="Equity Research"
+                title="Sector Teams"
+                blurb="Eight teams cover the equity universe. Each team is led by a Portfolio Manager with senior analysts and rotating junior analysts."
+                count={
+                  hasFilter ? filteredSectors.reduce((s, t) => s + t.members.length, 0) : undefined
+                }
+              />
+              <div className="space-y-16">
+                {filteredSectors.map((team) => (
+                  <div
+                    key={team.name}
+                    id={`sector-${sectorSlug(team.name)}`}
+                    className="scroll-mt-40"
+                  >
+                    <div className="mb-8 flex flex-wrap items-end justify-between gap-4 border-b border-border pb-4">
+                      <div>
+                        <h3 className="font-display text-2xl font-bold">{team.name}</h3>
+                        <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
+                          {team.description}
+                        </p>
+                      </div>
+                      <span className="text-xs uppercase tracking-[0.18em] text-gold-deep">
+                        {team.members.length} {team.members.length === 1 ? "member" : "members"}
+                      </span>
+                    </div>
+                    <RevealGroup
+                      className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+                      stagger={0.05}
+                    >
+                      {team.members.map((m) => (
+                        <RevealItem key={m.name} className="h-full [&>div]:h-full">
+                          <MemberCard m={m} onSelect={setSelected} />
+                        </RevealItem>
+                      ))}
+                    </RevealGroup>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        </section>
-      )}
+          </section>
+        )}
 
-      {showFim && filteredFim.length > 0 && (
-        <section id="fim" className="container-prose py-20 scroll-mt-40">
-          <SectionHeader
-            kicker="Cross-Asset"
-            title="Fixed Income & Macro Team"
-            blurb="Covers rates, credit, FX, and global macro themes, informing both the fixed income sleeve and the equity portfolio's macro overlay."
-            count={hasFilter ? filteredFim.length : undefined}
-          />
-          <RevealGroup className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" stagger={0.06}>
-            {filteredFim.map((m) => <RevealItem key={m.name} className="h-full [&>div]:h-full"><MemberCard m={m} onSelect={setSelected} /></RevealItem>)}
-          </RevealGroup>
-        </section>
-      )}
-
-      {showPm && filteredPm.length > 0 && (
-        <section id="pm" className="border-t border-border bg-secondary/30 py-20 scroll-mt-40">
-          <div className="container-prose">
+        {showFim && filteredFim.length > 0 && (
+          <section id="fim" className="container-prose py-20 scroll-mt-40">
             <SectionHeader
-              kicker="Portfolio + Risk Management"
-              title="Portfolio + Risk Management"
-              blurb="Implement allocation decisions, monitor portfolio risk, manage trading and rebalancing, and own performance attribution."
-              count={hasFilter ? filteredPm.length : undefined}
+              kicker="Cross-Asset"
+              title="Fixed Income & Macro Team"
+              blurb="Covers rates, credit, FX, and global macro themes, informing both the fixed income sleeve and the equity portfolio's macro overlay."
+              count={hasFilter ? filteredFim.length : undefined}
             />
             <RevealGroup className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" stagger={0.06}>
-              {filteredPm.map((m) => <RevealItem key={m.name} className="h-full [&>div]:h-full"><MemberCard m={m} onSelect={setSelected} /></RevealItem>)}
+              {filteredFim.map((m) => (
+                <RevealItem key={m.name} className="h-full [&>div]:h-full">
+                  <MemberCard m={m} onSelect={setSelected} />
+                </RevealItem>
+              ))}
             </RevealGroup>
-          </div>
-        </section>
-      )}
+          </section>
+        )}
 
-      {showFaculty && filteredFaculty.length > 0 && (
-        <section id="faculty" className="border-t border-border py-20 scroll-mt-40">
-          <div className="container-prose">
-            <SectionHeader
-              kicker="Faculty"
-              title="Faculty Advisors"
-              blurb="Daniels School of Business faculty who advise SMIF on curriculum, risk, and investment process."
-              count={hasFilter ? filteredFaculty.length : undefined}
-            />
-            <RevealGroup className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" stagger={0.06}>
-              {filteredFaculty.map((m) => <RevealItem key={m.name} className="h-full [&>div]:h-full"><MemberCard m={m} onSelect={setSelected} /></RevealItem>)}
-            </RevealGroup>
-          </div>
-        </section>
-      )}
+        {showPm && filteredPm.length > 0 && (
+          <section id="pm" className="border-t border-border bg-secondary/30 py-20 scroll-mt-40">
+            <div className="container-prose">
+              <SectionHeader
+                kicker="Portfolio + Risk Management"
+                title="Portfolio + Risk Management"
+                blurb="Implement allocation decisions, monitor portfolio risk, manage trading and rebalancing, and own performance attribution."
+                count={hasFilter ? filteredPm.length : undefined}
+              />
+              <RevealGroup className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" stagger={0.06}>
+                {filteredPm.map((m) => (
+                  <RevealItem key={m.name} className="h-full [&>div]:h-full">
+                    <MemberCard m={m} onSelect={setSelected} />
+                  </RevealItem>
+                ))}
+              </RevealGroup>
+            </div>
+          </section>
+        )}
+
+        {showFaculty && filteredFaculty.length > 0 && (
+          <section id="faculty" className="border-t border-border py-20 scroll-mt-40">
+            <div className="container-prose">
+              <SectionHeader
+                kicker="Faculty"
+                title="Faculty Advisors"
+                blurb="Daniels School of Business faculty who advise SMIF on curriculum, risk, and investment process."
+                count={hasFilter ? filteredFaculty.length : undefined}
+              />
+              <RevealGroup className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" stagger={0.06}>
+                {filteredFaculty.map((m) => (
+                  <RevealItem key={m.name} className="h-full [&>div]:h-full">
+                    <MemberCard m={m} onSelect={setSelected} />
+                  </RevealItem>
+                ))}
+              </RevealGroup>
+            </div>
+          </section>
+        )}
       </div>
 
       <MemberDetailSheet member={selected} onClose={() => setSelected(null)} />
     </>
   );
 }
-

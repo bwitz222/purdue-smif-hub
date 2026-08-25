@@ -22,7 +22,9 @@ export function PrepCard({
   const bg = background === "card" ? "bg-card" : "bg-background";
   const Heading = headingLevel;
   return (
-    <div className={`group h-full border border-border ${bg} p-6 hover-lift-sm hover:border-gold/50`}>
+    <div
+      className={`group h-full border border-border ${bg} p-6 hover-lift-sm hover:border-gold/50`}
+    >
       <Heading className="font-display text-lg font-bold">{title}</Heading>
       <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
         {items.map((item) => (

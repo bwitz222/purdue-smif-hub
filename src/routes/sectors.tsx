@@ -22,7 +22,8 @@ import { getLiveQuotes } from "@/lib/quotes.functions";
 import { getRiskMetrics } from "@/lib/risk.functions";
 import { applyQuotes, teamAllocations, baseHoldings } from "@/lib/portfolio";
 import { liveQueryOptions } from "@/lib/live-query";
-import { sectorTeams, fixedIncomeMacro, portfolioManagers } from "@/data/team";
+import { sectorTeams, fixedIncomeMacro, portfolioManagers, LEAD_ROLE } from "@/data/team";
+import type { Member } from "@/components/MemberCard";
 
 type EquityTeam = {
   Icon: typeof Cpu;
@@ -32,19 +33,59 @@ type EquityTeam = {
 type ProcessTeam = EquityTeam;
 
 const EQUITY_TEAMS: EquityTeam[] = [
-  { Icon: Cpu, name: "Information Technology", lead: "Software, semiconductors, and IT services across mega-caps and emerging growth." },
-  { Icon: HeartPulse, name: "Healthcare & Utilities", lead: "Pharma, biotech, med-tech, managed care, and regulated utilities." },
-  { Icon: Banknote, name: "Financials", lead: "Banks, insurers, asset managers, and capital markets infrastructure." },
-  { Icon: ShoppingBag, name: "Consumer Discretionary", lead: "Retail, autos, leisure, and other cyclical consumer names." },
-  { Icon: Home, name: "Consumer Staples", lead: "Food, beverage, household products, and other defensive consumer names." },
-  { Icon: Factory, name: "Industrials", lead: "Aerospace & defense, machinery, transports, and capital goods (incl. materials)." },
-  { Icon: Zap, name: "Energy & Real Estate", lead: "Integrated energy, E&P, midstream, refiners, and listed real estate (REITs)." },
-  { Icon: Wifi, name: "Communications", lead: "Telecom, media, interactive entertainment, and select platform names." },
+  {
+    Icon: Cpu,
+    name: "Information Technology",
+    lead: "Software, semiconductors, and IT services across mega-caps and emerging growth.",
+  },
+  {
+    Icon: HeartPulse,
+    name: "Healthcare & Utilities",
+    lead: "Pharma, biotech, med-tech, managed care, and regulated utilities.",
+  },
+  {
+    Icon: Banknote,
+    name: "Financials",
+    lead: "Banks, insurers, asset managers, and capital markets infrastructure.",
+  },
+  {
+    Icon: ShoppingBag,
+    name: "Consumer Discretionary",
+    lead: "Retail, autos, leisure, and other cyclical consumer names.",
+  },
+  {
+    Icon: Home,
+    name: "Consumer Staples",
+    lead: "Food, beverage, household products, and other defensive consumer names.",
+  },
+  {
+    Icon: Factory,
+    name: "Industrials",
+    lead: "Aerospace & defense, machinery, transports, and capital goods (incl. materials).",
+  },
+  {
+    Icon: Zap,
+    name: "Energy & Real Estate",
+    lead: "Integrated energy, E&P, midstream, refiners, and listed real estate (REITs).",
+  },
+  {
+    Icon: Wifi,
+    name: "Communications",
+    lead: "Telecom, media, interactive entertainment, and select platform names.",
+  },
 ];
 
 const PROCESS_TEAMS: ProcessTeam[] = [
-  { Icon: LineChart, name: "Fixed Income & Macro", lead: "Rates, credit, FX, and global macro themes that frame equity positioning." },
-  { Icon: Briefcase, name: "Portfolio + Risk Management", lead: "Allocation, risk oversight, trading, and performance attribution." },
+  {
+    Icon: LineChart,
+    name: "Fixed Income & Macro",
+    lead: "Rates, credit, FX, and global macro themes that frame equity positioning.",
+  },
+  {
+    Icon: Briefcase,
+    name: "Portfolio + Risk Management",
+    lead: "Allocation, risk oversight, trading, and performance attribution.",
+  },
 ];
 
 const ALL_TEAM_NAMES = [...EQUITY_TEAMS.map((t) => t.name), ...PROCESS_TEAMS.map((t) => t.name)];
@@ -54,10 +95,15 @@ export const Route = createFileRoute("/sectors")({
   head: () => ({
     meta: [
       { title: "Sector Coverage Teams & Equity Research | Purdue SMIF" },
-      { name: "description", content: "Purdue SMIF covers the market bottom-up: eight equity sector teams plus Fixed Income & Macro and Portfolio + Risk Management, each led by a student PM." },
+      {
+        name: "description",
+        content:
+          "Purdue SMIF covers the market bottom-up: eight equity sector teams plus Fixed Income & Macro and Portfolio + Risk Management, each led by a student PM.",
+      },
       ...socialMeta({
         title: "Coverage Teams | Purdue SMIF",
-        description: "Eight equity sector teams plus Fixed Income & Macro and Portfolio + Risk Management cover the SMIF investment universe.",
+        description:
+          "Eight equity sector teams plus Fixed Income & Macro and Portfolio + Risk Management cover the SMIF investment universe.",
         url: canonical("/sectors"),
         image: OG_SECTORS,
       }),
@@ -70,7 +116,8 @@ export const Route = createFileRoute("/sectors")({
           "@context": "https://schema.org",
           "@type": "ItemList",
           name: "Purdue SMIF Coverage Teams",
-          description: "Equity sector teams, Fixed Income & Macro, and Portfolio + Risk Management groups at the Purdue Student Managed Investment Fund.",
+          description:
+            "Equity sector teams, Fixed Income & Macro, and Portfolio + Risk Management groups at the Purdue Student Managed Investment Fund.",
           numberOfItems: ALL_TEAM_NAMES.length,
           itemListElement: ALL_TEAM_NAMES.map((name, i) => ({
             "@type": "ListItem",
@@ -85,31 +132,24 @@ export const Route = createFileRoute("/sectors")({
 });
 
 const fmtPct = (n: number) => `${n.toFixed(1)}%`;
-const fmtUSD0 = (n: number) => n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+const fmtUSD0 = (n: number) =>
+  n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
 
-// Portfolio manager name(s) for a given equity team, pulled from team.ts.
-// make() sets the first member of each sector team's `members` to role
-// "Portfolio Manager", so we look at that leading entry (and skip
-// unfilled placeholder seats).
+// Portfolio manager name(s) for a given team, pulled from team.ts. Matched on
+// the declared role rather than on array position: a team whose lead seat is
+// vacant must return [] and render "Open seat", never promote whoever happens
+// to sit first in the list.
+const leadsOf = (members: Member[]): string[] =>
+  members.filter((m) => m.role === LEAD_ROLE).map((m) => m.name);
+
 function pmsForEquityTeam(name: string): string[] {
   const t = sectorTeams.find((s) => s.name === name);
-  if (!t) return [];
-  const first = t.members[0];
-  if (first && !first.placeholder && first.name) return [first.name];
-  return [];
+  return t ? leadsOf(t.members) : [];
 }
 
 function pmsForProcessTeam(name: string): string[] {
-  if (name === "Fixed Income & Macro") {
-    return fixedIncomeMacro
-      .filter((m) => !m.placeholder && m.role === "Portfolio Manager")
-      .map((m) => m.name);
-  }
-  if (name === "Portfolio + Risk Management") {
-    return portfolioManagers
-      .filter((m) => !m.placeholder && m.role === "Portfolio Manager")
-      .map((m) => m.name);
-  }
+  if (name === "Fixed Income & Macro") return leadsOf(fixedIncomeMacro);
+  if (name === "Portfolio + Risk Management") return leadsOf(portfolioManagers);
   return [];
 }
 
@@ -140,7 +180,11 @@ function Sectors() {
   // True session date of the quotes (Polygon's latest completed close), from
   // the risk metrics' as_of — not quoteData.cachedAt, which is the fetch time.
   const asOf = risk?.asOf
-    ? new Date(risk.asOf + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+    ? new Date(risk.asOf + "T00:00:00").toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      })
     : null;
 
   return (
@@ -149,17 +193,25 @@ function Sectors() {
         <div className="container-prose py-24">
           <Reveal>
             <span className="rule-gold mb-5 block" />
-            <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">Coverage</span>
-            <h1 className="mt-4 font-display text-5xl font-bold md:text-6xl max-w-3xl">Our teams.</h1>
+            <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">
+              Coverage
+            </span>
+            <h1 className="mt-4 font-display text-5xl font-bold md:text-6xl max-w-3xl">
+              Our teams.
+            </h1>
             <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
-              Eight equity sector teams cover the investable universe from the bottom up. A Fixed Income &amp; Macro group frames the rate and credit backdrop, and Portfolio + Risk Management oversees allocation, trading, and performance.
+              Eight equity sector teams cover the investable universe from the bottom up. A Fixed
+              Income &amp; Macro group frames the rate and credit backdrop, and Portfolio + Risk
+              Management oversees allocation, trading, and performance.
             </p>
             <div
               aria-live="polite"
               className="mt-6 inline-flex items-center gap-2 border border-border bg-background/60 px-3 py-1.5 text-xs font-mono text-muted-foreground"
             >
               {isFetching ? (
-                <><RefreshCw className="h-3 w-3 animate-spin text-gold" /> Refreshing allocations…</>
+                <>
+                  <RefreshCw className="h-3 w-3 animate-spin text-gold" /> Refreshing allocations…
+                </>
               ) : asOf ? (
                 <>
                   <span className="h-1.5 w-1.5 rounded-full bg-gold" aria-hidden="true" />
@@ -216,7 +268,11 @@ function Sectors() {
                         Portfolio Manager
                       </div>
                       <div className="mt-1.5 text-sm text-ink">
-                        {pms.length ? pms.join(", ") : <span className="text-muted-foreground italic">Open seat</span>}
+                        {pms.length ? (
+                          pms.join(", ")
+                        ) : (
+                          <span className="text-muted-foreground italic">Open seat</span>
+                        )}
                       </div>
                     </div>
                     <div>
@@ -275,7 +331,11 @@ function Sectors() {
                       {pms.length > 1 ? "Portfolio Managers" : "Portfolio Manager"}
                     </div>
                     <div className="mt-1.5 text-sm text-ink">
-                      {pms.length ? pms.join(", ") : <span className="text-muted-foreground italic">Open seat</span>}
+                      {pms.length ? (
+                        pms.join(", ")
+                      ) : (
+                        <span className="text-muted-foreground italic">Open seat</span>
+                      )}
                     </div>
                   </div>
                   <div className="mt-auto pt-8">

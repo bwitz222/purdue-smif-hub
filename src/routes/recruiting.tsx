@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowRight, Calendar, CalendarPlus, MapPin, Clock, Download } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useReducedMotion } from "framer-motion";
+import { jumpToSection } from "@/lib/jump-to";
 import { socialMeta, canonical, breadcrumbLd, OG_RECRUITING } from "@/lib/seo";
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import { OnThisPage, type PageSection } from "@/components/OnThisPage";
@@ -31,8 +33,10 @@ const SECTIONS: readonly PageSection[] = [
 // no-JS / SSR.
 
 function parseEventStartMs(event: Event): number {
-  const { start } = parseEventTimes(event.time);
-  // Eastern offset for the Aug–Sep recruiting window is EDT (-04:00).
+  const times = parseEventTimes(event.time);
+  // Eastern offset for the Aug–Sep recruiting window is EDT (-04:00). A TBD
+  // slot has no hour, so it sorts from the start of its day.
+  const start = times ? times.start : { h: 0, m: 0 };
   const iso = `${event.iso}T${pad2(start.h)}:${pad2(start.m)}:00-04:00`;
   return new Date(iso).getTime();
 }
@@ -67,8 +71,12 @@ function useCountdown() {
 function CountdownUnit({ value, label }: { value: number | string; label: string }) {
   return (
     <div className="flex flex-1 sm:flex-none flex-col items-center border border-gold/30 bg-ink/40 px-4 py-3 min-w-[72px] hover-raise">
-      <span className="font-display text-3xl font-bold text-gold tabular-nums md:text-4xl">{value}</span>
-      <span className="mt-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-on-dark-secondary">{label}</span>
+      <span className="font-display text-3xl font-bold text-gold tabular-nums md:text-4xl">
+        {value}
+      </span>
+      <span className="mt-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-on-dark-secondary">
+        {label}
+      </span>
     </div>
   );
 }
@@ -100,7 +108,8 @@ function Countdown() {
           Applications Closed
         </div>
         <p className="mt-2 text-sm text-on-dark-secondary">
-          Applications for the Fall 2026 cycle are closed. Watch this page or follow us on Instagram for the next application window.
+          Applications for the Fall 2026 cycle are closed. Watch this page or follow us on Instagram
+          for the next application window.
         </p>
       </div>
     );
@@ -122,7 +131,9 @@ function Countdown() {
       <p className="mt-1 text-sm text-on-dark-secondary">{sub}</p>
       {/* Accessible plain-text countdown, hidden visually. Always present
           so screen readers + no-JS users get a complete sentence. */}
-      <span className="sr-only" aria-live="polite">{srLabel}</span>
+      <span className="sr-only" aria-live="polite">
+        {srLabel}
+      </span>
       <div className="mt-5 flex flex-wrap gap-3" aria-hidden="true">
         <CountdownUnit value={c ? c.days : "--"} label="Days" />
         <CountdownUnit value={c ? pad(c.hours) : "--"} label="Hours" />
@@ -133,27 +144,85 @@ function Countdown() {
   );
 }
 
-
-
 type Event = {
   date: string; // display date
-  iso: string;  // for sorting
+  iso: string; // for sorting
   name: string;
   time: string;
   location: string;
 };
 
 const CALENDAR: Event[] = [
-  { iso: "2026-08-22", date: "Sat, Aug 22", name: "B-Involved Fair",          time: "12:00 - 3:00 PM",  location: "Memorial Mall (TBD)" },
-  { iso: "2026-08-25", date: "Tue, Aug 25", name: "SMIF Callout 1",            time: "7:30 - 8:30 PM",   location: "Rawls 1086" },
-  { iso: "2026-08-26", date: "Wed, Aug 26", name: "SMIF Coffee Chats 1",       time: "7:15 - 8:00 PM",   location: "Rawls 1011" },
-  { iso: "2026-08-27", date: "Thu, Aug 27", name: "Daniels Club Expo",         time: "12:00 - 4:00 PM",  location: "Rawls Atrium" },
-  { iso: "2026-08-27", date: "Thu, Aug 27", name: "SMIF Callout 2",            time: "7:30 - 8:30 PM",   location: "Rawls 1086" },
-  { iso: "2026-08-31", date: "Mon, Aug 31", name: "SMIF Finance Club Consortium", time: "12:00 - 2:30 PM", location: "Rawls Atrium" },
-  { iso: "2026-08-31", date: "Mon, Aug 31", name: "SMIF Coffee Chats 2",       time: "7:00 - 8:00 PM",   location: "Rawls 1086" },
-  { iso: "2026-09-01", date: "Tue, Sep 1",  name: "SMIF Callout 3",            time: "7:30 - 8:30 PM",   location: "Rawls 1086" },
-  { iso: "2026-09-08", date: "Mon, Sep 8",  name: "SMIF Interviews, Day A",    time: "TBD",              location: "Young Hall 223, 217, 219, 213" },
-  { iso: "2026-09-09", date: "Tue, Sep 9",  name: "SMIF Interviews, Day B",    time: "TBD",              location: "Young Hall 223, 217, 219, 213" },
+  {
+    iso: "2026-08-22",
+    date: "Sat, Aug 22",
+    name: "B-Involved Fair",
+    time: "12:00 - 3:00 PM",
+    location: "Memorial Mall (TBD)",
+  },
+  {
+    iso: "2026-08-25",
+    date: "Tue, Aug 25",
+    name: "SMIF Callout 1",
+    time: "7:30 - 8:30 PM",
+    location: "Rawls 1086",
+  },
+  {
+    iso: "2026-08-26",
+    date: "Wed, Aug 26",
+    name: "SMIF Coffee Chats 1",
+    time: "7:15 - 8:00 PM",
+    location: "Rawls 1011",
+  },
+  {
+    iso: "2026-08-27",
+    date: "Thu, Aug 27",
+    name: "Daniels Club Expo",
+    time: "12:00 - 4:00 PM",
+    location: "Rawls Atrium",
+  },
+  {
+    iso: "2026-08-27",
+    date: "Thu, Aug 27",
+    name: "SMIF Callout 2",
+    time: "7:30 - 8:30 PM",
+    location: "Rawls 1086",
+  },
+  {
+    iso: "2026-08-31",
+    date: "Mon, Aug 31",
+    name: "SMIF Finance Club Consortium",
+    time: "12:00 - 2:30 PM",
+    location: "Rawls Atrium",
+  },
+  {
+    iso: "2026-08-31",
+    date: "Mon, Aug 31",
+    name: "SMIF Coffee Chats 2",
+    time: "7:00 - 8:00 PM",
+    location: "Rawls 1086",
+  },
+  {
+    iso: "2026-09-01",
+    date: "Tue, Sep 1",
+    name: "SMIF Callout 3",
+    time: "7:30 - 8:30 PM",
+    location: "Rawls 1086",
+  },
+  {
+    iso: "2026-09-08",
+    date: "Tue, Sep 8",
+    name: "SMIF Interviews, Day A",
+    time: "TBD",
+    location: "Young Hall 223, 217, 219, 213",
+  },
+  {
+    iso: "2026-09-09",
+    date: "Wed, Sep 9",
+    name: "SMIF Interviews, Day B",
+    time: "TBD",
+    location: "Young Hall 223, 217, 219, 213",
+  },
 ];
 
 // Parse "7:30 PM" / "12:00 PM" — returns { h, m } in 24h, or null
@@ -169,15 +238,22 @@ function parseTimeToken(t: string): { h: number; m: number } | null {
 }
 
 // Parse event.time like "7:30 - 8:30 PM" or "12:00 - 3:00 PM" — meridiem from end token applies to start if missing
-function parseEventTimes(time: string): { start: { h: number; m: number }; end: { h: number; m: number } } {
-  if (time === "TBD") {
-    return { start: { h: 17, m: 0 }, end: { h: 18, m: 0 } };
-  }
+function parseEventTimes(time: string): {
+  start: { h: number; m: number };
+  end: { h: number; m: number };
+} | null {
+  // A TBD slot has no time. It used to return 17:00-18:00, and that invented
+  // hour was published as a real 5 PM event in the .ics, the Google Calendar
+  // link and the Event structured data — so a student who clicked "add to
+  // Google Calendar" got a fabricated interview time on their calendar.
+  // Callers render these as all-day events instead.
+  if (time === "TBD") return null;
   // Accept hyphen or en-dash range separators (surrounded by spaces so
   // clock values like "7:30" are never split).
   const parts = time.split(/\s+[–-]\s+/).map((s) => s.trim());
   if (parts.length !== 2) return { start: { h: 17, m: 0 }, end: { h: 18, m: 0 } };
-  let [startStr, endStr] = parts;
+  const [rawStart, endStr] = parts;
+  let startStr = rawStart;
   // If start lacks meridiem, inherit from end
   if (!/AM|PM/i.test(startStr)) {
     const merMatch = endStr.match(/AM|PM/i);
@@ -188,28 +264,50 @@ function parseEventTimes(time: string): { start: { h: number; m: number }; end: 
   return { start, end };
 }
 
-function pad2(n: number) { return String(n).padStart(2, "0"); }
+function pad2(n: number) {
+  return String(n).padStart(2, "0");
+}
 
 // Returns "2026-08-25T19:30:00-04:00" (EDT for Aug/Sep 2026)
 function buildEventBody(event: Event): string {
-  const prefix = event.time === "TBD"
-    ? "Note: time TBD. Your specific interview slot will be communicated by email. Update this event when you receive your slot.\n\n"
-    : "";
+  const prefix =
+    event.time === "TBD"
+      ? "Note: time TBD. Your specific interview slot will be communicated by email. Update this event when you receive your slot.\n\n"
+      : "";
   return `${prefix}Purdue SMIF recruiting event.\n\nLocation: ${event.location}\nRecruiting page: https://www.purduesmif.org/recruiting\nQuestions: smif26@purdue.edu`;
 }
 
 function slugify(s: string): string {
-  return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  return s
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 }
 
 function icsEscape(s: string): string {
-  return s.replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\r?\n/g, "\\n");
+  return s
+    .replace(/\\/g, "\\\\")
+    .replace(/;/g, "\\;")
+    .replace(/,/g, "\\,")
+    .replace(/\r?\n/g, "\\n");
 }
 
 function toIcsLocal(iso: string, t: { h: number; m: number }): string {
   // YYYYMMDDTHHMMSS (floating with TZID)
   const ymd = iso.replace(/-/g, "");
   return `${ymd}T${pad2(t.h)}${pad2(t.m)}00`;
+}
+
+/** "2026-09-08" -> "20260908" (ICS DATE value). */
+function icsDate(iso: string): string {
+  return iso.replace(/-/g, "");
+}
+
+/** Next calendar day, in UTC so no local-timezone shift can occur. */
+function nextDayIso(iso: string): string {
+  const d = new Date(`${iso}T00:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + 1);
+  return d.toISOString().slice(0, 10);
 }
 
 function nowUtcStamp(): string {
@@ -229,13 +327,19 @@ function generateICS(events: Event[] = CALENDAR): string {
     "X-WR-TIMEZONE:America/New_York",
   ];
   for (const e of events) {
-    const { start, end } = parseEventTimes(e.time);
+    const times = parseEventTimes(e.time);
+    const when = times
+      ? [
+          `DTSTART;TZID=America/New_York:${toIcsLocal(e.iso, times.start)}`,
+          `DTEND;TZID=America/New_York:${toIcsLocal(e.iso, times.end)}`,
+        ]
+      : // All-day: DTEND is exclusive, so it is the following day.
+        [`DTSTART;VALUE=DATE:${icsDate(e.iso)}`, `DTEND;VALUE=DATE:${icsDate(nextDayIso(e.iso))}`];
     lines.push(
       "BEGIN:VEVENT",
       `UID:${e.iso}-${slugify(e.name)}@purduesmif.org`,
       `DTSTAMP:${stamp}`,
-      `DTSTART;TZID=America/New_York:${toIcsLocal(e.iso, start)}`,
-      `DTEND;TZID=America/New_York:${toIcsLocal(e.iso, end)}`,
+      ...when,
       `SUMMARY:${icsEscape(e.name)}`,
       `LOCATION:${icsEscape(e.location)}`,
       `DESCRIPTION:${icsEscape(buildEventBody(e))}`,
@@ -262,10 +366,14 @@ function downloadICS() {
 // Google Calendar render URL — opens a prefilled event the user just clicks "Save" on.
 // Works for any Google account (personal Gmail or Purdue's Google Workspace).
 function toGoogleCalendarLink(event: Event): string {
-  const { start, end } = parseEventTimes(event.time);
-  const ymd = event.iso.replace(/-/g, "");
-  // Floating local time + ctz tells Google to interpret it in Eastern.
-  const dates = `${ymd}T${pad2(start.h)}${pad2(start.m)}00/${ymd}T${pad2(end.h)}${pad2(end.m)}00`;
+  const times = parseEventTimes(event.time);
+  const ymd = icsDate(event.iso);
+  // Floating local time + ctz tells Google to interpret it in Eastern. A TBD
+  // slot becomes an all-day entry (YYYYMMDD/YYYYMMDD, end exclusive) rather
+  // than a made-up hour.
+  const dates = times
+    ? `${ymd}T${pad2(times.start.h)}${pad2(times.start.m)}00/${ymd}T${pad2(times.end.h)}${pad2(times.end.m)}00`
+    : `${ymd}/${icsDate(nextDayIso(event.iso))}`;
   const params = new URLSearchParams({
     action: "TEMPLATE",
     text: event.name,
@@ -282,10 +390,15 @@ export const Route = createFileRoute("/recruiting")({
   head: () => ({
     meta: [
       { title: "Recruiting Calendar & Interview Prep | Purdue SMIF" },
-      { name: "description", content: "How to join Purdue's student investment club: the Fall 2026 calendar of callouts, coffee chats, and interviews, plus a full interview prep guide." },
+      {
+        name: "description",
+        content:
+          "How to join Purdue's student investment club: the Fall 2026 calendar of callouts, coffee chats, and interviews, plus a full interview prep guide.",
+      },
       ...socialMeta({
         title: "Recruiting Calendar & Interview Prep | Purdue SMIF",
-        description: "Callouts, coffee chats, interviews, and a behavioral + technical interview prep guide for joining Purdue SMIF.",
+        description:
+          "Callouts, coffee chats, interviews, and a behavioral + technical interview prep guide for joining Purdue SMIF.",
         url: canonical("/recruiting"),
         image: OG_RECRUITING,
       }),
@@ -296,13 +409,19 @@ export const Route = createFileRoute("/recruiting")({
         type: "application/ld+json",
         children: JSON.stringify(
           CALENDAR.map((e) => {
-            const { start, end } = parseEventTimes(e.time);
+            const times = parseEventTimes(e.time);
             return {
               "@context": "https://schema.org",
               "@type": "Event",
               name: `Purdue SMIF: ${e.name}`,
-              startDate: `${e.iso}T${pad2(start.h)}:${pad2(start.m)}:00-04:00`,
-              endDate: `${e.iso}T${pad2(end.h)}:${pad2(end.m)}:00-04:00`,
+              // Date-only when the slot is still TBD — schema.org accepts a
+              // bare date, and it is the honest statement of what is known.
+              startDate: times
+                ? `${e.iso}T${pad2(times.start.h)}:${pad2(times.start.m)}:00-04:00`
+                : e.iso,
+              endDate: times
+                ? `${e.iso}T${pad2(times.end.h)}:${pad2(times.end.m)}:00-04:00`
+                : e.iso,
               eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
               eventStatus: "https://schema.org/EventScheduled",
               location: {
@@ -329,18 +448,24 @@ export const Route = createFileRoute("/recruiting")({
 function Recruiting() {
   // SSR-safe "now" — null on server, set on client mount
   const [nowMs, setNowMs] = useState<number | null>(null);
-  useEffect(() => { setNowMs(Date.now()); }, []);
+  useEffect(() => {
+    setNowMs(Date.now());
+  }, []);
+  const reduce = useReducedMotion();
 
   return (
     <>
       <section className="border-b border-border bg-ink text-background">
         <div className="container-prose py-24">
-          <span className="animate-fade-in text-xs font-semibold uppercase tracking-[0.3em] text-gold">Recruiting</span>
+          <span className="animate-fade-in text-xs font-semibold uppercase tracking-[0.3em] text-gold">
+            Recruiting
+          </span>
           <h1 className="animate-fade-up mt-4 font-display text-5xl font-bold md:text-6xl max-w-3xl">
             Join the Fund.
           </h1>
           <p className="animate-fade-up delay-100 mt-6 max-w-2xl text-lg text-background/70">
-            Our recruiting calendar, plus a complete guide to preparing for both behavioral and technical interviews with SMIF.
+            Our recruiting calendar, plus a complete guide to preparing for both behavioral and
+            technical interviews with SMIF.
           </p>
           <div className="animate-fade-up delay-200 mt-8 flex flex-wrap gap-3">
             <a
@@ -353,24 +478,34 @@ function Recruiting() {
             </a>
             <a
               href="#prep"
-              className="press inline-flex items-center gap-2 border border-background/30 px-6 py-3 text-sm font-semibold text-background hover:border-gold hover:text-gold"
+              onClick={(e) => {
+                if (jumpToSection("prep", { reduce })) e.preventDefault();
+              }}
+              className="press inline-flex items-center gap-2 border border-background/30 px-6 py-3 text-sm font-semibold text-background hover:border-gold hover:text-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
             >
               Jump to Prep Guide
             </a>
           </div>
           <Countdown />
         </div>
-
       </section>
 
       {/* Calendar */}
       <OnThisPage sections={SECTIONS} />
 
-      <section id="calendar" aria-labelledby="calendar-h" className="container-prose py-20 section-anchor">
+      <section
+        id="calendar"
+        aria-labelledby="calendar-h"
+        className="container-prose py-20 section-anchor"
+      >
         <Reveal className="flex items-end justify-between gap-6 border-b border-border pb-6">
           <div>
-            <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">Fall 2026</span>
-            <h2 id="calendar-h" className="mt-3 font-display text-3xl font-bold md:text-4xl">Recruiting Calendar</h2>
+            <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">
+              Fall 2026
+            </span>
+            <h2 id="calendar-h" className="mt-3 font-display text-3xl font-bold md:text-4xl">
+              Recruiting Calendar
+            </h2>
           </div>
           <span className="hidden md:inline font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
             All times Eastern
@@ -378,14 +513,15 @@ function Recruiting() {
         </Reveal>
 
         <p className="mt-4 text-sm text-muted-foreground">
-          Select any event to open it prefilled in Google Calendar, or download the full schedule below.
+          Select any event to open it prefilled in Google Calendar, or download the full schedule
+          below.
         </p>
 
         <div className="mt-6">
           <button
             type="button"
             onClick={downloadICS}
-            aria-label="Download all 10 events as iCal file"
+            aria-label={`Download all ${CALENDAR.length} events as iCal file`}
             className="press group inline-flex items-center gap-2 border border-ink px-4 py-2 text-xs font-semibold uppercase tracking-wider hover:bg-ink hover:text-background cursor-pointer"
           >
             <Download className="h-3.5 w-3.5 icon-pop" />
@@ -403,7 +539,12 @@ function Recruiting() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={`Add ${e.name} on ${e.date} at ${e.time} to Google Calendar (opens in new tab)`}
-                  className={`group row-rail block w-full text-left transition hover:bg-secondary/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 px-2 -mx-2 cursor-pointer ${isPast ? "opacity-50" : ""}`}
+                  // Past rows are dimmed, but not with opacity alone: at 50%
+                  // the already-muted text fell to 2.2:1 against the page
+                  // (5 axe color-contrast failures on this route). Lifting
+                  // muted text to the foreground token inside past rows keeps
+                  // the de-emphasised look above 4.5:1.
+                  className={`group row-rail block w-full text-left transition hover:bg-secondary/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 px-2 -mx-2 cursor-pointer ${isPast ? "opacity-70 [&_.text-muted-foreground]:text-foreground" : ""}`}
                 >
                   {/* Mobile: single ≥44px stacked tap block with right-aligned add-to-cal affordance. */}
                   <div className="md:hidden flex items-start gap-3 py-4 min-h-[64px]">
@@ -417,10 +558,18 @@ function Recruiting() {
                           </span>
                         )}
                       </div>
-                      <div className="mt-1 font-display text-base font-bold leading-tight">{e.name}</div>
+                      <div className="mt-1 font-display text-base font-bold leading-tight">
+                        {e.name}
+                      </div>
                       <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-muted-foreground">
-                        <span className="inline-flex items-center gap-1"><Clock className="h-3 w-3" />{e.time}</span>
-                        <span className="inline-flex items-center gap-1"><MapPin className="h-3 w-3" />{e.location}</span>
+                        <span className="inline-flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
+                          {e.time}
+                        </span>
+                        <span className="inline-flex items-center gap-1">
+                          <MapPin className="h-3 w-3" />
+                          {e.location}
+                        </span>
                       </div>
                     </div>
                     <span
@@ -466,10 +615,12 @@ function Recruiting() {
           })}
         </RevealGroup>
 
-
         <p className="mt-6 text-sm text-muted-foreground">
           Locations and times subject to change. Email{" "}
-          <a href="mailto:smif26@purdue.edu" className="link-underline text-gold-deep font-medium hover:text-gold">
+          <a
+            href="mailto:smif26@purdue.edu"
+            className="link-underline text-gold-deep font-medium hover:text-gold"
+          >
             smif26@purdue.edu
           </a>{" "}
           to be added to our mailing list for updates.
@@ -477,14 +628,22 @@ function Recruiting() {
       </section>
 
       {/* Prep Guide */}
-      <section id="prep" aria-labelledby="prep-h" className="border-t border-border bg-secondary/40 section-anchor">
+      <section
+        id="prep"
+        aria-labelledby="prep-h"
+        className="border-t border-border bg-secondary/40 section-anchor"
+      >
         <div className="container-prose py-20">
           <Reveal>
-            <h2 id="prep-h" className="font-display text-3xl font-bold md:text-4xl">Tips &amp; Tricks to Prep</h2>
+            <h2 id="prep-h" className="font-display text-3xl font-bold md:text-4xl">
+              Tips &amp; Tricks to Prep
+            </h2>
           </Reveal>
           <Reveal delay={0.06}>
             <p className="mt-4 max-w-3xl text-muted-foreground">
-              We recruit for curiosity, work ethic, and intellectual honesty, not pedigree. A finance background helps, but we've taken students from every major. Use the guide below to walk in confident and prepared.
+              We recruit for curiosity, work ethic, and intellectual honesty, not pedigree. A
+              finance background helps, but we've taken students from every major. Use the guide
+              below to walk in confident and prepared.
             </p>
           </Reveal>
 
@@ -492,12 +651,20 @@ function Recruiting() {
           <div className="mt-14">
             <Reveal className="flex items-center gap-3">
               <span className="animate-expand-x h-px w-10 bg-gold" />
-              <span className="font-mono text-xs uppercase tracking-[0.3em] text-gold-deep">Round 1</span>
+              <span className="font-mono text-xs uppercase tracking-[0.3em] text-gold-deep">
+                Round 1
+              </span>
             </Reveal>
             <Reveal>
-              <h3 id="behavioral" className="section-anchor mt-3 font-display text-2xl font-bold md:text-3xl">Behavioral Interview</h3>
+              <h3
+                id="behavioral"
+                className="section-anchor mt-3 font-display text-2xl font-bold md:text-3xl"
+              >
+                Behavioral Interview
+              </h3>
               <p className="mt-3 max-w-3xl text-muted-foreground">
-                We want to understand who you are, why you're interested in markets, and how you work with others. Be specific, be honest, and have stories ready.
+                We want to understand who you are, why you're interested in markets, and how you
+                work with others. Be specific, be honest, and have stories ready.
               </p>
             </Reveal>
 
@@ -530,7 +697,7 @@ function Recruiting() {
                   title="Know SMIF"
                   items={[
                     "Read our About, Sectors, and Holdings pages before you walk in.",
-                    "Understand the structure: analyst → senior analyst → sector head → executive board.",
+                    "Understand the structure: analyst → senior analyst → portfolio manager → executive board.",
                     "Reference a recent publication or holding that genuinely caught your interest.",
                   ]}
                 />
@@ -553,12 +720,20 @@ function Recruiting() {
           <div className="mt-16">
             <Reveal className="flex items-center gap-3">
               <span className="animate-expand-x h-px w-10 bg-gold" />
-              <span className="font-mono text-xs uppercase tracking-[0.3em] text-gold-deep">Round 2</span>
+              <span className="font-mono text-xs uppercase tracking-[0.3em] text-gold-deep">
+                Round 2
+              </span>
             </Reveal>
             <Reveal>
-              <h3 id="technical" className="section-anchor mt-3 font-display text-2xl font-bold md:text-3xl">Technical Interview</h3>
+              <h3
+                id="technical"
+                className="section-anchor mt-3 font-display text-2xl font-bold md:text-3xl"
+              >
+                Technical Interview
+              </h3>
               <p className="mt-3 max-w-3xl text-muted-foreground">
-                You don't need to be an investment banking analyst already. We test fundamentals, market awareness, and your ability to defend an investment thesis.
+                You don't need to be an investment banking analyst already. We test fundamentals,
+                market awareness, and your ability to defend an investment thesis.
               </p>
             </Reveal>
 
@@ -612,7 +787,9 @@ function Recruiting() {
 
           {/* Day-of */}
           <Reveal className="mt-14 border border-gold/30 bg-background p-6 md:p-8 hover-lift-sm">
-            <h3 id="day-of" className="section-anchor font-display text-xl font-bold">Day-Of Checklist</h3>
+            <h3 id="day-of" className="section-anchor font-display text-xl font-bold">
+              Day-Of Checklist
+            </h3>
             <ul className="mt-4 grid gap-2 text-sm text-muted-foreground md:grid-cols-2 list-disc pl-5 marker:text-gold-deep">
               <li>Business professional dress: suit and tie or equivalent.</li>
               <li>Arrive 10 minutes early. Silence your phone.</li>
@@ -625,19 +802,39 @@ function Recruiting() {
 
           {/* Reading list */}
           <Reveal className="mt-10 border border-border bg-background p-6 md:p-8 hover-lift-sm">
-            <h3 id="reading" className="section-anchor font-display text-xl font-bold">Recommended Reading</h3>
+            <h3 id="reading" className="section-anchor font-display text-xl font-bold">
+              Recommended Reading
+            </h3>
             <ul className="mt-4 space-y-2 text-sm text-muted-foreground list-disc pl-5 marker:text-gold-deep">
-              <li><span className="font-medium text-foreground">The Intelligent Investor</span>, Benjamin Graham: foundational value investing.</li>
-              <li><span className="font-medium text-foreground">One Up On Wall Street</span>, Peter Lynch: intuitive intro to stock picking.</li>
-              <li><span className="font-medium text-foreground">Investment Banking</span>, Rosenbaum &amp; Pearl: valuation reference.</li>
-              <li><span className="font-medium text-foreground">Damodaran Online</span>: free valuation resources from NYU Stern.</li>
-              <li><span className="font-medium text-foreground">Money Stuff</span>: Matt Levine's daily Bloomberg newsletter.</li>
+              <li>
+                <span className="font-medium text-foreground">The Intelligent Investor</span>,
+                Benjamin Graham: foundational value investing.
+              </li>
+              <li>
+                <span className="font-medium text-foreground">One Up On Wall Street</span>, Peter
+                Lynch: intuitive intro to stock picking.
+              </li>
+              <li>
+                <span className="font-medium text-foreground">Investment Banking</span>, Rosenbaum
+                &amp; Pearl: valuation reference.
+              </li>
+              <li>
+                <span className="font-medium text-foreground">Damodaran Online</span>: free
+                valuation resources from NYU Stern.
+              </li>
+              <li>
+                <span className="font-medium text-foreground">Money Stuff</span>: Matt Levine's
+                daily Bloomberg newsletter.
+              </li>
             </ul>
           </Reveal>
 
           <p className="mt-10 text-sm text-muted-foreground">
             Questions? Reach out at{" "}
-            <a href="mailto:smif26@purdue.edu" className="link-underline text-gold-deep font-medium hover:text-gold">
+            <a
+              href="mailto:smif26@purdue.edu"
+              className="link-underline text-gold-deep font-medium hover:text-gold"
+            >
               smif26@purdue.edu
             </a>
             .

@@ -20,9 +20,20 @@ const require = createRequire(import.meta.url);
 const { chromium } = require("playwright");
 const axeSource = readFileSync(require.resolve("axe-core/axe.min.js"), "utf8");
 
-const PAGES = ["/", "/about", "/team", "/sectors", "/holdings", "/performance",
-  "/research", "/recruiting", "/learn", "/apply", "/contact",
-  "/finance-clubs-at-purdue"];
+const PAGES = [
+  "/",
+  "/about",
+  "/team",
+  "/sectors",
+  "/holdings",
+  "/performance",
+  "/research",
+  "/recruiting",
+  "/learn",
+  "/apply",
+  "/contact",
+  "/finance-clubs-at-purdue",
+];
 
 const results = [];
 const record = (name, ok, note = "") => {
@@ -30,10 +41,14 @@ const record = (name, ok, note = "") => {
   console.log(`${ok ? "  PASS" : "  FAIL"}  ${name}${note ? "  ::  " + note : ""}`);
 };
 
-const freePort = () => new Promise((res) => {
-  const s = net.createServer();
-  s.listen(0, "127.0.0.1", () => { const { port } = s.address(); s.close(() => res(port)); });
-});
+const freePort = () =>
+  new Promise((res) => {
+    const s = net.createServer();
+    s.listen(0, "127.0.0.1", () => {
+      const { port } = s.address();
+      s.close(() => res(port));
+    });
+  });
 
 const waitForServer = async (base, timeoutMs = 90_000) => {
   const deadline = Date.now() + timeoutMs;
@@ -41,7 +56,9 @@ const waitForServer = async (base, timeoutMs = 90_000) => {
     try {
       const r = await fetch(base, { signal: AbortSignal.timeout(4000) });
       if (r.status) return true;
-    } catch { /* not up yet */ }
+    } catch {
+      /* not up yet */
+    }
     await new Promise((r) => setTimeout(r, 1000));
   }
   throw new Error(`dev server never came up at ${base}`);
@@ -49,11 +66,29 @@ const waitForServer = async (base, timeoutMs = 90_000) => {
 
 const port = await freePort();
 const BASE = `http://127.0.0.1:${port}`;
+// detached puts the dev server in its own process group. `npx vite dev` is a
+// wrapper: it spawns sh -> node -> esbuild beneath it, and signalling only the
+// wrapper leaves that tree running. Killing the group reaps all of it.
 const server = spawn("npx", ["vite", "dev", "--host", "127.0.0.1", "--port", String(port)], {
   stdio: ["ignore", "pipe", "pipe"],
   env: { ...process.env, BROWSER: "none" },
+  detached: true,
 });
-const stop = () => { try { server.kill("SIGTERM"); } catch { /* already gone */ } };
+let stopped = false;
+const stop = () => {
+  if (stopped) return;
+  stopped = true;
+  try {
+    // Negative pid = the whole process group.
+    process.kill(-server.pid, "SIGTERM");
+  } catch {
+    try {
+      server.kill("SIGTERM");
+    } catch {
+      /* already gone */
+    }
+  }
+};
 process.on("exit", stop);
 
 try {
@@ -75,8 +110,11 @@ try {
       text: document.body.innerText.length,
       overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
     }));
-    record(`${path} renders without Supabase`, status === 200 && info.text > 400,
-      `HTTP ${status}, ${info.text} chars`);
+    record(
+      `${path} renders without Supabase`,
+      status === 200 && info.text > 400,
+      `HTTP ${status}, ${info.text} chars`,
+    );
     record(`${path} has exactly one h1`, info.h1 === 1, `${info.h1} found`);
     record(`${path} no horizontal overflow`, !info.overflow);
     await ctx.close();
@@ -88,9 +126,29 @@ try {
     const page = await ctx.newPage();
     await page.goto(BASE + path, { waitUntil: "networkidle", timeout: 60_000 });
     await page.waitForTimeout(500);
-    await page.addScriptTag({ content: axeSource });
-    const out = await page.evaluate(async () =>
-      await window.axe.run(document, { runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"] } }));
+    // These pages are server-rendered and then hydrated, so the client router
+    // performs a second main-frame navigation to the same URL shortly after
+    // load. If it lands between addScriptTag and evaluate, the execution
+    // context is destroyed mid-run and the whole suite dies with an uncaught
+    // "Execution context was destroyed" — taking every later test with it.
+    // Re-inject and retry once rather than losing the run.
+    const runAxe = async () => {
+      await page.addScriptTag({ content: axeSource });
+      return page.evaluate(
+        async () =>
+          await window.axe.run(document, {
+            runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"] },
+          }),
+      );
+    };
+    let out;
+    try {
+      out = await runAxe();
+    } catch (err) {
+      if (!/Execution context was destroyed|Target closed/.test(String(err))) throw err;
+      await page.waitForLoadState("networkidle").catch(() => {});
+      out = await runAxe();
+    }
     const ids = out.violations.map((v) => `${v.id}(${v.nodes.length})`);
     record(`${path} axe WCAG 2.1 A/AA`, out.violations.length === 0, ids.join(" ") || "clean");
     await ctx.close();
@@ -116,22 +174,37 @@ try {
     await search.fill("Voona");
     await page.waitForTimeout(900);
     const names = await page.$$eval("main", (els) => els[0].innerText);
-    record("/team search filters the roster", names.includes("Voona") && !names.includes("Gautham"));
+    record(
+      "/team search filters the roster",
+      names.includes("Voona") && !names.includes("Gautham"),
+    );
     await search.fill("");
     await page.waitForTimeout(600);
 
-    const tab = page.locator('[role="tab"]').nth(2);
-    const label = (await tab.textContent()).trim();
-    await tab.click();
+    // The scope chips are role="group" + aria-pressed, not a tablist: they
+    // have no tabpanels, no aria-controls and no roving tabindex, so
+    // announcing them as tabs promised arrow-key navigation that never
+    // existed. Scoped by the group's own label so this can't match a
+    // toggle elsewhere on the page.
+    const chips = page.locator('[aria-label="Filter team by group"] button');
+    const chip = chips.nth(2);
+    const label = (await chip.textContent()).trim();
+    await chip.click();
     await page.waitForTimeout(900);
-    record("/team scope tab selects and deep-links",
-      (await page.locator('[role="tab"][aria-selected="true"]').textContent()).trim() === label
-      && page.url().includes("sector="), label);
+    const pressed = page.locator('[aria-label="Filter team by group"] button[aria-pressed="true"]');
+    record(
+      "/team scope chip selects and deep-links",
+      (await pressed.textContent()).trim() === label && page.url().includes("sector="),
+      label,
+    );
 
     // Clicking the card body (not the name link) opens the quick-preview sheet.
     await page.locator("main img").first().click();
     await page.waitForTimeout(1000);
-    record("/team card opens the detail sheet", (await page.locator('[role="dialog"]').count()) > 0);
+    record(
+      "/team card opens the detail sheet",
+      (await page.locator('[role="dialog"]').count()) > 0,
+    );
     await page.keyboard.press("Escape");
     await page.waitForTimeout(500);
     record("/team no uncaught page errors", errors.length === 0, errors[0] ?? "");
@@ -142,13 +215,21 @@ try {
     const { page, ctx } = await open("/team/sid-voona");
     const info = await page.evaluate(() => ({
       h1: document.querySelector("h1")?.textContent?.trim(),
-      ld: Array.from(document.querySelectorAll('script[type="application/ld+json"]'))
-        .map((s) => { try { return JSON.parse(s.textContent)["@type"]; } catch { return null; } }),
+      ld: Array.from(document.querySelectorAll('script[type="application/ld+json"]')).map((s) => {
+        try {
+          return JSON.parse(s.textContent)["@type"];
+        } catch {
+          return null;
+        }
+      }),
       canonical: document.querySelector('link[rel="canonical"]')?.getAttribute("href"),
     }));
     record("/team/<slug> renders the member", info.h1 === "Sid Voona", info.h1 ?? "");
-    record("/team/<slug> has a canonical URL",
-      info.canonical === "https://www.purduesmif.org/team/sid-voona", info.canonical ?? "");
+    record(
+      "/team/<slug> has a canonical URL",
+      info.canonical === "https://www.purduesmif.org/team/sid-voona",
+      info.canonical ?? "",
+    );
     await ctx.close();
   }
 
@@ -168,7 +249,10 @@ try {
     const trigger = page.locator("[data-radix-collection-item]").first();
     await trigger.click();
     await page.waitForTimeout(600);
-    record("/apply FAQ accordion expands", (await trigger.getAttribute("aria-expanded")) === "true");
+    record(
+      "/apply FAQ accordion expands",
+      (await trigger.getAttribute("aria-expanded")) === "true",
+    );
     await ctx.close();
   }
 
@@ -176,8 +260,10 @@ try {
     const { page, ctx } = await open("/contact");
     await page.locator('button[type="submit"]').click();
     await page.waitForTimeout(800);
-    record("/contact blocks an empty submit",
-      (await page.locator('[role="alert"]').filter({ hasText: /.+/ }).count()) > 0);
+    record(
+      "/contact blocks an empty submit",
+      (await page.locator('[role="alert"]').filter({ hasText: /.+/ }).count()) > 0,
+    );
     await page.locator("#name").fill("Test");
     await page.locator("#email").fill("not-an-email");
     await page.locator("#message").fill("too short");
@@ -191,13 +277,19 @@ try {
 
   {
     const { page, ctx } = await open("/recruiting");
-    record("/recruiting rows link to Google Calendar",
-      (await page.locator('a[href*="calendar.google.com"]').count()) === 10);
+    record(
+      "/recruiting rows link to Google Calendar",
+      (await page.locator('a[href*="calendar.google.com"]').count()) === 10,
+    );
     const [download] = await Promise.all([
       page.waitForEvent("download", { timeout: 10_000 }).catch(() => null),
       page.locator('button:has-text("Download all events")').click(),
     ]);
-    record("/recruiting .ics downloads", !!download, download ? await download.suggestedFilename() : "no download");
+    record(
+      "/recruiting .ics downloads",
+      !!download,
+      download ? await download.suggestedFilename() : "no download",
+    );
     await ctx.close();
   }
 
@@ -231,8 +323,12 @@ try {
   }
 
   // ── In-page "On this page" navigation ────────────────────────────────────
-  for (const [path, anchor] of [["/about", "governance"], ["/learn", "glossary"],
-                                ["/finance-clubs-at-purdue", "faq"], ["/recruiting", "technical"]]) {
+  for (const [path, anchor] of [
+    ["/about", "governance"],
+    ["/learn", "glossary"],
+    ["/finance-clubs-at-purdue", "faq"],
+    ["/recruiting", "technical"],
+  ]) {
     const { page, ctx } = await open(path);
     const nav = page.locator('nav[aria-label="On this page"]');
     record(`${path} has an On this page nav`, (await nav.count()) === 1);
@@ -258,3 +354,8 @@ if (failed.length) {
   for (const f of failed) console.log(`  - ${f.name}${f.note ? "  ::  " + f.note : ""}`);
   process.exit(1);
 }
+// Exit explicitly. Falling off the end leaves Node waiting on the dev server's
+// piped stdio handles, so a fully passing run never terminated — it sat until
+// GitHub cancelled the job at its six-hour ceiling. The failure path already
+// exited; only the success path was missing one.
+process.exit(0);

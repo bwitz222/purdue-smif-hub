@@ -10,7 +10,7 @@ finding was that stale third-party facts were beating the fund's own numbers:
 AI answers asserted the fund managed "approximately $400,000" while the site
 said otherwise. Models resolve an entity by looking for agreement across the
 sources it links to. Every profile below is reachable from this site's
-`sameAs` array, so each one is currently a vote on what SMIF *is*.
+`sameAs` array, so each one is currently a vote on what SMIF _is_.
 
 ---
 
@@ -18,21 +18,21 @@ sources it links to. Every profile below is reachable from this site's
 
 Every profile below should agree with these. They match the site as deployed.
 
-| Field | Value |
-|---|---|
-| Full name | Purdue Student Managed Investment Fund |
-| Short name | Purdue SMIF |
-| Founded | 2009 |
-| Affiliation | Mitch Daniels School of Business, Purdue University |
-| Assets under management | approximately $600,000 of real university capital |
-| Benchmark | S&P 500 Total Return Index; audited monthly performance since October 2013 |
-| Structure | 8 equity sector teams, a Fixed Income & Macro team, and a Portfolio + Risk Management team, overseen by a 7-member executive board elected each spring |
-| Faculty advisors | Lulu Zeng; Alexander Boquist |
-| Admissions | 15–25 analysts per cycle from 100–150 applicants; open to all majors |
-| Time commitment | ~6 hours per week |
-| Email | smif26@purdue.edu |
-| Address | Daniels School of Business, 403 Mitch Daniels Blvd, West Lafayette, IN 47907 |
-| Website | https://www.purduesmif.org |
+| Field                   | Value                                                                                                                                                  |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Full name               | Purdue Student Managed Investment Fund                                                                                                                 |
+| Short name              | Purdue SMIF                                                                                                                                            |
+| Founded                 | 2009                                                                                                                                                   |
+| Affiliation             | Mitch Daniels School of Business, Purdue University                                                                                                    |
+| Assets under management | approximately $600,000 of real university capital                                                                                                      |
+| Benchmark               | S&P 500 Total Return Index; audited monthly performance since October 2013                                                                             |
+| Structure               | 8 equity sector teams, a Fixed Income & Macro team, and a Portfolio + Risk Management team, overseen by a 7-member executive board elected each spring |
+| Faculty advisors        | Lulu Zeng; Alexander Boquist                                                                                                                           |
+| Admissions              | 15–25 analysts per cycle from 100–150 applicants; open to all majors                                                                                   |
+| Time commitment         | ~6 hours per week                                                                                                                                      |
+| Email                   | smif26@purdue.edu                                                                                                                                      |
+| Address                 | Daniels School of Business, 403 Mitch Daniels Blvd, West Lafayette, IN 47907                                                                           |
+| Website                 | https://www.purduesmif.org                                                                                                                             |
 
 **Deliberately omit a member headcount.** The site derives it from the published
 roster, so any number typed into a third-party profile will drift the moment
@@ -221,11 +221,11 @@ outside party.
 
 **Then, depending on the answer:**
 
-- *If SMIF controls purduesmif.com* — 301 it to `https://www.purduesmif.org`.
+- _If SMIF controls purduesmif.com_ — 301 it to `https://www.purduesmif.org`.
   That is the cleanest outcome: it consolidates brand signals instead of
   splitting them, and removes a second, staler description of the fund.
-- *If it belongs to a former officer* — ask for the transfer or the redirect.
-- *If neither* — do not attempt a takedown on SEO grounds. Out-rank it: the
+- _If it belongs to a former officer_ — ask for the transfer or the redirect.
+- _If neither_ — do not attempt a takedown on SEO grounds. Out-rank it: the
   real site now has more content, better structure, and a live portfolio. The
   manus.space clone in particular has no inbound links and will not hold.
 

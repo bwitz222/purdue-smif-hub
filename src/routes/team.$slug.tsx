@@ -3,7 +3,12 @@ import { ArrowLeft, Mail, Linkedin } from "lucide-react";
 import { useState } from "react";
 import { memberPhotoCandidates } from "@/components/MemberCard";
 import { Reveal } from "@/components/Reveal";
-import { findMemberBySlug, hasIndexableProfile, memberDirectory, type DirectoryEntry } from "@/data/team";
+import {
+  findMemberBySlug,
+  hasIndexableProfile,
+  memberDirectory,
+  type DirectoryEntry,
+} from "@/data/team";
 import { socialMeta, canonical, SITE_URL, OG_TEAM } from "@/lib/seo";
 
 /**
@@ -89,7 +94,11 @@ function ProfilePhoto({ entry }: { entry: DirectoryEntry }) {
   const remote = m.photo ? null : memberPhotoCandidates(m);
   const [src, setSrc] = useState<string | null>(m.photo ?? remote?.jpg ?? null);
   const [triedPng, setTriedPng] = useState(false);
-  const initials = m.name.split(" ").map((p) => p[0]).slice(0, 2).join("");
+  const initials = m.name
+    .split(" ")
+    .map((p) => p[0])
+    .slice(0, 2)
+    .join("");
 
   if (!src) {
     return (
@@ -128,9 +137,7 @@ function MemberProfile() {
   const { member: m, team, slug } = entry;
 
   // Teammates from the same group, for lateral navigation and internal linking.
-  const teammates = memberDirectory
-    .filter((e) => e.team === team && e.slug !== slug)
-    .slice(0, 6);
+  const teammates = memberDirectory.filter((e) => e.team === team && e.slug !== slug).slice(0, 6);
 
   return (
     <>
@@ -150,7 +157,13 @@ function MemberProfile() {
         <div className="grid gap-12 md:grid-cols-5">
           <Reveal className="md:col-span-2">
             <div className="border border-border bg-card overflow-hidden">
-              <ProfilePhoto entry={entry} />
+              {/* Keyed on the slug so navigating between two profiles remounts
+                  the photo. ProfilePhoto seeds `src` from useState and never
+                  syncs on prop change; the route crossfade normally remounts
+                  it, but that whole block is skipped under
+                  prefers-reduced-motion (see RouteTransition in __root), which
+                  left the previous member's headshot beside the new name. */}
+              <ProfilePhoto key={entry.slug} entry={entry} />
             </div>
           </Reveal>
 
@@ -165,7 +178,9 @@ function MemberProfile() {
             </p>
 
             {m.bio && (
-              <p className="mt-8 max-w-2xl text-lg leading-relaxed text-muted-foreground">{m.bio}</p>
+              <p className="mt-8 max-w-2xl text-lg leading-relaxed text-muted-foreground">
+                {m.bio}
+              </p>
             )}
 
             {(m.email || m.linkedin) && (

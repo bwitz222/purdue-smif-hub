@@ -18,30 +18,30 @@ The app reads these at build and request time. Without them, pages still render 
 every route degrades to static data rather than erroring — but live quotes,
 performance, publications and the contact form will not work.
 
-| Variable | Needed for | Where it comes from |
-| --- | --- | --- |
-| `VITE_SUPABASE_URL` | Browser-side Supabase client | Supabase project settings |
-| `VITE_SUPABASE_PUBLISHABLE_KEY` | Browser-side Supabase client | Supabase project settings (public by design) |
-| `SUPABASE_URL` | SSR / server functions | Same value as the `VITE_` one |
-| `SUPABASE_PUBLISHABLE_KEY` | SSR / server functions | Same value as the `VITE_` one |
-| `SUPABASE_SERVICE_ROLE_KEY` | Quote cache, fund stats, risk metrics | Supabase project settings — **server only, never expose** |
-| `REFRESH_HOOK_SECRET` | Gating the two cron webhooks | Any high-entropy string; must match the pg_cron jobs |
-| `POLYGON_API_KEY` | End-of-day prices | polygon.io |
-| `ALPHA_VANTAGE_API_KEY` | S&P 500 benchmark, risk-free rate | alphavantage.co |
+| Variable                        | Needed for                            | Where it comes from                                       |
+| ------------------------------- | ------------------------------------- | --------------------------------------------------------- |
+| `VITE_SUPABASE_URL`             | Browser-side Supabase client          | Supabase project settings                                 |
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | Browser-side Supabase client          | Supabase project settings (public by design)              |
+| `SUPABASE_URL`                  | SSR / server functions                | Same value as the `VITE_` one                             |
+| `SUPABASE_PUBLISHABLE_KEY`      | SSR / server functions                | Same value as the `VITE_` one                             |
+| `SUPABASE_SERVICE_ROLE_KEY`     | Quote cache, fund stats, risk metrics | Supabase project settings — **server only, never expose** |
+| `REFRESH_HOOK_SECRET`           | Gating the two cron webhooks          | Any high-entropy string; must match the pg_cron jobs      |
+| `POLYGON_API_KEY`               | End-of-day prices                     | polygon.io                                                |
+| `ALPHA_VANTAGE_API_KEY`         | S&P 500 benchmark, risk-free rate     | alphavantage.co                                           |
 
 In production these live in the Vercel project's Environment Variables, not in
 the repository. See `.env.example` for the annotated list.
 
 ## Scripts
 
-| Command | What it does |
-| --- | --- |
-| `npm run dev` | Vite dev server |
-| `npm run build` | Production build (Nitro → Vercel Build Output API) |
-| `npm test` | Unit tests (Vitest) |
+| Command            | What it does                                                     |
+| ------------------ | ---------------------------------------------------------------- |
+| `npm run dev`      | Vite dev server                                                  |
+| `npm run build`    | Production build (Nitro → Vercel Build Output API)               |
+| `npm test`         | Unit tests (Vitest)                                              |
 | `npm run test:e2e` | Boots a dev server, drives every page in Chromium, runs axe-core |
-| `npm run lint` | ESLint |
-| `npm run format` | Prettier |
+| `npm run lint`     | ESLint                                                           |
+| `npm run format`   | Prettier                                                         |
 
 `test:e2e` needs a Chromium. CI installs one with `npx playwright install chromium`.
 If you already have a browser on disk, point at it:
@@ -54,14 +54,14 @@ PLAYWRIGHT_CHROMIUM_PATH=/path/to/chromium npm run test:e2e
 
 Most of what you'd want to change is data, not components.
 
-| What | File | Notes |
-| --- | --- | --- |
-| Roster: names, roles, emails, class years, bios, LinkedIn | `src/data/team.ts` | Grouped by board / sector team / FIM / PM / faculty |
-| Member headshots | `src/assets/team/*.webp` | Wired up in `PHOTO_BY_NAME` in `src/data/team.ts` |
-| Portfolio positions: shares, cost basis, industry, beta | `src/data/holdings.ts` | Refreshed each quarter against the custody statement. Live prices come from Supabase and overwrite the rest |
-| Recruiting calendar | `src/routes/recruiting.tsx` (`CALENDAR`) | Drives the countdown, the schema.org Events, and the `.ics` download |
-| Learn curriculum and downloads | `src/routes/learn.tsx` | Downloadable models live in `src/assets/` |
-| Page titles, descriptions, social cards | each route's `head()` + `src/lib/seo.ts` | `socialMeta()` builds the OG/Twitter block |
+| What                                                      | File                                     | Notes                                                                                                       |
+| --------------------------------------------------------- | ---------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| Roster: names, roles, emails, class years, bios, LinkedIn | `src/data/team.ts`                       | Grouped by board / sector team / FIM / PM / faculty                                                         |
+| Member headshots                                          | `src/assets/team/*.webp`                 | Wired up in `PHOTO_BY_NAME` in `src/data/team.ts`                                                           |
+| Portfolio positions: shares, cost basis, industry, beta   | `src/data/holdings.ts`                   | Refreshed each quarter against the custody statement. Live prices come from Supabase and overwrite the rest |
+| Recruiting calendar                                       | `src/routes/recruiting.tsx` (`CALENDAR`) | Drives the countdown, the schema.org Events, and the `.ics` download                                        |
+| Learn curriculum and downloads                            | `src/routes/learn.tsx`                   | Downloadable models live in `src/assets/`                                                                   |
+| Page titles, descriptions, social cards                   | each route's `head()` + `src/lib/seo.ts` | `socialMeta()` builds the OG/Twitter block                                                                  |
 
 Publications on `/research`, fund stats, quotes and performance history come from
 Supabase, not from files.

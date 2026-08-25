@@ -56,10 +56,10 @@ export const Route = createFileRoute("/api/public/hooks/refresh-quotes")({
         const expectedSecret = process.env.REFRESH_HOOK_SECRET?.trim();
         const provided = request.headers.get("x-refresh-secret")?.trim();
         if (!expectedSecret || !provided || provided !== expectedSecret) {
-          return new Response(
-            JSON.stringify({ ok: false, error: "Unauthorized" }),
-            { status: 401, headers: { "Content-Type": "application/json" } },
-          );
+          return new Response(JSON.stringify({ ok: false, error: "Unauthorized" }), {
+            status: 401,
+            headers: { "Content-Type": "application/json" },
+          });
         }
         const apiKey = process.env.POLYGON_API_KEY?.trim();
         if (!apiKey) {
@@ -104,10 +104,10 @@ export const Route = createFileRoute("/api/public/hooks/refresh-quotes")({
         }
 
         if (upserts.length === 0) {
-          return new Response(
-            JSON.stringify({ ok: true, updated: 0, fetchedAt }),
-            { status: 200, headers: { "Content-Type": "application/json" } },
-          );
+          return new Response(JSON.stringify({ ok: true, updated: 0, fetchedAt }), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          });
         }
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -115,10 +115,10 @@ export const Route = createFileRoute("/api/public/hooks/refresh-quotes")({
           .from("quote_cache")
           .upsert(upserts, { onConflict: "symbol" });
         if (error) {
-          return new Response(
-            JSON.stringify({ ok: false, error: error.message }),
-            { status: 500, headers: { "Content-Type": "application/json" } },
-          );
+          return new Response(JSON.stringify({ ok: false, error: error.message }), {
+            status: 500,
+            headers: { "Content-Type": "application/json" },
+          });
         }
 
         // Refresh SPY total-return benchmark (monthly) from Alpha Vantage.
@@ -145,9 +145,10 @@ export const Route = createFileRoute("/api/public/hooks/refresh-quotes")({
                   const [y, m] = row.date.split("-");
                   const monthFirst = `${y}-${m}-01`;
                   const prev = idx === 0 ? sorted[sorted.length - tail.length - 1] : tail[idx - 1];
-                  const ret = prev && prev.close > 0
-                    ? Number((((row.close - prev.close) / prev.close) * 100).toFixed(4))
-                    : null;
+                  const ret =
+                    prev && prev.close > 0
+                      ? Number((((row.close - prev.close) / prev.close) * 100).toFixed(4))
+                      : null;
                   return {
                     month: monthFirst,
                     symbol: "SPY",

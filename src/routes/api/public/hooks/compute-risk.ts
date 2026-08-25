@@ -85,14 +85,23 @@ async function fetchLatestGroupedDay(
   apiKey: string,
 ): Promise<{ date: string; closes: Map<string, number> } | null> {
   const today = Date.now();
+  // Rate-limit retries are counted separately from the day walk-back. They used
+  // to be folded into it with `back--`, which the loop's `back++` cancelled out
+  // exactly: a provider that kept returning 429 (the free tier allows 5 req/min)
+  // spun here forever at 13s a pass, so the cron POST never returned, the
+  // function was killed at its max duration, and /holdings silently kept
+  // serving the previous day's as-of date.
+  let rateLimitRetries = 0;
   for (let back = 0; back <= 10; back++) {
     const d = ymd(today - back * 24 * 60 * 60 * 1000);
     const url = `https://api.polygon.io/v2/aggs/grouped/locale/us/market/stocks/${d}?adjusted=true&apiKey=${apiKey}`;
     try {
       const res = await fetch(url);
       if (res.status === 429) {
+        if (rateLimitRetries >= MAX_RETRIES) return null;
+        rateLimitRetries++;
         await sleep(RATE_DELAY_MS);
-        back--; // retry same day
+        back--; // retry the same day
         continue;
       }
       if (res.status === 403 || !res.ok) continue; // too-recent/unauthorized -> older day
@@ -144,11 +153,7 @@ async function upsertPriceRows(
   }
 }
 
-async function backfill(
-  supabaseAdmin: Admin,
-  symbols: string[],
-  apiKey: string,
-): Promise<number> {
+async function backfill(supabaseAdmin: Admin, symbols: string[], apiKey: string): Promise<number> {
   const to = ymd(Date.now());
   const from = ymd(Date.now() - HISTORY_BACKDAYS * 24 * 60 * 60 * 1000);
   const rows: Array<{ symbol: string; date: string; close: number }> = [];
@@ -224,7 +229,8 @@ async function computeAndStore(
   const cash = await getCashHoldings(supabaseAdmin);
   const nav = commonDates.map((d) => {
     let invested = 0;
-    for (const s of pricedSymbols) invested += (sharesBySymbol.get(s) ?? 0) * bySymbol.get(s)!.get(d)!;
+    for (const s of pricedSymbols)
+      invested += (sharesBySymbol.get(s) ?? 0) * bySymbol.get(s)!.get(d)!;
     return invested + cash;
   });
 

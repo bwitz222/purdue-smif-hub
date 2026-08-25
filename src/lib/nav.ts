@@ -1,13 +1,13 @@
 // Primary nav — used by SiteHeader and the mobile menu.
 export const NAV = [
-  { to: "/about",        label: "About"       },
-  { to: "/team",         label: "Team"        },
-  { to: "/sectors",      label: "Sectors"     },
-  { to: "/holdings",     label: "Holdings"    },
-  { to: "/performance",  label: "Performance" },
-  { to: "/research",     label: "Research"    },
-  { to: "/learn",        label: "Learn"       },
-  { to: "/recruiting",   label: "Recruiting"  },
+  { to: "/about", label: "About" },
+  { to: "/team", label: "Team" },
+  { to: "/sectors", label: "Sectors" },
+  { to: "/holdings", label: "Holdings" },
+  { to: "/performance", label: "Performance" },
+  { to: "/research", label: "Research" },
+  { to: "/learn", label: "Learn" },
+  { to: "/recruiting", label: "Recruiting" },
 ] as const;
 
 // Footer nav — the primary sections plus pages that earn internal links but
@@ -16,5 +16,5 @@ export const NAV = [
 export const FOOTER_NAV = [
   ...NAV,
   { to: "/finance-clubs-at-purdue", label: "Finance Clubs at Purdue" },
-  { to: "/apply",                   label: "Apply"                  },
+  { to: "/apply", label: "Apply" },
 ] as const;

@@ -49,7 +49,7 @@ const FAQ = [
   },
   {
     q: "Can freshmen join finance clubs at Purdue?",
-    a: "Yes. SMIF accepts first-year students who are ready to commit the time, and several current analysts joined as freshmen. Applying early is generally an advantage, because the analyst path runs analyst to senior analyst to sector head to executive board, and that progression takes semesters.",
+    a: "Yes. SMIF accepts first-year students who are ready to commit the time, and several current analysts joined as freshmen. Applying early is generally an advantage, because the analyst path runs analyst to senior analyst to portfolio manager to executive board, and that progression takes semesters.",
   },
   {
     q: "How many finance clubs should I join at Purdue?",
@@ -181,18 +181,18 @@ function FinanceClubs() {
               className="font-display font-bold text-background max-w-4xl"
               style={{ fontSize: "clamp(2.6rem, 5.5vw, 4.8rem)", lineHeight: "1.04" }}
             >
-              Finance and investment<br />
+              Finance and investment
+              <br />
               clubs at <span className="text-gold/80">Purdue.</span>
             </h1>
             {/* Direct-answer zone: the first thing a crawler or a model reads
                 should answer the query outright, not tease it. */}
             <p className="mt-8 max-w-2xl text-on-dark-primary leading-relaxed text-lg">
-              Purdue University has a deep bench of finance and investment organizations, and
-              most students interested in markets end up joining more than one. This guide
-              covers the main ones, what each is actually for, and how to choose. It is written
-              by the Student Managed Investment Fund — the club that manages real university
-              capital — so we have said plainly where we fit and where another organization is
-              the better first stop.
+              Purdue University has a deep bench of finance and investment organizations, and most
+              students interested in markets end up joining more than one. This guide covers the
+              main ones, what each is actually for, and how to choose. It is written by the Student
+              Managed Investment Fund — the club that manages real university capital — so we have
+              said plainly where we fit and where another organization is the better first stop.
             </p>
           </Reveal>
         </div>
@@ -201,7 +201,11 @@ function FinanceClubs() {
       {/* ── The short answer ──────────────────────────────────────── */}
       <OnThisPage sections={SECTIONS} />
 
-      <section id="short-answer" aria-labelledby="short-answer-h" className="border-b border-border bg-secondary/40 section-anchor">
+      <section
+        id="short-answer"
+        aria-labelledby="short-answer-h"
+        className="border-b border-border bg-secondary/40 section-anchor"
+      >
         <div className="container-prose py-24">
           <Reveal className="max-w-3xl">
             <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">
@@ -212,27 +216,26 @@ function FinanceClubs() {
             </h2>
             <div className="mt-8 space-y-5 text-muted-foreground leading-relaxed">
               <p>
-                Finance clubs at Purdue split roughly three ways. Some exist to teach you the
-                craft — valuation, financial statements, how a market actually clears. Some
-                exist to get you a specific job, and organize around the recruiting calendar
-                for banking, consulting, or wealth management. And one manages a real portfolio
-                with real money and real consequences.
+                Finance clubs at Purdue split roughly three ways. Some exist to teach you the craft
+                — valuation, financial statements, how a market actually clears. Some exist to get
+                you a specific job, and organize around the recruiting calendar for banking,
+                consulting, or wealth management. And one manages a real portfolio with real money
+                and real consequences.
               </p>
               <p>
-                Those are different products, and the honest answer to which club is best is
-                that it depends entirely on what you want out of the next four years. A
-                sophomore who has never opened a 10-K should probably start somewhere that
-                teaches fundamentals. A junior who already models companies for fun and wants
-                to defend a thesis in front of a committee wants something else.
+                Those are different products, and the honest answer to which club is best is that it
+                depends entirely on what you want out of the next four years. A sophomore who has
+                never opened a 10-K should probably start somewhere that teaches fundamentals. A
+                junior who already models companies for fun and wants to defend a thesis in front of
+                a committee wants something else.
               </p>
               <p>
                 The one distinction worth understanding before you apply anywhere: whether the
-                portfolio is real. Most student organizations run simulated or educational
-                books, which is a perfectly good way to learn. The Student Managed Investment
-                Fund invests actual university capital, which changes the character of the work
-                — positions are voted on, performance is benchmarked against the S&amp;P 500 and
-                reported quarterly, and a bad thesis costs the university money rather than
-                points in a game.
+                portfolio is real. Most student organizations run simulated or educational books,
+                which is a perfectly good way to learn. The Student Managed Investment Fund invests
+                actual university capital, which changes the character of the work — positions are
+                voted on, performance is benchmarked against the S&amp;P 500 and reported quarterly,
+                and a bad thesis costs the university money rather than points in a game.
               </p>
             </div>
           </Reveal>
@@ -240,7 +243,11 @@ function FinanceClubs() {
       </section>
 
       {/* ── Comparison table ──────────────────────────────────────── */}
-      <section id="organizations" aria-labelledby="organizations-h" className="border-b border-border section-anchor">
+      <section
+        id="organizations"
+        aria-labelledby="organizations-h"
+        className="border-b border-border section-anchor"
+      >
         <div className="container-prose py-24">
           <Reveal className="max-w-3xl mb-12">
             <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">
@@ -250,9 +257,9 @@ function FinanceClubs() {
               The main organizations.
             </h2>
             <p className="mt-6 text-muted-foreground leading-relaxed">
-              Offerings and meeting formats change every semester, so treat this as a map
-              rather than a schedule. BoilerLink, Purdue&apos;s official student organization
-              directory, carries the current details for every group listed here.
+              Offerings and meeting formats change every semester, so treat this as a map rather
+              than a schedule. BoilerLink, Purdue&apos;s official student organization directory,
+              carries the current details for every group listed here.
             </p>
           </Reveal>
 
@@ -267,10 +274,18 @@ function FinanceClubs() {
                 </caption>
                 <thead className="bg-secondary/60">
                   <tr>
-                    <th scope="col" className="px-5 py-4 font-semibold">Organization</th>
-                    <th scope="col" className="px-5 py-4 font-semibold">Primary focus</th>
-                    <th scope="col" className="px-5 py-4 font-semibold">Real capital</th>
-                    <th scope="col" className="px-5 py-4 font-semibold">Best suited to</th>
+                    <th scope="col" className="px-5 py-4 font-semibold">
+                      Organization
+                    </th>
+                    <th scope="col" className="px-5 py-4 font-semibold">
+                      Primary focus
+                    </th>
+                    <th scope="col" className="px-5 py-4 font-semibold">
+                      Real capital
+                    </th>
+                    <th scope="col" className="px-5 py-4 font-semibold">
+                      Best suited to
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -295,7 +310,11 @@ function FinanceClubs() {
       </section>
 
       {/* ── Where SMIF fits ───────────────────────────────────────── */}
-      <section id="where-we-fit" aria-labelledby="where-we-fit-h" className="border-b border-border bg-secondary/40 section-anchor">
+      <section
+        id="where-we-fit"
+        aria-labelledby="where-we-fit-h"
+        className="border-b border-border bg-secondary/40 section-anchor"
+      >
         <div className="container-prose py-24">
           <Reveal className="max-w-3xl">
             <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">
@@ -306,29 +325,27 @@ function FinanceClubs() {
             </h2>
             <div className="mt-8 space-y-5 text-muted-foreground leading-relaxed">
               <p>
-                The Purdue Student Managed Investment Fund is a student-run investment fund at
-                the Daniels School of Business. It was founded in 2009 and manages real
-                university capital across U.S. equities and fixed income. Analysts work on
-                sector teams, research single names from the bottom up, and pitch positions to
-                the full investment committee, which votes before anything enters the
-                portfolio.
+                The Purdue Student Managed Investment Fund is a student-run investment fund at the
+                Daniels School of Business. It was founded in 2009 and manages real university
+                capital across U.S. equities and fixed income. Analysts work on sector teams,
+                research single names from the bottom up, and pitch positions to the full investment
+                committee, which votes before anything enters the portfolio.
               </p>
               <p>
-                The structure is deliberately close to a real fund. There are eight equity
-                sector teams, a Fixed Income &amp; Macro group that frames the rate and credit
-                backdrop, and a Portfolio + Risk Management team that handles sizing,
-                monitoring, and attribution. The fund publishes its holdings and its
-                performance against the S&amp;P 500 on this site, which is unusual for a student
-                organization and is intentional: if we are going to claim the portfolio is
-                real, the record should be public.
+                The structure is deliberately close to a real fund. There are eight equity sector
+                teams, a Fixed Income &amp; Macro group that frames the rate and credit backdrop,
+                and a Portfolio + Risk Management team that handles sizing, monitoring, and
+                attribution. The fund publishes its holdings and its performance against the S&amp;P
+                500 on this site, which is unusual for a student organization and is intentional: if
+                we are going to claim the portfolio is real, the record should be public.
               </p>
               <p>
                 It is not the right first stop for everyone. The time commitment is roughly six
-                hours a week, the reading is genuine, and pitches get pushback. Students who
-                want a broad introduction to finance careers, or who are still deciding whether
-                markets interest them at all, are often better served starting with an
-                education-first organization and applying to SMIF a semester or two later. That
-                path is common and we recruit plenty of analysts who took it.
+                hours a week, the reading is genuine, and pitches get pushback. Students who want a
+                broad introduction to finance careers, or who are still deciding whether markets
+                interest them at all, are often better served starting with an education-first
+                organization and applying to SMIF a semester or two later. That path is common and
+                we recruit plenty of analysts who took it.
               </p>
             </div>
             <div className="mt-10 flex flex-wrap gap-4">
@@ -352,7 +369,11 @@ function FinanceClubs() {
       </section>
 
       {/* ── How to choose ─────────────────────────────────────────── */}
-      <section id="how-to-choose" aria-labelledby="how-to-choose-h" className="border-b border-border section-anchor">
+      <section
+        id="how-to-choose"
+        aria-labelledby="how-to-choose-h"
+        className="border-b border-border section-anchor"
+      >
         <div className="container-prose py-24">
           <Reveal className="max-w-3xl mb-12">
             <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">
@@ -387,7 +408,11 @@ function FinanceClubs() {
       </section>
 
       {/* ── FAQ ───────────────────────────────────────────────────── */}
-      <section id="faq" aria-labelledby="faq-h" className="border-b border-border bg-secondary/40 section-anchor">
+      <section
+        id="faq"
+        aria-labelledby="faq-h"
+        className="border-b border-border bg-secondary/40 section-anchor"
+      >
         <div className="container-prose py-24">
           <Reveal className="max-w-3xl mb-12">
             <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">
@@ -420,12 +445,14 @@ function FinanceClubs() {
               className="font-display font-bold text-background"
               style={{ fontSize: "clamp(2rem, 4vw, 3.4rem)", lineHeight: "1.06" }}
             >
-              Think the real portfolio<br />is the one you want?
+              Think the real portfolio
+              <br />
+              is the one you want?
             </h2>
             <p className="mt-6 text-on-dark-secondary leading-relaxed">
               Applications open each fall and spring. We recruit for curiosity, work ethic, and
-              intellectual honesty, not pedigree — and we have taken students from every major
-              at Purdue.
+              intellectual honesty, not pedigree — and we have taken students from every major at
+              Purdue.
             </p>
             <div className="mt-10 flex flex-wrap gap-4">
               <a

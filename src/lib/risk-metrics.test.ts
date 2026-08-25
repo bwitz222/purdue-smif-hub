@@ -123,7 +123,13 @@ describe("exposures", () => {
     expect(e.netPct).toBeCloseTo(50, 12); //   (100-50)/100
   });
   it("honors an explicit short side even with positive value", () => {
-    const e = exposures([{ value: 100, side: "long" }, { value: 50, side: "short" }], 100)!;
+    const e = exposures(
+      [
+        { value: 100, side: "long" },
+        { value: 50, side: "short" },
+      ],
+      100,
+    )!;
     expect(e.grossPct).toBeCloseTo(150, 12);
     expect(e.netPct).toBeCloseTo(50, 12);
   });
