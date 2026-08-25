@@ -66,15 +66,27 @@ const waitForServer = async (base, timeoutMs = 90_000) => {
 
 const port = await freePort();
 const BASE = `http://127.0.0.1:${port}`;
+// detached puts the dev server in its own process group. `npx vite dev` is a
+// wrapper: it spawns sh -> node -> esbuild beneath it, and signalling only the
+// wrapper leaves that tree running. Killing the group reaps all of it.
 const server = spawn("npx", ["vite", "dev", "--host", "127.0.0.1", "--port", String(port)], {
   stdio: ["ignore", "pipe", "pipe"],
   env: { ...process.env, BROWSER: "none" },
+  detached: true,
 });
+let stopped = false;
 const stop = () => {
+  if (stopped) return;
+  stopped = true;
   try {
-    server.kill("SIGTERM");
+    // Negative pid = the whole process group.
+    process.kill(-server.pid, "SIGTERM");
   } catch {
-    /* already gone */
+    try {
+      server.kill("SIGTERM");
+    } catch {
+      /* already gone */
+    }
   }
 };
 process.on("exit", stop);
@@ -342,3 +354,8 @@ if (failed.length) {
   for (const f of failed) console.log(`  - ${f.name}${f.note ? "  ::  " + f.note : ""}`);
   process.exit(1);
 }
+// Exit explicitly. Falling off the end leaves Node waiting on the dev server's
+// piped stdio handles, so a fully passing run never terminated — it sat until
+// GitHub cancelled the job at its six-hour ceiling. The failure path already
+// exited; only the success path was missing one.
+process.exit(0);
