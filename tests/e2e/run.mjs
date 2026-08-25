@@ -114,13 +114,29 @@ try {
     const page = await ctx.newPage();
     await page.goto(BASE + path, { waitUntil: "networkidle", timeout: 60_000 });
     await page.waitForTimeout(500);
-    await page.addScriptTag({ content: axeSource });
-    const out = await page.evaluate(
-      async () =>
-        await window.axe.run(document, {
-          runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"] },
-        }),
-    );
+    // These pages are server-rendered and then hydrated, so the client router
+    // performs a second main-frame navigation to the same URL shortly after
+    // load. If it lands between addScriptTag and evaluate, the execution
+    // context is destroyed mid-run and the whole suite dies with an uncaught
+    // "Execution context was destroyed" — taking every later test with it.
+    // Re-inject and retry once rather than losing the run.
+    const runAxe = async () => {
+      await page.addScriptTag({ content: axeSource });
+      return page.evaluate(
+        async () =>
+          await window.axe.run(document, {
+            runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"] },
+          }),
+      );
+    };
+    let out;
+    try {
+      out = await runAxe();
+    } catch (err) {
+      if (!/Execution context was destroyed|Target closed/.test(String(err))) throw err;
+      await page.waitForLoadState("networkidle").catch(() => {});
+      out = await runAxe();
+    }
     const ids = out.violations.map((v) => `${v.id}(${v.nodes.length})`);
     record(`${path} axe WCAG 2.1 A/AA`, out.violations.length === 0, ids.join(" ") || "clean");
     await ctx.close();
