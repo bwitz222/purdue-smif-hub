@@ -29,7 +29,7 @@ export function SiteFooter() {
           </div>
           <p className="mt-6 max-w-md text-sm font-normal text-on-dark-secondary">
             A student-run investment fund at the Daniels School of Business, managing real capital
-            with a disciplined, thesis-driven process since 2009.
+            with a disciplined, thesis-driven process since 1995.
           </p>
         </div>
         <nav aria-label="Footer">
@@ -126,7 +126,7 @@ export function SiteFooter() {
       <div className="border-t border-background/10">
         <div className="container-prose py-5 flex items-center gap-4">
           <span className="text-[10px] font-mono uppercase tracking-[0.32em] text-on-dark-muted whitespace-nowrap">
-            Est. 2009
+            Est. 1995
           </span>
           <span className="flex-1 h-px bg-gradient-gold opacity-50" aria-hidden="true" />
           <span className="text-[10px] font-mono uppercase tracking-[0.32em] text-on-dark-muted whitespace-nowrap">

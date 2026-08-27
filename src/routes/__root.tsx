@@ -125,7 +125,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "Purdue SMIF — the student-managed investment fund at Purdue's Daniels School of Business, managing real capital since 2009.",
+          "Purdue SMIF — the student-managed investment fund at Purdue's Daniels School of Business, managing real capital since 1995.",
       },
       // Opt into the largest available rich-result treatment. Without this,
       // Google caps image previews and truncates snippets by default.
@@ -200,10 +200,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
                 height: "512",
               },
               email: "smif26@purdue.edu",
-              foundingDate: "2009",
+              foundingDate: "1995",
               slogan: "Real capital. Real research. Real outcomes.",
               description:
-                "Purdue's premier student investment club and finance club — a student-run investment fund at the Mitch Daniels School of Business, Purdue University, managing real capital across global markets since 2009.",
+                "Purdue's premier student investment club and finance club — a student-run investment fund at the Mitch Daniels School of Business, Purdue University, managing real capital across global markets since 1995.",
               parentOrganization: {
                 "@type": "CollegeOrUniversity",
                 name: "Daniels School of Business, Purdue University",

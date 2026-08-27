@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { computeAnalytics, type MonthlyPoint, type PerfAnalytics } from "@/lib/fund-analytics";
 
 export type PerfRow = {
   year: number;
@@ -64,17 +65,10 @@ export const getFundPerformance = createServerFn({ method: "GET" }).handler(
 // Monthly history (since inception) + SPY total-return benchmark
 // ─────────────────────────────────────────────────────────────────────────────
 
-export type MonthlyPoint = {
-  month: string; // YYYY-MM-DD (first of month)
-  smif_return_pct: number; // monthly return, 0 for transition months
-  /** SPY total-return monthly %. null when that month has no benchmark row. */
-  bench_return_pct: number | null;
-  smif_growth: number; // cumulative growth-of-$1
-  bench_growth: number; // cumulative growth-of-$1
-  smif_drawdown_pct: number; // peak-to-current drawdown
-  bench_drawdown_pct: number;
-  is_transition: boolean;
-};
+// MonthlyPoint and PerfAnalytics are defined in @/lib/fund-analytics, which
+// holds the pure math so it can be reused per window and unit-tested without a
+// Supabase client. Re-exported here for existing importers.
+export type { MonthlyPoint, PerfAnalytics } from "@/lib/fund-analytics";
 
 type MonthlyHistoryKpis = {
   /** null when there is less than a full 12-month window. */
@@ -84,26 +78,6 @@ type MonthlyHistoryKpis = {
   inception_annualized_pct: number;
   max_drawdown_pct: number;
   bench_inception_annualized_pct: number;
-};
-
-// Risk & return analytics derived from the monthly return series. All percent
-// figures are annualized where noted; ratios are dimensionless. Sharpe/Sortino
-// assume a 0% risk-free rate; beta/alpha/correlation are vs the SPY total return.
-type PerfAnalytics = {
-  cumulative_return_pct: number;
-  annualized_return_pct: number;
-  annualized_vol_pct: number;
-  sharpe: number;
-  sortino: number;
-  beta: number;
-  annualized_alpha_pct: number;
-  tracking_error_pct: number;
-  information_ratio: number;
-  correlation: number;
-  best_month_pct: number;
-  worst_month_pct: number;
-  positive_months_pct: number;
-  observations: number;
 };
 
 export type FundMonthlyHistory = {
@@ -251,74 +225,10 @@ export const getFundMonthlyHistory = createServerFn({ method: "GET" }).handler(
 
       const maxDD = series.reduce((m, p) => Math.min(m, p.smif_drawdown_pct), 0);
 
-      // ── Risk & return analytics ──────────────────────────────────────────
-      // Exclude custodian-transition bridge months (artificial 0% returns)
-      // so volatility, beta, and the ratios reflect real market months only.
-      const real = series.filter((p) => !p.is_transition);
-      const rs = real.map((p) => p.smif_return_pct); // monthly %, SMIF
-      const nObs = rs.length;
-
-      // Beta, correlation, tracking error and alpha are all two-series
-      // statistics, so they use only the months where BOTH series reported.
-      // Previously a missing benchmark month became a 0% observation and was
-      // fed in as though it were real, pulling every one of them toward zero.
-      const paired = real.filter(
-        (p): p is (typeof real)[number] & { bench_return_pct: number } =>
-          p.bench_return_pct !== null,
-      );
-      const ps = paired.map((p) => p.smif_return_pct);
-      const rb = paired.map((p) => p.bench_return_pct);
-
-      const mean = (a: number[]) => (a.length ? a.reduce((s, x) => s + x, 0) / a.length : 0);
-      const sampVar = (a: number[]) => {
-        if (a.length < 2) return 0;
-        const m = mean(a);
-        return a.reduce((s, x) => s + (x - m) * (x - m), 0) / (a.length - 1);
-      };
-      const std = (a: number[]) => Math.sqrt(sampVar(a));
-      const cov = (a: number[], b: number[]) => {
-        const nn = Math.min(a.length, b.length);
-        if (nn < 2) return 0;
-        const ma = mean(a);
-        const mb = mean(b);
-        let s = 0;
-        for (let i = 0; i < nn; i++) s += (a[i] - ma) * (b[i] - mb);
-        return s / (nn - 1);
-      };
-
-      const SQRT12 = Math.sqrt(12);
-      const annVol = std(rs) * SQRT12; // %
-      const smifAnn = inceptionAnnPct; // % (geometric, from cumulative growth)
-      const benchAnn = benchInceptionAnnPct; // %
-      const downsideDev =
-        Math.sqrt(rs.reduce((s, x) => s + Math.min(0, x) * Math.min(0, x), 0) / (nObs || 1)) *
-        SQRT12; // %
-      const varB = sampVar(rb);
-      const beta = varB > 0 ? cov(ps, rb) / varB : 0;
-      const diff = ps.map((x, i) => x - rb[i]);
-      const trackingError = std(diff) * SQRT12; // %
-      // Correlation is paired too — both standard deviations must be measured
-      // over the same months as the covariance.
-      const sdS = std(ps);
-      const sdB = std(rb);
-      const correlation = sdS > 0 && sdB > 0 ? cov(ps, rb) / (sdS * sdB) : 0;
-
-      const analytics: PerfAnalytics = {
-        cumulative_return_pct: (last.smif_growth - 1) * 100,
-        annualized_return_pct: smifAnn,
-        annualized_vol_pct: annVol,
-        sharpe: annVol > 0 ? smifAnn / annVol : 0,
-        sortino: downsideDev > 0 ? smifAnn / downsideDev : 0,
-        beta,
-        annualized_alpha_pct: smifAnn - beta * benchAnn,
-        tracking_error_pct: trackingError,
-        information_ratio: trackingError > 0 ? (smifAnn - benchAnn) / trackingError : 0,
-        correlation,
-        best_month_pct: nObs ? Math.max(...rs) : 0,
-        worst_month_pct: nObs ? Math.min(...rs) : 0,
-        positive_months_pct: nObs ? (rs.filter((x) => x > 0).length / nObs) * 100 : 0,
-        observations: nObs,
-      };
+      // Risk & return analytics over the full series. /performance re-computes
+      // these per selected window from `series` using the same pure helpers,
+      // so this is the since-inception view.
+      const analytics: PerfAnalytics = computeAnalytics(series);
 
       return {
         series,

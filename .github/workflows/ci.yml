@@ -23,6 +23,14 @@ jobs:
         run: npx tsc --noEmit -p tsconfig.json
       - name: Unit tests
         run: npm test
+      # Splits are not applied automatically: Polygon returns adjusted prices
+      # while share counts in src/data/holdings.ts are maintained by hand, so a
+      # split silently halves a position. Skips itself when no key is set, so
+      # forks and preview builds stay green.
+      - name: Unreconciled stock splits
+        run: npm run check:splits
+        env:
+          POLYGON_API_KEY: ${{ secrets.POLYGON_API_KEY }}
       - name: Production build
         run: npm run build
 

@@ -326,7 +326,7 @@ function FinanceClubs() {
             <div className="mt-8 space-y-5 text-muted-foreground leading-relaxed">
               <p>
                 The Purdue Student Managed Investment Fund is a student-run investment fund at the
-                Daniels School of Business. It was founded in 2009 and manages real university
+                Daniels School of Business. It was founded in 1995 and manages real university
                 capital across U.S. equities and fixed income. Analysts work on sector teams,
                 research single names from the bottom up, and pitch positions to the full investment
                 committee, which votes before anything enters the portfolio.

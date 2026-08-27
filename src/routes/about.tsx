@@ -77,7 +77,7 @@ export const Route = createFileRoute("/about")({
 const FAQ = [
   {
     q: "When was the Purdue Student Managed Investment Fund founded?",
-    a: "SMIF was founded in 2009 at Purdue University's Daniels School of Business. Audited monthly performance has been tracked since October 2013, and the full return history is published on the performance page.",
+    a: "SMIF was founded in 1995 at Purdue University's Daniels School of Business. Continuous audited monthly records begin in October 2013, when the fund moved to its current custodian; that series is published in full on the performance page.",
   },
   {
     q: "Does Purdue SMIF invest real money?",
@@ -196,16 +196,18 @@ function About() {
         <div className="md:col-span-2 space-y-6 text-lg text-muted-foreground">
           <Reveal delay={0.1}>
             <p>
-              Founded in 2009 at the Daniels School of Business, the Purdue Student Managed
+              Founded in 1995 at the Daniels School of Business, the Purdue Student Managed
               Investment Fund began as a small group of finance students with a single conviction:
               that the best way to learn investing is to invest. From an initial capital allocation,
               the fund has grown to manage real assets on behalf of the university.
             </p>
             <p className="mt-6">
-              The record is public and it is long. Audited monthly performance has been tracked
-              since October 2013, and every position the fund holds is published on this site
-              alongside the returns it has produced. Few student organizations open their book that
-              way; we do it because a portfolio that claims to be real should be inspectable.
+              The record is public. Continuous audited monthly statements begin in October 2013,
+              when the fund moved to its current custodian — we publish that series rather than a
+              reconstruction of the years before it — and every position the fund holds appears on
+              this site alongside the returns it has produced. Few student organizations open their
+              book that way; we do it because a portfolio that claims to be real should be
+              inspectable.
             </p>
             <p className="mt-6">
               Each cycle, the fund admits 15 to 25 analysts from a pool of more than 100 applicants.

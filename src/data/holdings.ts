@@ -4,6 +4,16 @@
 // overwritten at render time by quote_cache (Polygon end-of-day close via
 // getLiveQuotes). The numbers hardcoded below are legacy fallbacks used only
 // when no quote is available for a symbol.
+//
+// SPLITS ARE NOT AUTOMATIC. Polygon is queried with adjusted=true, so a split
+// halves the live price the morning it takes effect while `shares` below stays
+// stale until someone edits this file — and value = price × shares then
+// understates the position by the split factor. Monster's 2-for-1 on
+// 2026-08-11 published MNST as a 31% loser for two weeks before it was caught.
+// `npm run check:splits` fails the build on any split effective after the date
+// below; bump it only when the share counts have actually been re-checked.
+export const LAST_RECONCILED = "2026-08-26";
+
 export interface Holding {
   company: string;
   symbol: string;
@@ -34,22 +44,22 @@ export const holdings: Holding[] = [
     dayChange: 0.25,
     totalReturn: 116970.25,
     returnPct: 79.14,
-    allocation: 41.53,
+    allocation: 41.35,
   },
   {
     company: "Monster Beverage",
     symbol: "MNST",
     industry: "Consumer Defensive",
-    price: 88.08,
+    price: 47.81,
     beta: 0.54,
-    shares: 372,
-    value: 32765.76,
+    shares: 744,
+    value: 35570.64,
     costBasis: 25712.75,
-    dayGain: 33.48,
-    dayChange: 0.1,
-    totalReturn: 7053.01,
-    returnPct: 27.43,
-    allocation: 5.14,
+    dayGain: -684.48,
+    dayChange: -1.89,
+    totalReturn: 9857.89,
+    returnPct: 38.34,
+    allocation: 5.56,
   },
   {
     company: "U.S. Bancorp",
@@ -64,7 +74,7 @@ export const holdings: Holding[] = [
     dayChange: 0.73,
     totalReturn: 4106.99,
     returnPct: 17.49,
-    allocation: 4.33,
+    allocation: 4.31,
   },
   {
     company: "Berkshire Hathaway",
@@ -79,7 +89,7 @@ export const holdings: Holding[] = [
     dayChange: -0.62,
     totalReturn: 3557.38,
     returnPct: 14.85,
-    allocation: 4.32,
+    allocation: 4.3,
   },
   {
     company: "Meta Platforms",
@@ -94,7 +104,7 @@ export const holdings: Holding[] = [
     dayChange: -0.44,
     totalReturn: -190.9,
     returnPct: -0.83,
-    allocation: 3.57,
+    allocation: 3.56,
   },
   {
     company: "Amazon.com",
@@ -109,7 +119,7 @@ export const holdings: Holding[] = [
     dayChange: -1.23,
     totalReturn: 1641.51,
     returnPct: 7.06,
-    allocation: 3.91,
+    allocation: 3.89,
   },
   {
     company: "Microsoft Corp.",
@@ -124,7 +134,7 @@ export const holdings: Holding[] = [
     dayChange: 5.45,
     totalReturn: -3200.75,
     returnPct: -12.45,
-    allocation: 3.53,
+    allocation: 3.52,
   },
   {
     company: "Cummins Inc.",
@@ -139,7 +149,7 @@ export const holdings: Holding[] = [
     dayChange: -3.3,
     totalReturn: 3217.9,
     returnPct: 24.85,
-    allocation: 2.54,
+    allocation: 2.52,
   },
   {
     company: "Cipher Mining",
@@ -154,7 +164,7 @@ export const holdings: Holding[] = [
     dayChange: -3.82,
     totalReturn: 8813.2,
     returnPct: 73.45,
-    allocation: 3.26,
+    allocation: 3.25,
   },
   {
     company: "Ally Financial",
@@ -169,7 +179,7 @@ export const holdings: Holding[] = [
     dayChange: 0.02,
     totalReturn: 3141.32,
     returnPct: 25.25,
-    allocation: 2.44,
+    allocation: 2.43,
   },
   {
     company: "Constellation Energy",
@@ -187,7 +197,7 @@ export const holdings: Holding[] = [
     dayChange: 0.5,
     totalReturn: -4252.38,
     returnPct: -22.47,
-    allocation: 2.3,
+    allocation: 2.29,
   },
   {
     company: "Eli Lilly and Co.",
@@ -202,7 +212,7 @@ export const holdings: Holding[] = [
     dayChange: -1.93,
     totalReturn: 944.48,
     returnPct: 5.64,
-    allocation: 2.77,
+    allocation: 2.76,
   },
   {
     company: "Palo Alto Networks",
@@ -217,7 +227,7 @@ export const holdings: Holding[] = [
     dayChange: 9.28,
     totalReturn: 6192.72,
     returnPct: 43.95,
-    allocation: 3.18,
+    allocation: 3.17,
   },
   {
     company: "Orion Group",
@@ -232,7 +242,7 @@ export const holdings: Holding[] = [
     dayChange: -4.04,
     totalReturn: 2375.61,
     returnPct: 19.24,
-    allocation: 2.31,
+    allocation: 2.3,
   },
   {
     company: "Steel Dynamics",
@@ -247,7 +257,7 @@ export const holdings: Holding[] = [
     dayChange: -0.23,
     totalReturn: 4556.47,
     returnPct: 46.72,
-    allocation: 2.24,
+    allocation: 2.23,
   },
   {
     company: "Occidental Petroleum",
@@ -277,7 +287,7 @@ export const holdings: Holding[] = [
     dayChange: -1.85,
     totalReturn: 783.0,
     returnPct: 7.73,
-    allocation: 1.71,
+    allocation: 1.7,
   },
   {
     company: "Verizon Communications",
@@ -292,7 +302,7 @@ export const holdings: Holding[] = [
     dayChange: -0.42,
     totalReturn: 1395.15,
     returnPct: 15.87,
-    allocation: 1.6,
+    allocation: 1.59,
   },
   {
     company: "Deere & Company",
@@ -307,7 +317,7 @@ export const holdings: Holding[] = [
     dayChange: 0.59,
     totalReturn: 3102.33,
     returnPct: 50.74,
-    allocation: 1.45,
+    allocation: 1.44,
   },
   {
     company: "Procter & Gamble",
@@ -322,7 +332,7 @@ export const holdings: Holding[] = [
     dayChange: -1.61,
     totalReturn: 0.01,
     returnPct: 0.0,
-    allocation: 1.24,
+    allocation: 1.23,
   },
   {
     company: "Capital One Financial",
@@ -372,18 +382,18 @@ export const holdings: Holding[] = [
 ];
 
 export const portfolioSummary = {
-  investedCapital: 622023.5,
+  investedCapital: 624828.38,
   cashHoldings: 15484.0,
-  portfolioValue: 637507.5,
-  totalDayGain: 428.09,
-  totalDayChange: 0.07,
-  totalReturn: 162660.51,
-  // Return over COST BASIS (459,362.99), which is what holdings.tsx computes
-  // from live quotes. This read 25.52, which is the return over portfolio
-  // value — a different denominator, and 10 points lower.
-  totalReturnPct: 35.41,
-  // Value-weighted mean of the position betas over invested capital. Read
-  // 1.02; the rows sum to 1.048. Live: holdings.tsx falls back to this
-  // whenever invested value is 0.
-  weightedBeta: 1.048,
+  portfolioValue: 640312.38,
+  totalDayGain: -289.87,
+  totalDayChange: -0.05,
+  totalReturn: 165465.39,
+  // Return over COST BASIS (459,362.99) — the same denominator holdings.tsx
+  // uses when it recomputes from live quotes. Measuring it over portfolio
+  // value instead is a different, and materially lower, number.
+  totalReturnPct: 36.02,
+  // Value-weighted mean of the position betas over invested capital, not a
+  // simple average. Live: holdings.tsx falls back to this only when invested
+  // value is 0.
+  weightedBeta: 1.046,
 };

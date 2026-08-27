@@ -58,7 +58,7 @@ export const Route = createFileRoute("/")({
 const FALLBACK_STATS = {
   aum_display: "$600K",
   active_members: String(totalMemberCount),
-  founded_year: 2009,
+  founded_year: 1995,
   sector_teams: sectorTeams.length,
 };
 
@@ -103,7 +103,7 @@ function Index() {
   const STATS = [
     { kind: "aum" as const, label: "Assets Under Management", sub: "actively deployed" },
     { kind: "members" as const, label: "Active Members", sub: "across all years" },
-    { kind: "track" as const, label: "Track Record", sub: `since est. ${s.founded_year}` },
+    { kind: "track" as const, label: "Years Investing", sub: `since est. ${s.founded_year}` },
     { kind: "sectors" as const, label: "Sector Coverage Teams", sub: "bottom-up research" },
   ];
   return (
@@ -269,7 +269,7 @@ function Index() {
                   {trackRecordYears}Y+
                 </div>
                 <div className="text-xs uppercase tracking-wider text-ink/75 mt-1">
-                  Track record
+                  Years investing
                 </div>
               </div>
             </Reveal>
