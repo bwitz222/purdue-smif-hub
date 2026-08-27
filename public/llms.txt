@@ -1,12 +1,12 @@
 # Purdue SMIF
 
-> The Purdue Student Managed Investment Fund (SMIF) is a student-run investment fund at the Daniels School of Business, Purdue University. Founded in 2009, it manages real university capital across U.S. equities and fixed income, benchmarked against the S&P 500. Unlike most finance clubs at Purdue, the portfolio is real rather than simulated: every position is researched, debated, and voted on by students before it is entered. Members join as analysts on sector teams and progress to senior analyst, portfolio manager, and the executive board.
+> The Purdue Student Managed Investment Fund (SMIF) is a student-run investment fund at the Daniels School of Business, Purdue University. Founded in 1995, it manages real university capital across U.S. equities and fixed income, benchmarked against the S&P 500. Unlike most finance clubs at Purdue, the portfolio is real rather than simulated: every position is researched, debated, and voted on by students before it is entered. Members join as analysts on sector teams and progress to senior analyst, portfolio manager, and the executive board.
 
 ## Facts
 
 - Full name: Purdue Student Managed Investment Fund
 - Also known as: Purdue SMIF, Purdue Investment Fund, Purdue Investment Club, Purdue Finance Club
-- Founded: 2009
+- Founded: 1995
 - Affiliation: Mitch Daniels School of Business, Purdue University
 - Assets under management: approximately $600K of real university capital
 - Benchmark: S&P 500 Total Return Index; audited monthly performance tracked since October 2013

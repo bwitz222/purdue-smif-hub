@@ -1,5 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useMemo } from "react";
+import {
+  computeWindowStats,
+  WINDOW_MONTHS,
+  WINDOW_LABEL,
+  type PerfWindow,
+} from "@/lib/fund-analytics";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowUp, ArrowDown } from "lucide-react";
@@ -161,6 +167,7 @@ function Performance() {
   const [series, setSeries] = useState<Series>("both");
   const [incMode, setIncMode] = useState<IncMode>("growth");
   const [incSeries, setIncSeries] = useState<Series>("both");
+  const [perfWindow, setPerfWindow] = useState<PerfWindow>("5y");
 
   const initial = Route.useLoaderData();
 
@@ -187,6 +194,24 @@ function Performance() {
   const kpis: PerfKpis = perfData?.kpis ?? FALLBACK_KPIS;
   const allAudited = years.length > 0 && years.every((r) => r.is_audited);
 
+  // Both measurement windows, derived from the single monthly series with the
+  // same pure helpers the server uses. computeWindowStats re-bases growth to
+  // the window's first month and recomputes the drawdown peak inside it —
+  // slicing the cumulative-from-inception figures would carry an old peak in.
+  const windows = useMemo(() => {
+    const full = monthlyData?.series ?? [];
+    return {
+      "5y": computeWindowStats(full, WINDOW_MONTHS["5y"]),
+      inception: computeWindowStats(full, WINDOW_MONTHS.inception),
+    };
+  }, [monthlyData]);
+
+  // Fall back rather than render a window the data cannot support.
+  const activeWindow: PerfWindow = windows[perfWindow] ? perfWindow : "inception";
+  const windowStats = windows[activeWindow];
+  const windowLabel = WINDOW_LABEL[activeWindow];
+  const windowStartMonth = windowStats?.series[0]?.month ?? monthlyData?.inceptionMonth ?? "";
+
   // Prefer real KPIs derived from the monthly series when available.
   const KPI_STATS = useMemo(() => {
     if (monthlyData) {
@@ -203,7 +228,11 @@ function Performance() {
           v: fmtPct(k.inception_annualized_pct),
           pos: k.inception_annualized_pct >= 0,
         },
-        { l: "Max Drawdown", v: fmtPct(k.max_drawdown_pct), pos: false },
+        {
+          l: activeWindow === "5y" ? "Max Drawdown · 5Y" : "Max Drawdown",
+          v: fmtPct(windowStats?.max_drawdown_pct ?? k.max_drawdown_pct),
+          pos: false,
+        },
       ];
     }
     return [
@@ -219,20 +248,20 @@ function Performance() {
         pos: kpis.inception_annualized >= 0,
       },
     ];
-  }, [monthlyData, kpis]);
+  }, [monthlyData, kpis, activeWindow, windowStats]);
 
   // Risk & return analytics — derived server-side from the monthly series.
   type Tone = "pos" | "neg" | "neutral";
   const toneClass = (t: Tone) =>
     t === "pos" ? "text-gain" : t === "neg" ? "text-loss" : "text-ink";
-  const a = monthlyData?.analytics;
+  const a = windowStats?.analytics;
   const analyticsPrimary: { l: string; v: string; tone: Tone; sub: string }[] = a
     ? [
         {
           l: "Cumulative Return",
           v: fmtPct(a.cumulative_return_pct),
           tone: a.cumulative_return_pct >= 0 ? "pos" : "neg",
-          sub: "Since inception",
+          sub: windowLabel,
         },
         {
           l: "Annualized Volatility",
@@ -308,7 +337,7 @@ function Performance() {
 
   // Monthly chart series + rolling-1Y derived series.
   const monthlySeries = useMemo(() => {
-    const pts: MonthlyPoint[] = monthlyData?.series ?? [];
+    const pts: MonthlyPoint[] = windowStats?.series ?? [];
     if (incMode === "rolling") {
       // 12-month trailing return at each point
       const out: Array<{ month: string; smif: number; bench: number }> = [];
@@ -331,7 +360,7 @@ function Performance() {
       }));
     }
     return pts.map((p) => ({ month: p.month, smif: p.smif_growth, bench: p.bench_growth }));
-  }, [monthlyData, incMode]);
+  }, [windowStats, incMode]);
 
   // Only show January tick labels so the long axis stays readable.
   const monthlyTickFormatter = (iso: string) => {
@@ -347,15 +376,15 @@ function Performance() {
 
   const tableRows = useMemo(() => [...years].sort((a, b) => b.year - a.year), [years]);
 
-  const sinceInceptionTitle = useMemo(() => {
-    if (!monthlyData) return "Growth of $1 since inception";
-    const startYear = monthlyData.inceptionMonth.slice(0, 4);
+  const monthlyChartTitle = useMemo(() => {
+    if (!monthlyData || !windowStartMonth) return "Growth of $1";
+    const startYear = windowStartMonth.slice(0, 4);
     return incMode === "growth"
-      ? `Growth of $1 since ${formatMonth(monthlyData.inceptionMonth)}`
+      ? `Growth of $1 since ${formatMonth(windowStartMonth)}`
       : incMode === "drawdown"
         ? `Peak-to-trough drawdown since ${startYear}`
         : `Rolling 12-month return since ${startYear}`;
-  }, [monthlyData, incMode]);
+  }, [monthlyData, windowStartMonth, incMode]);
 
   return (
     <>
@@ -380,7 +409,8 @@ function Performance() {
           </h1>
           <p className="mt-8 max-w-xl text-on-dark-secondary leading-relaxed text-lg">
             Measured against the S&amp;P 500 Total Return Index (SPY). The fund was established in
-            2009; audited monthly performance is tracked since October 2013.
+            1995; the audited monthly series begins October 2013, when it moved to its current
+            custodian.
             {monthlyData ? "" : allAudited ? "" : " Returns shown are illustrative."}
           </p>
         </div>
@@ -430,6 +460,49 @@ function Performance() {
           ))}
         </Reveal>
 
+        {/* ── Measurement window ────────────────────────────────── */}
+        {/* Governs the analytics block and the monthly chart below it. Both
+            used to be since-inception with no way to say so on the page; the
+            labels underneath now name whichever window is selected. Hidden
+            when the history is too short to support a 5Y figure, since there
+            would be nothing to switch between. */}
+        {monthlyData && windows["5y"] && (
+          <Reveal className="flex flex-wrap items-center gap-x-4 gap-y-2" delay={0.01}>
+            <span className="text-[10px] font-mono uppercase tracking-[0.22em] text-muted-foreground">
+              Measurement window
+            </span>
+            <div
+              className="inline-flex border border-border"
+              role="group"
+              aria-label="Measurement window"
+            >
+              {(
+                [
+                  { k: "5y", label: "5Y" },
+                  { k: "inception", label: "Since inception" },
+                ] as { k: PerfWindow; label: string }[]
+              ).map((b) => (
+                <button
+                  key={b.k}
+                  onClick={() => setPerfWindow(b.k)}
+                  aria-pressed={activeWindow === b.k}
+                  className={`press px-4 py-2 text-xs font-semibold uppercase tracking-wider cursor-pointer ${
+                    activeWindow === b.k
+                      ? "bg-ink text-background"
+                      : "bg-background text-ink hover:bg-secondary"
+                  }`}
+                >
+                  {b.label}
+                </button>
+              ))}
+            </div>
+            <span className="text-xs text-muted-foreground">
+              Applies to the analytics and monthly chart below. The annual table and the 1Y / 5Y /
+              inception cards above are unaffected.
+            </span>
+          </Reveal>
+        )}
+
         {/* ── Risk & return analytics ───────────────────────────── */}
         {a && a.observations >= 12 && (
           <Reveal className="space-y-4" delay={0.02}>
@@ -472,23 +545,24 @@ function Performance() {
             </div>
             <p className="text-xs text-muted-foreground">
               Computed from monthly SMIF and S&amp;P 500 total-return (SPY) returns since{" "}
-              {formatMonth(monthlyData!.inceptionMonth)}, excluding custodian-transition bridge
-              months. Sharpe and Sortino assume a 0% risk-free rate; alpha, beta, and correlation
-              are measured against the S&amp;P 500 total-return index.
+              {formatMonth(windowStartMonth)}
+              {activeWindow === "5y" ? " (trailing 5 years)" : " (inception)"}, excluding
+              custodian-transition bridge months. Sharpe and Sortino assume a 0% risk-free rate;
+              alpha, beta, and correlation are measured against the S&amp;P 500 total-return index.
             </p>
           </Reveal>
         )}
 
-        {/* ── Since Inception (monthly, live) ───────────────────── */}
+        {/* ── Monthly series (windowed, live) ────────────────────── */}
         {monthlyData && monthlyData.series.length > 0 && (
           <Reveal className="border border-border bg-card p-6 md:p-10" delay={0.04}>
             <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between mb-8">
               <div>
                 <div className="text-xs uppercase tracking-[0.22em] text-muted-foreground mb-2">
-                  Since Inception · Monthly · updated {formatMonth(monthlyData.lastMonth)}
+                  {windowLabel} · Monthly · updated {formatMonth(monthlyData.lastMonth)}
                 </div>
                 <h2 className="font-display text-2xl font-bold text-ink md:text-3xl">
-                  {sinceInceptionTitle}
+                  {monthlyChartTitle}
                 </h2>
               </div>
 
@@ -857,6 +931,15 @@ function Performance() {
             <span className="font-semibold text-foreground">Methodology:</span> monthly returns are
             computed on a Modified Dietz basis to account for intra-month contributions and
             withdrawals. The benchmark is the S&amp;P 500 Total Return (SPY, dividends reinvested).
+          </p>
+          <p>
+            <span className="font-semibold text-foreground">Measurement window:</span> the risk and
+            return analytics and the monthly chart default to the trailing five years, the period
+            with the most complete custodian data. Growth and drawdown are re-based to the start of
+            whichever window is selected, so a five-year drawdown is the deepest fall within those
+            five years rather than an all-time figure. The full record since October 2013 remains
+            available from the window control, and the annual table below is always the complete
+            series.
           </p>
           <p>
             Past performance does not guarantee future results.

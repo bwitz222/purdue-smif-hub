@@ -167,7 +167,7 @@ export function SiteHeader() {
           </nav>
           <div className="container-prose pb-6 shrink-0">
             <span className="text-xs uppercase tracking-[0.18em] text-on-dark-dim font-mono">
-              Daniels School of Business · Est. 2009
+              Daniels School of Business · Est. 1995
             </span>
           </div>
         </DialogContent>

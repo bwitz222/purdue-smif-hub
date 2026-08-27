@@ -22,7 +22,7 @@ Every profile below should agree with these. They match the site as deployed.
 | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Full name               | Purdue Student Managed Investment Fund                                                                                                                 |
 | Short name              | Purdue SMIF                                                                                                                                            |
-| Founded                 | 2009                                                                                                                                                   |
+| Founded                 | 1995                                                                                                                                                   |
 | Affiliation             | Mitch Daniels School of Business, Purdue University                                                                                                    |
 | Assets under management | approximately $600,000 of real university capital                                                                                                      |
 | Benchmark               | S&P 500 Total Return Index; audited monthly performance since October 2013                                                                             |
@@ -54,7 +54,7 @@ first entry in the site's `sameAs` array.
 
 > The Purdue Student Managed Investment Fund (SMIF) is a student-run investment
 > fund at the Mitch Daniels School of Business, Purdue University. Founded in
-> 2009, SMIF manages approximately $600,000 of real university capital across
+> 1995, SMIF manages approximately $600,000 of real university capital across
 > U.S. equities and fixed income — not a simulated portfolio.
 >
 > Analysts work on sector teams, research individual companies from the bottom
@@ -87,13 +87,13 @@ first entry in the site's `sameAs` array.
 
 **Tagline** (LinkedIn limit 120 characters — this is 92):
 
-> Student-run investment fund at Purdue's Daniels School of Business. Real capital since 2009.
+> Student-run investment fund at Purdue's Daniels School of Business. Real capital since 1995.
 
 **About** (limit 2,000 characters — this is 1,178):
 
 > The Purdue Student Managed Investment Fund (SMIF) is a student-run investment
 > fund at the Mitch Daniels School of Business, Purdue University. Founded in
-> 2009, we manage approximately $600,000 of real university capital across U.S.
+> 1995, we manage approximately $600,000 of real university capital across U.S.
 > equities and fixed income.
 >
 > The portfolio is real, not simulated. Analysts join a sector team, research
@@ -116,7 +116,7 @@ first entry in the site's `sameAs` array.
 
 **Fields to set:** Website `https://www.purduesmif.org` · Industry
 `Investment Management` · Company size `11-50 employees` · Type
-`Nonprofit` · Founded `2009` · Location `West Lafayette, Indiana`.
+`Nonprofit` · Founded `1995` · Location `West Lafayette, Indiana`.
 
 ---
 
@@ -126,7 +126,7 @@ first entry in the site's `sameAs` array.
 
 **Bio** (limit 150 characters — this is 124):
 
-> Purdue's student-managed investment fund 📈 Real university capital since 2009
+> Purdue's student-managed investment fund 📈 Real university capital since 1995
 > Daniels School of Business
 > Holdings + apply ⬇️
 
@@ -143,7 +143,7 @@ first entry in the site's `sameAs` array.
 
 > Research and commentary from the Purdue Student Managed Investment Fund, a
 > student-run investment fund at Purdue University's Daniels School of Business.
-> Founded in 2009, SMIF manages approximately $600,000 of real university
+> Founded in 1995, SMIF manages approximately $600,000 of real university
 > capital, benchmarked against the S&P 500. Everything here is written by
 > student analysts. Holdings and performance are published at
 > https://www.purduesmif.org.
@@ -185,7 +185,7 @@ department, and should be sent from a purdue.edu address:**
 >    who find us through the Daniels site currently have no route to the
 >    portfolio, the recruiting calendar, or the application.
 > 2. Could the description be updated to: "A student-run investment fund
->    managing approximately $600,000 of real university capital since 2009.
+>    managing approximately $600,000 of real university capital since 1995.
 >    Analysts research and pitch individual companies, and the fund's holdings
 >    and performance against the S&P 500 are published publicly."
 >

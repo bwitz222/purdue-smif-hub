@@ -12,7 +12,8 @@
     "format": "prettier --write .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "node tests/e2e/run.mjs"
+    "test:e2e": "node tests/e2e/run.mjs",
+    "check:splits": "node scripts/check-splits.mjs"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.12",
