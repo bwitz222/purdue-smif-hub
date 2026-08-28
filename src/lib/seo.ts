@@ -3,6 +3,7 @@
 
 export const SITE_URL = "https://www.purduesmif.org";
 export const OG_IMAGE = `${SITE_URL}/og-share.jpg`;
+export const OG_HOME = `${SITE_URL}/og-home.jpg`;
 export const OG_HOLDINGS = `${SITE_URL}/og-holdings.jpg`;
 export const OG_TEAM = `${SITE_URL}/og-team.jpg`;
 export const OG_ABOUT = `${SITE_URL}/og-about.jpg`;
