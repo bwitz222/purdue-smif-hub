@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import tradingImg from "@/assets/nyc-skyline.webp";
+import skylineImg from "@/assets/nyc-skyline.webp";
+import teamPhoto from "@/assets/team-photo.webp";
 import campusImg from "@/assets/hero-campus.webp";
 import { applyUrl } from "@/lib/apply-url";
 import {
@@ -19,7 +20,7 @@ import { sectorTeams, totalMemberCount } from "@/data/team";
 import { liveQueryOptions } from "@/lib/live-query";
 
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
-import { socialMeta, canonical } from "@/lib/seo";
+import { socialMeta, canonical, OG_HOME } from "@/lib/seo";
 import { PerformanceSparkline } from "@/components/PerformanceSparkline";
 
 const HOME_TITLE = "Purdue SMIF — Student Managed Investment Fund";
@@ -36,11 +37,12 @@ export const Route = createFileRoute("/")({
         title: HOME_TITLE,
         description: HOME_DESCRIPTION,
         url: canonical("/"),
+        image: OG_HOME,
       }),
     ],
     links: [
       { rel: "canonical", href: canonical("/") },
-      { rel: "preload", as: "image", href: tradingImg, fetchPriority: "high" },
+      { rel: "preload", as: "image", href: teamPhoto, fetchPriority: "high" },
     ],
   }),
 });
@@ -110,64 +112,89 @@ function Index() {
     <>
       {/* Hero */}
       <section className="relative isolate overflow-hidden bg-ink min-h-[100dvh] flex flex-col">
+        {/* Texture only. The team photo alongside is the hero's actual
+            subject, so this drops to opacity-15 and no longer drifts — a moving
+            backdrop behind a portrait of real people reads as jitter. It stays
+            because the Mission section directly below is also bg-ink, and a
+            flat hero fuses the two into one undifferentiated dark slab. */}
         <div aria-hidden="true" className="absolute inset-0">
           <img
-            src={tradingImg}
+            src={skylineImg}
             alt=""
-            width={1920}
-            height={1080}
-            fetchPriority="high"
+            width={1600}
+            height={1216}
+            loading="lazy"
             decoding="async"
-            className="h-full w-full object-cover opacity-30 animate-ken-burns"
+            className="h-full w-full object-cover opacity-15"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-ink/85 via-ink/70 to-ink" />
+          <div className="absolute inset-0 bg-gradient-to-b from-ink/70 via-ink/55 to-ink" />
         </div>
         <div className="relative flex-1 container-prose flex flex-col justify-center py-24 lg:py-28 text-background">
-          <div className="max-w-4xl">
-            <div className="animate-fade-in flex items-center gap-3 mb-8">
-              <span className="rule-gold animate-expand-x delay-100" />
-              <span className="text-xs font-semibold uppercase tracking-[0.18em] text-gold/80">
-                Daniels School of Business · Est. {s.founded_year}
-              </span>
-            </div>
-            <h1
-              className="animate-fade-up delay-200 font-display font-bold text-background"
-              style={{ fontSize: "clamp(2.5rem, 7vw, 5.5rem)", lineHeight: "1.02" }}
-            >
-              Purdue <span className="text-gold">Student</span> Managed
-              <br />
-              Investment Fund
-            </h1>
-            {/* Direct-answer paragraph. This is the featured-snippet / AI Overview
+          <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+            <div className="lg:col-span-7">
+              <div className="animate-fade-in flex items-center gap-3 mb-8">
+                <span className="rule-gold animate-expand-x delay-100" />
+                <span className="text-xs font-semibold uppercase tracking-[0.18em] text-gold/80">
+                  Daniels School of Business · Est. {s.founded_year}
+                </span>
+              </div>
+              <h1
+                className="animate-fade-up delay-200 font-display font-bold text-background"
+                style={{ fontSize: "clamp(2.25rem, 4.2vw, 3.5rem)", lineHeight: "1.06" }}
+              >
+                Purdue <span className="text-gold">Student</span> Managed
+                <br />
+                Investment Fund
+              </h1>
+              {/* Direct-answer paragraph. This is the featured-snippet / AI Overview
                 extraction zone, so it names the entity, its category, the
                 university, and the hard facts in plain prose — a crawler that
                 reads nothing else should still be able to answer "what is
                 Purdue SMIF" and "how much does it manage" from these two
                 sentences. Keep it declarative; do not turn it back into a
                 tagline. */}
-            <p className="animate-fade-up delay-400 mt-8 max-w-2xl text-on-dark-primary text-base leading-relaxed">
-              The Purdue Student Managed Investment Fund (SMIF) is a student-run investment fund at
-              Purdue University's Daniels School of Business. Founded in {s.founded_year}, SMIF
-              manages {s.aum_display} of real university capital across U.S. equities and fixed
-              income, benchmarked against the S&amp;P 500 and reported quarterly.
-            </p>
-            <div className="animate-fade-up delay-500 mt-10 flex flex-wrap gap-4">
-              <a
-                href={applyUrl("home-hero")}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="press group inline-flex items-center gap-2.5 bg-gold px-8 py-3.5 text-sm font-semibold text-ink hover:bg-gold-mid"
-              >
-                Apply to Join
-                <ExternalLink className="h-4 w-4" aria-hidden="true" />
-                <span className="sr-only">(opens application form in new tab)</span>
-              </a>
-              <Link
-                to="/holdings"
-                className="press inline-flex items-center gap-2.5 border border-background/25 px-8 py-3.5 text-sm font-semibold text-background hover:border-gold hover:text-gold"
-              >
-                View Portfolio
-              </Link>
+              <p className="animate-fade-up delay-400 mt-8 max-w-2xl text-on-dark-primary text-base leading-relaxed">
+                The Purdue Student Managed Investment Fund (SMIF) is a student-run investment fund
+                at Purdue University's Daniels School of Business. Founded in {s.founded_year}, SMIF
+                manages {s.aum_display} of real university capital across U.S. equities and fixed
+                income, benchmarked against the S&amp;P 500 and reported quarterly.
+              </p>
+              <div className="animate-fade-up delay-500 mt-10 flex flex-wrap gap-4">
+                <a
+                  href={applyUrl("home-hero")}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="press group inline-flex items-center gap-2.5 bg-gold px-8 py-3.5 text-sm font-semibold text-ink hover:bg-gold-mid"
+                >
+                  Apply to Join
+                  <ExternalLink className="h-4 w-4" aria-hidden="true" />
+                  <span className="sr-only">(opens application form in new tab)</span>
+                </a>
+                <Link
+                  to="/holdings"
+                  className="press inline-flex items-center gap-2.5 border border-background/25 px-8 py-3.5 text-sm font-semibold text-background hover:border-gold hover:text-gold"
+                >
+                  View Portfolio
+                </Link>
+              </div>
+            </div>
+
+            {/* The photo is the point of this section, so it renders at full
+                opacity rather than as a darkened backdrop, and it is content —
+                not decoration — so it carries real alt text and sits outside
+                the aria-hidden backdrop above. The asset is pre-cropped to 3:4,
+                which makes object-cover a no-op here: nobody gets cropped a
+                second time at render, at any viewport width. */}
+            <div className="lg:col-span-5">
+              <img
+                src={teamPhoto}
+                alt="Members of the Purdue Student Managed Investment Fund on the staircase at the Daniels School of Business."
+                width={1200}
+                height={1600}
+                fetchPriority="high"
+                decoding="async"
+                className="animate-fade-up delay-300 w-full aspect-[3/4] object-cover shadow-elegant"
+              />
             </div>
           </div>
 
@@ -255,8 +282,8 @@ function Index() {
                 src={campusImg}
                 alt="Purdue's Daniels School of Business campus"
                 loading="lazy"
-                width={1600}
-                height={1200}
+                width={1024}
+                height={683}
                 className="w-full aspect-[3/4] object-cover shadow-elegant"
               />
               <div className="absolute -bottom-5 -left-5 bg-gold p-5 shadow-gold hidden lg:block">
