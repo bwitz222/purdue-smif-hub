@@ -5,6 +5,7 @@ import { applyUrl } from "@/lib/apply-url";
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import { OnThisPage, type PageSection } from "@/components/OnThisPage";
 import { facultyAdvisors } from "@/data/team";
+import placementsImg from "@/assets/placements-2026.png";
 
 /** Anchors for the in-page nav. Each id must match a <section id> below. */
 const SECTIONS: readonly PageSection[] = [
@@ -63,6 +64,33 @@ export const Route = createFileRoute("/about")({
     ],
   }),
 });
+
+/** Mirrors the logos in `placements-2026.png`. Kept as text because the logo
+    wall is a single image — screen readers and crawlers cannot read it. */
+const PLACEMENT_FIRMS = [
+  "Morgan Stanley",
+  "Barclays",
+  "BMO",
+  "Wells Fargo",
+  "Deloitte",
+  "PwC",
+  "EY",
+  "Accenture",
+  "Crowe",
+  "MFS Investment Management",
+  "Julius Bär",
+  "CBRE",
+  "Zurich Insurance",
+  "Huntington Bank",
+  "State Farm",
+  "Simon Property Group",
+  "IBM",
+  "Caterpillar",
+  "Cummins",
+  "Northrop Grumman",
+  "CenterPoint Energy",
+  "NASA",
+] as const;
 
 /**
  * Questions about the fund itself — how it is governed, measured, and funded.
@@ -218,37 +246,38 @@ function About() {
               more than it rewards a particular major.
             </p>
           </Reveal>
-
-          <div className="pt-6">
-            <h3 className="text-xs font-semibold uppercase tracking-[0.32em] text-gold-deep mb-6">
-              Where Our Members Go
-            </h3>
-            <RevealGroup
-              className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-border border border-border"
-              stagger={0.05}
-            >
-              {[
-                "Morgan Stanley",
-                "Barclays",
-                "BMO Capital",
-                "Wells Fargo",
-                "Deloitte",
-                "PwC",
-                "EY",
-                "KPMG",
-              ].map((firm) => (
-                <RevealItem
-                  key={firm}
-                  className="bg-background flex items-center justify-center px-4 py-8 text-center hover:bg-secondary/50 transition-colors duration-200"
-                >
-                  <span className="font-display text-sm font-semibold text-ink/75 tracking-tight">
-                    {firm}
-                  </span>
-                </RevealItem>
-              ))}
-            </RevealGroup>
-          </div>
         </div>
+
+        {/* Placement logo wall. Spans the full container rather than sitting in
+            the 2/3 prose column because the source is a wide 1.87:1 collage —
+            squeezed into the column the smaller marks stop being legible. It
+            scrolls horizontally below ~680px for the same reason. */}
+        <Reveal className="md:col-span-3">
+          <h3 className="text-xs font-semibold uppercase tracking-[0.32em] text-gold-deep mb-6">
+            Where Our Members Go
+          </h3>
+          <div
+            role="group"
+            aria-label="Employer logos, scrollable horizontally"
+            tabIndex={0}
+            className="overflow-x-auto border border-border bg-white"
+          >
+            <img
+              src={placementsImg}
+              alt="Logos of the employers where Purdue SMIF members have placed."
+              width={1920}
+              height={1029}
+              loading="lazy"
+              decoding="async"
+              className="block w-full min-w-[680px]"
+            />
+          </div>
+          <ul className="sr-only">
+            {PLACEMENT_FIRMS.map((firm) => (
+              <li key={firm}>{firm}</li>
+            ))}
+          </ul>
+        </Reveal>
       </section>
 
       {/* ── Where SMIF fits ───────────────────────────────────────────
