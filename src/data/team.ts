@@ -107,7 +107,7 @@ const SECONDARY_BIO_BY_NAME: Record<string, string> = {
   "Sandhya Gopinath":
     "On the Portfolio + Risk Management team, turns approved pitches into sized positions and helps monitor portfolio risk and performance.",
   "Shaheera Ali":
-    "Leads the Information Technology team, setting sector strategy across software, semiconductors, and IT services.",
+    "Covers technology equities on the Information Technology team — software, semiconductors, and IT services — from the bottom up.",
 };
 
 export const board: Member[] = [
@@ -257,9 +257,9 @@ export const sectorTeams = [
     description:
       "Software, semiconductors, hardware, and IT services across mega-caps and emerging growth.",
     members: make("Information Technology", [
-      ["Chris Andreou", "Senior Analyst", "andreou@purdue.edu", "2028"],
+      ["Chris Andreou", "Portfolio Manager", "andreou@purdue.edu", "2028"],
       ["Parth Dama", "Senior Analyst", "damap@purdue.edu", "2029"],
-      ["Shaheera Ali", "Portfolio Manager", "ali251@purdue.edu", "2028"],
+      ["Shaheera Ali", "Analyst", "ali251@purdue.edu", "2028"],
       ["Landon Haffner", "Analyst", "haffnel@purdue.edu", "2029"],
       ["Sarath Shayam", "Analyst", "sshayam@purdue.edu", "2029"],
     ]),
@@ -268,7 +268,7 @@ export const sectorTeams = [
     name: "Consumer Discretionary",
     description: "Retail, autos, leisure, apparel, and other cyclical consumer names.",
     members: make("Consumer Discretionary", [
-      ["Ayden Wong", "Senior Analyst", "wong482@purdue.edu", "2028"],
+      ["Ayden Wong", "Portfolio Manager", "wong482@purdue.edu", "2028"],
       ["Riley Collins", "Senior Analyst", "colli571@purdue.edu", "2028"],
       ["Karanvir Singh", "Senior Analyst", "sing2553@purdue.edu", "2028"],
       ["Sohum Sharma", "Analyst", "shar1061@purdue.edu", "2030"],
@@ -281,7 +281,7 @@ export const sectorTeams = [
     members: make("Financials", [
       ["Alex Belanger", "Portfolio Manager", "belangea@purdue.edu", "2027"],
       ["Mikhail Bilokin", "Analyst", "mbilokin@purdue.edu", "2029"],
-      ["Aanga Verma", "Analyst", "verma319@purdue.edu", "2029"],
+      ["Aanya Verma", "Analyst", "verma319@purdue.edu", "2029"],
       ["Cian Murray", "Analyst", "murra410@purdue.edu", "2029"],
       ["Charlotte Liu", "Analyst", "liu3972@purdue.edu", "2028"],
     ]),
@@ -293,7 +293,7 @@ export const sectorTeams = [
       ["Evan Wright", "Portfolio Manager", "wrigh712@purdue.edu", "2027"],
       ["Logan Friedman", "Senior Analyst", "friedml@purdue.edu", "2028"],
       ["Fabian Segura Vargas", "Senior Analyst", "fsegurav@purdue.edu", "2028"],
-      ["Soham Rog", "Analyst", "roy321@purdue.edu", "2029"],
+      ["Soham Roy", "Analyst", "roy321@purdue.edu", "2029"],
       ["Ryan Pham", "Analyst", "pham296@purdue.edu", "2030"],
     ]),
   },
@@ -316,7 +316,7 @@ export const sectorTeams = [
       ["Gautham Santhanam", "Senior Analyst", "gsanthan@purdue.edu", "2028"],
       ["Brock Heller", "Senior Analyst", "baheller@purdue.edu", "2027"],
       ["Aarav Mehta", "Analyst", "mehta488@purdue.edu", "2030"],
-      ["Anjali Muthgala", "Analyst", "lmuthyal@purdue.edu", "2029"],
+      ["Anjali Muthyala", "Analyst", "lmuthyal@purdue.edu", "2029"],
     ]),
   },
   {
@@ -326,7 +326,7 @@ export const sectorTeams = [
       ["Daniel Friedman", "Portfolio Manager", "friedmd@purdue.edu", "Dec 2026"],
       ["Gabriel Fridman", "Senior Analyst", "gfridman@purdue.edu", "2028"],
       ["Evan Lee", "Analyst", "lee6214@purdue.edu", "2030"],
-      ["John Battaglino", "Analyst", "battagl@purdue.edu", "2030"],
+      ["John Battaglino", "Analyst", "battaglj@purdue.edu", "2030"],
       ["Felipe Restrepo", "Analyst", "frestrep@purdue.edu", "2030"],
     ]),
   },
@@ -347,7 +347,7 @@ export const fixedIncomeMacro: Member[] = make("Fixed Income & Macro", [
   ["Andrew Lacambra", "Portfolio Manager", "alacambr@purdue.edu", "2027"],
   ["Keren Wadhwani", "Senior Analyst, Rates", "kwadhwan@purdue.edu", "2028"],
   ["Balthazar Schmitt", "Analyst, FX & Macro", "bschm@purdue.edu", "2028"],
-  ["Luke Ellis", "Analyst", "ellim06@purdue.edu", "2029"],
+  ["Luke Ellis", "Analyst", "ellilm06@purdue.edu", "2029"],
   ["Cooper McBride", "Analyst", "mcbrid73@purdue.edu", "2030"],
 ]).map((m) => (m.name === "Andrew Lacambra" ? { ...m, photo: andrewLacambraPhoto } : m));
 
@@ -418,6 +418,25 @@ const LINKEDIN_BY_NAME: Record<string, string> = {
   "Alejandro Cabrales": "https://www.linkedin.com/in/alejandro-cabrales",
   "Arav Ginde": "https://www.linkedin.com/in/aravginde",
   "Veer Sanyal": "https://www.linkedin.com/in/veersanyal",
+  "Evan Lee": "https://www.linkedin.com/in/evand7lee",
+  "John Battaglino": "https://www.linkedin.com/in/johnbutlerbattaglino",
+  "Felipe Restrepo": "https://www.linkedin.com/in/feliperestrepog",
+  "Sohum Sharma": "https://www.linkedin.com/in/sohamksharma",
+  "Vincent Broersma": "https://www.linkedin.com/in/vincent-broersma",
+  "Soham Roy": "https://www.linkedin.com/in/sohamr0",
+  "Ryan Pham": "https://www.linkedin.com/in/ryan-pham-1aa198374",
+  "Aanya Verma": "https://www.linkedin.com/in/aanya-verma-448a65377",
+  "Cian Murray": "https://www.linkedin.com/in/cian-sebastian-murray",
+  "Charlotte Liu": "https://www.linkedin.com/in/charlotte-liu-593655269",
+  "Luke Ellis": "https://www.linkedin.com/in/lukeellis06",
+  "Cooper McBride": "https://www.linkedin.com/in/cooper-mcbride-3a1197352",
+  "Aarav Mehta": "https://www.linkedin.com/in/aarav-mehta-0735a030a",
+  "Anjali Muthyala": "https://www.linkedin.com/in/laxmi-anjali",
+  "Emily Ryu": "https://www.linkedin.com/in/emily-ryu-hello",
+  "Sarath Shayam": "https://www.linkedin.com/in/sarath-shayam",
+  "Hayden Krueger": "https://www.linkedin.com/in/hayden-krueger-816b00189",
+  "Giorgina Ninassi": "https://www.linkedin.com/in/giorgina-ninassi",
+  "Brody Salz": "https://www.linkedin.com/in/brody-salz",
 };
 
 const attachLinkedIn = <T extends Member>(m: T): T =>
