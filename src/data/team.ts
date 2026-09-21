@@ -335,7 +335,6 @@ export const sectorTeams = [
     description: "Integrated energy, E&P, midstream, refiners, and listed real estate (REITs).",
     members: make("Energy & Real Estate", [
       ["Jacob George", "Portfolio Manager", "georg243@purdue.edu", "2029"],
-      ["Alejandro Cabrales", "Senior Analyst", "acabrale@purdue.edu", "2028"],
       ["Arav Ginde", "Senior Analyst", "aginde@purdue.edu", "2027"],
       ["Veer Sanyal", "Senior Analyst", "vsanyal@purdue.edu", "2028"],
       ["Brody Salz", "Analyst", "bsalz@purdue.edu", "2029"],
@@ -354,7 +353,6 @@ export const fixedIncomeMacro: Member[] = make("Fixed Income & Macro", [
 export const portfolioManagers: Member[] = make("Portfolio + Risk Management", [
   ["Hunter Specht", "Portfolio Manager", "hspecht@purdue.edu", "2027"],
   ["Sandhya Gopinath", "Portfolio Manager", "gopinas@purdue.edu", "2028"],
-  ["Yashita Pujari", "Portfolio Management Associate", "ypujari@purdue.edu", "2028"],
   ["Anushka Patel", "Portfolio Management Associate", "pate3115@purdue.edu", "2029"],
   ["Abhipsa Prajapati", "Portfolio Management Associate", "aprajap@purdue.edu", "2029"],
   ["Hayden Krueger", "Analyst", "kruegeh@purdue.edu", "2029"],
