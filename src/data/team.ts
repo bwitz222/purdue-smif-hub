@@ -316,7 +316,7 @@ export const sectorTeams = [
       ["Gautham Santhanam", "Senior Analyst", "gsanthan@purdue.edu", "2028"],
       ["Brock Heller", "Senior Analyst", "baheller@purdue.edu", "2027"],
       ["Aarav Mehta", "Analyst", "mehta488@purdue.edu", "2030"],
-      ["Anjali Muthgala", "Analyst", "lmuthgal@purdue.edu", "2029"],
+      ["Anjali Muthgala", "Analyst", "lmuthyal@purdue.edu", "2029"],
     ]),
   },
   {
