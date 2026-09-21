@@ -107,7 +107,7 @@ const SECONDARY_BIO_BY_NAME: Record<string, string> = {
   "Sandhya Gopinath":
     "On the Portfolio + Risk Management team, turns approved pitches into sized positions and helps monitor portfolio risk and performance.",
   "Shaheera Ali":
-    "Covers technology equities on the Information Technology team — software, semiconductors, and IT services — from the bottom up.",
+    "Leads the Information Technology team, setting sector strategy across software, semiconductors, and IT services.",
 };
 
 export const board: Member[] = [
@@ -257,20 +257,22 @@ export const sectorTeams = [
     description:
       "Software, semiconductors, hardware, and IT services across mega-caps and emerging growth.",
     members: make("Information Technology", [
-      ["Chris Andreou", "Portfolio Manager", "andreou@purdue.edu", "2028"],
+      ["Chris Andreou", "Senior Analyst", "andreou@purdue.edu", "2028"],
       ["Parth Dama", "Senior Analyst", "damap@purdue.edu", "2029"],
-      ["Shaheera Ali", "Analyst", "ali251@purdue.edu", "2028"],
+      ["Shaheera Ali", "Portfolio Manager", "ali251@purdue.edu", "2028"],
       ["Landon Haffner", "Analyst", "haffnel@purdue.edu", "2029"],
+      ["Sarath Shayam", "Analyst", "sshayam@purdue.edu", "2029"],
     ]),
   },
   {
     name: "Consumer Discretionary",
     description: "Retail, autos, leisure, apparel, and other cyclical consumer names.",
     members: make("Consumer Discretionary", [
-      ["Ayden Wong", "Portfolio Manager", "wong482@purdue.edu", "2028"],
+      ["Ayden Wong", "Senior Analyst", "wong482@purdue.edu", "2028"],
       ["Riley Collins", "Senior Analyst", "colli571@purdue.edu", "2028"],
       ["Karanvir Singh", "Senior Analyst", "sing2553@purdue.edu", "2028"],
-      ["Fabian Segura Vargas", "Senior Analyst", "fsegurav@purdue.edu", "2028"],
+      ["Sohum Sharma", "Analyst", "shar1061@purdue.edu", "2030"],
+      ["Vincent Broersma", "Analyst", "vbroersm@purdue.edu", "2029"],
     ]),
   },
   {
@@ -278,8 +280,10 @@ export const sectorTeams = [
     description: "Banks, insurers, asset managers, and capital markets infrastructure.",
     members: make("Financials", [
       ["Alex Belanger", "Portfolio Manager", "belangea@purdue.edu", "2027"],
-      ["Daniel Friedman", "Senior Analyst", "friedmd@purdue.edu", "Dec 2026"],
       ["Mikhail Bilokin", "Analyst", "mbilokin@purdue.edu", "2029"],
+      ["Aanga Verma", "Analyst", "verma319@purdue.edu", "2029"],
+      ["Cian Murray", "Analyst", "murra410@purdue.edu", "2029"],
+      ["Charlotte Liu", "Analyst", "liu3972@purdue.edu", "2028"],
     ]),
   },
   {
@@ -288,6 +292,9 @@ export const sectorTeams = [
     members: make("Consumer Staples", [
       ["Evan Wright", "Portfolio Manager", "wrigh712@purdue.edu", "2027"],
       ["Logan Friedman", "Senior Analyst", "friedml@purdue.edu", "2028"],
+      ["Fabian Segura Vargas", "Senior Analyst", "fsegurav@purdue.edu", "2028"],
+      ["Soham Rog", "Analyst", "roy321@purdue.edu", "2029"],
+      ["Ryan Pham", "Analyst", "pham296@purdue.edu", "2030"],
     ]),
   },
   {
@@ -298,6 +305,7 @@ export const sectorTeams = [
       ["Dallas White", "Senior Analyst", "whit1259@purdue.edu", "2029"],
       ["Cooper Weiss", "Senior Analyst", "weiss109@purdue.edu", "2028"],
       ["Augustus Matushek", "Senior Analyst", "amatush@purdue.edu", "2029"],
+      ["Emily Ryu", "Analyst", "ryu93@purdue.edu", "2030"],
     ]),
   },
   {
@@ -307,13 +315,19 @@ export const sectorTeams = [
       ["Sid Voona", "Portfolio Manager", "voona@purdue.edu", "2028"],
       ["Gautham Santhanam", "Senior Analyst", "gsanthan@purdue.edu", "2028"],
       ["Brock Heller", "Senior Analyst", "baheller@purdue.edu", "2027"],
+      ["Aarav Mehta", "Analyst", "mehta488@purdue.edu", "2030"],
+      ["Anjali Muthgala", "Analyst", "lmuthyal@purdue.edu", "2029"],
     ]),
   },
   {
     name: "Communications",
     description: "Telecom, media, interactive entertainment, and select platform names.",
     members: make("Communications", [
+      ["Daniel Friedman", "Portfolio Manager", "friedmd@purdue.edu", "Dec 2026"],
       ["Gabriel Fridman", "Senior Analyst", "gfridman@purdue.edu", "2028"],
+      ["Evan Lee", "Analyst", "lee6214@purdue.edu", "2030"],
+      ["John Battaglino", "Analyst", "battagl@purdue.edu", "2030"],
+      ["Felipe Restrepo", "Analyst", "frestrep@purdue.edu", "2030"],
     ]),
   },
   {
@@ -324,6 +338,7 @@ export const sectorTeams = [
       ["Alejandro Cabrales", "Senior Analyst", "acabrale@purdue.edu", "2028"],
       ["Arav Ginde", "Senior Analyst", "aginde@purdue.edu", "2027"],
       ["Veer Sanyal", "Senior Analyst", "vsanyal@purdue.edu", "2028"],
+      ["Brody Salz", "Analyst", "bsalz@purdue.edu", "2029"],
     ]),
   },
 ];
@@ -332,6 +347,8 @@ export const fixedIncomeMacro: Member[] = make("Fixed Income & Macro", [
   ["Andrew Lacambra", "Portfolio Manager", "alacambr@purdue.edu", "2027"],
   ["Keren Wadhwani", "Senior Analyst, Rates", "kwadhwan@purdue.edu", "2028"],
   ["Balthazar Schmitt", "Analyst, FX & Macro", "bschm@purdue.edu", "2028"],
+  ["Luke Ellis", "Analyst", "ellim06@purdue.edu", "2029"],
+  ["Cooper McBride", "Analyst", "mcbrid73@purdue.edu", "2030"],
 ]).map((m) => (m.name === "Andrew Lacambra" ? { ...m, photo: andrewLacambraPhoto } : m));
 
 export const portfolioManagers: Member[] = make("Portfolio + Risk Management", [
@@ -340,6 +357,8 @@ export const portfolioManagers: Member[] = make("Portfolio + Risk Management", [
   ["Yashita Pujari", "Portfolio Management Associate", "ypujari@purdue.edu", "2028"],
   ["Anushka Patel", "Portfolio Management Associate", "pate3115@purdue.edu", "2029"],
   ["Abhipsa Prajapati", "Portfolio Management Associate", "aprajap@purdue.edu", "2029"],
+  ["Hayden Krueger", "Analyst", "kruegeh@purdue.edu", "2029"],
+  ["Giorgina Ninassi", "Analyst", "gninassi@purdue.edu", "2029"],
 ]);
 
 // Faculty Advisors — Daniels School professors who advise SMIF. Photos are
