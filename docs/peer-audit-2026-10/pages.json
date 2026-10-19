@@ -1,0 +1,191 @@
+{
+ "smif": {
+  "home": "https://www.purduesmif.org/",
+  "about": "https://www.purduesmif.org/about",
+  "team": "https://www.purduesmif.org/team",
+  "research": "https://www.purduesmif.org/research",
+  "holdings": "https://www.purduesmif.org/holdings",
+  "performance": "https://www.purduesmif.org/performance",
+  "sectors": "https://www.purduesmif.org/sectors",
+  "recruiting": "https://www.purduesmif.org/recruiting",
+  "apply": "https://www.purduesmif.org/apply",
+  "learn": "https://www.purduesmif.org/learn",
+  "contact": "https://www.purduesmif.org/contact"
+ },
+ "gs": {
+  "home": "https://www.goldmansachs.com/",
+  "research": "https://www.goldmansachs.com/insights",
+  "team": "https://www.goldmansachs.com/our-firm/our-people-and-leadership",
+  "careers": "https://www.goldmansachs.com/careers/students"
+ },
+ "ms": {
+  "home": "https://www.morganstanley.com/",
+  "research": "https://www.morganstanley.com/insights",
+  "team": "https://www.morganstanley.com/about-us/leadership",
+  "careers": "https://www.morganstanley.com/people"
+ },
+ "jpm": {
+  "home": "https://www.jpmorgan.com/global",
+  "research": "https://www.jpmorgan.com/insights",
+  "team": "https://www.jpmorgan.com/about-us",
+  "careers": "https://www.jpmorganchase.com/careers"
+ },
+ "bofa": {
+  "home": "https://business.bofa.com/content/boaml/en_us/home.html",
+  "research": "https://business.bofa.com/en-us/content/market-strategies-insights.html",
+  "team": "https://business.bofa.com/en-us/content/about-us.html",
+  "careers": "https://business.bofa.com/en-us/content/careers.html"
+ },
+ "citi": {
+  "home": "https://www.citigroup.com/global",
+  "research": "https://www.citigroup.com/global/insights/research",
+  "team": "https://www.citigroup.com/global/about-us/leadership",
+  "careers": "https://jobs.citi.com/"
+ },
+ "barc": {
+  "home": "https://home.barclays/",
+  "research": "https://home.barclays/insights/",
+  "team": "https://home.barclays/who-we-are/structure-and-leadership/",
+  "careers": "https://home.barclays/careers/"
+ },
+ "ubs": {
+  "home": "https://www.ubs.com/us/en.html",
+  "research": "https://www.ubs.com/us/en/wealth-management/insights.html",
+  "team": "https://www.ubs.com/global/en/our-firm.html",
+  "careers": "https://www.ubs.com/global/en/careers/early-careers.html"
+ },
+ "db": {
+  "home": "https://www.db.com/",
+  "research": "https://www.db.com/flow",
+  "team": "https://www.db.com/who-we-are",
+  "careers": "https://www.db.com/careers"
+ },
+ "evr": {
+  "home": "https://www.evercore.com/",
+  "research": "https://www.evercore.com/our-business-and-capabilities/equities/research/",
+  "team": "https://www.evercore.com/who-we-are/leadership/",
+  "careers": "https://www.evercore.com/careers/students-graduates/"
+ },
+ "laz": {
+  "home": "https://www.lazard.com/",
+  "research": "https://www.lazard.com/research-insights/",
+  "careers": "https://www.lazard.com/careers/"
+ },
+ "blk": {
+  "home": "https://www.blackrock.com/corporate",
+  "research": "https://www.blackrock.com/corporate/insights/thought-leadership/global-insights",
+  "team": "https://www.blackrock.com/corporate/about-us/who-we-are/leadership",
+  "careers": "https://careers.blackrock.com/"
+ },
+ "vgd": {
+  "home": "https://corporate.vanguard.com/",
+  "research": "https://corporate.vanguard.com/content/corporatesite/us/en/corp/what-we-think/index.html",
+  "careers": "https://www.vanguardjobs.com/"
+ },
+ "fid": {
+  "home": "https://www.fidelity.com/",
+  "research": "https://www.fidelity.com/learning-center/wealth-management-insights",
+  "team": "https://about.fidelity.com/",
+  "careers": "https://jobs.fidelity.com/"
+ },
+ "pimco": {
+  "home": "https://www.pimco.com/us/en",
+  "research": "https://www.pimco.com/us/en/insights",
+  "team": "https://www.pimco.com/us/en/about-us/experts",
+  "careers": "https://www.pimco.com/us/en/about-us/careers"
+ },
+ "apo": {
+  "home": "https://www.apollo.com/",
+  "research": "https://www.apollo.com/insights-news/insights",
+  "team": "https://www.apollo.com/aboutus/leadership-and-people",
+  "careers": "https://www.apollo.com/careers"
+ },
+ "wel": {
+  "home": "https://www.wellington.com/en",
+  "research": "https://www.wellington.com/en/insights/investment-outlook",
+  "team": "https://www.wellington.com/en/about-us/learn-more-about-our-firm"
+ },
+ "cap": {
+  "home": "https://www.capitalgroup.com/",
+  "about": "https://www.capitalgroup.com/about-us.html",
+  "careers": "https://www.capitalgroup.com/about-us/careers.html"
+ },
+ "trow": {
+  "home": "https://www.troweprice.com/en/us",
+  "research": "https://www.troweprice.com/en/us/insights",
+  "team": "https://www.troweprice.com/en/us/about-us/leadership",
+  "careers": "https://www.troweprice.com/en/us/careers"
+ },
+ "bain": {
+  "home": "https://www.baincapital.com/",
+  "team": "https://www.baincapital.com/people",
+  "careers": "https://www.baincapital.com/careers"
+ },
+ "bw": {
+  "home": "https://www.bridgewater.com/",
+  "research": "https://www.bridgewater.com/research-and-insights",
+  "team": "https://www.bridgewater.com/people",
+  "careers": "https://www.bridgewater.com/investment-careers"
+ },
+ "oak": {
+  "home": "https://www.oaktreecapital.com/",
+  "research": "https://www.oaktreecapital.com/insights",
+  "team": "https://www.oaktreecapital.com/about/leadership",
+  "careers": "https://www.oaktreecapital.com/careers"
+ },
+ "aqr": {
+  "home": "https://www.aqr.com/",
+  "research": "https://www.aqr.com/Insights/Research",
+  "team": "https://www.aqr.com/Our-Firm/Leadership",
+  "careers": "https://www.aqr.com/Our-Firm/Careers"
+ },
+ "ts": {
+  "home": "https://www.twosigma.com/",
+  "research": "https://www.twosigma.com/insights/",
+  "team": "https://www.twosigma.com/about-us/",
+  "careers": "https://www.twosigma.com/careers/"
+ },
+ "des": {
+  "home": "https://www.deshaw.com/",
+  "research": "https://www.deshaw.com/library",
+  "team": "https://www.deshaw.com/who-we-are/our-people",
+  "careers": "https://www.deshaw.com/careers"
+ },
+ "kkr": {
+  "home": "https://www.kkr.com/",
+  "research": "https://www.kkr.com/insights",
+  "team": "https://www.kkr.com/about/our-people",
+  "careers": "https://www.kkr.com/careers/student-careers"
+ },
+ "nlf": {
+  "home": "https://nittanylionfund.com/",
+  "team": "https://nittanylionfund.com/team"
+ },
+ "mii": {
+  "home": "https://mcintireinvestmentinstitute.org/",
+  "team": "https://mcintireinvestmentinstitute.org/exec",
+  "careers": "https://mcintireinvestmentinstitute.org/apply",
+  "placement": "https://mcintireinvestmentinstitute.org/placement"
+ },
+ "fsmif": {
+  "home": "https://www.fordhamsmif.com/",
+  "research": "https://www.fordhamsmif.com/research",
+  "about": "https://www.fordhamsmif.com/aboutus"
+ },
+ "shf": {
+  "home": "https://www.southhillfund.com/",
+  "research": "https://www.southhillfund.com/research.html"
+ },
+ "tsmf": {
+  "home": "https://trinitysmf.com/",
+  "research": "https://trinitysmf.com/research-publications/",
+  "team": "https://trinitysmf.com/team/",
+  "about": "https://trinitysmf.com/about-us/"
+ },
+ "bkf": {
+  "home": "https://www.brookfield.com/",
+  "research": "https://www.brookfield.com/views-news/insights",
+  "team": "https://www.brookfield.com/about-us/leadership",
+  "careers": "https://www.brookfield.com/careers/student-programs"
+ }
+}
