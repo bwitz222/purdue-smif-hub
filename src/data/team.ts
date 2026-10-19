@@ -379,7 +379,6 @@ export const sectorTeams = [
     description: "Integrated energy, E&P, midstream, refiners, and listed real estate (REITs).",
     members: make("Energy & Real Estate", [
       ["Jacob George", "Portfolio Manager", "georg243@purdue.edu", "2029"],
-      ["Arav Ginde", "Senior Analyst", "aginde@purdue.edu", "2027"],
       ["Veer Sanyal", "Senior Analyst", "vsanyal@purdue.edu", "2028"],
       ["Brody Salz", "Analyst", "bsalz@purdue.edu", "2029"],
     ]),
@@ -458,7 +457,6 @@ const LINKEDIN_BY_NAME: Record<string, string> = {
   "Yashita Pujari": "https://www.linkedin.com/in/yashitarpujari",
   "Jacob George": "https://www.linkedin.com/in/jacobmigeorge",
   "Alejandro Cabrales": "https://www.linkedin.com/in/alejandro-cabrales",
-  "Arav Ginde": "https://www.linkedin.com/in/aravginde",
   "Veer Sanyal": "https://www.linkedin.com/in/veersanyal",
   "Evan Lee": "https://www.linkedin.com/in/evand7lee",
   "John Battaglino": "https://www.linkedin.com/in/johnbutlerbattaglino",
