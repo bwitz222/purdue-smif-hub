@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Mail, Linkedin } from "lucide-react";
 import { Link } from "@tanstack/react-router";
-import { supabase } from "@/integrations/supabase/client";
 import { memberSlug } from "@/data/team";
 
 export interface Member {
@@ -18,32 +17,6 @@ export interface Member {
 
 export const memberEmail = (m: Member) => m.email;
 
-/**
- * Remote headshot fallbacks for members with no bundled photo.
- *
- * Only called when `m.photo` is absent. Building these eagerly for every
- * member touched the Supabase client on render, which (a) made /team fail
- * outright when the env vars weren't set, and (b) meant the 7 members
- * without a bundled photo each fired a 404 for the .jpg and then the .png
- * before falling back to initials. Bundled photos never needed either URL.
- */
-export const memberPhotoCandidates = (m: Member) => {
-  const slug = memberSlug(m.name);
-  try {
-    const jpg = supabase.storage.from("team-headshots").getPublicUrl(`${slug}.jpg`).data.publicUrl;
-    const png = supabase.storage.from("team-headshots").getPublicUrl(`${slug}.png`).data.publicUrl;
-    return { jpg, png };
-  } catch {
-    // The Supabase client throws on construction when its env vars are absent,
-    // and every caller reaches this during render — so an unconfigured
-    // environment took the whole /team route down through the error boundary
-    // rather than dropping a few headshots. These URLs are an optional
-    // fallback for members with no bundled photo; every caller already
-    // handles null by rendering initials. Never let them break the page.
-    return null;
-  }
-};
-
 export function MemberCard({
   m,
   variant = "default",
@@ -59,10 +32,8 @@ export function MemberCard({
     .slice(0, 2)
     .join("");
   const email = memberEmail(m);
-  // Bundled photo wins outright; only members without one consult storage.
-  const remote = m.photo ? null : memberPhotoCandidates(m);
-  const [src, setSrc] = useState<string | null>(m.photo ?? remote?.jpg ?? null);
-  const [triedPng, setTriedPng] = useState(false);
+  // Falls back to initials if the bundled photo is missing or fails to load.
+  const [src, setSrc] = useState<string | null>(m.photo ?? null);
 
   const interactive = !!onSelect;
   const handleActivate = () => onSelect?.(m);
@@ -98,14 +69,7 @@ export function MemberCard({
               transformOrigin: m.photoPosition ?? "center",
             }}
             loading="lazy"
-            onError={() => {
-              if (!m.photo && !triedPng && remote) {
-                setTriedPng(true);
-                setSrc(remote.png);
-              } else {
-                setSrc(null);
-              }
-            }}
+            onError={() => setSrc(null)}
           />
         ) : (
           <div className="grid h-full w-full place-items-center">

@@ -8,7 +8,7 @@ import {
   SheetDescription,
 } from "@/components/ui/sheet";
 import { Link } from "@tanstack/react-router";
-import { memberEmail, memberPhotoCandidates, type Member } from "@/components/MemberCard";
+import { memberEmail, type Member } from "@/components/MemberCard";
 import { memberSlug } from "@/data/team";
 
 export function MemberDetailSheet({
@@ -29,10 +29,8 @@ export function MemberDetailSheet({
 }
 
 function MemberDetail({ m }: { m: Member }) {
-  // Same rule as MemberCard: a bundled photo never needs the storage lookup.
-  const remote = m.photo ? null : memberPhotoCandidates(m);
-  const [src, setSrc] = useState<string | null>(m.photo ?? remote?.jpg ?? null);
-  const [triedPng, setTriedPng] = useState(false);
+  // Same rule as MemberCard: initials when there is no usable photo.
+  const [src, setSrc] = useState<string | null>(m.photo ?? null);
   const email = memberEmail(m);
   const initials = m.name
     .split(" ")
@@ -56,14 +54,7 @@ function MemberDetail({ m }: { m: Member }) {
               transform: m.photoScale ? `scale(${m.photoScale})` : undefined,
               transformOrigin: m.photoPosition ?? "center",
             }}
-            onError={() => {
-              if (!m.photo && !triedPng && remote) {
-                setTriedPng(true);
-                setSrc(remote.png);
-              } else {
-                setSrc(null);
-              }
-            }}
+            onError={() => setSrc(null)}
           />
         ) : (
           <div className="grid h-full w-full place-items-center">

@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 
-type PublicationCategory = "equity_research" | "semester" | "annual";
+type PublicationCategory = "macro" | "equity_research" | "semester" | "annual";
 
 export interface PublicationRow {
   id: string;
@@ -13,6 +13,10 @@ export interface PublicationRow {
   file_size: number | null;
   mime_type: string | null;
   created_at: string;
+  /** Credited analysts, in byline order. Null when the fund is the author. */
+  authors: string[] | null;
+  /** Issue number within a numbered series (e.g. The Macro Brief #002). */
+  issue_number: number | null;
   url: string;
 }
 

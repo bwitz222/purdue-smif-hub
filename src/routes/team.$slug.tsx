@@ -1,7 +1,6 @@
 import { createFileRoute, notFound, Link } from "@tanstack/react-router";
 import { ArrowLeft, Mail, Linkedin } from "lucide-react";
 import { useState } from "react";
-import { memberPhotoCandidates } from "@/components/MemberCard";
 import { Reveal } from "@/components/Reveal";
 import {
   findMemberBySlug,
@@ -90,10 +89,8 @@ export const Route = createFileRoute("/team/$slug")({
 
 function ProfilePhoto({ entry }: { entry: DirectoryEntry }) {
   const m = entry.member;
-  // Same rule as the roster cards: a bundled photo never needs the storage lookup.
-  const remote = m.photo ? null : memberPhotoCandidates(m);
-  const [src, setSrc] = useState<string | null>(m.photo ?? remote?.jpg ?? null);
-  const [triedPng, setTriedPng] = useState(false);
+  // Same rule as the roster cards: initials when there is no usable photo.
+  const [src, setSrc] = useState<string | null>(m.photo ?? null);
   const initials = m.name
     .split(" ")
     .map((p) => p[0])
@@ -120,14 +117,7 @@ function ProfilePhoto({ entry }: { entry: DirectoryEntry }) {
         transform: m.photoScale ? `scale(${m.photoScale})` : undefined,
         transformOrigin: m.photoPosition ?? "center",
       }}
-      onError={() => {
-        if (!m.photo && !triedPng && remote) {
-          setTriedPng(true);
-          setSrc(remote.png);
-        } else {
-          setSrc(null);
-        }
-      }}
+      onError={() => setSrc(null)}
     />
   );
 }
