@@ -113,7 +113,7 @@ const FAQ = [
   },
   {
     q: "Who oversees the fund?",
-    a: "An executive board of seven students, elected each spring, runs strategy, research, risk, recruiting, education, and operations. That sits inside faculty oversight: holdings, factor exposures, drawdowns, and concentration are reviewed with the faculty advisor quarterly, and performance is reported each semester to the Daniels School and university stakeholders.",
+    a: "An executive board of seven students, elected each spring, runs strategy, research, risk, recruiting, education, and operations. That sits inside faculty oversight: holdings, factor exposures, drawdowns, and concentration are reviewed with the faculty advisors quarterly, and performance is reported each semester to the Daniels School and university stakeholders.",
   },
   {
     q: "How does SMIF decide what to buy?",
@@ -167,7 +167,7 @@ const IPS = [
   },
   {
     t: "Risk Controls",
-    d: "Ongoing monitoring of factor exposures, drawdowns, and concentration. Quarterly reviews with the faculty advisor.",
+    d: "Ongoing monitoring of factor exposures, drawdowns, and concentration. Quarterly reviews with the faculty advisors.",
   },
   {
     t: "Decision Process",
@@ -464,7 +464,7 @@ function About() {
             </p>
             <p className="mt-6">
               That student authority operates inside faculty oversight. Holdings, factor exposures,
-              drawdowns, and concentration are reviewed with the faculty advisor each quarter, and
+              drawdowns, and concentration are reviewed with the faculty advisors each quarter, and
               performance and attribution are reported every semester to the Daniels School and to
               university stakeholders.
             </p>
@@ -474,7 +474,7 @@ function About() {
             <h3 className="text-xs font-semibold uppercase tracking-[0.32em] text-gold-deep mb-6 pt-2">
               Faculty Advisors
             </h3>
-            <ul className="grid gap-px bg-border border border-border sm:grid-cols-2">
+            <ul className="grid gap-px bg-border border border-border sm:grid-cols-3">
               {facultyAdvisors.map((f) => (
                 <li key={f.name} className="bg-background p-6">
                   <div className="font-display text-base font-bold text-ink">{f.name}</div>
