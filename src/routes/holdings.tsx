@@ -713,8 +713,9 @@ function HoldingsPage() {
                           type="button"
                           onClick={() => setSector(h.industry)}
                           className="group row-rail w-full flex items-center gap-3 px-2 py-2 -mx-2 text-left hover:bg-secondary/40 cursor-pointer press"
-                          aria-label={`Filter by ${h.industry} (${h.symbol})`}
                         >
+                          {/* Visible text is the accessible name (WCAG 2.5.3, label
+                              in name); the action is appended for screen readers. */}
                           <span className="font-mono font-bold text-gold-deep tracking-wider w-16">
                             {h.symbol}
                           </span>
@@ -729,6 +730,7 @@ function HoldingsPage() {
                             )}
                             {fmtPct(h.dayChange)}
                           </span>
+                          <span className="sr-only">, filter holdings to {h.industry}</span>
                         </button>
                       </li>
                     ))}

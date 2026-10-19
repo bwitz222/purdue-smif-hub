@@ -298,7 +298,7 @@ function Sectors() {
                     <Link
                       to="/team"
                       search={{ sector: name }}
-                      className="link-underline inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-gold-deep hover:text-ink transition-colors"
+                      className="link-underline inline-flex min-h-6 items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-gold-deep hover:text-ink transition-colors"
                     >
                       View team
                       <ArrowRight className="h-3.5 w-3.5 arrow-slide" />
@@ -342,7 +342,7 @@ function Sectors() {
                     <Link
                       to="/team"
                       search={{ sector: name }}
-                      className="link-underline inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-gold-deep hover:text-ink transition-colors"
+                      className="link-underline inline-flex min-h-6 items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-gold-deep hover:text-ink transition-colors"
                     >
                       View team
                       <ArrowRight className="h-3.5 w-3.5 arrow-slide" />
