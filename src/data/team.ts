@@ -422,6 +422,13 @@ export const facultyAdvisors: Member[] = [
     photoPosition: "center 15%",
     bio: "Teaches Honors Financial Management and Futures & Options.",
   },
+  {
+    // No headshot yet: MemberCard and the profile page fall back to initials.
+    name: "Larissa Adamic",
+    role: "Faculty Advisor",
+    year: "Daniels School of Business",
+    bio: "Teaches Undergraduate Investment Management and courses in the Daniels graduate programs.",
+  },
 ];
 
 // LinkedIn profiles, keyed by name, applied across board, sector teams, FIM, and PM groups.

@@ -205,9 +205,11 @@ function MemberProfile() {
         <section className="border-t border-border bg-secondary/30">
           <div className="container-prose py-16">
             <h2 className="font-display text-2xl font-bold">Also on {team}</h2>
-            <ul className="mt-8 grid gap-px bg-border border border-border sm:grid-cols-2 lg:grid-cols-3">
+            {/* Per-cell borders rather than a gap-px bg-border grid, so a short
+                last row leaves blank page instead of a gray filler cell. */}
+            <ul className="mt-8 grid border-l border-t border-border sm:grid-cols-2 lg:grid-cols-3">
               {teammates.map((t) => (
-                <li key={t.slug} className="bg-background">
+                <li key={t.slug} className="border-b border-r border-border bg-background">
                   <Link
                     to="/team/$slug"
                     params={{ slug: t.slug }}

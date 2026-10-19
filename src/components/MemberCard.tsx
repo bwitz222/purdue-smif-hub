@@ -85,7 +85,7 @@ export function MemberCard({
           to="/team/$slug"
           params={{ slug: memberSlug(m.name) }}
           onClick={stop}
-          className="link-underline mt-1 self-start font-display text-lg font-bold leading-tight"
+          className="link-underline mt-1 min-h-6 self-start font-display text-lg font-bold leading-tight"
         >
           {m.name}
         </Link>

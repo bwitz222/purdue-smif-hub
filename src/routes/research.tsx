@@ -5,6 +5,7 @@ import { Reveal } from "@/components/Reveal";
 import { socialMeta, canonical, breadcrumbLd, OG_RESEARCH } from "@/lib/seo";
 import { getPublications, type PublicationRow } from "@/lib/publications.functions";
 import { findMemberBySlug, memberSlug } from "@/data/team";
+import { SERIES_LABEL } from "@/lib/publication-series";
 
 const SUBSTACK_URL = "https://purduesmif.substack.com";
 
@@ -26,29 +27,37 @@ const SERIES: {
 }[] = [
   {
     value: "macro",
-    label: "The Macro Brief",
+    label: SERIES_LABEL.macro,
     cadence: "Biweekly",
     byline: "Fixed Income & Macro team",
     description:
       "Rates, inflation, the Fed, and cross-asset moves, with a dated call on each and what would prove us wrong.",
   },
   {
-    value: "equity_research",
-    label: "Equity Research",
+    value: "pitch",
+    label: SERIES_LABEL.pitch,
     cadence: "Each research cycle",
     byline: "Sector teams",
-    description: "Single-name pitches and deep-dive analyst reports from the eight sector teams.",
+    description:
+      "Stock pitches the sector teams present to the fund for a vote: thesis, valuation, and risks.",
+  },
+  {
+    value: "equity_research",
+    label: SERIES_LABEL.equity_research,
+    cadence: "Each research cycle",
+    byline: "Sector teams",
+    description: "Initiation reports and deep-dive analyst research from the eight sector teams.",
   },
   {
     value: "semester",
-    label: "Semester Reports",
+    label: SERIES_LABEL.semester,
     cadence: "Twice a year",
     byline: "Fund leadership",
     description: "End-of-term letters on performance, attribution, and positioning.",
   },
   {
     value: "annual",
-    label: "Annual Reports",
+    label: SERIES_LABEL.annual,
     cadence: "Yearly",
     byline: "Fund leadership",
     description: "Full-year reports to the Daniels School and the fund's stakeholders.",
@@ -96,7 +105,7 @@ export const Route = createFileRoute("/research")({
         "@id": `${url}#library`,
         name: "Purdue SMIF Research Library",
         description:
-          "The Macro Brief, equity research, semester letters, and annual reports authored by Purdue SMIF analysts.",
+          "The Macro Brief, stock pitch decks, equity research, semester letters, and annual reports authored by Purdue SMIF analysts.",
         url,
         isPartOf: { "@id": "https://www.purduesmif.org/#website" },
         about: { "@id": "https://www.purduesmif.org/#organization" },
@@ -116,6 +125,7 @@ export const Route = createFileRoute("/research")({
                 url: p.url,
                 ...(p.mime_type && { encodingFormat: p.mime_type }),
                 genre: SERIES_BY_VALUE[p.category]?.label ?? "Report",
+                ...(p.ticker && { about: { "@type": "Corporation", tickerSymbol: p.ticker } }),
                 isAccessibleForFree: true,
                 // Named analysts are credited only when the row stores them;
                 // otherwise the fund is the author. Attributing a Person we
@@ -134,16 +144,16 @@ export const Route = createFileRoute("/research")({
 
     return {
       meta: [
-        { title: "Research: The Macro Brief, Equity Research & Reports | Purdue SMIF" },
+        { title: "Research: The Macro Brief, Pitch Decks & Reports | Purdue SMIF" },
         {
           name: "description",
           content:
-            "The Macro Brief, equity research, semester letters, and annual reports written by Purdue SMIF analysts and curated by fund leadership.",
+            "The Macro Brief, stock pitch decks, equity research, semester letters, and annual reports written by Purdue SMIF analysts and curated by fund leadership.",
         },
         ...socialMeta({
           title: "Research | Purdue SMIF",
           description:
-            "Read SMIF's biweekly Macro Brief, equity research, semester letters, and annual reports.",
+            "Read SMIF's biweekly Macro Brief, stock pitch decks, equity research, and reports.",
           url,
           image: OG_RESEARCH,
         }),
@@ -194,9 +204,13 @@ function Research() {
     const base = pubs.filter((p: PublicationRow) => {
       if (active !== "all" && p.category !== active) return false;
       if (!q) return true;
-      return [p.title, p.description ?? "", ...(p.authors ?? [])].some((s) =>
-        s.toLowerCase().includes(q),
-      );
+      return [
+        p.title,
+        p.description ?? "",
+        p.ticker ?? "",
+        p.sector ?? "",
+        ...(p.authors ?? []),
+      ].some((s) => s.toLowerCase().includes(q));
     });
     const sorted = [...base];
     if (sort === "newest") sorted.sort(byNewest);
@@ -282,12 +296,16 @@ function Research() {
         >
           Series
         </h2>
-        <ul className="mt-5 grid gap-px border border-border bg-border sm:grid-cols-2 lg:grid-cols-4">
+        <ul className="mt-5 grid gap-px border border-border bg-border sm:grid-cols-2 lg:grid-cols-5">
           {SERIES.map((s) => {
             const n = countFor(s.value);
             const isActive = active === s.value;
             return (
-              <li key={s.value} className="bg-background">
+              <li
+                key={s.value}
+                // Five series: the odd card spans the row at two columns.
+                className="bg-background sm:last:col-span-2 lg:last:col-span-1"
+              >
                 <button
                   type="button"
                   aria-pressed={isActive}
@@ -467,10 +485,23 @@ function FeaturedPublication({ pub }: { pub: PublicationRow }) {
           <span className="text-[10px] font-semibold uppercase tracking-[0.28em] text-gold">
             {series?.label ?? "Report"}
           </span>
-          {pub.issue_number != null && (
-            <div className="mt-3 font-display text-7xl font-bold leading-none text-background md:text-8xl">
-              #{String(pub.issue_number).padStart(3, "0")}
-            </div>
+          {pub.ticker ? (
+            <>
+              <div className="mt-3 font-display text-7xl font-bold leading-none text-background md:text-8xl">
+                {pub.ticker}
+              </div>
+              {(pub.position || pub.sector) && (
+                <div className="mt-3 font-mono text-xs uppercase tracking-[0.18em] text-gold">
+                  {[pub.position, pub.sector].filter(Boolean).join(" · ")}
+                </div>
+              )}
+            </>
+          ) : (
+            pub.issue_number != null && (
+              <div className="mt-3 font-display text-7xl font-bold leading-none text-background md:text-8xl">
+                #{String(pub.issue_number).padStart(3, "0")}
+              </div>
+            )
           )}
         </div>
         <div className="font-mono text-xs uppercase tracking-[0.18em] text-on-dark-secondary">
@@ -495,7 +526,11 @@ function FeaturedPublication({ pub }: { pub: PublicationRow }) {
             rel="noreferrer"
             className="press inline-flex items-center gap-2 bg-gold px-5 py-2.5 text-sm font-semibold text-ink hover:bg-gold-mid"
           >
-            Read {series?.value === "macro" ? "the brief" : "the report"}
+            {series?.value === "macro"
+              ? "Read the brief"
+              : series?.value === "pitch"
+                ? "View the deck"
+                : "Read the report"}
             <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
           </a>
           <span className="font-mono text-xs uppercase tracking-[0.14em] text-muted-foreground">
@@ -509,6 +544,13 @@ function FeaturedPublication({ pub }: { pub: PublicationRow }) {
 
 function PublicationRowItem({ pub, showSeries }: { pub: PublicationRow; showSeries: boolean }) {
   const series = SERIES_BY_VALUE[pub.category];
+  const eyebrow = [
+    showSeries ? (series?.label ?? "Report") : null,
+    pub.issue_number != null ? `No. ${pub.issue_number}` : null,
+    pub.ticker,
+    pub.sector,
+    pub.position,
+  ].filter(Boolean);
   return (
     <li
       id={`pub-${pub.id}`}
@@ -518,11 +560,9 @@ function PublicationRowItem({ pub, showSeries }: { pub: PublicationRow; showSeri
         <time dateTime={pub.created_at}>{shortDate(pub.created_at)}</time>
       </div>
       <div className="min-w-0">
-        {(showSeries || pub.issue_number != null) && (
+        {eyebrow.length > 0 && (
           <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-gold-deep">
-            {showSeries && (series?.label ?? "Report")}
-            {showSeries && pub.issue_number != null && " · "}
-            {pub.issue_number != null && `No. ${pub.issue_number}`}
+            {eyebrow.join(" · ")}
           </div>
         )}
         <h4 className="mt-1 font-display text-xl font-bold leading-snug">
@@ -573,12 +613,16 @@ function EmptyState({ series, query }: { series: (typeof SERIES)[number] | null;
     );
   }
   const copy: Record<Category, { headline: string; support: string }> = {
+    pitch: {
+      headline: "Pitch decks publish here after each research cycle.",
+      support: "Each deck is posted once the fund has voted on the idea.",
+    },
     macro: {
       headline: "The next Macro Brief publishes here every other week.",
       support: "Follow along on Substack between issues.",
     },
     equity_research: {
-      headline: "Analyst pitches publish here after each research cycle.",
+      headline: "Analyst reports publish here after each research cycle.",
       support: "Follow interim writeups on Substack while the next cycle wraps.",
     },
     semester: {

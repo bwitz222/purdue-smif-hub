@@ -521,11 +521,11 @@ function Recruiting() {
           <button
             type="button"
             onClick={downloadICS}
-            aria-label={`Download all ${CALENDAR.length} events as iCal file`}
             className="press group inline-flex items-center gap-2 border border-ink px-4 py-2 text-xs font-semibold uppercase tracking-wider hover:bg-ink hover:text-background cursor-pointer"
           >
             <Download className="h-3.5 w-3.5 icon-pop" />
             Download all events (.ics)
+            <span className="sr-only">, {CALENDAR.length} events as a calendar file</span>
           </button>
         </div>
 
@@ -538,7 +538,6 @@ function Recruiting() {
                   href={toGoogleCalendarLink(e)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label={`Add ${e.name} on ${e.date} at ${e.time} to Google Calendar (opens in new tab)`}
                   // Past rows are dimmed, but not with opacity alone: at 50%
                   // the already-muted text fell to 2.2:1 against the page
                   // (5 axe color-contrast failures on this route). Lifting
@@ -609,6 +608,10 @@ function Recruiting() {
                       {e.location}
                     </div>
                   </div>
+                  {/* The row's visible text is its accessible name (WCAG 2.5.3,
+                      label in name); an aria-label replacing it failed axe on
+                      every row. The action is appended for screen readers. */}
+                  <span className="sr-only">, add to Google Calendar (opens in new tab)</span>
                 </a>
               </RevealItem>
             );

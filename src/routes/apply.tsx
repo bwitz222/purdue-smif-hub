@@ -130,9 +130,17 @@ function Apply() {
               <br />
               to meet you.
             </h1>
-            <p className="mt-6 text-lg text-on-dark-secondary">
-              Applications are open. Submit through the official portal, then explore what we look
-              for, how the process works, and answers to the questions we hear most often.
+            {/* Status-neutral on purpose: "Applications are open" was hardcoded
+                here while /recruiting (which derives open/closed from the
+                event calendar) said the cycle had closed. The calendar owns
+                the dates; this page links to it. */}
+            <p className="mt-6 max-w-2xl text-lg text-on-dark-secondary">
+              Applications go through the official portal during each recruiting window; the{" "}
+              <Link to="/recruiting" className="link-underline text-background hover:text-gold">
+                recruiting calendar
+              </Link>{" "}
+              has the current dates. Below: what we look for, how the process works, and answers to
+              the questions we hear most often.
             </p>
           </Reveal>
         </div>

@@ -16,6 +16,8 @@ import { CountUp } from "@/components/CountUp";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getFundStats } from "@/lib/fund-stats.functions";
+import { getPublications } from "@/lib/publications.functions";
+import { SERIES_LABEL } from "@/lib/publication-series";
 import { sectorTeams, totalMemberCount } from "@/data/team";
 import { liveQueryOptions } from "@/lib/live-query";
 
@@ -28,6 +30,9 @@ const HOME_DESCRIPTION =
   "Purdue SMIF is the student investment club at the Daniels School of Business: the university's student-managed fund, where analysts invest real capital.";
 
 export const Route = createFileRoute("/")({
+  // The three newest publications, rendered server-side so the home page links
+  // straight into fresh research (getPublications degrades to [] on failure).
+  loader: async () => ({ latest: (await getPublications()).slice(0, 3) }),
   component: Index,
   head: () => ({
     meta: [
@@ -91,6 +96,7 @@ const PILLARS = [
 ];
 
 function Index() {
+  const { latest } = Route.useLoaderData();
   const fetchStats = useServerFn(getFundStats);
   const { data: fundStats } = useQuery({
     queryKey: ["fund-stats"],
@@ -271,7 +277,7 @@ function Index() {
               </p>
               <Link
                 to="/about"
-                className="group inline-flex items-center gap-2 text-sm font-semibold text-gold hover:text-gold-mid transition-colors duration-200 mt-2 cursor-pointer"
+                className="group inline-flex min-h-6 items-center gap-2 text-sm font-semibold text-gold hover:text-gold-mid transition-colors duration-200 mt-2 cursor-pointer"
               >
                 Learn about our process
                 <ChevronRight className="h-4 w-4 arrow-slide" />
@@ -342,6 +348,73 @@ function Index() {
           </RevealGroup>
         </div>
       </section>
+
+      {/* Latest research: peer fund sites (Bridgewater, AQR, Oaktree) lead with
+          their newest thinking; this surfaces ours. Hidden when there's none. */}
+      {latest.length > 0 && (
+        <section
+          className="bg-background border-t border-border py-24"
+          aria-labelledby="latest-research-h"
+        >
+          <div className="container-prose">
+            <Reveal className="flex items-end justify-between mb-10 gap-8 flex-wrap">
+              <div>
+                <span className="text-xs font-semibold uppercase tracking-[0.32em] text-gold-deep block mb-4">
+                  Research
+                </span>
+                <h2
+                  id="latest-research-h"
+                  className="font-display font-bold text-ink"
+                  style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}
+                >
+                  Latest from the fund
+                </h2>
+              </div>
+              <Link
+                to="/research"
+                className="group inline-flex min-h-6 items-center gap-2 text-sm font-semibold text-ink border-b-2 border-gold pb-1 hover:text-gold-deep transition-colors duration-200"
+              >
+                All research
+                <ArrowRight className="h-4 w-4 arrow-slide" />
+              </Link>
+            </Reveal>
+            <RevealGroup className="grid border-t border-border md:grid-cols-3" stagger={0.1}>
+              {latest.map((p) => (
+                <RevealItem
+                  key={p.id}
+                  className="border-b md:border-b-0 md:border-r border-border last:border-r-0 p-8 transition-colors duration-300 hover:bg-secondary/50"
+                >
+                  <div className="text-[11px] font-semibold uppercase tracking-[0.2em] text-gold-deep">
+                    {[SERIES_LABEL[p.category] ?? "Report", p.ticker].filter(Boolean).join(" · ")}
+                  </div>
+                  <h3 className="mt-3 font-display text-xl font-bold leading-snug text-ink">
+                    <a
+                      href={p.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="link-underline hover:text-gold-deep"
+                    >
+                      {p.title}
+                    </a>
+                  </h3>
+                  <time
+                    dateTime={p.created_at}
+                    className="mt-4 block font-mono text-xs uppercase tracking-[0.14em] text-muted-foreground"
+                  >
+                    {/* UTC so the server render and the browser agree on the day. */}
+                    {new Date(p.created_at).toLocaleDateString("en-US", {
+                      timeZone: "UTC",
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })}
+                  </time>
+                </RevealItem>
+              ))}
+            </RevealGroup>
+          </div>
+        </section>
+      )}
 
       {/* Performance teaser */}
       <section className="bg-secondary/60 border-t border-border py-20">

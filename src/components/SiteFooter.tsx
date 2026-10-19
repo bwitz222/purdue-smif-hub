@@ -36,12 +36,14 @@ export function SiteFooter() {
           <h2 className="text-sm font-medium text-gold mb-4 uppercase tracking-[0.14em]">
             Explore
           </h2>
-          <ul className="space-y-2 text-sm text-on-dark-secondary">
+          {/* min-h-6 on each link: 24px targets (WCAG 2.5.8); space-y-1 keeps the
+              list the same height it had with 20px links and space-y-2. */}
+          <ul className="space-y-1 text-sm text-on-dark-secondary">
             {FOOTER_NAV.map(({ to, label }) => (
               <li key={to}>
                 <Link
                   to={to}
-                  className="link-underline inline-block hover:text-gold transition-colors duration-200"
+                  className="link-underline inline-flex min-h-6 items-center hover:text-gold transition-colors duration-200"
                 >
                   {label}
                 </Link>
@@ -54,14 +56,14 @@ export function SiteFooter() {
           <h2 className="text-sm font-medium text-gold mb-4 uppercase tracking-[0.14em]">
             Contact
           </h2>
-          <ul className="space-y-2 text-sm text-on-dark-secondary">
+          <ul className="space-y-1 text-sm text-on-dark-secondary">
             <li>Daniels School of Business</li>
             <li>403 Mitch Daniels Blvd</li>
             <li>West Lafayette, IN 47907</li>
             <li>
               <Link
                 to="/contact"
-                className="group link-underline inline-flex items-center gap-1 hover:text-gold transition-colors duration-200"
+                className="group link-underline inline-flex min-h-6 items-center gap-1 hover:text-gold transition-colors duration-200"
               >
                 Get in touch{" "}
                 <span aria-hidden="true" className="arrow-slide">
@@ -75,13 +77,13 @@ export function SiteFooter() {
           <h2 className="text-sm font-medium text-gold mb-4 uppercase tracking-[0.14em]">
             Find Us
           </h2>
-          <ul className="space-y-2 text-sm text-on-dark-secondary">
+          <ul className="space-y-1 text-sm text-on-dark-secondary">
             <li>
               <a
                 href="https://boilerlink.purdue.edu/organization/smif"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group link-underline inline-flex items-center gap-2 hover:text-gold transition-colors duration-200"
+                className="group link-underline inline-flex min-h-6 items-center gap-2 hover:text-gold transition-colors duration-200"
               >
                 <GraduationCap className="h-4 w-4 icon-pop" />
                 BoilerLink
@@ -92,7 +94,7 @@ export function SiteFooter() {
                 href="https://www.instagram.com/smif_purdue/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group link-underline inline-flex items-center gap-2 hover:text-gold transition-colors duration-200"
+                className="group link-underline inline-flex min-h-6 items-center gap-2 hover:text-gold transition-colors duration-200"
               >
                 <Instagram className="h-4 w-4 icon-pop" />
                 Instagram
@@ -103,7 +105,7 @@ export function SiteFooter() {
                 href="https://www.linkedin.com/company/purdue-smif/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group link-underline inline-flex items-center gap-2 hover:text-gold transition-colors duration-200"
+                className="group link-underline inline-flex min-h-6 items-center gap-2 hover:text-gold transition-colors duration-200"
               >
                 <Linkedin className="h-4 w-4 icon-pop" />
                 LinkedIn
@@ -114,7 +116,7 @@ export function SiteFooter() {
                 href="https://purduesmif.substack.com/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group link-underline inline-flex items-center gap-2 hover:text-gold transition-colors duration-200"
+                className="group link-underline inline-flex min-h-6 items-center gap-2 hover:text-gold transition-colors duration-200"
               >
                 <Newspaper className="h-4 w-4 icon-pop" />
                 Substack
