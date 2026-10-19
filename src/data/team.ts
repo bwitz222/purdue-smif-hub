@@ -30,6 +30,17 @@ import alexanderBoquistPhoto from "@/assets/team/alexander-boquist.webp";
 import luluZengPhoto from "@/assets/team/lulu-zeng.webp";
 import hunterSpechtPhoto from "@/assets/team/hunter-specht.webp";
 import rileyCollinsPhoto from "@/assets/team/riley-collins.webp";
+import brockHellerPhoto from "@/assets/team/brock-heller.webp";
+import gabrielFridmanPhoto from "@/assets/team/gabriel-fridman.webp";
+import haydenKruegerPhoto from "@/assets/team/hayden-krueger.webp";
+import brodySalzPhoto from "@/assets/team/brody-salz.webp";
+import sarathShayamPhoto from "@/assets/team/sarath-shayam.webp";
+import evanLeePhoto from "@/assets/team/evan-lee.webp";
+import vincentBroersmaPhoto from "@/assets/team/vincent-broersma.webp";
+import cooperMcBridePhoto from "@/assets/team/cooper-mcbride.webp";
+import sohamRoyPhoto from "@/assets/team/soham-roy.webp";
+import ryanPhamPhoto from "@/assets/team/ryan-pham.webp";
+import aaravMehtaPhoto from "@/assets/team/aarav-mehta.webp";
 
 const BIO_BY_NAME: Record<string, string> = {
   "Landon Haffner":
@@ -92,6 +103,28 @@ const BIO_BY_NAME: Record<string, string> = {
     "Fabian Segura Vargas is a junior in the Daniels School of Business, majoring in Finance and Business Analytics & Information Management (BAIM). He previously interned at Cummins as a Finance Systems Intern. In his free time, he enjoys playing and watching sports, and filmmaking.",
   "Riley Collins":
     "Riley Collins is a junior in the Daniels School of Business, majoring in Finance and Business Analytics & Information Management. He previously interned at AeroVironment as a Program Manager. In his free time, he enjoys watching basketball, hiking, and golfing.",
+  "Gabriel Fridman":
+    "Gabriel Fridman is a junior in the Daniels School of Business, majoring in Economics and Finance. He previously worked at Iovance Biotherapeutics as an Accounting Intern. In his free time, he enjoys playing basketball, chess, and hiking.",
+  "Hayden Krueger":
+    "Hayden Krueger is a junior in the Daniels School of Business, majoring in Finance. Before pursuing his education, Hayden competed as a professional gamer on 100 Thieves, one of North America's largest esports organizations. He then started his own consumer goods business, which currently sells products in 20+ countries around the world. In his free time, he enjoys snowboarding, calisthenics, and golf.",
+  "Brody Salz":
+    "Brody Salz is a sophomore in the Daniels School of Business, majoring in Finance and Accounting. He has previously interned at an insurance startup, A2 Insurance Partners, as a Business Development and Operations Intern. Outside of SMIF, he enjoys spending time outdoors, watching sports, and playing guitar.",
+  "Aanya Verma":
+    "Aanya Verma is a freshman in the Daniels School of Business, majoring in Quantitative Business Economics with minors in Political Science and Financial Engineering. Outside of SMIF, she is involved in consulting and leadership organizations at Purdue. In her free time, she enjoys making music, going to the gym, and trying fun coffees.",
+  "Sarath Shayam":
+    "Sarath Shayam is a sophomore in the College of Engineering, majoring in Industrial Engineering with a minor in Finance. He has previously interned at Buist Inc. as part of the Engineering and Operations team. In his free time, he enjoys playing pickleball, going to the gym, and listening to music.",
+  "Evan Lee":
+    "Evan Lee is a freshman in the Daniels School of Business, majoring in Finance and Accounting. Outside of SMIF, he has a multi-platform social media presence with over a million followers and is a Business Ambassador representing Daniels. In his free time, he enjoys playing volleyball, singing, and watching movies.",
+  "Vincent Broersma":
+    "Vincent Broersma is a junior in the Daniels School of Business, majoring in Economics with a concentration in Quantitative Economics and Data Analysis and a minor in Computer Science. In his free time, he enjoys snowboarding, hiking, and golfing.",
+  "Cooper McBride":
+    "Cooper McBride is a sophomore in the Daniels School of Business, majoring in Finance. He previously interned at 1st Source Bank as a Client Services Representative. In his free time, he enjoys playing euchre, going to the gym, and running.",
+  "Soham Roy":
+    "Soham Roy is a sophomore in the College of Engineering, majoring in Electrical Engineering with a minor in Mathematics. He previously interned at FläktGroup as an Engineering Intern in Dubai. In his free time, he enjoys going to the gym.",
+  "Ryan Pham":
+    "Ryan Pham is a freshman in the Daniels School of Business, majoring in Quantitative Business Economics with a minor in Mathematics. He has previously interned at Manhattan Gold & Silver as a Precious Metals Analyst. In his free time, he enjoys working out, hiking, and watching American football and basketball.",
+  "Aarav Mehta":
+    "Aarav Mehta is a freshman in the Daniels School of Business, majoring in Finance and Data Analytics. Outside of SMIF, he is a member of Purdue Think, where he is helping open a new Purdue Pharmacy location. In his free time, he enjoys Bollywood dance, cooking, and singing karaoke.",
 };
 
 // Secondary bios — a short role line for a board member's second appearance
@@ -199,6 +232,17 @@ const PHOTO_BY_NAME: Record<string, string> = {
   "Alex Belanger": alexBelangerPhoto,
   "Hunter Specht": hunterSpechtPhoto,
   "Riley Collins": rileyCollinsPhoto,
+  "Brock Heller": brockHellerPhoto,
+  "Gabriel Fridman": gabrielFridmanPhoto,
+  "Hayden Krueger": haydenKruegerPhoto,
+  "Brody Salz": brodySalzPhoto,
+  "Sarath Shayam": sarathShayamPhoto,
+  "Evan Lee": evanLeePhoto,
+  "Vincent Broersma": vincentBroersmaPhoto,
+  "Cooper McBride": cooperMcBridePhoto,
+  "Soham Roy": sohamRoyPhoto,
+  "Ryan Pham": ryanPhamPhoto,
+  "Aarav Mehta": aaravMehtaPhoto,
 };
 
 const PHOTO_POSITION_BY_NAME: Record<string, string> = {
