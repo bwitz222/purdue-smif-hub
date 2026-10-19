@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, ExternalLink } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { socialMeta, canonical, breadcrumbLd, OG_ABOUT } from "@/lib/seo";
-import { applyUrl } from "@/lib/apply-url";
+import { ApplyCta } from "@/components/ApplyCta";
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import { OnThisPage, type PageSection } from "@/components/OnThisPage";
 
@@ -208,7 +208,7 @@ function FinanceClubs() {
       >
         <div className="container-prose py-24">
           <Reveal className="max-w-3xl">
-            <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">
+            <span className="text-xs font-semibold uppercase tracking-[0.14em] text-gold-deep">
               The short answer
             </span>
             <h2 id="short-answer-h" className="mt-4 font-display text-3xl font-bold md:text-4xl">
@@ -250,7 +250,7 @@ function FinanceClubs() {
       >
         <div className="container-prose py-24">
           <Reveal className="max-w-3xl mb-12">
-            <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">
+            <span className="text-xs font-semibold uppercase tracking-[0.14em] text-gold-deep">
               At a glance
             </span>
             <h2 id="organizations-h" className="mt-4 font-display text-3xl font-bold md:text-4xl">
@@ -293,7 +293,7 @@ function FinanceClubs() {
                     <tr key={o.short} className="border-t border-border align-top">
                       <th scope="row" className="px-5 py-4 font-semibold">
                         {o.name}
-                        <span className="mt-1 block font-mono text-[11px] font-normal uppercase tracking-[0.18em] text-muted-foreground">
+                        <span className="mt-1 block font-mono text-xs font-normal uppercase tracking-[0.18em] text-muted-foreground">
                           {o.short}
                         </span>
                       </th>
@@ -317,7 +317,7 @@ function FinanceClubs() {
       >
         <div className="container-prose py-24">
           <Reveal className="max-w-3xl">
-            <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">
+            <span className="text-xs font-semibold uppercase tracking-[0.14em] text-gold-deep">
               Where we fit
             </span>
             <h2 id="where-we-fit-h" className="mt-4 font-display text-3xl font-bold md:text-4xl">
@@ -376,7 +376,7 @@ function FinanceClubs() {
       >
         <div className="container-prose py-24">
           <Reveal className="max-w-3xl mb-12">
-            <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">
+            <span className="text-xs font-semibold uppercase tracking-[0.14em] text-gold-deep">
               How to choose
             </span>
             <h2 id="how-to-choose-h" className="mt-4 font-display text-3xl font-bold md:text-4xl">
@@ -415,7 +415,7 @@ function FinanceClubs() {
       >
         <div className="container-prose py-24">
           <Reveal className="max-w-3xl mb-12">
-            <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">
+            <span className="text-xs font-semibold uppercase tracking-[0.14em] text-gold-deep">
               Common questions
             </span>
             <h2 id="faq-h" className="mt-4 font-display text-3xl font-bold md:text-4xl">
@@ -455,16 +455,11 @@ function FinanceClubs() {
               Purdue.
             </p>
             <div className="mt-10 flex flex-wrap gap-4">
-              <a
-                href={applyUrl("finance-clubs-guide")}
-                target="_blank"
-                rel="noopener noreferrer"
+              <ApplyCta
+                placement="finance-clubs-guide"
+                closed="updates"
                 className="press group inline-flex items-center gap-2.5 bg-gold px-8 py-3.5 text-sm font-semibold text-ink hover:bg-gold-mid"
-              >
-                Apply to Join
-                <ExternalLink className="h-4 w-4" aria-hidden="true" />
-                <span className="sr-only">(opens application form in new tab)</span>
-              </a>
+              />
               <Link
                 to="/recruiting"
                 className="press inline-flex items-center gap-2.5 border border-background/25 px-8 py-3.5 text-sm font-semibold text-background hover:border-gold hover:text-gold"

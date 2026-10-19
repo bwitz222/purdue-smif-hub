@@ -7,7 +7,7 @@ import { getPublications, type PublicationRow } from "@/lib/publications.functio
 import { findMemberBySlug, memberSlug } from "@/data/team";
 import { SERIES_LABEL } from "@/lib/publication-series";
 
-const SUBSTACK_URL = "https://purduesmif.substack.com";
+import { SUBSTACK_URL } from "@/lib/nav";
 
 type Category = PublicationRow["category"];
 type SortKey = "newest" | "oldest" | "title";
@@ -63,6 +63,15 @@ const SERIES: {
     description: "Full-year reports to the Daniels School and the fund's stakeholders.",
   },
 ];
+
+// Literal class names so Tailwind can see them; keyed by visible series count.
+const SERIES_COLS: Record<number, string> = {
+  1: "lg:grid-cols-1",
+  2: "lg:grid-cols-2",
+  3: "lg:grid-cols-3",
+  4: "lg:grid-cols-4",
+  5: "lg:grid-cols-5",
+};
 
 const SERIES_BY_VALUE = Object.fromEntries(SERIES.map((s) => [s.value, s])) as Record<
   Category,
@@ -240,6 +249,12 @@ function Research() {
     });
 
   const countFor = (c: Category) => pubs.filter((p) => p.category === c).length;
+  // Only series with at least one publication get a card and a chip; an empty
+  // shelf of "Coming soon" cards made the library look abandoned. If nothing
+  // has loaded at all (data outage), every series shows so the page still
+  // explains what it publishes. A series selected by URL stays visible.
+  const liveSeries = SERIES.filter((s) => countFor(s.value) > 0 || s.value === active);
+  const shownSeries = liveSeries.length > 0 ? liveSeries : SERIES;
   const activeSeries = active === "all" ? null : SERIES_BY_VALUE[active];
 
   return (
@@ -247,7 +262,7 @@ function Research() {
       {/* ── Masthead ─────────────────────────────────────────────── */}
       <section className="border-b border-border bg-secondary/40">
         <div className="container-prose py-20 md:py-24">
-          <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">
+          <span className="text-xs font-semibold uppercase tracking-[0.14em] text-gold-deep">
             Research
           </span>
           <div className="mt-4 grid gap-10 md:grid-cols-[1fr_auto] md:items-end">
@@ -278,13 +293,27 @@ function Research() {
         <section className="container-prose pt-16" aria-labelledby="latest-heading">
           <h2
             id="latest-heading"
-            className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground"
+            className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground"
           >
             Latest
           </h2>
           <Reveal>
             <FeaturedPublication pub={latest} />
           </Reveal>
+          <div className="mt-4 flex flex-col gap-3 border border-border bg-secondary/40 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm text-muted-foreground">
+              New issues of The Macro Brief arrive every two weeks. Get them by email.
+            </p>
+            <a
+              href={SUBSTACK_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex min-h-11 shrink-0 items-center gap-2 text-sm font-semibold text-ink underline decoration-gold decoration-2 underline-offset-4 hover:text-gold-deep"
+            >
+              Subscribe free on Substack
+              <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+            </a>
+          </div>
         </section>
       )}
 
@@ -292,19 +321,22 @@ function Research() {
       <section className="container-prose pt-16" aria-labelledby="series-heading">
         <h2
           id="series-heading"
-          className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground"
+          className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground"
         >
           Series
         </h2>
-        <ul className="mt-5 grid gap-px border border-border bg-border sm:grid-cols-2 lg:grid-cols-5">
-          {SERIES.map((s) => {
+        <ul
+          className={`mt-5 grid gap-px border border-border bg-border sm:grid-cols-2 ${SERIES_COLS[shownSeries.length] ?? "lg:grid-cols-5"}`}
+        >
+          {shownSeries.map((s) => {
             const n = countFor(s.value);
             const isActive = active === s.value;
             return (
               <li
                 key={s.value}
-                // Five series: the odd card spans the row at two columns.
-                className="bg-background sm:last:col-span-2 lg:last:col-span-1"
+                // An odd count leaves the last card alone on its row at two
+                // columns, so it spans the row there.
+                className={`bg-background ${shownSeries.length % 2 === 1 ? "sm:last:col-span-2 lg:last:col-span-1" : ""}`}
               >
                 <button
                   type="button"
@@ -319,7 +351,7 @@ function Research() {
                     isActive ? "bg-secondary" : "hover:bg-secondary/50"
                   }`}
                 >
-                  <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-gold-deep">
+                  <span className="text-xs font-semibold uppercase tracking-[0.14em] text-gold-deep">
                     {s.cadence}
                   </span>
                   <span className="mt-2 font-display text-xl font-bold leading-tight">
@@ -328,7 +360,7 @@ function Research() {
                   <span className="mt-2 text-sm leading-relaxed text-muted-foreground">
                     {s.description}
                   </span>
-                  <span className="mt-auto flex items-center justify-between pt-5 font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
+                  <span className="mt-auto flex items-center justify-between pt-5 font-mono text-xs uppercase tracking-[0.14em] text-muted-foreground">
                     {n === 0 ? "Coming soon" : `${n} ${n === 1 ? "issue" : "issues"}`}
                     <ArrowUpRight
                       className="h-3.5 w-3.5 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
@@ -397,7 +429,7 @@ function Research() {
           aria-label="Filter publications by series"
           className="-mx-4 mt-6 flex gap-2 overflow-x-auto px-4 scrollbar-hide md:mx-0 md:flex-wrap md:overflow-visible md:px-0"
         >
-          {[{ value: "all" as const, label: "All" }, ...SERIES].map((o) => {
+          {[{ value: "all" as const, label: "All" }, ...shownSeries].map((o) => {
             const isActive = active === o.value;
             return (
               <button
@@ -405,7 +437,7 @@ function Research() {
                 type="button"
                 aria-pressed={isActive}
                 onClick={() => selectSeries(o.value)}
-                className={`press shrink-0 min-h-9 rounded-full border px-3.5 text-[11px] font-semibold uppercase tracking-[0.14em] focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-1 ${
+                className={`press shrink-0 min-h-9 rounded-full border px-3.5 text-xs font-semibold uppercase tracking-[0.14em] focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-1 ${
                   isActive
                     ? "border-ink bg-ink text-background"
                     : "border-border bg-background text-muted-foreground hover:border-ink hover:text-foreground"
@@ -424,7 +456,7 @@ function Research() {
             groups.map((g) => (
               <div key={g.year ?? "all"} className="mb-10 last:mb-0">
                 {g.year !== null && (
-                  <h3 className="mb-2 font-mono text-xs uppercase tracking-[0.22em] text-muted-foreground">
+                  <h3 className="mb-2 font-mono text-xs uppercase tracking-[0.14em] text-muted-foreground">
                     {g.year}
                   </h3>
                 )}
@@ -461,7 +493,9 @@ function Authors({ names }: { names: string[] }) {
               <Link
                 to="/team/$slug"
                 params={{ slug }}
-                className="link-underline text-foreground hover:text-gold-deep"
+                // inline-block + py-1 gives each name a 24px target (WCAG 2.5.8)
+                // without changing the line's visual rhythm.
+                className="link-underline inline-block py-1 text-foreground hover:text-gold-deep"
               >
                 {name}
               </Link>
@@ -482,7 +516,7 @@ function FeaturedPublication({ pub }: { pub: PublicationRow }) {
       <div className="relative flex flex-col justify-between gap-10 bg-ink p-8 text-background md:p-10">
         <span aria-hidden="true" className="absolute inset-x-0 top-0 h-0.5 bg-gradient-gold" />
         <div>
-          <span className="text-[10px] font-semibold uppercase tracking-[0.28em] text-gold">
+          <span className="text-xs font-semibold uppercase tracking-[0.14em] text-gold">
             {series?.label ?? "Report"}
           </span>
           {pub.ticker ? (
@@ -561,7 +595,7 @@ function PublicationRowItem({ pub, showSeries }: { pub: PublicationRow; showSeri
       </div>
       <div className="min-w-0">
         {eyebrow.length > 0 && (
-          <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-gold-deep">
+          <div className="text-xs font-semibold uppercase tracking-[0.14em] text-gold-deep">
             {eyebrow.join(" · ")}
           </div>
         )}
@@ -591,12 +625,12 @@ function PublicationRowItem({ pub, showSeries }: { pub: PublicationRow; showSeri
           href={pub.url}
           target="_blank"
           rel="noreferrer"
-          aria-label={`Download ${pub.title}`}
+          aria-label={`Open ${pub.title}`}
           className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-foreground hover:text-gold-deep"
         >
           <Download className="h-3.5 w-3.5" aria-hidden="true" /> Open
         </a>
-        <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
+        <span className="font-mono text-xs uppercase tracking-[0.14em] text-muted-foreground">
           {formatLabel(pub)}
         </span>
       </div>
@@ -642,7 +676,7 @@ function EmptyState({ series, query }: { series: (typeof SERIES)[number] | null;
   return (
     <div className="relative border border-border bg-secondary/30 p-12 text-center md:p-16">
       <span aria-hidden="true" className="absolute inset-x-0 top-0 h-0.5 bg-gradient-gold" />
-      <span className="text-[10px] font-semibold uppercase tracking-[0.28em] text-gold-deep">
+      <span className="text-xs font-semibold uppercase tracking-[0.14em] text-gold-deep">
         {series ? `${series.label} · Coming soon` : "Coming soon"}
       </span>
       <h3 className="mx-auto mt-4 max-w-xl font-display text-2xl font-bold leading-tight text-ink md:text-3xl">

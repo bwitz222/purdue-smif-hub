@@ -8,7 +8,15 @@ import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import { OnThisPage, type PageSection } from "@/components/OnThisPage";
 import { PrepCard } from "@/components/PrepCard";
 
-import { applyUrl } from "@/lib/apply-url";
+import { ApplyCta } from "@/components/ApplyCta";
+import {
+  CALENDAR,
+  nextUpcomingEvent,
+  parseEventStartMs,
+  pad2,
+  parseEventTimes,
+  type RecruitingEvent as Event,
+} from "@/lib/recruiting-calendar";
 
 /**
  * Anchors for the in-page nav.
@@ -31,20 +39,6 @@ const SECTIONS: readonly PageSection[] = [
 // have passed, we render an "Applications closed / next cycle" message
 // instead of a stale date. A plain-text fallback always renders for
 // no-JS / SSR.
-
-function parseEventStartMs(event: Event): number {
-  const times = parseEventTimes(event.time);
-  // Eastern offset for the Aug–Sep recruiting window is EDT (-04:00). A TBD
-  // slot has no hour, so it sorts from the start of its day.
-  const start = times ? times.start : { h: 0, m: 0 };
-  const iso = `${event.iso}T${pad2(start.h)}:${pad2(start.m)}:00-04:00`;
-  return new Date(iso).getTime();
-}
-
-function nextUpcomingEvent(nowMs: number): Event | null {
-  // CALENDAR is module-scoped (defined below this fn) — read it lazily.
-  return CALENDAR.find((e) => parseEventStartMs(e) > nowMs) ?? null;
-}
 
 function useCountdown() {
   const [now, setNow] = useState<number | null>(null);
@@ -74,7 +68,7 @@ function CountdownUnit({ value, label }: { value: number | string; label: string
       <span className="font-display text-3xl font-bold text-gold tabular-nums md:text-4xl">
         {value}
       </span>
-      <span className="mt-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-on-dark-secondary">
+      <span className="mt-1 text-xs font-semibold uppercase tracking-[0.18em] text-on-dark-secondary">
         {label}
       </span>
     </div>
@@ -104,7 +98,7 @@ function Countdown() {
         role="status"
         className="mt-10 border border-gold/30 bg-ink/60 p-6 text-background md:p-8"
       >
-        <div className="text-xs font-semibold uppercase tracking-[0.3em] text-gold">
+        <div className="text-xs font-semibold uppercase tracking-[0.14em] text-gold">
           Applications Closed
         </div>
         <p className="mt-2 text-sm text-on-dark-secondary">
@@ -125,7 +119,7 @@ function Countdown() {
 
   return (
     <div className="mt-10 border border-gold/30 bg-ink/60 p-6 text-background md:p-8">
-      <div className="text-xs font-semibold uppercase tracking-[0.3em] text-gold">
+      <div className="text-xs font-semibold uppercase tracking-[0.14em] text-gold">
         Next: {headline}
       </div>
       <p className="mt-1 text-sm text-on-dark-secondary">{sub}</p>
@@ -142,130 +136,6 @@ function Countdown() {
       </div>
     </div>
   );
-}
-
-type Event = {
-  date: string; // display date
-  iso: string; // for sorting
-  name: string;
-  time: string;
-  location: string;
-};
-
-const CALENDAR: Event[] = [
-  {
-    iso: "2026-08-22",
-    date: "Sat, Aug 22",
-    name: "B-Involved Fair",
-    time: "12:00 - 3:00 PM",
-    location: "Memorial Mall (TBD)",
-  },
-  {
-    iso: "2026-08-25",
-    date: "Tue, Aug 25",
-    name: "SMIF Callout 1",
-    time: "7:30 - 8:30 PM",
-    location: "Rawls 1086",
-  },
-  {
-    iso: "2026-08-26",
-    date: "Wed, Aug 26",
-    name: "SMIF Coffee Chats 1",
-    time: "7:15 - 8:00 PM",
-    location: "Rawls 1011",
-  },
-  {
-    iso: "2026-08-27",
-    date: "Thu, Aug 27",
-    name: "Daniels Club Expo",
-    time: "12:00 - 4:00 PM",
-    location: "Rawls Atrium",
-  },
-  {
-    iso: "2026-08-27",
-    date: "Thu, Aug 27",
-    name: "SMIF Callout 2",
-    time: "7:30 - 8:30 PM",
-    location: "Rawls 1086",
-  },
-  {
-    iso: "2026-08-31",
-    date: "Mon, Aug 31",
-    name: "SMIF Finance Club Consortium",
-    time: "12:00 - 2:30 PM",
-    location: "Rawls Atrium",
-  },
-  {
-    iso: "2026-08-31",
-    date: "Mon, Aug 31",
-    name: "SMIF Coffee Chats 2",
-    time: "7:00 - 8:00 PM",
-    location: "Rawls 1086",
-  },
-  {
-    iso: "2026-09-01",
-    date: "Tue, Sep 1",
-    name: "SMIF Callout 3",
-    time: "7:30 - 8:30 PM",
-    location: "Rawls 1086",
-  },
-  {
-    iso: "2026-09-08",
-    date: "Tue, Sep 8",
-    name: "SMIF Interviews, Day A",
-    time: "TBD",
-    location: "Young Hall 223, 217, 219, 213",
-  },
-  {
-    iso: "2026-09-09",
-    date: "Wed, Sep 9",
-    name: "SMIF Interviews, Day B",
-    time: "TBD",
-    location: "Young Hall 223, 217, 219, 213",
-  },
-];
-
-// Parse "7:30 PM" / "12:00 PM" — returns { h, m } in 24h, or null
-function parseTimeToken(t: string): { h: number; m: number } | null {
-  const match = t.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
-  if (!match) return null;
-  const [, hh, mm, mer] = match;
-  let h = parseInt(hh, 10);
-  const m = parseInt(mm, 10);
-  if (mer.toUpperCase() === "PM" && h !== 12) h += 12;
-  if (mer.toUpperCase() === "AM" && h === 12) h = 0;
-  return { h, m };
-}
-
-// Parse event.time like "7:30 - 8:30 PM" or "12:00 - 3:00 PM" — meridiem from end token applies to start if missing
-function parseEventTimes(time: string): {
-  start: { h: number; m: number };
-  end: { h: number; m: number };
-} | null {
-  // A TBD slot has no time. It used to return 17:00-18:00, and that invented
-  // hour was published as a real 5 PM event in the .ics, the Google Calendar
-  // link and the Event structured data — so a student who clicked "add to
-  // Google Calendar" got a fabricated interview time on their calendar.
-  // Callers render these as all-day events instead.
-  if (time === "TBD") return null;
-  // Accept hyphen or en-dash range separators (surrounded by spaces so
-  // clock values like "7:30" are never split).
-  const parts = time.split(/\s+[–-]\s+/).map((s) => s.trim());
-  if (parts.length !== 2) return { start: { h: 17, m: 0 }, end: { h: 18, m: 0 } };
-  const [rawStart, endStr] = parts;
-  let startStr = rawStart;
-  // If start lacks meridiem, inherit from end
-  if (!/AM|PM/i.test(startStr)) {
-    const merMatch = endStr.match(/AM|PM/i);
-    if (merMatch) startStr = `${startStr} ${merMatch[0]}`;
-  }
-  const start = parseTimeToken(startStr) ?? { h: 17, m: 0 };
-  const end = parseTimeToken(endStr) ?? { h: 18, m: 0 };
-  return { start, end };
-}
-
-function pad2(n: number) {
-  return String(n).padStart(2, "0");
 }
 
 // Returns "2026-08-25T19:30:00-04:00" (EDT for Aug/Sep 2026)
@@ -457,7 +327,7 @@ function Recruiting() {
     <>
       <section className="border-b border-border bg-ink text-background">
         <div className="container-prose py-24">
-          <span className="animate-fade-in text-xs font-semibold uppercase tracking-[0.3em] text-gold">
+          <span className="animate-fade-in text-xs font-semibold uppercase tracking-[0.14em] text-gold">
             Recruiting
           </span>
           <h1 className="animate-fade-up mt-4 font-display text-5xl font-bold md:text-6xl max-w-3xl">
@@ -468,14 +338,17 @@ function Recruiting() {
             technical interviews with SMIF.
           </p>
           <div className="animate-fade-up delay-200 mt-8 flex flex-wrap gap-3">
-            <a
-              href={applyUrl("recruiting-hero")}
-              target="_blank"
-              rel="noopener noreferrer"
+            <ApplyCta
+              placement="recruiting-hero"
+              closed="updates"
+              icon={false}
+              openLabel={
+                <>
+                  Apply Now <ArrowRight className="h-4 w-4 arrow-slide" aria-hidden="true" />
+                </>
+              }
               className="press group inline-flex items-center gap-2 bg-gold px-6 py-3 text-sm font-semibold text-ink hover:bg-gold-mid"
-            >
-              Apply Now <ArrowRight className="h-4 w-4 arrow-slide" />
-            </a>
+            />
             <a
               href="#prep"
               onClick={(e) => {
@@ -500,14 +373,14 @@ function Recruiting() {
       >
         <Reveal className="flex items-end justify-between gap-6 border-b border-border pb-6">
           <div>
-            <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">
+            <span className="text-xs font-semibold uppercase tracking-[0.14em] text-gold-deep">
               Fall 2026
             </span>
             <h2 id="calendar-h" className="mt-3 font-display text-3xl font-bold md:text-4xl">
               Recruiting Calendar
             </h2>
           </div>
-          <span className="hidden md:inline font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
+          <span className="hidden md:inline font-mono text-xs uppercase tracking-[0.14em] text-muted-foreground">
             All times Eastern
           </span>
         </Reveal>
@@ -548,11 +421,11 @@ function Recruiting() {
                   {/* Mobile: single ≥44px stacked tap block with right-aligned add-to-cal affordance. */}
                   <div className="md:hidden flex items-start gap-3 py-4 min-h-[64px]">
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 text-[11px] font-mono uppercase tracking-[0.16em] text-gold-deep">
+                      <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-[0.16em] text-gold-deep">
                         <Calendar className="h-3.5 w-3.5 shrink-0" />
                         <span className="truncate">{e.date}</span>
                         {isPast && (
-                          <span className="ml-1 inline-block px-1.5 py-0.5 text-[10px] font-mono uppercase tracking-wider bg-muted text-muted-foreground border border-border">
+                          <span className="ml-1 inline-block px-1.5 py-0.5 text-xs font-mono uppercase tracking-wider bg-muted text-muted-foreground border border-border">
                             Past
                           </span>
                         )}
@@ -594,7 +467,7 @@ function Recruiting() {
                         />
                       </span>
                       {isPast && (
-                        <span className="ml-2 inline-block px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider bg-muted text-muted-foreground border border-border">
+                        <span className="ml-2 inline-block px-2 py-0.5 text-xs font-mono uppercase tracking-wider bg-muted text-muted-foreground border border-border">
                           Past
                         </span>
                       )}
@@ -654,7 +527,7 @@ function Recruiting() {
           <div className="mt-14">
             <Reveal className="flex items-center gap-3">
               <span className="animate-expand-x h-px w-10 bg-gold" />
-              <span className="font-mono text-xs uppercase tracking-[0.3em] text-gold-deep">
+              <span className="font-mono text-xs uppercase tracking-[0.14em] text-gold-deep">
                 Round 1
               </span>
             </Reveal>
@@ -723,7 +596,7 @@ function Recruiting() {
           <div className="mt-16">
             <Reveal className="flex items-center gap-3">
               <span className="animate-expand-x h-px w-10 bg-gold" />
-              <span className="font-mono text-xs uppercase tracking-[0.3em] text-gold-deep">
+              <span className="font-mono text-xs uppercase tracking-[0.14em] text-gold-deep">
                 Round 2
               </span>
             </Reveal>

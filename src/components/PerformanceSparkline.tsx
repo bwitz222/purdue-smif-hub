@@ -60,7 +60,7 @@ export function PerformanceSparkline() {
         />
         <circle cx={lastX} cy={lastY} r={2.75} fill="var(--gold)" />
       </svg>
-      <div className="text-[11px] font-mono uppercase tracking-[0.18em] text-muted-foreground">
+      <div className="text-xs font-mono uppercase tracking-[0.18em] text-muted-foreground">
         $1 → ${multiple.toFixed(2)} since {formatMonth(data.inceptionMonth)}
       </div>
     </div>

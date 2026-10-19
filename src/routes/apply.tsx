@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ExternalLink, BookOpen, Users, TrendingUp } from "lucide-react";
+import { BookOpen, Users, TrendingUp } from "lucide-react";
 import { socialMeta, canonical, breadcrumbLd, OG_APPLY } from "@/lib/seo";
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import {
@@ -9,9 +9,7 @@ import {
   AccordionContent,
 } from "@/components/ui/accordion";
 
-import { applyUrl } from "@/lib/apply-url";
-
-const APPLICATION_URL = applyUrl("apply-page-primary");
+import { ApplyCta } from "@/components/ApplyCta";
 
 export const Route = createFileRoute("/apply")({
   component: Apply,
@@ -151,7 +149,7 @@ function Apply() {
         <div className="container-prose">
           <Reveal className="max-w-2xl mb-14">
             <span className="rule-gold mb-5 block" />
-            <span className="text-xs font-semibold uppercase tracking-[0.32em] text-gold-deep block mb-4">
+            <span className="text-xs font-semibold uppercase tracking-[0.14em] text-gold-deep block mb-4">
               What we look for
             </span>
             <h2
@@ -197,7 +195,7 @@ function Apply() {
           >
             {TIMELINE.map((step) => (
               <RevealItem key={step.n} className="bg-background p-8 lg:p-10">
-                <div className="font-mono text-xs uppercase tracking-[0.22em] text-gold-deep mb-4">
+                <div className="font-mono text-xs uppercase tracking-[0.14em] text-gold-deep mb-4">
                   Step {step.n}
                 </div>
                 <h3 className="font-display text-xl font-semibold text-ink mb-3">{step.title}</h3>
@@ -252,16 +250,12 @@ function Apply() {
             interview prep guide.
           </p>
           <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href={APPLICATION_URL}
-              target="_blank"
-              rel="noopener noreferrer"
+            <ApplyCta
+              placement="apply-page-primary"
+              closed="updates"
+              openLabel="Open Application Portal"
               className="press inline-flex items-center justify-center gap-2.5 bg-gold px-9 py-4 text-sm font-semibold text-ink hover:bg-gold-mid"
-            >
-              Open Application Portal
-              <ExternalLink className="h-4 w-4" aria-hidden="true" />
-              <span className="sr-only">(opens application form in new tab)</span>
-            </a>
+            />
             <Link
               to="/recruiting"
               className="press inline-flex items-center justify-center gap-2 border border-background/30 px-9 py-4 text-sm font-semibold text-background hover:border-gold hover:text-gold"

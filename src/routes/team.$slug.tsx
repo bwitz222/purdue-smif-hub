@@ -158,7 +158,7 @@ function MemberProfile() {
           </Reveal>
 
           <Reveal className="md:col-span-3" delay={0.08}>
-            <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">
+            <span className="text-xs font-semibold uppercase tracking-[0.14em] text-gold-deep">
               {m.role}
             </span>
             <h1 className="mt-3 font-display text-4xl font-bold md:text-5xl">{m.name}</h1>
@@ -215,7 +215,7 @@ function MemberProfile() {
                     params={{ slug: t.slug }}
                     className="group flex flex-col gap-1 p-5 transition-colors duration-200 hover:bg-secondary/50"
                   >
-                    <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-gold-deep">
+                    <span className="text-xs font-semibold uppercase tracking-[0.18em] text-gold-deep">
                       {t.member.role}
                     </span>
                     <span className="font-display text-lg font-bold leading-tight">

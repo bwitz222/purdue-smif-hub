@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { PortfolioTabs } from "@/components/PortfolioTabs";
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -189,11 +190,12 @@ function Sectors() {
 
   return (
     <>
+      <PortfolioTabs />
       <section className="border-b border-border bg-secondary/40">
         <div className="container-prose py-24">
           <Reveal>
             <span className="rule-gold mb-5 block" />
-            <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">
+            <span className="text-xs font-semibold uppercase tracking-[0.14em] text-gold-deep">
               Coverage
             </span>
             <h1 className="mt-4 font-display text-5xl font-bold md:text-6xl max-w-3xl">
@@ -233,7 +235,7 @@ function Sectors() {
       <section className="container-prose py-20">
         <div className="flex items-baseline justify-between mb-8 gap-4">
           <h2 className="font-display text-2xl md:text-3xl font-bold text-ink">Equity coverage</h2>
-          <span className="text-[10px] font-mono uppercase tracking-[0.22em] text-muted-foreground">
+          <span className="text-xs font-mono uppercase tracking-[0.14em] text-muted-foreground">
             % of invested capital
           </span>
         </div>
@@ -256,7 +258,7 @@ function Sectors() {
                       <div className="font-display text-3xl font-bold text-ink leading-none">
                         {alloc ? fmtPct(alloc.pctOfInvested) : "—"}
                       </div>
-                      <div className="mt-1 text-[10px] font-mono uppercase tracking-[0.18em] text-muted-foreground">
+                      <div className="mt-1 text-xs font-mono uppercase tracking-[0.18em] text-muted-foreground">
                         {alloc ? fmtUSD0(alloc.dollars) : ""}
                       </div>
                     </div>
@@ -264,7 +266,7 @@ function Sectors() {
 
                   <div className="mt-6 grid gap-6 sm:grid-cols-2">
                     <div>
-                      <div className="text-[10px] font-mono uppercase tracking-[0.22em] text-muted-foreground">
+                      <div className="text-xs font-mono uppercase tracking-[0.14em] text-muted-foreground">
                         Portfolio Manager
                       </div>
                       <div className="mt-1.5 text-sm text-ink">
@@ -276,7 +278,7 @@ function Sectors() {
                       </div>
                     </div>
                     <div>
-                      <div className="text-[10px] font-mono uppercase tracking-[0.22em] text-muted-foreground">
+                      <div className="text-xs font-mono uppercase tracking-[0.14em] text-muted-foreground">
                         Top holdings
                       </div>
                       <ul className="mt-1.5 space-y-0.5 text-sm text-ink">
@@ -298,7 +300,7 @@ function Sectors() {
                     <Link
                       to="/team"
                       search={{ sector: name }}
-                      className="link-underline inline-flex min-h-6 items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-gold-deep hover:text-ink transition-colors"
+                      className="link-underline inline-flex min-h-6 items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-gold-deep hover:text-ink transition-colors"
                     >
                       View team
                       <ArrowRight className="h-3.5 w-3.5 arrow-slide" />
@@ -327,7 +329,7 @@ function Sectors() {
                     </div>
                   </div>
                   <div className="mt-6">
-                    <div className="text-[10px] font-mono uppercase tracking-[0.22em] text-muted-foreground">
+                    <div className="text-xs font-mono uppercase tracking-[0.14em] text-muted-foreground">
                       {pms.length > 1 ? "Portfolio Managers" : "Portfolio Manager"}
                     </div>
                     <div className="mt-1.5 text-sm text-ink">
@@ -342,7 +344,7 @@ function Sectors() {
                     <Link
                       to="/team"
                       search={{ sector: name }}
-                      className="link-underline inline-flex min-h-6 items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-gold-deep hover:text-ink transition-colors"
+                      className="link-underline inline-flex min-h-6 items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-gold-deep hover:text-ink transition-colors"
                     >
                       View team
                       <ArrowRight className="h-3.5 w-3.5 arrow-slide" />

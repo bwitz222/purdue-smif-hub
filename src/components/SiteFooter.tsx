@@ -127,11 +127,11 @@ export function SiteFooter() {
       </div>
       <div className="border-t border-background/10">
         <div className="container-prose py-5 flex items-center gap-4">
-          <span className="text-[10px] font-mono uppercase tracking-[0.32em] text-on-dark-muted whitespace-nowrap">
+          <span className="text-xs font-mono uppercase tracking-[0.14em] text-on-dark-muted whitespace-nowrap">
             Est. 1995
           </span>
           <span className="flex-1 h-px bg-gradient-gold opacity-50" aria-hidden="true" />
-          <span className="text-[10px] font-mono uppercase tracking-[0.32em] text-on-dark-muted whitespace-nowrap">
+          <span className="text-xs font-mono uppercase tracking-[0.14em] text-on-dark-muted whitespace-nowrap">
             Present
           </span>
         </div>

@@ -48,13 +48,16 @@ export function MemberCard({
   return (
     <div
       onClick={interactive ? handleActivate : undefined}
-      className={`group flex flex-col border border-border bg-card ${
+      // Phones get a compact row (thumbnail beside the name, bio clipped to 3
+      // lines); full portrait cards from sm up. The full bio is one tap away
+      // in the detail sheet and on the member's own page.
+      className={`group flex flex-row sm:flex-col border border-border bg-card ${
         interactive
           ? "hover-lift cursor-pointer focus-within:ring-2 focus-within:ring-gold"
           : "transition-[border-color,box-shadow] duration-200 hover:border-gold hover:shadow-elegant"
       }`}
     >
-      <div className="aspect-square w-full overflow-hidden bg-gradient-gold">
+      <div className="aspect-square w-24 shrink-0 self-start overflow-hidden bg-gradient-gold sm:w-full sm:self-auto">
         {src ? (
           <img
             src={src}
@@ -73,11 +76,13 @@ export function MemberCard({
           />
         ) : (
           <div className="grid h-full w-full place-items-center">
-            <span className="font-display text-5xl font-bold text-ink/40">{initials}</span>
+            <span className="font-display text-2xl font-bold text-ink/40 sm:text-5xl">
+              {initials}
+            </span>
           </div>
         )}
       </div>
-      <div className="flex flex-1 flex-col p-6">
+      <div className="flex min-w-0 flex-1 flex-col p-4 sm:p-6">
         <div className="text-xs font-semibold uppercase tracking-[0.18em] text-gold-deep">
           {m.role}
         </div>
@@ -90,9 +95,13 @@ export function MemberCard({
           {m.name}
         </Link>
         <div className="text-xs text-muted-foreground">{m.year}</div>
-        {m.bio && <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{m.bio}</p>}
+        {m.bio && (
+          <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-muted-foreground sm:mt-4 sm:line-clamp-none">
+            {m.bio}
+          </p>
+        )}
         <div
-          className="mt-auto flex items-center gap-4 border-t border-border pt-4 text-xs"
+          className="mt-auto flex items-center gap-4 border-t border-border pt-2 text-xs sm:pt-4"
           style={{ marginTop: m.bio ? undefined : "1.25rem" }}
         >
           {email && (
