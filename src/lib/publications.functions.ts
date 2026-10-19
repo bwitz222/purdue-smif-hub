@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 
-type PublicationCategory = "macro" | "equity_research" | "semester" | "annual";
+type PublicationCategory = "macro" | "pitch" | "equity_research" | "semester" | "annual";
 
 export interface PublicationRow {
   id: string;
@@ -17,6 +17,10 @@ export interface PublicationRow {
   authors: string[] | null;
   /** Issue number within a numbered series (e.g. The Macro Brief #002). */
   issue_number: number | null;
+  /** Pitch decks: the pitched security, its sector, and the side ("Long" / "Short"). */
+  ticker: string | null;
+  sector: string | null;
+  position: string | null;
   url: string;
 }
 

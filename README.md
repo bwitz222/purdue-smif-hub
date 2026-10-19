@@ -34,14 +34,15 @@ the repository. See `.env.example` for the annotated list.
 
 ## Scripts
 
-| Command            | What it does                                                     |
-| ------------------ | ---------------------------------------------------------------- |
-| `npm run dev`      | Vite dev server                                                  |
-| `npm run build`    | Production build (Nitro → Vercel Build Output API)               |
-| `npm test`         | Unit tests (Vitest)                                              |
-| `npm run test:e2e` | Boots a dev server, drives every page in Chromium, runs axe-core |
-| `npm run lint`     | ESLint                                                           |
-| `npm run format`   | Prettier                                                         |
+| Command                    | What it does                                                     |
+| -------------------------- | ---------------------------------------------------------------- |
+| `npm run dev`              | Vite dev server                                                  |
+| `npm run build`            | Production build (Nitro → Vercel Build Output API)               |
+| `npm test`                 | Unit tests (Vitest)                                              |
+| `npm run test:e2e`         | Boots a dev server, drives every page in Chromium, runs axe-core |
+| `npm run lint`             | ESLint                                                           |
+| `npm run format`           | Prettier                                                         |
+| `npm run publish:research` | Post a PDF/deck to `/research` (see "Posting research" below)    |
 
 `test:e2e` needs a Chromium. CI installs one with `npx playwright install chromium`.
 If you already have a browser on disk, point at it:
@@ -76,6 +77,29 @@ Supabase, not from files.
 Everything else follows automatically: the roster page, the per-member page at
 `/team/<first-last>`, the sitemap entry and the `Person` structured data are all
 derived from `memberDirectory`.
+
+### Posting research
+
+Everything on `/research` (The Macro Brief, pitch decks, equity research,
+semester and annual reports) is a row in the Supabase `publications` table plus
+a file in the `publications` storage bucket. One command does both:
+
+```bash
+npm run publish:research -- --category pitch --file ./NVDA-pitch.pdf \
+  --title "NVIDIA (NVDA): The Inference Build-Out" --date 2026-11-04 \
+  --ticker NVDA --sector "Information Technology" --position Long \
+  --authors "Chris Andreou, Parth Dama" --description "One-sentence summary."
+```
+
+- `--category`: `macro`, `pitch`, `equity_research`, `semester`, or `annual`.
+- `--date` is the publication date shown on the site. `--issue` numbers a Macro Brief.
+- Pitch decks need `--ticker`; `--sector` and `--position` (`Long`/`Short`) are optional.
+- Add `--dry-run` first to check the row without uploading anything.
+- Needs `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` in your environment or `.env`.
+  The service-role key is admin access, so keep it on your own machine.
+
+It appears on the site on the next page load; no redeploy. PDF is best for decks
+(it previews in the browser); `.pptx`, `.docx` and `.xlsx` also work.
 
 ## Architecture notes worth knowing
 

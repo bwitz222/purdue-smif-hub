@@ -281,6 +281,9 @@ export type Database = {
           id: string;
           issue_number: number | null;
           mime_type: string | null;
+          position: string | null;
+          sector: string | null;
+          ticker: string | null;
           title: string;
         };
         Insert: {
@@ -294,6 +297,9 @@ export type Database = {
           id?: string;
           issue_number?: number | null;
           mime_type?: string | null;
+          position?: string | null;
+          sector?: string | null;
+          ticker?: string | null;
           title: string;
         };
         Update: {
@@ -307,6 +313,9 @@ export type Database = {
           id?: string;
           issue_number?: number | null;
           mime_type?: string | null;
+          position?: string | null;
+          sector?: string | null;
+          ticker?: string | null;
           title?: string;
         };
         Relationships: [];
@@ -358,7 +367,7 @@ export type Database = {
       [_ in never]: never;
     };
     Enums: {
-      publication_category: "equity_research" | "semester" | "annual" | "macro";
+      publication_category: "equity_research" | "semester" | "annual" | "macro" | "pitch";
     };
     CompositeTypes: {
       [_ in never]: never;
@@ -484,7 +493,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      publication_category: ["equity_research", "semester", "annual", "macro"],
+      publication_category: ["equity_research", "semester", "annual", "macro", "pitch"],
     },
   },
 } as const;
