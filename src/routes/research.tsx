@@ -1,12 +1,69 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { FileText, Download, ExternalLink, Rss, Search } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { RevealGroup, RevealItem } from "@/components/Reveal";
+import { ArrowUpRight, Download, ExternalLink, Rss, Search } from "lucide-react";
+import { Reveal } from "@/components/Reveal";
 import { socialMeta, canonical, breadcrumbLd, OG_RESEARCH } from "@/lib/seo";
 import { getPublications, type PublicationRow } from "@/lib/publications.functions";
+import { findMemberBySlug, memberSlug } from "@/data/team";
 
 const SUBSTACK_URL = "https://purduesmif.substack.com";
+
+type Category = PublicationRow["category"];
+type SortKey = "newest" | "oldest" | "title";
+
+/**
+ * Each category is presented as a named series with its own byline, the way
+ * fund research hubs present a flagship letter or weekly note: readers learn
+ * what a series is and how often it publishes before they open an issue.
+ * Order here is display order on the page.
+ */
+const SERIES: {
+  value: Category;
+  label: string;
+  cadence: string;
+  byline: string;
+  description: string;
+}[] = [
+  {
+    value: "macro",
+    label: "The Macro Brief",
+    cadence: "Biweekly",
+    byline: "Fixed Income & Macro team",
+    description:
+      "Rates, inflation, the Fed, and cross-asset moves, with a dated call on each and what would prove us wrong.",
+  },
+  {
+    value: "equity_research",
+    label: "Equity Research",
+    cadence: "Each research cycle",
+    byline: "Sector teams",
+    description: "Single-name pitches and deep-dive analyst reports from the eight sector teams.",
+  },
+  {
+    value: "semester",
+    label: "Semester Reports",
+    cadence: "Twice a year",
+    byline: "Fund leadership",
+    description: "End-of-term letters on performance, attribution, and positioning.",
+  },
+  {
+    value: "annual",
+    label: "Annual Reports",
+    cadence: "Yearly",
+    byline: "Fund leadership",
+    description: "Full-year reports to the Daniels School and the fund's stakeholders.",
+  },
+];
+
+const SERIES_BY_VALUE = Object.fromEntries(SERIES.map((s) => [s.value, s])) as Record<
+  Category,
+  (typeof SERIES)[number]
+>;
+
+const isCategory = (v: unknown): v is Category =>
+  typeof v === "string" && SERIES.some((s) => s.value === v);
+
+type ResearchSearch = { series?: Category; q?: string };
 
 export const Route = createFileRoute("/research")({
   // SSR loader — the publications list is fetched on the server so the
@@ -14,6 +71,10 @@ export const Route = createFileRoute("/research")({
   // indexable by crawlers). Client-side search/sort still operate on the
   // returned array.
   loader: async (): Promise<{ pubs: PublicationRow[] }> => ({ pubs: await getPublications() }),
+  validateSearch: (search: Record<string, unknown>): ResearchSearch => ({
+    series: isCategory(search.series) ? search.series : undefined,
+    q: typeof search.q === "string" && search.q.trim() ? search.q : undefined,
+  }),
   component: Research,
   head: ({ loaderData }) => {
     const pubs = loaderData?.pubs ?? [];
@@ -35,7 +96,7 @@ export const Route = createFileRoute("/research")({
         "@id": `${url}#library`,
         name: "Purdue SMIF Research Library",
         description:
-          "Equity research, single-name stock pitches, semester performance reviews, and annual reports authored by Purdue SMIF analysts.",
+          "The Macro Brief, equity research, semester letters, and annual reports authored by Purdue SMIF analysts.",
         url,
         isPartOf: { "@id": "https://www.purduesmif.org/#website" },
         about: { "@id": "https://www.purduesmif.org/#organization" },
@@ -54,13 +115,15 @@ export const Route = createFileRoute("/research")({
                 datePublished: p.created_at,
                 url: p.url,
                 ...(p.mime_type && { encodingFormat: p.mime_type }),
-                genre: CATEGORY_LABEL[p.category as Category] ?? "Report",
+                genre: SERIES_BY_VALUE[p.category]?.label ?? "Report",
                 isAccessibleForFree: true,
-                // Reports are published by the fund rather than credited to
-                // individual analysts in the data model, so the organization
-                // is both author and publisher. Attributing a Person we don't
-                // actually store would be fabricated provenance.
-                author: { "@id": "https://www.purduesmif.org/#organization" },
+                // Named analysts are credited only when the row stores them;
+                // otherwise the fund is the author. Attributing a Person we
+                // don't actually store would be fabricated provenance.
+                author:
+                  p.authors && p.authors.length > 0
+                    ? p.authors.map((name) => ({ "@type": "Person", name }))
+                    : { "@id": "https://www.purduesmif.org/#organization" },
                 publisher: { "@id": "https://www.purduesmif.org/#organization" },
               },
             })),
@@ -71,16 +134,16 @@ export const Route = createFileRoute("/research")({
 
     return {
       meta: [
-        { title: "Equity Research Reports & Publications | Purdue SMIF" },
+        { title: "Research: The Macro Brief, Equity Research & Reports | Purdue SMIF" },
         {
           name: "description",
           content:
-            "Equity research, single-name stock pitches, semester performance reviews, and annual reports authored by Purdue SMIF analysts and curated by fund leadership.",
+            "The Macro Brief, equity research, semester letters, and annual reports written by Purdue SMIF analysts and curated by fund leadership.",
         },
         ...socialMeta({
-          title: "Equity Research & Reports | Purdue SMIF",
+          title: "Research | Purdue SMIF",
           description:
-            "Read SMIF's equity research pitches, semester performance reviews, and annual reports.",
+            "Read SMIF's biweekly Macro Brief, equity research, semester letters, and annual reports.",
           url,
           image: OG_RESEARCH,
         }),
@@ -91,32 +154,14 @@ export const Route = createFileRoute("/research")({
   },
 });
 
-type Category = "equity_research" | "semester" | "annual";
-type SortKey = "newest" | "oldest" | "title";
-
-const CATEGORIES: { value: Category; label: string; description: string }[] = [
-  {
-    value: "equity_research",
-    label: "Equity Research",
-    description: "Single-name pitches and deep-dive analyst reports.",
-  },
-  {
-    value: "semester",
-    label: "Semester Reports",
-    description: "End-of-semester performance and attribution reviews.",
-  },
-  {
-    value: "annual",
-    label: "Annual Reports",
-    description: "Comprehensive yearly reports to the Daniels School and stakeholders.",
-  },
-];
-
-const CATEGORY_LABEL: Record<Category, string> = {
-  equity_research: "Equity Research",
-  semester: "Semester Report",
-  annual: "Annual Report",
-};
+// Dates are formatted in UTC so the server render and the browser agree on
+// the day; a local-time format flips a midnight-UTC date back a day for any
+// US visitor and trips a hydration mismatch.
+const fmtDate = (iso: string, opts: Intl.DateTimeFormatOptions) =>
+  new Date(iso).toLocaleDateString("en-US", { timeZone: "UTC", ...opts });
+const longDate = (iso: string) => fmtDate(iso, { month: "long", day: "numeric", year: "numeric" });
+const shortDate = (iso: string) => fmtDate(iso, { month: "short", day: "numeric" });
+const yearOf = (iso: string) => new Date(iso).getUTCFullYear();
 
 function formatBytes(bytes: number | null) {
   if (!bytes) return "";
@@ -125,211 +170,419 @@ function formatBytes(bytes: number | null) {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
+function formatLabel(pub: PublicationRow) {
+  const ext = pub.file_name.split(".").pop()?.toUpperCase();
+  const size = formatBytes(pub.file_size);
+  return [ext, size].filter(Boolean).join(" · ");
+}
+
+const byNewest = (a: PublicationRow, b: PublicationRow) =>
+  +new Date(b.created_at) - +new Date(a.created_at);
+
 function Research() {
   const { pubs } = Route.useLoaderData();
-  const [query, setQuery] = useState("");
+  const search = Route.useSearch();
+  const navigate = Route.useNavigate();
+  const [query, setQuery] = useState(search.q ?? "");
   const [sort, setSort] = useState<SortKey>("newest");
+  const active = search.series ?? "all";
+
+  const latest = useMemo(() => [...pubs].sort(byNewest)[0], [pubs]);
 
   const filtered = useMemo<PublicationRow[]>(() => {
     const q = query.trim().toLowerCase();
-    const base = q
-      ? pubs.filter(
-          (p: PublicationRow) =>
-            p.title.toLowerCase().includes(q) || (p.description ?? "").toLowerCase().includes(q),
-        )
-      : pubs;
+    const base = pubs.filter((p: PublicationRow) => {
+      if (active !== "all" && p.category !== active) return false;
+      if (!q) return true;
+      return [p.title, p.description ?? "", ...(p.authors ?? [])].some((s) =>
+        s.toLowerCase().includes(q),
+      );
+    });
     const sorted = [...base];
-    if (sort === "newest") sorted.sort((a, b) => +new Date(b.created_at) - +new Date(a.created_at));
-    else if (sort === "oldest")
-      sorted.sort((a, b) => +new Date(a.created_at) - +new Date(b.created_at));
+    if (sort === "newest") sorted.sort(byNewest);
+    else if (sort === "oldest") sorted.sort((a, b) => -byNewest(a, b));
     else sorted.sort((a, b) => a.title.localeCompare(b.title));
     return sorted;
-  }, [pubs, query, sort]);
+  }, [pubs, query, sort, active]);
+
+  // Year headings only make sense for a chronological sort.
+  const groups = useMemo(() => {
+    if (sort === "title") return [{ year: null as number | null, items: filtered }];
+    const out: { year: number | null; items: PublicationRow[] }[] = [];
+    for (const p of filtered) {
+      const y = yearOf(p.created_at);
+      const last = out[out.length - 1];
+      if (last && last.year === y) last.items.push(p);
+      else out.push({ year: y, items: [p] });
+    }
+    return out;
+  }, [filtered, sort]);
+
+  const selectSeries = (value: Category | "all") =>
+    navigate({
+      search: (prev) => ({ ...prev, series: value === "all" ? undefined : value }),
+      replace: true,
+      resetScroll: false,
+    });
+
+  const countFor = (c: Category) => pubs.filter((p) => p.category === c).length;
+  const activeSeries = active === "all" ? null : SERIES_BY_VALUE[active];
 
   return (
     <>
+      {/* ── Masthead ─────────────────────────────────────────────── */}
       <section className="border-b border-border bg-secondary/40">
-        <div className="container-prose py-24">
+        <div className="container-prose py-20 md:py-24">
           <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">
             Research
           </span>
-          <h1 className="mt-4 font-display text-5xl font-bold md:text-6xl max-w-3xl">
-            Reports & research from the fund.
-          </h1>
-          <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
-            Browse equity research, semester performance reviews, and annual reports authored by
-            SMIF members. This library is view-only and curated by fund leadership.
-          </p>
-          <a
-            href={SUBSTACK_URL}
-            target="_blank"
-            rel="noreferrer"
-            className="press mt-8 inline-flex items-center gap-2 border border-ink bg-ink px-5 py-2.5 text-sm font-semibold text-background hover:bg-ink/90"
-          >
-            <Rss className="h-4 w-4" /> Read us on Substack
-            <ExternalLink className="h-3.5 w-3.5 opacity-70" />
-          </a>
+          <div className="mt-4 grid gap-10 md:grid-cols-[1fr_auto] md:items-end">
+            <div>
+              <h1 className="font-display text-5xl font-bold md:text-6xl max-w-3xl">
+                What the fund is thinking.
+              </h1>
+              <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
+                Macro views, single-name research, and our letters to stakeholders, written by SMIF
+                analysts and reviewed by fund leadership.
+              </p>
+            </div>
+            <a
+              href={SUBSTACK_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="press inline-flex items-center gap-2 self-start border border-ink bg-ink px-5 py-2.5 text-sm font-semibold text-background hover:bg-ink/90 md:self-end"
+            >
+              <Rss className="h-4 w-4" aria-hidden="true" /> Subscribe on Substack
+              <ExternalLink className="h-3.5 w-3.5 opacity-70" aria-hidden="true" />
+            </a>
+          </div>
         </div>
       </section>
 
-      <section className="container-prose py-16">
-        <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="relative w-full sm:max-w-sm">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <input
-              type="search"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search reports…"
-              aria-label="Search reports"
-              className="w-full border border-input bg-background py-2 pl-9 pr-3 text-sm outline-none focus:border-gold"
-            />
-          </div>
-          <label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-            Sort
-            <select
-              value={sort}
-              onChange={(e) => setSort(e.target.value as SortKey)}
-              aria-label="Sort reports"
-              className="border border-input bg-background px-2 py-1.5 text-xs font-medium tracking-normal text-foreground outline-none focus:border-gold"
-            >
-              <option value="newest">Newest first</option>
-              <option value="oldest">Oldest first</option>
-              <option value="title">Title (A-Z)</option>
-            </select>
-          </label>
-        </div>
+      {/* ── Latest issue ─────────────────────────────────────────── */}
+      {latest && (
+        <section className="container-prose pt-16" aria-labelledby="latest-heading">
+          <h2
+            id="latest-heading"
+            className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground"
+          >
+            Latest
+          </h2>
+          <Reveal>
+            <FeaturedPublication pub={latest} />
+          </Reveal>
+        </section>
+      )}
 
-        <Tabs defaultValue="equity_research" className="w-full">
-          <TabsList className="h-auto flex-wrap gap-1 bg-secondary/60 p-1">
-            {CATEGORIES.map((c) => {
-              // Search filters across every category but only one tab is
-              // visible, so a query matching an Annual Report while the
-              // Equity Research tab is open used to read 'No equity research
-              // match "…"' with nothing to suggest the hit existed elsewhere.
-              const n = filtered.filter((p) => p.category === c.value).length;
-              return (
-                <TabsTrigger key={c.value} value={c.value} className="px-4 py-2 text-sm">
-                  {c.label}
-                  {query && (
-                    <span
-                      className={`ml-2 font-mono text-[10px] ${n > 0 ? "text-gold-deep" : "text-muted-foreground/60"}`}
-                    >
-                      {n}
-                    </span>
-                  )}
-                </TabsTrigger>
-              );
-            })}
-          </TabsList>
-
-          {CATEGORIES.map((c, ci) => {
-            // Anything with an unrecognised category would otherwise render in
-            // no tab at all and silently disappear from the site. Park it in
-            // the first tab rather than dropping it.
-            const known = new Set<string>(CATEGORIES.map((x) => x.value));
-            const items = filtered.filter(
-              (p) => p.category === c.value || (ci === 0 && !known.has(p.category)),
-            );
+      {/* ── Series ───────────────────────────────────────────────── */}
+      <section className="container-prose pt-16" aria-labelledby="series-heading">
+        <h2
+          id="series-heading"
+          className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground"
+        >
+          Series
+        </h2>
+        <ul className="mt-5 grid gap-px border border-border bg-border sm:grid-cols-2 lg:grid-cols-4">
+          {SERIES.map((s) => {
+            const n = countFor(s.value);
+            const isActive = active === s.value;
             return (
-              <TabsContent key={c.value} value={c.value} className="mt-8">
-                <div className="mb-6 flex items-baseline justify-between gap-4">
-                  <div>
-                    <h2 className="font-display text-2xl font-bold">{c.label}</h2>
-                    <p className="mt-1 text-sm text-muted-foreground">{c.description}</p>
-                  </div>
-                  <span className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                    {items.length} {items.length === 1 ? "report" : "reports"}
+              <li key={s.value} className="bg-background">
+                <button
+                  type="button"
+                  aria-pressed={isActive}
+                  onClick={() => {
+                    selectSeries(isActive ? "all" : s.value);
+                    document
+                      .getElementById("library")
+                      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+                  }}
+                  className={`group flex h-full w-full flex-col p-6 text-left transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-gold ${
+                    isActive ? "bg-secondary" : "hover:bg-secondary/50"
+                  }`}
+                >
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-gold-deep">
+                    {s.cadence}
                   </span>
-                </div>
-
-                <RevealGroup className="grid gap-4 md:grid-cols-2" stagger={0.06}>
-                  {items.length === 0 ? (
-                    <EmptyState category={c.value} label={c.label} query={query} />
-                  ) : (
-                    items.map((p) => (
-                      <RevealItem key={p.id} className="h-full [&>div]:h-full">
-                        <PublicationCard pub={p} />
-                      </RevealItem>
-                    ))
-                  )}
-                </RevealGroup>
-              </TabsContent>
+                  <span className="mt-2 font-display text-xl font-bold leading-tight">
+                    {s.label}
+                  </span>
+                  <span className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                    {s.description}
+                  </span>
+                  <span className="mt-auto flex items-center justify-between pt-5 font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
+                    {n === 0 ? "Coming soon" : `${n} ${n === 1 ? "issue" : "issues"}`}
+                    <ArrowUpRight
+                      className="h-3.5 w-3.5 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                      aria-hidden="true"
+                    />
+                  </span>
+                </button>
+              </li>
             );
           })}
-        </Tabs>
+        </ul>
+      </section>
+
+      {/* ── Library ──────────────────────────────────────────────── */}
+      <section
+        id="library"
+        className="container-prose scroll-mt-20 py-16"
+        aria-labelledby="library-heading"
+      >
+        <div className="flex flex-col gap-6 border-b border-border pb-6 md:flex-row md:items-end md:justify-between">
+          <div>
+            <h2 id="library-heading" className="font-display text-3xl font-bold">
+              {activeSeries ? activeSeries.label : "Library"}
+            </h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {activeSeries
+                ? `${activeSeries.byline} · ${activeSeries.cadence}`
+                : "Every publication, newest first."}
+            </p>
+          </div>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div className="relative w-full sm:w-64">
+              <Search
+                className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+                aria-hidden="true"
+              />
+              <input
+                type="search"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search titles, topics, authors…"
+                aria-label="Search publications"
+                className="w-full border border-input bg-background py-2 pl-9 pr-3 text-sm outline-none focus:border-gold"
+              />
+            </div>
+            <label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+              Sort
+              <select
+                value={sort}
+                onChange={(e) => setSort(e.target.value as SortKey)}
+                aria-label="Sort publications"
+                className="border border-input bg-background px-2 py-1.5 text-xs font-medium tracking-normal text-foreground outline-none focus:border-gold"
+              >
+                <option value="newest">Newest first</option>
+                <option value="oldest">Oldest first</option>
+                <option value="title">Title (A-Z)</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        {/* role="group" + aria-pressed, matching the /team scope chips: these
+            filter one list in place, so they are toggles, not tabs. */}
+        <div
+          role="group"
+          aria-label="Filter publications by series"
+          className="-mx-4 mt-6 flex gap-2 overflow-x-auto px-4 scrollbar-hide md:mx-0 md:flex-wrap md:overflow-visible md:px-0"
+        >
+          {[{ value: "all" as const, label: "All" }, ...SERIES].map((o) => {
+            const isActive = active === o.value;
+            return (
+              <button
+                key={o.value}
+                type="button"
+                aria-pressed={isActive}
+                onClick={() => selectSeries(o.value)}
+                className={`press shrink-0 min-h-9 rounded-full border px-3.5 text-[11px] font-semibold uppercase tracking-[0.14em] focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-1 ${
+                  isActive
+                    ? "border-ink bg-ink text-background"
+                    : "border-border bg-background text-muted-foreground hover:border-ink hover:text-foreground"
+                }`}
+              >
+                {o.label}
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="mt-8">
+          {filtered.length === 0 ? (
+            <EmptyState series={activeSeries} query={query} />
+          ) : (
+            groups.map((g) => (
+              <div key={g.year ?? "all"} className="mb-10 last:mb-0">
+                {g.year !== null && (
+                  <h3 className="mb-2 font-mono text-xs uppercase tracking-[0.22em] text-muted-foreground">
+                    {g.year}
+                  </h3>
+                )}
+                <ol className="border-t border-border">
+                  {g.items.map((p) => (
+                    <PublicationRowItem key={p.id} pub={p} showSeries={active === "all"} />
+                  ))}
+                </ol>
+              </div>
+            ))
+          )}
+        </div>
+
+        <p className="mt-16 max-w-3xl border-t border-border pt-6 text-xs leading-relaxed text-muted-foreground">
+          Student research produced as part of the Purdue Student Managed Investment Fund for
+          educational purposes. It is not investment advice or a recommendation to buy or sell any
+          security. Views are the authors' as of the publication date and may change without notice.
+        </p>
       </section>
     </>
   );
 }
 
-function PublicationCard({ pub }: { pub: PublicationRow }) {
-  // Matches a title that IS a sample, not one that merely uses the word:
-  // "Sample selection bias in small-cap screens" is a real report and was
-  // getting both the Sample badge and a fabricated "Spring 2026" date in
-  // place of its actual created_at.
-  const isSample = /(^|\W)sample(\W|$)/i.test(pub.title) && /^sample\b/i.test(pub.title.trim());
+function Authors({ names }: { names: string[] }) {
   return (
-    <div className="group flex flex-col border border-border bg-card hover-lift">
-      <div className="relative aspect-[3/4] overflow-hidden border-b border-border bg-secondary/40">
-        <div className="absolute inset-x-0 top-0 h-0.5 bg-gradient-gold" aria-hidden="true" />
-        {isSample && (
-          <span className="absolute right-3 top-3 z-10 border border-gold/60 bg-background/90 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.2em] text-gold-deep">
-            Sample
+    <>
+      {names.map((name, i) => {
+        const slug = memberSlug(name);
+        const linked = Boolean(findMemberBySlug(slug));
+        return (
+          <span key={name}>
+            {i > 0 && (i === names.length - 1 ? " & " : ", ")}
+            {linked ? (
+              <Link
+                to="/team/$slug"
+                params={{ slug }}
+                className="link-underline text-foreground hover:text-gold-deep"
+              >
+                {name}
+              </Link>
+            ) : (
+              name
+            )}
           </span>
-        )}
-        <div className="flex h-full flex-col items-center justify-center gap-4 p-6 text-center">
-          <FileText className="h-12 w-12 text-gold-deep/70" aria-hidden="true" />
-          <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-            {CATEGORY_LABEL[pub.category as Category] ?? "Report"}
+        );
+      })}
+    </>
+  );
+}
+
+function FeaturedPublication({ pub }: { pub: PublicationRow }) {
+  const series = SERIES_BY_VALUE[pub.category];
+  return (
+    <article className="mt-5 grid border border-border bg-card md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
+      <div className="relative flex flex-col justify-between gap-10 bg-ink p-8 text-background md:p-10">
+        <span aria-hidden="true" className="absolute inset-x-0 top-0 h-0.5 bg-gradient-gold" />
+        <div>
+          <span className="text-[10px] font-semibold uppercase tracking-[0.28em] text-gold">
+            {series?.label ?? "Report"}
           </span>
+          {pub.issue_number != null && (
+            <div className="mt-3 font-display text-7xl font-bold leading-none text-background md:text-8xl">
+              #{String(pub.issue_number).padStart(3, "0")}
+            </div>
+          )}
+        </div>
+        <div className="font-mono text-xs uppercase tracking-[0.18em] text-on-dark-secondary">
+          <time dateTime={pub.created_at}>{longDate(pub.created_at)}</time>
+          {series && <div className="mt-1">{series.byline}</div>}
         </div>
       </div>
-      <div className="flex flex-1 flex-col p-5">
-        <h3 className="font-display text-lg font-bold leading-tight">{pub.title}</h3>
-        {pub.description && <p className="mt-2 text-sm text-muted-foreground">{pub.description}</p>}
-        <div className="mt-2 text-xs text-muted-foreground">
-          {new Date(pub.created_at).toLocaleDateString()}
-          {formatBytes(pub.file_size) && ` · ${formatBytes(pub.file_size)}`}
-        </div>
-        <div className="mt-4 flex items-center gap-3 border-t border-border pt-3 text-xs">
+      <div className="flex flex-col p-8 md:p-10">
+        <h3 className="font-display text-3xl font-bold leading-tight md:text-4xl">{pub.title}</h3>
+        {pub.description && (
+          <p className="mt-4 text-base leading-relaxed text-muted-foreground">{pub.description}</p>
+        )}
+        {pub.authors && pub.authors.length > 0 && (
+          <p className="mt-6 text-sm text-muted-foreground">
+            By <Authors names={pub.authors} />
+          </p>
+        )}
+        <div className="mt-auto flex flex-wrap items-center gap-4 pt-8">
           <a
             href={pub.url}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-1.5 text-muted-foreground transition hover:text-gold-deep"
+            className="press inline-flex items-center gap-2 bg-gold px-5 py-2.5 text-sm font-semibold text-ink hover:bg-gold-mid"
           >
-            <Download className="h-3.5 w-3.5" /> View / Download
+            Read {series?.value === "macro" ? "the brief" : "the report"}
+            <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
           </a>
+          <span className="font-mono text-xs uppercase tracking-[0.14em] text-muted-foreground">
+            {formatLabel(pub)}
+          </span>
         </div>
       </div>
-    </div>
+    </article>
   );
 }
 
-function EmptyState({
-  category,
-  label,
-  query,
-}: {
-  category: Category;
-  label: string;
-  query: string;
-}) {
+function PublicationRowItem({ pub, showSeries }: { pub: PublicationRow; showSeries: boolean }) {
+  const series = SERIES_BY_VALUE[pub.category];
+  return (
+    <li
+      id={`pub-${pub.id}`}
+      className="group grid gap-x-8 gap-y-2 border-b border-border py-6 md:grid-cols-[7rem_minmax(0,1fr)_auto]"
+    >
+      <div className="font-mono text-xs uppercase tracking-[0.14em] text-muted-foreground md:pt-1.5">
+        <time dateTime={pub.created_at}>{shortDate(pub.created_at)}</time>
+      </div>
+      <div className="min-w-0">
+        {(showSeries || pub.issue_number != null) && (
+          <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-gold-deep">
+            {showSeries && (series?.label ?? "Report")}
+            {showSeries && pub.issue_number != null && " · "}
+            {pub.issue_number != null && `No. ${pub.issue_number}`}
+          </div>
+        )}
+        <h4 className="mt-1 font-display text-xl font-bold leading-snug">
+          <a
+            href={pub.url}
+            target="_blank"
+            rel="noreferrer"
+            className="link-underline hover:text-gold-deep"
+          >
+            {pub.title}
+          </a>
+        </h4>
+        {pub.description && (
+          <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted-foreground">
+            {pub.description}
+          </p>
+        )}
+        {pub.authors && pub.authors.length > 0 && (
+          <p className="mt-2 text-xs text-muted-foreground">
+            By <Authors names={pub.authors} />
+          </p>
+        )}
+      </div>
+      <div className="flex items-center gap-4 md:flex-col md:items-end md:gap-2 md:pt-1.5">
+        <a
+          href={pub.url}
+          target="_blank"
+          rel="noreferrer"
+          aria-label={`Download ${pub.title}`}
+          className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-foreground hover:text-gold-deep"
+        >
+          <Download className="h-3.5 w-3.5" aria-hidden="true" /> Open
+        </a>
+        <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
+          {formatLabel(pub)}
+        </span>
+      </div>
+    </li>
+  );
+}
+
+function EmptyState({ series, query }: { series: (typeof SERIES)[number] | null; query: string }) {
   if (query) {
     return (
-      <div className="col-span-full border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
-        No {label.toLowerCase()} match "{query}".
+      <div className="border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
+        No {series ? series.label : "publications"} match "{query}".
       </div>
     );
   }
   const copy: Record<Category, { headline: string; support: string }> = {
+    macro: {
+      headline: "The next Macro Brief publishes here every other week.",
+      support: "Follow along on Substack between issues.",
+    },
     equity_research: {
       headline: "Analyst pitches publish here after each research cycle.",
       support: "Follow interim writeups on Substack while the next cycle wraps.",
     },
     semester: {
-      headline: "First semester report publishes December 2026.",
+      headline: "The next semester letter publishes December 2026.",
       support:
         "End-of-term performance and attribution reviews will land here after each semester closes.",
     },
@@ -339,17 +592,19 @@ function EmptyState({
         "Full reports to the Daniels School and stakeholders are posted once audited each year.",
     },
   };
-  const c = copy[category];
+  const c = series
+    ? copy[series.value]
+    : { headline: "Publications will appear here.", support: "Check back soon." };
   return (
-    <div className="col-span-full relative border border-border bg-secondary/30 p-12 md:p-16 text-center">
+    <div className="relative border border-border bg-secondary/30 p-12 text-center md:p-16">
       <span aria-hidden="true" className="absolute inset-x-0 top-0 h-0.5 bg-gradient-gold" />
       <span className="text-[10px] font-semibold uppercase tracking-[0.28em] text-gold-deep">
-        {label} · Coming soon
+        {series ? `${series.label} · Coming soon` : "Coming soon"}
       </span>
-      <h3 className="mt-4 font-display text-2xl md:text-3xl font-bold text-ink max-w-xl mx-auto leading-tight">
+      <h3 className="mx-auto mt-4 max-w-xl font-display text-2xl font-bold leading-tight text-ink md:text-3xl">
         {c.headline}
       </h3>
-      <p className="mt-4 text-sm text-muted-foreground max-w-md mx-auto leading-relaxed">
+      <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-muted-foreground">
         {c.support}
       </p>
     </div>
