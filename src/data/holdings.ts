@@ -369,7 +369,7 @@ export const holdings: Holding[] = [
     symbol: "AMAT",
     industry: "Technology",
     price: 540.7,
-    beta: 1.58,
+    beta: 1.59,
     shares: 13,
     value: 7029.1,
     costBasis: 7029.1,
