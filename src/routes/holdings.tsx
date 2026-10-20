@@ -24,6 +24,7 @@ import { CountUp } from "@/components/CountUp";
 import { Reveal } from "@/components/Reveal";
 import { socialMeta, canonical, breadcrumbLd, OG_HOLDINGS } from "@/lib/seo";
 import { applyQuotes, sectorPercentBreakdown } from "@/lib/portfolio";
+import { getEtfSectorWeights } from "@/lib/etf-weights.functions";
 import { liveQueryOptions } from "@/lib/live-query";
 
 export const Route = createFileRoute("/holdings")({
@@ -293,7 +294,16 @@ function HoldingsPage() {
     };
   }, [quoteData, cashHoldings]);
 
-  const sectorBreakdown = useMemo(() => sectorPercentBreakdown(holdings), [holdings]);
+  const fetchEtfWeights = useServerFn(getEtfSectorWeights);
+  const { data: etfWeights } = useQuery({
+    queryKey: ["etf-sector-weights"],
+    queryFn: () => fetchEtfWeights(),
+    ...liveQueryOptions,
+  });
+  const sectorBreakdown = useMemo(
+    () => sectorPercentBreakdown(holdings, etfWeights?.weights),
+    [holdings, etfWeights],
+  );
 
   const sectors = useMemo<string[]>(
     () => ["All", ...Array.from(new Set(holdings.map((h) => h.industry)))],

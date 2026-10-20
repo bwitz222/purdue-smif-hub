@@ -26,6 +26,7 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TeamIndexRouteImport } from './routes/team.index'
 import { Route as TeamSlugRouteImport } from './routes/team.$slug'
 import { Route as ApiPublicHooksComputeRiskRouteImport } from './routes/api/public/hooks/compute-risk'
+import { Route as ApiPublicHooksRefreshEtfWeightsRouteImport } from './routes/api/public/hooks/refresh-etf-weights'
 import { Route as ApiPublicHooksRefreshQuotesRouteImport } from './routes/api/public/hooks/refresh-quotes'
 
 const IndexRoute = IndexRouteImport.update({
@@ -114,6 +115,12 @@ const ApiPublicHooksComputeRiskRoute =
     path: '/api/public/hooks/compute-risk',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksRefreshEtfWeightsRoute =
+  ApiPublicHooksRefreshEtfWeightsRouteImport.update({
+    id: '/api/public/hooks/refresh-etf-weights',
+    path: '/api/public/hooks/refresh-etf-weights',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksRefreshQuotesRoute =
   ApiPublicHooksRefreshQuotesRouteImport.update({
     id: '/api/public/hooks/refresh-quotes',
@@ -139,6 +146,7 @@ export interface FileRoutesByFullPath {
   '/team/$slug': typeof TeamSlugRoute
   '/team/': typeof TeamIndexRoute
   '/api/public/hooks/compute-risk': typeof ApiPublicHooksComputeRiskRoute
+  '/api/public/hooks/refresh-etf-weights': typeof ApiPublicHooksRefreshEtfWeightsRoute
   '/api/public/hooks/refresh-quotes': typeof ApiPublicHooksRefreshQuotesRoute
 }
 export interface FileRoutesByTo {
@@ -159,6 +167,7 @@ export interface FileRoutesByTo {
   '/team/$slug': typeof TeamSlugRoute
   '/team': typeof TeamIndexRoute
   '/api/public/hooks/compute-risk': typeof ApiPublicHooksComputeRiskRoute
+  '/api/public/hooks/refresh-etf-weights': typeof ApiPublicHooksRefreshEtfWeightsRoute
   '/api/public/hooks/refresh-quotes': typeof ApiPublicHooksRefreshQuotesRoute
 }
 export interface FileRoutesById {
@@ -180,6 +189,7 @@ export interface FileRoutesById {
   '/team/$slug': typeof TeamSlugRoute
   '/team/': typeof TeamIndexRoute
   '/api/public/hooks/compute-risk': typeof ApiPublicHooksComputeRiskRoute
+  '/api/public/hooks/refresh-etf-weights': typeof ApiPublicHooksRefreshEtfWeightsRoute
   '/api/public/hooks/refresh-quotes': typeof ApiPublicHooksRefreshQuotesRoute
 }
 export interface FileRouteTypes {
@@ -202,6 +212,7 @@ export interface FileRouteTypes {
     | '/team/$slug'
     | '/team/'
     | '/api/public/hooks/compute-risk'
+    | '/api/public/hooks/refresh-etf-weights'
     | '/api/public/hooks/refresh-quotes'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -222,6 +233,7 @@ export interface FileRouteTypes {
     | '/team/$slug'
     | '/team'
     | '/api/public/hooks/compute-risk'
+    | '/api/public/hooks/refresh-etf-weights'
     | '/api/public/hooks/refresh-quotes'
   id:
     | '__root__'
@@ -242,6 +254,7 @@ export interface FileRouteTypes {
     | '/team/$slug'
     | '/team/'
     | '/api/public/hooks/compute-risk'
+    | '/api/public/hooks/refresh-etf-weights'
     | '/api/public/hooks/refresh-quotes'
   fileRoutesById: FileRoutesById
 }
@@ -263,6 +276,7 @@ export interface RootRouteChildren {
   TeamSlugRoute: typeof TeamSlugRoute
   TeamIndexRoute: typeof TeamIndexRoute
   ApiPublicHooksComputeRiskRoute: typeof ApiPublicHooksComputeRiskRoute
+  ApiPublicHooksRefreshEtfWeightsRoute: typeof ApiPublicHooksRefreshEtfWeightsRoute
   ApiPublicHooksRefreshQuotesRoute: typeof ApiPublicHooksRefreshQuotesRoute
 }
 
@@ -387,6 +401,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksComputeRiskRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/refresh-etf-weights': {
+      id: '/api/public/hooks/refresh-etf-weights'
+      path: '/api/public/hooks/refresh-etf-weights'
+      fullPath: '/api/public/hooks/refresh-etf-weights'
+      preLoaderRoute: typeof ApiPublicHooksRefreshEtfWeightsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/refresh-quotes': {
       id: '/api/public/hooks/refresh-quotes'
       path: '/api/public/hooks/refresh-quotes'
@@ -415,6 +436,7 @@ const rootRouteChildren: RootRouteChildren = {
   TeamSlugRoute: TeamSlugRoute,
   TeamIndexRoute: TeamIndexRoute,
   ApiPublicHooksComputeRiskRoute: ApiPublicHooksComputeRiskRoute,
+  ApiPublicHooksRefreshEtfWeightsRoute: ApiPublicHooksRefreshEtfWeightsRoute,
   ApiPublicHooksRefreshQuotesRoute: ApiPublicHooksRefreshQuotesRoute,
 }
 export const routeTree = rootRouteImport

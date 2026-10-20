@@ -14,9 +14,12 @@ import { holdings as baseHoldings, type Holding } from "@/data/holdings";
 // 2026-10-19; sums to 99.99). GICS names map to this site's buckets:
 // Information Technology -> Technology, Health Care -> Healthcare,
 // Consumer Discretionary -> Consumer Cyclical, Consumer Staples -> Consumer
-// Defensive. Refresh whenever SPY is traded or any sector moves >0.5pp so the
-// fund's look-through sector allocation stays honest.
-const ETF_SECTOR_WEIGHTS: Record<string, Record<string, number>> = {
+// Defensive. This is the FALLBACK: the daily refresh-etf-weights hook scrapes
+// the same table into public.etf_sector_weights and the pages pass that in, so
+// this only renders when the table is empty or unreadable.
+export type EtfSectorWeights = Record<string, Record<string, number>>;
+
+const ETF_SECTOR_WEIGHTS: EtfSectorWeights = {
   SPY: {
     Technology: 38.11,
     Financials: 11.7,
@@ -54,10 +57,13 @@ export function applyQuotes(
 
 // Sector breakdown in DOLLARS by industry, with SPY (or any ETF listed in
 // ETF_SECTOR_WEIGHTS) split across its constituent sectors by weight.
-function sectorDollarBreakdown(holdings: Holding[]): Map<string, number> {
+function sectorDollarBreakdown(
+  holdings: Holding[],
+  etfWeights: EtfSectorWeights = ETF_SECTOR_WEIGHTS,
+): Map<string, number> {
   const map = new Map<string, number>();
   holdings.forEach((h) => {
-    const weights = ETF_SECTOR_WEIGHTS[h.symbol];
+    const weights = etfWeights[h.symbol] ?? ETF_SECTOR_WEIGHTS[h.symbol];
     if (weights) {
       const total = Object.values(weights).reduce((s, w) => s + w, 0);
       Object.entries(weights).forEach(([sec, w]) => {
@@ -71,8 +77,11 @@ function sectorDollarBreakdown(holdings: Holding[]): Map<string, number> {
 }
 
 // Convenience: returns [industry, pctOfInvested] tuples sorted desc.
-export function sectorPercentBreakdown(holdings: Holding[]): [string, number][] {
-  const dollars = sectorDollarBreakdown(holdings);
+export function sectorPercentBreakdown(
+  holdings: Holding[],
+  etfWeights: EtfSectorWeights = ETF_SECTOR_WEIGHTS,
+): [string, number][] {
+  const dollars = sectorDollarBreakdown(holdings, etfWeights);
   const invested = holdings.reduce((s, h) => s + h.value, 0);
   return Array.from(dollars.entries())
     .map(([s, v]) => [s, invested > 0 ? (v / invested) * 100 : 0] as [string, number])
@@ -105,8 +114,11 @@ export type TeamAllocation = {
 // sectorDollarBreakdown as /holdings so the numbers tie out. Top holdings
 // list is drawn from direct (non-ETF) positions only, since SPY has no
 // single sector.
-export function teamAllocations(holdings: Holding[]): TeamAllocation[] {
-  const dollarsByIndustry = sectorDollarBreakdown(holdings);
+export function teamAllocations(
+  holdings: Holding[],
+  etfWeights: EtfSectorWeights = ETF_SECTOR_WEIGHTS,
+): TeamAllocation[] {
+  const dollarsByIndustry = sectorDollarBreakdown(holdings, etfWeights);
   const invested = holdings.reduce((s, h) => s + h.value, 0);
   return Object.entries(TEAM_INDUSTRIES).map(([team, industries]) => {
     const dollars = industries.reduce((s, ind) => s + (dollarsByIndustry.get(ind) || 0), 0);
