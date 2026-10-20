@@ -19,7 +19,10 @@ import {
 //     with 429 backoff, into public.price_history. Slow (~5 min); run manually.
 //   • default (daily) — appends just the latest authorized trading day for all
 //     holdings using ONE grouped-daily call, then recomputes. Fast + timeout-safe
-//     for pg_cron / serverless.
+//     for pg_cron / serverless. Before appending it self-heals: any holding with
+//     no price_history yet (a newly bought name) is backfilled, up to
+//     MAX_HEAL_SYMBOLS per run, so a trade never silently drops out of the risk
+//     series while the manual backfill is forgotten.
 //
 // Either mode ends by reading the trailing price_history window, rebuilding the
 // portfolio NAV series with CURRENT share counts (a "current-portfolio" risk
@@ -35,6 +38,7 @@ const LOOKBACK_CAP = TRADING_DAYS_PER_YEAR; // cap the return series at 252 obs
 const HISTORY_BACKDAYS = 400; // calendar days of history to keep/backfill
 const RATE_DELAY_MS = 13_000; // > 12s between ranged calls => <= 5/min (free tier)
 const MAX_RETRIES = 4;
+const MAX_HEAL_SYMBOLS = 4; // new holdings backfilled per daily run (4 x 13s stays inside the function budget)
 
 type PolyAgg = { T?: string; t: number; c: number };
 type PolyResp = { results?: PolyAgg[]; status?: string };
@@ -164,6 +168,19 @@ async function backfill(supabaseAdmin: Admin, symbols: string[], apiKey: string)
   }
   await upsertPriceRows(supabaseAdmin, rows);
   return rows.length;
+}
+
+/** Holdings with no price_history rows at all, i.e. bought since the last backfill. */
+async function symbolsMissingHistory(supabaseAdmin: Admin, symbols: string[]): Promise<string[]> {
+  const missing: string[] = [];
+  for (const symbol of symbols) {
+    const { count, error } = await supabaseAdmin
+      .from("price_history")
+      .select("symbol", { count: "exact", head: true })
+      .eq("symbol", symbol);
+    if (!error && (count ?? 0) === 0) missing.push(symbol);
+  }
+  return missing;
 }
 
 async function appendLatestDay(
@@ -348,8 +365,20 @@ export const Route = createFileRoute("/api/public/hooks/compute-risk")({
             const written = await backfill(supabaseAdmin, symbols, apiKey);
             ingest = { mode, rowsWritten: written };
           } else {
+            const missing = await symbolsMissingHistory(supabaseAdmin, symbols);
+            const healed =
+              missing.length > 0
+                ? await backfill(supabaseAdmin, missing.slice(0, MAX_HEAL_SYMBOLS), apiKey)
+                : 0;
             const appended = await appendLatestDay(supabaseAdmin, symbols, apiKey);
-            ingest = { mode, appendedDate: appended.date, appendedCount: appended.count };
+            ingest = {
+              mode,
+              appendedDate: appended.date,
+              appendedCount: appended.count,
+              healedSymbols: missing.slice(0, MAX_HEAL_SYMBOLS),
+              healedRows: healed,
+              stillMissing: Math.max(0, missing.length - MAX_HEAL_SYMBOLS),
+            };
           }
           const metrics = await computeAndStore(supabaseAdmin, avKey);
           return json({ ok: true, ...ingest, ...metrics });
