@@ -10,22 +10,25 @@
 import { holdings as baseHoldings, type Holding } from "@/data/holdings";
 
 // SPY sector weights (%) — hardcoded snapshot of State Street's published
-// sector breakdown. Refresh periodically (roughly once per year, or when SPY
-// re-composition materially moves any sector by >0.5pp) so the fund's
-// look-through sector allocation stays honest.
+// sector breakdown (ssga.com SPY fund page, "Fund Sector Breakdown", as of
+// 2026-10-19; sums to 99.99). GICS names map to this site's buckets:
+// Information Technology -> Technology, Health Care -> Healthcare,
+// Consumer Discretionary -> Consumer Cyclical, Consumer Staples -> Consumer
+// Defensive. Refresh whenever SPY is traded or any sector moves >0.5pp so the
+// fund's look-through sector allocation stays honest.
 const ETF_SECTOR_WEIGHTS: Record<string, Record<string, number>> = {
   SPY: {
-    Technology: 33.5,
-    Financials: 13.5,
-    "Consumer Cyclical": 10.5,
-    Healthcare: 10.0,
-    "Communication Services": 9.5,
-    Industrials: 8.5,
-    "Consumer Defensive": 5.5,
-    Energy: 3.0,
-    Utilities: 2.5,
-    "Real Estate": 2.0,
-    Materials: 1.5,
+    Technology: 38.11,
+    Financials: 11.7,
+    "Communication Services": 9.7,
+    Healthcare: 9.6,
+    "Consumer Cyclical": 9.0,
+    Industrials: 8.0,
+    "Consumer Defensive": 4.8,
+    Energy: 3.73,
+    Utilities: 1.96,
+    "Real Estate": 1.71,
+    Materials: 1.68,
   },
 };
 
