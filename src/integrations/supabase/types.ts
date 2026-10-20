@@ -62,6 +62,30 @@ export type Database = {
         };
         Relationships: [];
       };
+      etf_sector_weights: {
+        Row: {
+          as_of: string;
+          fetched_at: string;
+          source: string;
+          symbol: string;
+          weights: Json;
+        };
+        Insert: {
+          as_of: string;
+          fetched_at?: string;
+          source: string;
+          symbol: string;
+          weights: Json;
+        };
+        Update: {
+          as_of?: string;
+          fetched_at?: string;
+          source?: string;
+          symbol?: string;
+          weights?: Json;
+        };
+        Relationships: [];
+      };
       fund_monthly_history: {
         Row: {
           beginning_balance: number;

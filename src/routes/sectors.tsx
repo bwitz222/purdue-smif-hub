@@ -21,6 +21,7 @@ import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import { getLiveQuotes } from "@/lib/quotes.functions";
 import { getRiskMetrics } from "@/lib/risk.functions";
 import { applyQuotes, teamAllocations, baseHoldings } from "@/lib/portfolio";
+import { getEtfSectorWeights } from "@/lib/etf-weights.functions";
 import { liveQueryOptions } from "@/lib/live-query";
 import { sectorTeams, fixedIncomeMacro, portfolioManagers, LEAD_ROLE } from "@/data/team";
 import type { Member } from "@/components/MemberCard";
@@ -171,11 +172,18 @@ function Sectors() {
     ...liveQueryOptions,
   });
 
+  const fetchEtfWeights = useServerFn(getEtfSectorWeights);
+  const { data: etfWeights } = useQuery({
+    queryKey: ["etf-sector-weights"],
+    queryFn: () => fetchEtfWeights(),
+    ...liveQueryOptions,
+  });
+
   const teams = useMemo(() => {
     const updated = applyQuotes(baseHoldings, quoteData?.quotes ?? {});
-    const allocations = teamAllocations(updated);
+    const allocations = teamAllocations(updated, etfWeights?.weights);
     return new Map(allocations.map((a) => [a.team, a]));
-  }, [quoteData]);
+  }, [quoteData, etfWeights]);
 
   // True session date of the quotes (Polygon's latest completed close), from
   // the risk metrics' as_of — not quoteData.cachedAt, which is the fetch time.
