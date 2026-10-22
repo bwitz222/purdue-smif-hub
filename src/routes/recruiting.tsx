@@ -26,11 +26,45 @@ const SECTIONS: readonly PageSection[] = [
   { id: "reading", label: "Reading" },
 ];
 
-// Countdown is data-driven from the CALENDAR (defined below) — we pick
-// the next upcoming event and count down to its start. When all events
-// have passed, we render an "Applications closed / next cycle" message
-// instead of a stale date. A plain-text fallback always renders for
+// Countdown targets whichever comes first — the application deadline or the
+// next upcoming CALENDAR event (defined below) — and counts down to it. When
+// everything has passed, we render an "Applications closed / next cycle"
+// message instead of a stale date. A plain-text fallback always renders for
 // no-JS / SSR.
+
+/**
+ * The application deadline. It is deliberately not a CALENDAR row: there is no
+ * room and nothing to attend, so it would publish as a bogus in-person event in
+ * the .ics, the Google Calendar links and the Event structured data, all three
+ * of which describe places students show up to. It feeds the countdown only.
+ */
+const APPLICATION_CLOSE = {
+  eyebrow: "Application Close",
+  name: "Application Close",
+  iso: "2026-09-04",
+  date: "Fri, Sep 4",
+  time: "11:59 PM",
+  // 11:59 PM as a 24h clock value, so the ticker and the label cannot drift.
+  time24: "23:59",
+} as const;
+
+type CountdownTarget = {
+  /** Eyebrow line above the digits. */
+  eyebrow: string;
+  /** Bare name, used in the screen-reader sentence. */
+  name: string;
+  date: string;
+  time: string;
+  startMs: number;
+};
+
+function deadlineTarget(): CountdownTarget {
+  return {
+    ...APPLICATION_CLOSE,
+    // EDT (-04:00) for the Sep 2026 recruiting window, same as the events.
+    startMs: Date.parse(`${APPLICATION_CLOSE.iso}T${APPLICATION_CLOSE.time24}:00-04:00`),
+  };
+}
 
 function parseEventStartMs(event: Event): number {
   const times = parseEventTimes(event.time);
@@ -46,6 +80,27 @@ function nextUpcomingEvent(nowMs: number): Event | null {
   return CALENDAR.find((e) => parseEventStartMs(e) > nowMs) ?? null;
 }
 
+function eventTarget(e: Event): CountdownTarget {
+  return {
+    eyebrow: `Next: ${e.name}`,
+    name: e.name,
+    date: e.date,
+    time: e.time,
+    startMs: parseEventStartMs(e),
+  };
+}
+
+/** Soonest of the deadline and the next event, so neither can hide the other. */
+function nextCountdownTarget(nowMs: number): CountdownTarget | null {
+  const deadline = deadlineTarget();
+  const nextEvent = nextUpcomingEvent(nowMs);
+  const upcoming = [
+    ...(deadline.startMs > nowMs ? [deadline] : []),
+    ...(nextEvent ? [eventTarget(nextEvent)] : []),
+  ];
+  return upcoming.sort((a, b) => a.startMs - b.startMs)[0] ?? null;
+}
+
 function useCountdown() {
   const [now, setNow] = useState<number | null>(null);
   useEffect(() => {
@@ -54,13 +109,12 @@ function useCountdown() {
     return () => clearInterval(id);
   }, []);
   if (now === null) return null;
-  const next = nextUpcomingEvent(now);
-  if (!next) return { expired: true as const };
-  const deadline = parseEventStartMs(next);
-  const diff = Math.max(0, deadline - now);
+  const target = nextCountdownTarget(now);
+  if (!target) return { expired: true as const };
+  const diff = Math.max(0, target.startMs - now);
   return {
     expired: false as const,
-    event: next,
+    target,
     days: Math.floor(diff / 86_400_000),
     hours: Math.floor((diff % 86_400_000) / 3_600_000),
     minutes: Math.floor((diff % 3_600_000) / 60_000),
@@ -81,21 +135,27 @@ function CountdownUnit({ value, label }: { value: number | string; label: string
   );
 }
 
-// SSR/no-JS fallback label — uses CALENDAR + build-time clock to name a
-// real upcoming event so the resting HTML matches the live ticker after
-// hydration. Falls back to the first event, then to a closed-cycle label.
-function staticNextEventLabel(): { name: string; date: string; time: string; expired: boolean } {
-  const nowMs = Date.now();
-  const next = nextUpcomingEvent(nowMs);
-  if (next) return { name: next.name, date: next.date, time: next.time, expired: false };
+// SSR/no-JS fallback label — uses the same target logic against the build-time
+// clock so the resting HTML names a real upcoming deadline or event and matches
+// the live ticker after hydration. Falls back to a closed-cycle label.
+function staticTargetLabel(): CountdownTarget & { expired: boolean } {
+  const target = nextCountdownTarget(Date.now());
+  if (target) return { ...target, expired: false };
   const last = CALENDAR[CALENDAR.length - 1];
-  return { name: last?.name ?? "", date: last?.date ?? "", time: last?.time ?? "", expired: true };
+  return {
+    eyebrow: `Next: ${last?.name ?? ""}`,
+    name: last?.name ?? "",
+    date: last?.date ?? "",
+    time: last?.time ?? "",
+    startMs: 0,
+    expired: true,
+  };
 }
 
 function Countdown() {
   const c = useCountdown();
   const pad = (n: number) => n.toString().padStart(2, "0");
-  const fallback = staticNextEventLabel();
+  const fallback = staticTargetLabel();
 
   // Expired — entire cycle has passed. role="status" so AT announces it.
   if (c?.expired || (c === null && fallback.expired)) {
@@ -115,18 +175,16 @@ function Countdown() {
     );
   }
 
-  const headline = c?.event?.name ?? fallback.name;
-  const sub = c?.event
-    ? `${c.event.date} · ${c.event.time} ET`
-    : `${fallback.date} · ${fallback.time} ET`;
+  const target = c?.expired === false ? c.target : fallback;
+  const sub = `${target.date} · ${target.time} ET`;
   const srLabel = c
-    ? `${c.days} days, ${c.hours} hours, ${c.minutes} minutes until ${headline}.`
-    : `Next event: ${headline} on ${sub}.`;
+    ? `${c.days} days, ${c.hours} hours, ${c.minutes} minutes until ${target.name}.`
+    : `Next: ${target.name} on ${sub}.`;
 
   return (
     <div className="mt-10 border border-gold/30 bg-ink/60 p-6 text-background md:p-8">
       <div className="text-xs font-semibold uppercase tracking-[0.3em] text-gold">
-        Next: {headline}
+        {target.eyebrow}
       </div>
       <p className="mt-1 text-sm text-on-dark-secondary">{sub}</p>
       {/* Accessible plain-text countdown, hidden visually. Always present
