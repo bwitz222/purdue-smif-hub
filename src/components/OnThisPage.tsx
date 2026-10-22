@@ -42,7 +42,7 @@ export function OnThisPage({
       <div className="container-prose flex flex-col gap-3 py-5 md:flex-row md:items-center md:gap-6">
         <span
           aria-hidden="true"
-          className="shrink-0 text-[10px] font-semibold uppercase tracking-[0.28em] text-muted-foreground"
+          className="shrink-0 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground"
         >
           On this page
         </span>
@@ -56,7 +56,7 @@ export function OnThisPage({
                 onClick={(e) => {
                   if (jumpToSection(s.id, { reduce })) e.preventDefault();
                 }}
-                className="press inline-flex min-h-11 items-center rounded-full border border-border bg-background px-3.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground hover:border-ink hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-1"
+                className="press inline-flex min-h-11 items-center rounded-full border border-border bg-background px-3.5 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground hover:border-ink hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-1"
               >
                 {s.label}
               </a>

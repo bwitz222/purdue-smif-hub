@@ -1,0 +1,194 @@
+[
+ {
+  "id": "smif",
+  "name": "Purdue SMIF",
+  "group": "Ours",
+  "url": "https://www.purduesmif.org/"
+ },
+ {
+  "id": "gs",
+  "name": "Goldman Sachs",
+  "group": "Sell-side",
+  "url": "https://www.goldmansachs.com/"
+ },
+ {
+  "id": "ms",
+  "name": "Morgan Stanley",
+  "group": "Sell-side",
+  "url": "https://www.morganstanley.com/"
+ },
+ {
+  "id": "jpm",
+  "name": "J.P. Morgan",
+  "group": "Sell-side",
+  "url": "https://www.jpmorgan.com/"
+ },
+ {
+  "id": "bofa",
+  "name": "BofA Securities",
+  "group": "Sell-side",
+  "url": "https://business.bofa.com/"
+ },
+ {
+  "id": "citi",
+  "name": "Citi",
+  "group": "Sell-side",
+  "url": "https://www.citigroup.com/"
+ },
+ {
+  "id": "barc",
+  "name": "Barclays",
+  "group": "Sell-side",
+  "url": "https://home.barclays/"
+ },
+ {
+  "id": "ubs",
+  "name": "UBS",
+  "group": "Sell-side",
+  "url": "https://www.ubs.com/"
+ },
+ {
+  "id": "db",
+  "name": "Deutsche Bank",
+  "group": "Sell-side",
+  "url": "https://www.db.com/"
+ },
+ {
+  "id": "evr",
+  "name": "Evercore",
+  "group": "Sell-side",
+  "url": "https://www.evercore.com/"
+ },
+ {
+  "id": "laz",
+  "name": "Lazard",
+  "group": "Sell-side",
+  "url": "https://www.lazard.com/"
+ },
+ {
+  "id": "blk",
+  "name": "BlackRock",
+  "group": "Buy-side",
+  "url": "https://www.blackrock.com/corporate"
+ },
+ {
+  "id": "vgd",
+  "name": "Vanguard",
+  "group": "Buy-side",
+  "url": "https://corporate.vanguard.com/"
+ },
+ {
+  "id": "fid",
+  "name": "Fidelity Investments",
+  "group": "Buy-side",
+  "url": "https://www.fidelity.com/"
+ },
+ {
+  "id": "pimco",
+  "name": "PIMCO",
+  "group": "Buy-side",
+  "url": "https://www.pimco.com/"
+ },
+ {
+  "id": "bkf",
+  "name": "Brookfield",
+  "group": "Buy-side",
+  "url": "https://www.brookfield.com/"
+ },
+ {
+  "id": "apo",
+  "name": "Apollo",
+  "group": "Buy-side",
+  "url": "https://www.apollo.com/"
+ },
+ {
+  "id": "wel",
+  "name": "Wellington Management",
+  "group": "Buy-side",
+  "url": "https://www.wellington.com/"
+ },
+ {
+  "id": "cap",
+  "name": "Capital Group",
+  "group": "Buy-side",
+  "url": "https://www.capitalgroup.com/"
+ },
+ {
+  "id": "trow",
+  "name": "T. Rowe Price",
+  "group": "Buy-side",
+  "url": "https://www.troweprice.com/"
+ },
+ {
+  "id": "bain",
+  "name": "Bain Capital",
+  "group": "Buy-side",
+  "url": "https://www.baincapital.com/"
+ },
+ {
+  "id": "bw",
+  "name": "Bridgewater",
+  "group": "Buy-side (prior set)",
+  "url": "https://www.bridgewater.com/"
+ },
+ {
+  "id": "oak",
+  "name": "Oaktree",
+  "group": "Buy-side (prior set)",
+  "url": "https://www.oaktreecapital.com/"
+ },
+ {
+  "id": "aqr",
+  "name": "AQR",
+  "group": "Buy-side (prior set)",
+  "url": "https://www.aqr.com/"
+ },
+ {
+  "id": "ts",
+  "name": "Two Sigma",
+  "group": "Buy-side (prior set)",
+  "url": "https://www.twosigma.com/"
+ },
+ {
+  "id": "des",
+  "name": "D. E. Shaw",
+  "group": "Buy-side (prior set)",
+  "url": "https://www.deshaw.com/"
+ },
+ {
+  "id": "kkr",
+  "name": "KKR",
+  "group": "Buy-side (prior set)",
+  "url": "https://www.kkr.com/"
+ },
+ {
+  "id": "nlf",
+  "name": "Nittany Lion Fund (Penn State)",
+  "group": "Student fund",
+  "url": "https://nittanylionfund.com/"
+ },
+ {
+  "id": "mii",
+  "name": "McIntire Investment Institute (UVA)",
+  "group": "Student fund",
+  "url": "https://mcintireinvestmentinstitute.org/"
+ },
+ {
+  "id": "fsmif",
+  "name": "Fordham SMIF",
+  "group": "Student fund",
+  "url": "https://www.fordhamsmif.com/"
+ },
+ {
+  "id": "shf",
+  "name": "South Hill Fund (Ithaca)",
+  "group": "Student fund",
+  "url": "https://www.southhillfund.com/"
+ },
+ {
+  "id": "tsmf",
+  "name": "Trinity SMF",
+  "group": "Student fund",
+  "url": "https://trinitysmf.com/"
+ }
+]

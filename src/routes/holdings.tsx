@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { PortfolioTabs } from "@/components/PortfolioTabs";
 import { useState, useMemo, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -117,7 +118,7 @@ function KpiCard({
     accent === "positive" ? "text-gain" : accent === "negative" ? "text-loss" : "text-ink";
   return (
     <div className="border border-border bg-card p-6 flex flex-col gap-1 hover-lift-sm">
-      <div className="text-xs uppercase tracking-[0.22em] text-muted-foreground">{label}</div>
+      <div className="text-xs uppercase tracking-[0.14em] text-muted-foreground">{label}</div>
       {muted ? (
         <div className="text-lg font-semibold text-muted-foreground mt-2">{value}</div>
       ) : (
@@ -127,7 +128,7 @@ function KpiCard({
       )}
       {sub && <div className="text-xs text-muted-foreground font-mono mt-0.5">{sub}</div>}
       {asOf && (
-        <div className="text-[10px] font-mono uppercase tracking-[0.18em] text-muted-foreground mt-1">
+        <div className="text-xs font-mono uppercase tracking-[0.18em] text-muted-foreground mt-1">
           As of {asOf}
         </div>
       )}
@@ -417,7 +418,7 @@ function HoldingsPage() {
           >
             <div className="container-prose flex items-center justify-between gap-4 py-2.5 text-xs">
               <div className="flex items-center gap-5 font-mono overflow-x-auto">
-                <span className="uppercase tracking-[0.22em] text-muted-foreground hidden sm:inline">
+                <span className="uppercase tracking-[0.14em] text-muted-foreground hidden sm:inline">
                   Portfolio
                 </span>
                 <span>
@@ -443,7 +444,7 @@ function HoldingsPage() {
                   </span>
                 </span>
               </div>
-              <span className="hidden md:inline text-[10px] uppercase tracking-[0.22em] text-muted-foreground whitespace-nowrap">
+              <span className="hidden md:inline text-xs uppercase tracking-[0.14em] text-muted-foreground whitespace-nowrap">
                 {rows.length} positions
               </span>
             </div>
@@ -451,10 +452,11 @@ function HoldingsPage() {
         )}
       </AnimatePresence>
 
+      <PortfolioTabs />
       <section className="border-b border-border bg-secondary/30">
         <div className="container-prose py-20">
           <span className="rule-gold mb-5 block" />
-          <span className="text-xs font-semibold uppercase tracking-[0.32em] text-gold-deep block mb-4">
+          <span className="text-xs font-semibold uppercase tracking-[0.14em] text-gold-deep block mb-4">
             Portfolio Holdings
           </span>
           <h1
@@ -489,7 +491,7 @@ function HoldingsPage() {
             )}
           </div>
           {quoteData?.cachedAt && (
-            <div className="mt-1.5 text-[10px] font-mono uppercase tracking-[0.18em] text-muted-foreground">
+            <div className="mt-1.5 text-xs font-mono uppercase tracking-[0.18em] text-muted-foreground">
               Updated{" "}
               {new Date(quoteData.cachedAt).toLocaleString("en-US", {
                 month: "short",
@@ -534,7 +536,7 @@ function HoldingsPage() {
             previously had no rendered h2 at all, which left it with no outline
             for a reader and nothing for a parser to segment on. Styled with the
             page's own label typography so they read as native furniture. */}
-        <h2 className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+        <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
           Portfolio Summary
         </h2>
         <Reveal className="grid gap-px bg-border sm:grid-cols-2 lg:grid-cols-4">
@@ -636,10 +638,10 @@ function HoldingsPage() {
             <div className="flex items-baseline justify-between mb-5 gap-3">
               {/* Was a div duplicated by an sr-only h2 above the grid, which
                   announced the same text twice. One real heading instead. */}
-              <h2 className="text-xs uppercase tracking-[0.22em] text-muted-foreground">
+              <h2 className="text-xs uppercase tracking-[0.14em] text-muted-foreground">
                 Sector Allocation
               </h2>
-              <div className="text-[10px] font-mono uppercase tracking-[0.18em] text-muted-foreground">
+              <div className="text-xs font-mono uppercase tracking-[0.18em] text-muted-foreground">
                 % of invested capital
               </div>
             </div>
@@ -672,7 +674,7 @@ function HoldingsPage() {
           </div>
           <div className="bg-card border border-border p-6 flex flex-col gap-6">
             <div>
-              <div className="text-xs uppercase tracking-[0.22em] text-muted-foreground mb-2">
+              <div className="text-xs uppercase tracking-[0.14em] text-muted-foreground mb-2">
                 Weighted Beta
               </div>
               <div className="font-display text-4xl font-bold text-ink">
@@ -683,7 +685,7 @@ function HoldingsPage() {
               </div>
             </div>
             <div className="border-t border-border pt-5">
-              <div className="text-xs uppercase tracking-[0.22em] text-muted-foreground mb-2">
+              <div className="text-xs uppercase tracking-[0.14em] text-muted-foreground mb-2">
                 Invested Capital
               </div>
               <div className="font-display text-2xl font-bold text-ink">
@@ -699,7 +701,7 @@ function HoldingsPage() {
 
         {!(isFetching && !quoteData) && (
           <Reveal>
-            <h2 className="mb-4 text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+            <h2 className="mb-4 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
               Today's Movers
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-border">
@@ -709,10 +711,10 @@ function HoldingsPage() {
               ].map((panel) => (
                 <div key={panel.title} className="bg-card border border-border p-6 hover-lift-sm">
                   <div className="flex items-baseline justify-between mb-4 gap-3">
-                    <span className="text-xs uppercase tracking-[0.22em] text-muted-foreground">
+                    <span className="text-xs uppercase tracking-[0.14em] text-muted-foreground">
                       {panel.title}
                     </span>
-                    <span className="text-[10px] font-mono uppercase tracking-[0.18em] text-muted-foreground">
+                    <span className="text-xs font-mono uppercase tracking-[0.18em] text-muted-foreground">
                       By day change %
                     </span>
                   </div>
@@ -751,7 +753,7 @@ function HoldingsPage() {
           </Reveal>
         )}
 
-        <h2 className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+        <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
           Holdings
         </h2>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
@@ -770,7 +772,7 @@ function HoldingsPage() {
             />
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs uppercase tracking-[0.22em] text-muted-foreground mr-1">
+            <span className="text-xs uppercase tracking-[0.14em] text-muted-foreground mr-1">
               Sector
             </span>
             {sectors.length > 8 ? (
@@ -843,7 +845,7 @@ function HoldingsPage() {
                         {h.symbol}
                       </div>
                       <div className="text-sm font-medium truncate">{h.company}</div>
-                      <div className="text-[11px] text-muted-foreground mt-0.5">{h.industry}</div>
+                      <div className="text-xs text-muted-foreground mt-0.5">{h.industry}</div>
                     </div>
                     <div className="text-right shrink-0">
                       <div className="font-mono text-sm">{fmtUSD(h.price)}</div>
@@ -861,7 +863,7 @@ function HoldingsPage() {
                   </div>
                   <div className="mt-3 grid grid-cols-3 gap-3 border-t border-border pt-3 text-xs">
                     <div>
-                      <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                      <div className="text-xs uppercase tracking-wider text-muted-foreground">
                         Value
                       </div>
                       <div className="font-mono mt-0.5">
@@ -869,7 +871,7 @@ function HoldingsPage() {
                       </div>
                     </div>
                     <div>
-                      <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                      <div className="text-xs uppercase tracking-wider text-muted-foreground">
                         Return
                       </div>
                       <div
@@ -884,7 +886,7 @@ function HoldingsPage() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                      <div className="text-xs uppercase tracking-wider text-muted-foreground">
                         Weight
                       </div>
                       <div className="font-mono mt-0.5 text-muted-foreground">
@@ -1016,7 +1018,7 @@ function HoldingsPage() {
         )}
 
         <div className="border-t border-border pt-6 mt-10 space-y-2 text-xs text-muted-foreground max-w-3xl">
-          <div className="text-[10px] font-mono font-semibold uppercase tracking-[0.28em] text-muted-foreground">
+          <div className="text-xs font-mono font-semibold uppercase tracking-[0.14em] text-muted-foreground">
             Methodology &amp; disclaimer
           </div>
           <p>

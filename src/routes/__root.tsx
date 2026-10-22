@@ -51,7 +51,7 @@ function NotFoundComponent() {
           </Link>
         </div>
         <div className="mt-10 border-t border-white/10 pt-6">
-          <div className="text-xs font-mono uppercase tracking-[0.22em] text-on-dark-dim mb-3">
+          <div className="text-xs font-mono uppercase tracking-[0.14em] text-on-dark-dim mb-3">
             Or visit
           </div>
           <ul className="flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm">

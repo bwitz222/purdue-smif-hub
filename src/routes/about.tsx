@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight } from "lucide-react";
 import { socialMeta, canonical, breadcrumbLd, OG_ABOUT } from "@/lib/seo";
-import { applyUrl } from "@/lib/apply-url";
+import { ApplyCta } from "@/components/ApplyCta";
+import { RECRUITING_EMAIL } from "@/lib/recruiting-calendar";
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import { OnThisPage, type PageSection } from "@/components/OnThisPage";
 import { facultyAdvisors } from "@/data/team";
@@ -183,28 +183,28 @@ function About() {
   return (
     <>
       {/* ── Page header ───────────────────────────────────────────── */}
-      <section className="relative bg-ink text-background overflow-hidden">
-        <div className="container-prose py-28">
+      {/* Cream: content pages share one ground; ink is kept for the home
+          page and the Join pages. */}
+      <section className="border-b border-border bg-secondary/40">
+        <div className="container-prose py-20 md:py-24">
           <Reveal>
             <span className="rule-gold mb-8 animate-expand-x" />
             <h1
-              className="font-display font-bold text-background max-w-3xl"
+              className="font-display font-bold text-ink max-w-3xl"
               style={{ fontSize: "clamp(2.8rem, 6vw, 5.5rem)", lineHeight: "1.02" }}
             >
               A legacy of
               <br />
               disciplined
               <br />
-              <span className="text-gold/80">investing.</span>
+              <span className="text-gold-deep">investing.</span>
             </h1>
-            <p className="mt-8 max-w-xl text-on-dark-secondary leading-relaxed text-lg">
+            <p className="mt-8 max-w-xl text-muted-foreground leading-relaxed text-lg">
               Founded at the Daniels School of Business. Built on the conviction that the best way
               to learn investing is to actually invest.
             </p>
           </Reveal>
         </div>
-        {/* Decorative rule */}
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-white/10" />
       </section>
 
       <OnThisPage sections={SECTIONS} />
@@ -253,7 +253,7 @@ function About() {
             squeezed into the column the smaller marks stop being legible. It
             scrolls horizontally below ~680px for the same reason. */}
         <Reveal className="md:col-span-3">
-          <h3 className="text-xs font-semibold uppercase tracking-[0.32em] text-gold-deep mb-6">
+          <h3 className="text-xs font-semibold uppercase tracking-[0.14em] text-gold-deep mb-6">
             Where Our Members Go
           </h3>
           <div
@@ -277,6 +277,22 @@ function About() {
               <li key={firm}>{firm}</li>
             ))}
           </ul>
+          {/* A named door for employers, without another header link. */}
+          <div className="mt-8 flex flex-col gap-4 border border-border bg-secondary/40 p-6 md:flex-row md:items-center md:justify-between">
+            <div>
+              <h3 className="font-display text-xl font-bold text-ink">For recruiters</h3>
+              <p className="mt-1 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+                Hiring for internships or full-time roles? Email the executive board to share an
+                opportunity with our members.
+              </p>
+            </div>
+            <a
+              href={`mailto:${RECRUITING_EMAIL}?subject=${encodeURIComponent("Recruiting SMIF analysts")}`}
+              className="press inline-flex shrink-0 items-center justify-center gap-2 self-start border border-ink px-6 py-3 text-sm font-semibold text-ink hover:bg-ink hover:text-background md:self-auto"
+            >
+              Email the board
+            </a>
+          </div>
         </Reveal>
       </section>
 
@@ -471,14 +487,14 @@ function About() {
           </Reveal>
 
           <Reveal delay={0.15}>
-            <h3 className="text-xs font-semibold uppercase tracking-[0.32em] text-gold-deep mb-6 pt-2">
+            <h3 className="text-xs font-semibold uppercase tracking-[0.14em] text-gold-deep mb-6 pt-2">
               Faculty Advisors
             </h3>
             <ul className="grid gap-px bg-border border border-border sm:grid-cols-3">
               {facultyAdvisors.map((f) => (
                 <li key={f.name} className="bg-background p-6">
                   <div className="font-display text-base font-bold text-ink">{f.name}</div>
-                  <div className="mt-1 font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                  <div className="mt-1 font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">
                     {f.year}
                   </div>
                   {f.bio && (
@@ -531,19 +547,14 @@ function About() {
               Ready to put our process to work?
             </h2>
             <p className="mt-3 max-w-md text-sm text-background/65">
-              Apply to be part of the research process — from pitch to portfolio decision.
+              Join the research process, from first pitch to portfolio decision.
             </p>
           </div>
           <div className="flex gap-4 shrink-0">
-            <a
-              href={applyUrl("about-cta")}
-              target="_blank"
-              rel="noopener noreferrer"
+            <ApplyCta
+              placement="about-cta"
               className="press group inline-flex items-center gap-2 bg-gold px-7 py-3.5 text-sm font-semibold text-ink hover:bg-gold-mid"
-            >
-              Apply to Join
-              <ArrowRight className="h-4 w-4 arrow-slide" />
-            </a>
+            />
             <Link
               to="/team"
               className="press inline-flex items-center gap-2 border border-background/20 px-7 py-3.5 text-sm font-semibold text-background hover:border-gold hover:text-gold"

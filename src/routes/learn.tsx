@@ -3,13 +3,11 @@ import { ExternalLink, Download } from "lucide-react";
 import { socialMeta, canonical, breadcrumbLd, OG_LEARN } from "@/lib/seo";
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import { OnThisPage, type PageSection } from "@/components/OnThisPage";
-import { applyUrl } from "@/lib/apply-url";
+import { ApplyCta } from "@/components/ApplyCta";
 import dcfAmzn from "@/assets/dcf-model-amzn.xlsx?url";
 import amznThesis from "@/assets/amzn-investment-thesis.docx?url";
 import amznCca from "@/assets/amzn-cca.xlsx?url";
 import amznCcaCommentary from "@/assets/amzn-cca-commentary.docx?url";
-
-const APPLICATION_URL = applyUrl("learn-cta");
 
 /** Anchors for the in-page nav. Each id must match a <section id> below. */
 const SECTIONS: readonly PageSection[] = [
@@ -300,7 +298,7 @@ function Learn() {
       <section className="bg-ink text-background">
         <div className="container-prose py-28 max-w-3xl">
           <Reveal>
-            <span className="text-xs font-semibold uppercase tracking-[0.28em] text-gold">
+            <span className="text-xs font-semibold uppercase tracking-[0.14em] text-gold">
               Education
             </span>
             <h1
@@ -376,7 +374,7 @@ function Learn() {
                 key={m.n}
                 className="grid md:grid-cols-[auto_1fr] gap-6 md:gap-10 border-b border-border py-8"
               >
-                <div className="font-mono text-xs uppercase tracking-[0.22em] text-gold-deep md:pt-1">
+                <div className="font-mono text-xs uppercase tracking-[0.14em] text-gold-deep md:pt-1">
                   {m.n}
                 </div>
                 <div>
@@ -579,16 +577,11 @@ function Learn() {
             spring.
           </p>
           <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href={APPLICATION_URL}
-              target="_blank"
-              rel="noopener noreferrer"
+            <ApplyCta
+              placement="learn-cta"
+              closed="updates"
               className="press inline-flex items-center justify-center gap-2.5 bg-gold px-9 py-4 text-sm font-semibold text-ink hover:bg-gold-mid"
-            >
-              Apply to Join
-              <ExternalLink className="h-4 w-4" aria-hidden="true" />
-              <span className="sr-only">(opens application form in new tab)</span>
-            </a>
+            />
             <Link
               to="/recruiting"
               className="press inline-flex items-center justify-center gap-2 border border-background/30 px-9 py-4 text-sm font-semibold text-background hover:border-gold hover:text-gold"

@@ -55,14 +55,15 @@ PLAYWRIGHT_CHROMIUM_PATH=/path/to/chromium npm run test:e2e
 
 Most of what you'd want to change is data, not components.
 
-| What                                                      | File                                     | Notes                                                                                                       |
-| --------------------------------------------------------- | ---------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| Roster: names, roles, emails, class years, bios, LinkedIn | `src/data/team.ts`                       | Grouped by board / sector team / FIM / PM / faculty                                                         |
-| Member headshots                                          | `src/assets/team/*.webp`                 | Wired up in `PHOTO_BY_NAME` in `src/data/team.ts`                                                           |
-| Portfolio positions: shares, cost basis, industry, beta   | `src/data/holdings.ts`                   | Refreshed each quarter against the custody statement. Live prices come from Supabase and overwrite the rest |
-| Recruiting calendar                                       | `src/routes/recruiting.tsx` (`CALENDAR`) | Drives the countdown, the schema.org Events, and the `.ics` download                                        |
-| Learn curriculum and downloads                            | `src/routes/learn.tsx`                   | Downloadable models live in `src/assets/`                                                                   |
-| Page titles, descriptions, social cards                   | each route's `head()` + `src/lib/seo.ts` | `socialMeta()` builds the OG/Twitter block                                                                  |
+| What                                                      | File                                          | Notes                                                                                                                                                          |
+| --------------------------------------------------------- | --------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Roster: names, roles, emails, class years, bios, LinkedIn | `src/data/team.ts`                            | Grouped by board / sector team / FIM / PM / faculty                                                                                                            |
+| Member headshots                                          | `src/assets/team/*.webp`                      | Wired up in `PHOTO_BY_NAME` in `src/data/team.ts`                                                                                                              |
+| Portfolio positions: shares, cost basis, industry, beta   | `src/data/holdings.ts`                        | Refreshed each quarter against the custody statement. Live prices come from Supabase and overwrite the rest                                                    |
+| Recruiting calendar                                       | `src/lib/recruiting-calendar.ts` (`CALENDAR`) | Drives the countdown, the schema.org Events, the `.ics` download, and whether every Apply button is live (open from the first event until the first interview) |
+| Learn curriculum and downloads                            | `src/routes/learn.tsx`                        | Downloadable models live in `src/assets/`                                                                                                                      |
+| Page titles, descriptions, social cards                   | each route's `head()` + `src/lib/seo.ts`      | `socialMeta()` builds the OG/Twitter block                                                                                                                     |
+| Header, footer and search navigation                      | `src/lib/nav.ts`                              | 5 primary items (Portfolio and Join are groups); the header search indexes these pages too                                                                     |
 
 Publications on `/research`, fund stats, quotes and performance history come from
 Supabase, not from files.
@@ -115,6 +116,11 @@ It appears on the site on the next page load; no redeploy. PDF is best for decks
 - **Colour tokens are contrast-checked.** `--gold-deep` is set to a value that
   clears WCAG AA on every ground it is used against. If you darken a background or
   lighten that token, re-run `npm run test:e2e` — it fails on any new axe violation.
+- **12px is the type floor.** Nothing visible renders under 12px; `npm run test:e2e`
+  fails on any page that does. Use `text-xs` for the smallest labels, never `text-[10px]`.
+- **Apply buttons go through `<ApplyCta>`.** It links to the Qualtrics form only while
+  the application window in `src/lib/recruiting-calendar.ts` is open, and to /recruiting
+  or a mailing-list email otherwise. Don't hand-roll `applyUrl()` links.
 - **`src/routeTree.gen.ts` is generated.** Don't edit it.
 
 ## Deployment

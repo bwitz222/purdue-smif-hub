@@ -105,11 +105,29 @@ try {
     const resp = await page.goto(BASE + path, { waitUntil: "networkidle", timeout: 60_000 });
     await page.waitForTimeout(600);
     const status = resp?.status() ?? 0;
-    const info = await page.evaluate(() => ({
-      h1: document.querySelectorAll("h1").length,
-      text: document.body.innerText.length,
-      overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
-    }));
+    const info = await page.evaluate(() => {
+      // Visible text rendered under 12px. The October 2026 audit found a
+      // median of 14 such elements per page here against 0 on every peer
+      // group; 12px is now the floor.
+      const small = [];
+      const tw = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+      while (tw.nextNode()) {
+        const el = tw.currentNode.parentElement;
+        if (!el || !tw.currentNode.textContent.trim()) continue;
+        const cs = getComputedStyle(el);
+        const r = el.getBoundingClientRect();
+        if (cs.display === "none" || cs.visibility === "hidden" || r.width === 0) continue;
+        if (el.closest(".sr-only")) continue;
+        if (parseFloat(cs.fontSize) < 12)
+          small.push(tw.currentNode.textContent.trim().slice(0, 30));
+      }
+      return {
+        h1: document.querySelectorAll("h1").length,
+        text: document.body.innerText.length,
+        overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
+        small,
+      };
+    });
     record(
       `${path} renders without Supabase`,
       status === 200 && info.text > 400,
@@ -117,6 +135,11 @@ try {
     );
     record(`${path} has exactly one h1`, info.h1 === 1, `${info.h1} found`);
     record(`${path} no horizontal overflow`, !info.overflow);
+    record(
+      `${path} no text under 12px`,
+      info.small.length === 0,
+      info.small.slice(0, 3).join(" | "),
+    );
     await ctx.close();
   }
 
@@ -301,6 +324,53 @@ try {
     await page.locator('button[aria-label="Close menu"]').click();
     await page.waitForTimeout(600);
     record("mobile menu closes", (await page.locator('[role="dialog"]:visible').count()) === 0);
+    await ctx.close();
+  }
+
+  {
+    const { page, ctx, errors } = await open("/");
+    const portfolio = page.locator('nav[aria-label="Primary"] button:has-text("Portfolio")');
+    await portfolio.click();
+    await page.waitForTimeout(300);
+    record(
+      "header Portfolio menu opens",
+      (await portfolio.getAttribute("aria-expanded")) === "true" &&
+        (await page.locator('nav[aria-label="Primary"] a[href="/holdings"]').isVisible()),
+    );
+    await page.keyboard.press("Escape");
+    await page.waitForTimeout(200);
+    record(
+      "header menu closes on Escape",
+      (await portfolio.getAttribute("aria-expanded")) === "false",
+    );
+
+    await page.locator('button[aria-label="Search the site"]').click();
+    await page.waitForTimeout(400);
+    const box = page.locator('input[role="combobox"]');
+    await box.fill("voona");
+    await page.waitForTimeout(300);
+    record(
+      "site search finds a member",
+      (await page.locator('[role="option"]').filter({ hasText: "Sid Voona" }).count()) > 0,
+    );
+    await box.press("Enter");
+    await page.waitForTimeout(1500);
+    record("site search navigates on Enter", page.url().endsWith("/team/sid-voona"), page.url());
+    record("header + search no uncaught page errors", errors.length === 0, errors[0] ?? "");
+    await ctx.close();
+  }
+
+  {
+    const { page, ctx } = await open("/team", 390);
+    const toggle = page.locator("#sector-financials button[aria-expanded]");
+    const panel = page.locator("#sector-financials-members");
+    record("/team sector teams start collapsed", !(await panel.isVisible()));
+    await toggle.click();
+    await page.waitForTimeout(500);
+    record(
+      "/team sector team expands",
+      (await toggle.getAttribute("aria-expanded")) === "true" && (await panel.isVisible()),
+    );
     await ctx.close();
   }
 

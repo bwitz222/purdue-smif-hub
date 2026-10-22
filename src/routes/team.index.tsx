@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useReducedMotion } from "framer-motion";
-import { Search, X } from "lucide-react";
+import { ChevronDown, Search, X } from "lucide-react";
 import { MemberCard, type Member } from "@/components/MemberCard";
 import { MemberDetailSheet } from "@/components/MemberDetailSheet";
 import { RevealGroup, RevealItem } from "@/components/Reveal";
@@ -15,6 +15,7 @@ import {
   studentCount,
   facultyCount,
   totalMemberCount,
+  LEAD_ROLE,
 } from "@/data/team";
 import { socialMeta, canonical, breadcrumbLd, OG_TEAM } from "@/lib/seo";
 import { jumpToSection } from "@/lib/jump-to";
@@ -90,11 +91,11 @@ function SectionHeader({
   return (
     <div className="mb-12 max-w-3xl">
       <div className="flex items-center gap-3">
-        <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">
+        <span className="text-xs font-semibold uppercase tracking-[0.14em] text-gold-deep">
           {kicker}
         </span>
         {typeof count === "number" && (
-          <span className="text-[10px] font-mono uppercase tracking-[0.22em] text-muted-foreground">
+          <span className="text-xs font-mono uppercase tracking-[0.14em] text-muted-foreground">
             {count} {count === 1 ? "result" : "results"}
           </span>
         )}
@@ -184,6 +185,17 @@ function Team() {
   const [group, setGroup] = useState<Group>("all");
   const [sectorFilter, setSectorFilter] = useState<string>("all");
   const [selected, setSelected] = useState<Member | null>(null);
+  // Sector teams open one at a time from a collapsed list. Rendering all 35+
+  // sector cards by default made /team about 45,000px tall on a phone. The
+  // cards stay in the DOM (hidden), so profile links and crawlers see them.
+  const [openTeams, setOpenTeams] = useState<Set<string>>(() => new Set());
+  const toggleTeam = (name: string) =>
+    setOpenTeams((prev) => {
+      const next = new Set(prev);
+      if (next.has(name)) next.delete(name);
+      else next.add(name);
+      return next;
+    });
 
   // Sync URL ?sector=… → state and scroll to grid on change.
   useEffect(() => {
@@ -276,7 +288,7 @@ function Team() {
     <>
       <section className="border-b border-border bg-secondary/40">
         <div className="container-prose py-24">
-          <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">
+          <span className="text-xs font-semibold uppercase tracking-[0.14em] text-gold-deep">
             Team
           </span>
           <h1 className="mt-4 font-display text-5xl font-bold md:text-6xl max-w-3xl">
@@ -291,8 +303,8 @@ function Team() {
 
           <div className="mt-10 grid grid-cols-2 gap-6 md:grid-cols-4 max-w-3xl">
             {[
-              ["7", "Executive Board"],
-              ["8", "Sector Teams"],
+              [String(board.length), "Executive Board"],
+              [String(sectorTeams.length), "Sector Teams"],
               ["1", "Fixed Income & Macro"],
               ["1", "Portfolio + Risk Mgmt."],
             ].map(([n, l]) => (
@@ -331,7 +343,7 @@ function Team() {
                 </button>
               )}
             </div>
-            <div className="text-[11px] font-mono uppercase tracking-[0.2em] text-muted-foreground whitespace-nowrap md:ml-auto md:text-right">
+            <div className="text-xs font-mono uppercase tracking-[0.14em] text-muted-foreground whitespace-nowrap md:ml-auto md:text-right">
               {hasFilter
                 ? `${totalResults} ${totalResults === 1 ? "match" : "matches"}`
                 : `${totalMembers} members`}
@@ -355,7 +367,7 @@ function Team() {
                   type="button"
                   aria-pressed={active}
                   onClick={() => handleScopeChange(o.value)}
-                  className={`press shrink-0 snap-start min-h-9 rounded-full border px-3.5 text-[11px] font-semibold uppercase tracking-[0.14em] focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-1 ${
+                  className={`press shrink-0 snap-start min-h-9 rounded-full border px-3.5 text-xs font-semibold uppercase tracking-[0.14em] focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-1 ${
                     active
                       ? "border-ink bg-ink text-background"
                       : "border-border bg-background text-muted-foreground hover:border-ink hover:text-foreground"
@@ -418,36 +430,88 @@ function Team() {
                   hasFilter ? filteredSectors.reduce((s, t) => s + t.members.length, 0) : undefined
                 }
               />
-              <div className="space-y-16">
-                {filteredSectors.map((team) => (
-                  <div
-                    key={team.name}
-                    id={`sector-${sectorSlug(team.name)}`}
-                    className="scroll-mt-40"
+              {!hasFilter && (
+                <div className="mb-4 flex justify-end">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setOpenTeams((prev) =>
+                        prev.size === sectorTeams.length
+                          ? new Set()
+                          : new Set(sectorTeams.map((t) => t.name)),
+                      )
+                    }
+                    className="inline-flex min-h-11 items-center text-sm font-semibold text-ink underline decoration-gold decoration-2 underline-offset-4 hover:text-gold-deep"
                   >
-                    <div className="mb-8 flex flex-wrap items-end justify-between gap-4 border-b border-border pb-4">
-                      <div>
-                        <h3 className="font-display text-2xl font-bold">{team.name}</h3>
-                        <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
+                    {openTeams.size === sectorTeams.length
+                      ? "Collapse all teams"
+                      : "Show all teams"}
+                  </button>
+                </div>
+              )}
+              <div className="border-t border-border">
+                {filteredSectors.map((team) => {
+                  // Any search or scope filter shows every matching card.
+                  const expanded = hasFilter || openTeams.has(team.name);
+                  const slug = sectorSlug(team.name);
+                  const lead = team.members.find((m) => m.role === LEAD_ROLE);
+                  const count = `${team.members.length} ${team.members.length === 1 ? "member" : "members"}`;
+                  const heading = (
+                    <>
+                      <span className="min-w-0 flex-1">
+                        <span className="block font-display text-2xl font-bold text-ink">
+                          {team.name}
+                        </span>
+                        <span className="mt-1 block max-w-2xl text-sm text-muted-foreground">
                           {team.description}
-                        </p>
-                      </div>
-                      <span className="text-xs uppercase tracking-[0.18em] text-gold-deep">
-                        {team.members.length} {team.members.length === 1 ? "member" : "members"}
+                        </span>
+                        <span className="mt-2 block text-xs font-semibold uppercase tracking-[0.14em] text-gold-deep">
+                          {count}
+                          {lead ? ` · Led by ${lead.name}` : ""}
+                        </span>
                       </span>
-                    </div>
-                    <RevealGroup
-                      className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
-                      stagger={0.05}
+                    </>
+                  );
+                  return (
+                    <div
+                      key={team.name}
+                      id={`sector-${slug}`}
+                      className="scroll-mt-40 border-b border-border"
                     >
-                      {team.members.map((m) => (
-                        <RevealItem key={m.name} className="h-full [&>div]:h-full">
-                          <MemberCard m={m} onSelect={setSelected} />
-                        </RevealItem>
-                      ))}
-                    </RevealGroup>
-                  </div>
-                ))}
+                      <h3>
+                        {hasFilter ? (
+                          <span className="flex items-start gap-4 py-6">{heading}</span>
+                        ) : (
+                          <button
+                            type="button"
+                            aria-expanded={expanded}
+                            aria-controls={`sector-${slug}-members`}
+                            onClick={() => toggleTeam(team.name)}
+                            className="flex w-full items-start gap-4 py-6 text-left transition-colors duration-200 hover:bg-secondary/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-gold"
+                          >
+                            {heading}
+                            <ChevronDown
+                              className={`mt-2 h-5 w-5 shrink-0 text-muted-foreground transition-transform duration-200 ${expanded ? "rotate-180" : ""}`}
+                              aria-hidden="true"
+                            />
+                          </button>
+                        )}
+                      </h3>
+                      <div id={`sector-${slug}-members`} hidden={!expanded} className="pb-10">
+                        <RevealGroup
+                          className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+                          stagger={0.05}
+                        >
+                          {team.members.map((m) => (
+                            <RevealItem key={m.name} className="h-full [&>div]:h-full">
+                              <MemberCard m={m} onSelect={setSelected} />
+                            </RevealItem>
+                          ))}
+                        </RevealGroup>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </section>

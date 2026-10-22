@@ -15,18 +15,18 @@ import {
   type DirectoryEntry,
 } from "@/data/team";
 import type { Member } from "@/components/MemberCard";
+import { CALENDAR, applicationsOpen } from "@/lib/recruiting-calendar";
 
 /**
  * Guards over the roster, and over the two cross-page contracts that broke
  * silently: /sectors -> /team links, and the recruiting calendar's weekdays.
  *
  * Roster facts are asserted against the real modules. The two route files
- * below are read as text only because CALENDAR and SCOPE_OPTIONS are module-
- * private; the assertions are written to survive reformatting (whole-file
+ * below are read as text only because SCOPE_OPTIONS and the sector arrays are
+ * module-private; the assertions are written to survive reformatting (whole-file
  * regex, no dependence on line breaks).
  */
 const src = (p: string) => readFileSync(join(process.cwd(), p), "utf8");
-const recruitingSrc = src("src/routes/recruiting.tsx");
 const teamRouteSrc = src("src/routes/team.index.tsx");
 const sectorsSrc = src("src/routes/sectors.tsx");
 
@@ -40,12 +40,7 @@ const everyone: Member[] = [
 
 describe("recruiting calendar", () => {
   const DOW = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-  // Whole-file scan: each entry is an object carrying both keys, in either
-  // order, however Prettier chooses to wrap it.
-  const rows = [...recruitingSrc.matchAll(/\{[^{}]*?\biso:\s*"([\d-]+)"[^{}]*?\}/gs)].map((m) => ({
-    iso: m[1],
-    date: m[0].match(/\bdate:\s*"([^"]+)"/)![1],
-  }));
+  const rows = CALENDAR.map(({ iso, date }) => ({ iso, date }));
 
   it("finds every calendar row", () => {
     expect(rows.length).toBeGreaterThanOrEqual(10);
@@ -57,6 +52,24 @@ describe("recruiting calendar", () => {
   // `date` is what the visitor reads, so the two disagreed by a full day.
   it.each(rows)("$iso displays the correct weekday ($date)", ({ iso, date }) => {
     expect(date.split(",")[0]).toBe(DOW[new Date(`${iso}T12:00:00Z`).getUTCDay()]);
+  });
+});
+
+describe("application window", () => {
+  // Every Apply button reads this. It must close before interviews start, so
+  // a visitor is never sent to a form that has already stopped accepting.
+  const at = (iso: string) => new Date(iso).getTime();
+
+  it("is closed before the cycle's first event", () => {
+    expect(applicationsOpen(at("2026-08-21T12:00:00-04:00"))).toBe(false);
+  });
+  it("is open during callouts and coffee chats", () => {
+    expect(applicationsOpen(at("2026-08-22T09:00:00-04:00"))).toBe(true);
+    expect(applicationsOpen(at("2026-09-01T21:00:00-04:00"))).toBe(true);
+  });
+  it("closes when interviews begin and stays closed", () => {
+    expect(applicationsOpen(at("2026-09-08T00:00:00-04:00"))).toBe(false);
+    expect(applicationsOpen(at("2026-10-19T12:00:00-04:00"))).toBe(false);
   });
 });
 

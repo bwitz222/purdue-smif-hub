@@ -62,14 +62,14 @@ function MemberDetail({ m }: { m: Member }) {
           </div>
         )}
         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/90 via-ink/40 to-transparent p-6 text-background">
-          <div className="text-[10px] font-semibold uppercase tracking-[0.28em] text-gold">
+          <div className="text-xs font-semibold uppercase tracking-[0.14em] text-gold">
             {m.role}
           </div>
           <SheetHeader className="space-y-1 text-left">
             <SheetTitle className="font-display text-3xl font-bold text-background">
               {m.name}
             </SheetTitle>
-            <SheetDescription className="text-background/70 font-mono text-xs uppercase tracking-[0.2em]">
+            <SheetDescription className="text-background/70 font-mono text-xs uppercase tracking-[0.14em]">
               {m.year}
             </SheetDescription>
           </SheetHeader>
@@ -85,7 +85,7 @@ function MemberDetail({ m }: { m: Member }) {
         </Link>
         {m.bio && (
           <div>
-            <div className="text-[10px] font-semibold uppercase tracking-[0.28em] text-gold-deep mb-2">
+            <div className="text-xs font-semibold uppercase tracking-[0.14em] text-gold-deep mb-2">
               Bio
             </div>
             <p className="text-sm leading-relaxed text-foreground/80">{m.bio}</p>
@@ -93,7 +93,7 @@ function MemberDetail({ m }: { m: Member }) {
         )}
         {(email || m.linkedin) && (
           <div className="border-t border-border pt-5 space-y-3">
-            <div className="text-[10px] font-semibold uppercase tracking-[0.28em] text-gold-deep">
+            <div className="text-xs font-semibold uppercase tracking-[0.14em] text-gold-deep">
               Contact
             </div>
             {email && (

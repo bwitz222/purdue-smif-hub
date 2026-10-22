@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { PortfolioTabs } from "@/components/PortfolioTabs";
 import { useState, useMemo } from "react";
 import {
   computeWindowStats,
@@ -388,33 +389,34 @@ function Performance() {
 
   return (
     <>
+      <PortfolioTabs />
       {/* ── Page header ─────────────────────────────────────────── */}
-      <section className="relative bg-ink text-background overflow-hidden">
-        <div className="container-prose py-28">
+      {/* Cream like /holdings and /sectors: data pages share one ground. */}
+      <section className="border-b border-border bg-secondary/40">
+        <div className="container-prose py-20 md:py-24">
           <div className="flex items-center gap-3 mb-8">
             <span className="rule-gold" />
-            <span className="text-xs font-semibold uppercase tracking-[0.32em] text-gold/70">
+            <span className="text-xs font-semibold uppercase tracking-[0.14em] text-gold-deep">
               Performance
             </span>
           </div>
           <h1
-            className="font-display font-bold text-background max-w-3xl"
+            className="font-display font-bold text-ink max-w-3xl"
             style={{ fontSize: "clamp(2.8rem, 6vw, 5.5rem)", lineHeight: "1.02" }}
           >
             Benchmarked.
             <br />
             Transparent.
             <br />
-            <span className="text-gold/80">Quarterly.</span>
+            <span className="text-gold-deep">Quarterly.</span>
           </h1>
-          <p className="mt-8 max-w-xl text-on-dark-secondary leading-relaxed text-lg">
+          <p className="mt-8 max-w-xl text-muted-foreground leading-relaxed text-lg">
             Measured against the S&amp;P 500 Total Return Index (SPY). The fund was established in
             1995; the audited monthly series begins October 2013, when it moved to its current
             custodian.
             {monthlyData ? "" : allAudited ? "" : " Returns shown are illustrative."}
           </p>
         </div>
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-white/10" />
       </section>
 
       {!monthlyData && !allAudited && (
@@ -422,7 +424,7 @@ function Performance() {
           <div className="border border-gold/40 bg-secondary/30 p-5 md:p-6 flex items-start gap-4">
             <span className="rule-gold mt-2 shrink-0" aria-hidden="true" />
             <div className="flex-1">
-              <div className="text-[10px] font-mono font-semibold uppercase tracking-[0.28em] text-gold-deep mb-1">
+              <div className="text-xs font-mono font-semibold uppercase tracking-[0.14em] text-gold-deep mb-1">
                 Work in progress
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed">
@@ -468,7 +470,7 @@ function Performance() {
             would be nothing to switch between. */}
         {monthlyData && windows["5y"] && (
           <Reveal className="flex flex-wrap items-center gap-x-4 gap-y-2" delay={0.01}>
-            <span className="text-[10px] font-mono uppercase tracking-[0.22em] text-muted-foreground">
+            <span className="text-xs font-mono uppercase tracking-[0.14em] text-muted-foreground">
               Measurement window
             </span>
             <div
@@ -510,7 +512,7 @@ function Performance() {
               <h2 className="font-display text-2xl font-bold text-ink md:text-3xl">
                 Risk &amp; return analytics
               </h2>
-              <span className="text-[10px] font-mono uppercase tracking-[0.22em] text-muted-foreground whitespace-nowrap">
+              <span className="text-xs font-mono uppercase tracking-[0.14em] text-muted-foreground whitespace-nowrap">
                 {a.observations} mo · monthly basis
               </span>
             </div>
@@ -526,7 +528,7 @@ function Performance() {
                   <div className={`font-display text-3xl font-bold mt-1 ${toneClass(tone)}`}>
                     {v}
                   </div>
-                  <div className="text-[11px] text-muted-foreground font-mono">{sub}</div>
+                  <div className="text-xs text-muted-foreground font-mono">{sub}</div>
                 </div>
               ))}
             </div>
@@ -536,7 +538,7 @@ function Performance() {
                   key={l}
                   className="bg-card px-6 py-5 flex flex-col gap-0.5 border border-border hover-raise"
                 >
-                  <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                  <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
                     {l}
                   </div>
                   <div className={`font-display text-xl font-bold ${toneClass(tone)}`}>{v}</div>
@@ -558,7 +560,7 @@ function Performance() {
           <Reveal className="border border-border bg-card p-6 md:p-10" delay={0.04}>
             <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between mb-8">
               <div>
-                <div className="text-xs uppercase tracking-[0.22em] text-muted-foreground mb-2">
+                <div className="text-xs uppercase tracking-[0.14em] text-muted-foreground mb-2">
                   {windowLabel} · Monthly · updated {formatMonth(monthlyData.lastMonth)}
                 </div>
                 <h2 className="font-display text-2xl font-bold text-ink md:text-3xl">
@@ -634,7 +636,7 @@ function Performance() {
                     <XAxis
                       dataKey="month"
                       stroke="#6B6860"
-                      tick={{ fontSize: 11, fontFamily: "IBM Plex Mono" }}
+                      tick={{ fontSize: 12, fontFamily: "IBM Plex Mono" }}
                       tickLine={false}
                       axisLine={{ stroke: "#E0DDD5" }}
                       tickFormatter={monthlyTickFormatter}
@@ -643,7 +645,7 @@ function Performance() {
                     />
                     <YAxis
                       stroke="#6B6860"
-                      tick={{ fontSize: 11, fontFamily: "IBM Plex Mono" }}
+                      tick={{ fontSize: 12, fontFamily: "IBM Plex Mono" }}
                       tickLine={false}
                       axisLine={false}
                       tickFormatter={(v) => `${v.toFixed(1)}×`}
@@ -654,7 +656,7 @@ function Performance() {
                     />
                     <Legend
                       iconType="circle"
-                      wrapperStyle={{ fontSize: 11, paddingTop: 16, fontFamily: "IBM Plex Mono" }}
+                      wrapperStyle={{ fontSize: 12, paddingTop: 16, fontFamily: "IBM Plex Mono" }}
                     />
                     {showIncSmif && (
                       <Area
@@ -687,7 +689,7 @@ function Performance() {
                     <XAxis
                       dataKey="month"
                       stroke="#6B6860"
-                      tick={{ fontSize: 11, fontFamily: "IBM Plex Mono" }}
+                      tick={{ fontSize: 12, fontFamily: "IBM Plex Mono" }}
                       tickLine={false}
                       axisLine={{ stroke: "#E0DDD5" }}
                       tickFormatter={monthlyTickFormatter}
@@ -696,7 +698,7 @@ function Performance() {
                     />
                     <YAxis
                       stroke="#6B6860"
-                      tick={{ fontSize: 11, fontFamily: "IBM Plex Mono" }}
+                      tick={{ fontSize: 12, fontFamily: "IBM Plex Mono" }}
                       tickLine={false}
                       axisLine={false}
                       tickFormatter={(v) => `${v.toFixed(0)}%`}
@@ -708,7 +710,7 @@ function Performance() {
                     />
                     <Legend
                       iconType="circle"
-                      wrapperStyle={{ fontSize: 11, paddingTop: 16, fontFamily: "IBM Plex Mono" }}
+                      wrapperStyle={{ fontSize: 12, paddingTop: 16, fontFamily: "IBM Plex Mono" }}
                     />
                     {showIncSmif && (
                       <Line
@@ -749,7 +751,7 @@ function Performance() {
         <Reveal className="border border-border bg-card p-6 md:p-10" delay={0.08}>
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between mb-8">
             <div>
-              <div className="text-xs uppercase tracking-[0.22em] text-muted-foreground mb-2">
+              <div className="text-xs uppercase tracking-[0.14em] text-muted-foreground mb-2">
                 Annual · Audited Years
               </div>
               <h2 className="font-display text-2xl font-bold text-ink md:text-3xl">
@@ -810,7 +812,7 @@ function Performance() {
                 <XAxis
                   dataKey="year"
                   stroke="#6B6860"
-                  tick={{ fontSize: 11, fontFamily: "IBM Plex Mono" }}
+                  tick={{ fontSize: 12, fontFamily: "IBM Plex Mono" }}
                   tickLine={false}
                   axisLine={{ stroke: "#E0DDD5" }}
                   minTickGap={24}
@@ -819,7 +821,7 @@ function Performance() {
 
                 <YAxis
                   stroke="#6B6860"
-                  tick={{ fontSize: 11, fontFamily: "IBM Plex Mono" }}
+                  tick={{ fontSize: 12, fontFamily: "IBM Plex Mono" }}
                   tickLine={false}
                   axisLine={false}
                   tickFormatter={(v) => (mode === "cumulative" ? `${v.toFixed(1)}×` : `${v}%`)}
@@ -831,7 +833,7 @@ function Performance() {
                 />
                 <Legend
                   iconType="circle"
-                  wrapperStyle={{ fontSize: 11, paddingTop: 16, fontFamily: "IBM Plex Mono" }}
+                  wrapperStyle={{ fontSize: 12, paddingTop: 16, fontFamily: "IBM Plex Mono" }}
                 />
                 {showSmif && (
                   <Line
@@ -919,7 +921,7 @@ function Performance() {
         </Reveal>
 
         <div className="border-t border-border pt-6 pb-8 mt-4 space-y-2 text-xs text-muted-foreground max-w-3xl">
-          <div className="text-[10px] font-mono font-semibold uppercase tracking-[0.28em] text-muted-foreground">
+          <div className="text-xs font-mono font-semibold uppercase tracking-[0.14em] text-muted-foreground">
             Methodology &amp; disclaimer
           </div>
           <p>
