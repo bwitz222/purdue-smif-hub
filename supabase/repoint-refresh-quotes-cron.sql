@@ -29,19 +29,22 @@ begin
   end loop;
 end $$;
 
--- 3) Schedule ONE daily run, after the US market close.
---    '0 1 * * *' = 01:00 UTC daily ≈ 8-9 PM ET, a few hours after the 4 PM ET
---    close, once the day's end-of-day grouped bar has settled. Weekends and
---    holidays are harmless: the hook walks back to the most recent authorized
---    trading session (see the 403-skip in fetchTwoDaysGroupedBars) and the
---    upsert is idempotent.
---    Note: on the current Polygon plan the *current* day's bar is 403 until it
---    settles, so the freshest data available is the latest completed session.
+-- 3) Schedule two runs on the morning after each session (Tuesday to Saturday).
+--    '0 12,16 * * 2-6' = 12:00 and 16:00 UTC.
+--    Why the morning and not the evening: Polygon has a session's grouped
+--    bar out by the NEXT morning, but not on the night of the close. Production showed it:
+--    a 01:00-01:30 UTC run (8-9 PM ET) never had the session that had just
+--    closed, so price_history trailed by two trading days, while a visitor
+--    refresh at 15:44 UTC the next day already returned that close. 12:00 UTC is
+--    7-8 AM ET; 16:00 UTC is the retry in case the bar is not out yet. Both runs
+--    are idempotent.
+--    Holidays are harmless: the hook walks back to the most recent authorized
+--    trading session (see the 403-skip in fetchTwoDaysGroupedBars).
 --    >>> Replace <VERCEL_REFRESH_HOOK_SECRET> with the exact value from
 --        Vercel → Settings → Environment Variables → REFRESH_HOOK_SECRET.
 select cron.schedule(
   'refresh-quotes',
-  '0 1 * * *',
+  '0 12,16 * * 2-6',
   $job$
   select net.http_post(
     url     := 'https://www.purduesmif.org/api/public/hooks/refresh-quotes',

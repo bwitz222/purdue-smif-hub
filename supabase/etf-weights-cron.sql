@@ -14,13 +14,14 @@ begin
   end loop;
 end $$;
 
--- 01:15 UTC daily, after refresh-quotes (01:00) and before compute-risk (01:30).
--- State Street publishes the previous close's weights each trading day; weekends
--- re-write the same as-of row, which is harmless.
+-- 12:15 and 16:15 UTC, Tuesday to Saturday: after refresh-quotes (12:00, 16:00)
+-- and before compute-risk (12:30, 16:30). State Street publishes the previous
+-- close's weights each trading day; re-running re-writes the same as-of row,
+-- which is harmless.
 --   >>> Replace <VERCEL_REFRESH_HOOK_SECRET> with the REFRESH_HOOK_SECRET value.
 select cron.schedule(
   'refresh-etf-weights',
-  '15 1 * * *',
+  '15 12,16 * * 2-6',
   $job$
   select net.http_post(
     url     := 'https://www.purduesmif.org/api/public/hooks/refresh-etf-weights',

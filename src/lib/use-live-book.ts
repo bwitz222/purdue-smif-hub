@@ -76,9 +76,11 @@ export function useLiveBook(initialQuotes?: QuotePayload | null) {
   const movers = useMemo(() => topMovers(book.holdings), [book.holdings]);
 
   const now = useNow();
-  // The quote cache records its own session date; until it has (or while a
-  // pre-upgrade cache is being replaced) the risk job's date is the same close.
-  const quotesSession = quoteData?.sessionDate ?? risk?.asOf ?? null;
+  // The quote cache records its own session date. Until it has one (right after
+  // an upgrade, before the first refresh writes it) the date is unknown: the risk
+  // job's date is a different data set and can be older than the prices, so it is
+  // never borrowed as the prices' date.
+  const quotesSession = quoteData?.sessionDate ?? null;
   const status: LiveStatus = {
     quotes: freshnessOf(quotesSession, now),
     risk: freshnessOf(risk?.asOf ?? null, now),
