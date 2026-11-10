@@ -42,19 +42,10 @@ export const Route = createFileRoute("/")({
     ],
     links: [
       { rel: "canonical", href: canonical("/") },
-      // The team photo is above the fold only where the hero is two columns
-      // (lg and up). On a phone it sits below the headline, so preloading it
-      // there would compete with the text that is the real first paint. One
-      // preload, responsive, scoped to the widths where it matters.
-      {
-        rel: "preload",
-        as: "image",
-        href: teamPhoto800,
-        imageSrcSet: `${teamPhoto480} 480w, ${teamPhoto800} 800w, ${teamPhoto} 1200w`,
-        imageSizes: "456px",
-        media: "(min-width: 1024px)",
-        fetchPriority: "high",
-      },
+      // No manual image preload: React preloads the eager team photo itself, once,
+      // from its srcSet and sizes. A second, hand-written preload for the same
+      // image was a duplicate request and, with fetchpriority high, made phones
+      // fetch a below-the-fold photo ahead of the text that is the first paint.
     ],
   }),
 });
@@ -208,7 +199,6 @@ function Index() {
                 alt="Members of the Purdue Student Managed Investment Fund on the staircase at the Daniels School of Business."
                 width={1200}
                 height={1600}
-                fetchPriority="high"
                 decoding="async"
                 className="animate-fade-up delay-200 w-full max-h-[70vh] lg:max-h-none aspect-[3/4] object-cover"
               />
