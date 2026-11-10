@@ -7,6 +7,7 @@ import {
   holdingsDatasetLd,
   isEmittableEvent,
   memberDescription,
+  memberTitle,
   performanceDatasetLd,
 } from "./seo";
 
@@ -88,6 +89,25 @@ describe("memberDescription", () => {
       "Portfolio + Risk Management",
     );
     expect(d.length).toBeLessThanOrEqual(155);
+  });
+});
+
+describe("memberTitle", () => {
+  it("is 60 characters or fewer for every member and ends with the brand", () => {
+    for (const { member } of memberDirectory) {
+      const t = memberTitle(member);
+      expect(t.length, t).toBeLessThanOrEqual(60);
+      expect(t.endsWith(" | Purdue SMIF")).toBe(true);
+      expect(t.startsWith(member.name)).toBe(true);
+    }
+  });
+  it("falls back to the name alone when the role is too long", () => {
+    expect(memberTitle({ name: "Chris Andreou", role: "Director of Talent and Operations" })).toBe(
+      "Chris Andreou | Purdue SMIF",
+    );
+    expect(memberTitle({ name: "Ian Teh", role: "Co-President" })).toBe(
+      "Ian Teh: Co-President | Purdue SMIF",
+    );
   });
 });
 

@@ -196,6 +196,17 @@ export function isEmittableEvent(ev: {
 // ── Member pages ───────────────────────────────────────────────────────────
 
 const MAX_DESCRIPTION = 155;
+const MAX_TITLE = 60;
+
+/**
+ * `Name: Role | Purdue SMIF`, falling back to `Name | Purdue SMIF` when a long
+ * role (for example "Director of Talent and Operations") would push the title
+ * past the 60 characters search results show.
+ */
+export function memberTitle(m: { name: string; role: string }) {
+  const full = `${m.name}: ${m.role} | Purdue SMIF`;
+  return full.length <= MAX_TITLE ? full : `${m.name} | Purdue SMIF`;
+}
 
 /**
  * Meta description for a member profile, built only from fields every member
