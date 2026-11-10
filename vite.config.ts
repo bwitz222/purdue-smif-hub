@@ -10,6 +10,9 @@ import tsConfigPaths from "vite-tsconfig-paths";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import { nitro } from "nitro/vite";
 import viteReact from "@vitejs/plugin-react";
+// Imported by relative path: the config runs before the "@" alias exists. The file
+// has no imports of its own, so it is safe to load here.
+import { CONTENT_ROUTES } from "./src/lib/content-routes";
 
 // Edge caching and security headers. The HTML is public and identical for every
 // visitor (no cookies, no user-specific data; live figures such as prices and
@@ -34,6 +37,9 @@ const STATIC_PAGES = [
   "/finance-clubs-at-purdue",
   "/recruiting",
   "/team",
+  // Every content page (pillar, pitches, interview prep, glossary) is cached the
+  // same way, taken from the list the sitemap uses so a new page cannot be missed.
+  ...CONTENT_ROUTES.map((r) => r.path),
 ];
 // Public files keep their names across deploys, so they get a day, then a week of
 // stale-while-revalidate.
@@ -53,14 +59,10 @@ const routeRules: Record<string, Record<string, unknown>> = {
   "/favicon.ico": { headers: PUBLIC_FILE_CACHE },
   "/apple-touch-icon.png": { headers: PUBLIC_FILE_CACHE },
   "/smif-logo.png": { headers: PUBLIC_FILE_CACHE },
-  // A trailing slash is the same page: tell crawlers permanently so link equity
-  // on /about/ style URLs consolidates (the router's own redirect is a 307).
-  ...Object.fromEntries(
-    [...LIVE_PAGES.slice(1), ...STATIC_PAGES].map((p) => [
-      `${p}/`,
-      { redirect: { to: p, status: 308 } },
-    ]),
-  ),
+  // No trailing-slash redirect rules here. Vercel matches route sources without
+  // regard to a trailing slash, so a rule for "/about/" also matched "/about" and
+  // redirected it to itself (an endless 308 loop on the preview). The router's own
+  // 307 from /about/ to /about stays.
 };
 
 export default defineConfig(({ command, mode }) => {

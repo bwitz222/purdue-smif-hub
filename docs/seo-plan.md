@@ -42,7 +42,7 @@ Already strong, and not touched: one h1 per page and no skipped levels, canonica
 
 - HTML now sends `s-maxage` with stale-while-revalidate (5 to 10 minutes for data pages, longer for static ones); social cards, favicon and logo cache for a day. The HTML is identical for every visitor and carries no cookies or personal data; live figures load through client queries after the page loads.
 - Security headers: nosniff, referrer policy, permissions policy, X-Frame-Options. A Content-Security-Policy is deliberately not set yet (see section 6).
-- Trailing-slash URLs such as `/about/` redirect permanently (308) instead of 307. Member-page trailing slashes still get the router's 307.
+- Trailing-slash URLs such as `/about/` still get the router's 307 to `/about`. A permanent 308 was tried and removed: Vercel matches a route source without regard to the trailing slash, so the rule redirected `/about` to itself in an endless loop on the preview deployment. Fixing the 307 needs a different mechanism (for example the `trailingSlash` setting in `vercel.json`), tested on a preview first.
 - The 56 KB logo PNG shown at 28 to 64 px is now a 4 KB WebP.
 - JavaScript removed from the critical path: the contact form no longer ships the full Supabase client, zod or the toast library. Chunk sizes (raw): entry 586,708 to 498,136 bytes; `/contact` 263,116 to 59,264; `/holdings` 151,388 to 25,095. `framer-motion` is no longer a dependency.
 - Home mobile LCP 3.1 s to 1.4 to 1.5 s (production build, brotli): the decorative skyline now loads small and at low priority, and the duplicate hero preload is gone.
@@ -125,4 +125,5 @@ Each quarter confirm that these read the same on the site, its structured data, 
 - **Content-Security-Policy:** not enforced; the allowed origins (analytics, Supabase, the application forms) were not enumerated. Add it in report-only mode first.
 - **Sitemap dates:** static pages share `LAST_CONTENT_UPDATE` in `src/lib/seo.ts`. Bump it whenever page copy changes, or the dates stop being truthful.
 - **Holidays:** the market calendar and its "behind by N sessions" labels list NYSE holidays through 2027.
+- **Always test header and redirect rules on a deployed preview.** They looked correct in the build config and broke four pages on the real deployment.
 - **Not verified:** the `@PurdueSMIF` Twitter handle (the site returned an error), the contact form's database insert (no credentials locally), and edge header behavior on a deployed preview.
