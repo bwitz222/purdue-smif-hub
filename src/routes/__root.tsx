@@ -4,12 +4,10 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
-  useLocation,
   HeadContent,
   Scripts,
   type ErrorComponentProps,
 } from "@tanstack/react-router";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import appCss from "../styles.css?url";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -22,7 +20,7 @@ function NotFoundComponent() {
       {/* React 19 hoists these into <head>. Without them a soft-404 inherits the
           root title/description and stays indexable — unknown /team/<slug>
           values land here, so that would publish an endless supply of them. */}
-      <title>Page not found — Purdue SMIF</title>
+      <title>Page not found: Purdue SMIF</title>
       <meta name="robots" content="noindex, follow" />
       <div className="max-w-md text-center text-background">
         <span className="mx-auto mb-8 grid h-16 w-16 place-items-center bg-background p-2">
@@ -38,7 +36,7 @@ function NotFoundComponent() {
         <div className="font-display text-[8rem] font-bold text-gold/20 leading-none select-none">
           404
         </div>
-        <h1 className="font-display text-3xl font-bold text-background mt-4">Page not found</h1>
+        <h1 className="font-display text-background mt-4">Page not found</h1>
         <p className="mt-3 text-sm text-on-dark-secondary">
           The page you're looking for doesn't exist or has been moved.
         </p>
@@ -51,9 +49,7 @@ function NotFoundComponent() {
           </Link>
         </div>
         <div className="mt-10 border-t border-white/10 pt-6">
-          <div className="text-xs font-mono uppercase tracking-[0.22em] text-on-dark-dim mb-3">
-            Or visit
-          </div>
+          <div className="text-xs font-mono text-on-dark-dim mb-3">Or visit</div>
           <ul className="flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm">
             <li>
               <Link to="/about" className="text-on-dark-secondary hover:text-gold">
@@ -87,11 +83,11 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
   const router = useRouter();
   return (
     <div className="flex min-h-dvh items-center justify-center bg-ink px-4">
-      <title>Something went wrong — Purdue SMIF</title>
+      <title>Something went wrong: Purdue SMIF</title>
       <meta name="robots" content="noindex, follow" />
       <div className="max-w-md text-center text-background">
         <span className="rule-gold block mb-5 mx-auto" />
-        <h1 className="font-display text-2xl font-bold text-background">This page didn't load</h1>
+        <h1 className="font-display text-background">This page didn't load</h1>
         <p className="mt-3 text-sm text-on-dark-secondary">
           Something went wrong on our end. Try refreshing or head back home.
         </p>
@@ -126,7 +122,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "Purdue SMIF — the student-managed investment fund at Purdue's Daniels School of Business, managing real capital since 1995.",
+          "Purdue SMIF, the student-managed investment fund at Purdue's Daniels School of Business, managing real capital since 1995.",
       },
       // Opt into the largest available rich-result treatment. Without this,
       // Google caps image previews and truncates snippets by default.
@@ -144,19 +140,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "stylesheet", href: appCss },
       { rel: "icon", href: "/favicon.ico" },
       { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "dns-prefetch", href: "https://mxjrtmratusuxhpxtwmg.supabase.co" },
-      // Body font — must render fast
-      {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&display=swap",
-      },
-      // Display + mono — decorative, can wait for the real face
-      {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=IBM+Plex+Mono:wght@400&display=optional",
-      },
     ],
     scripts: [
       // Vercel Web Analytics + Speed Insights.
@@ -204,7 +188,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
               foundingDate: "1995",
               slogan: "Real capital. Real research. Real outcomes.",
               description:
-                "Purdue's premier student investment club and finance club — a student-run investment fund at the Mitch Daniels School of Business, Purdue University, managing real capital across global markets since 1995.",
+                "Purdue's student investment club and finance club: a student-run investment fund at the Mitch Daniels School of Business, Purdue University, managing real capital since 1995.",
               parentOrganization: {
                 "@type": "CollegeOrUniversity",
                 name: "Daniels School of Business, Purdue University",
@@ -286,26 +270,6 @@ function RootShell({ children }: { children: React.ReactNode }) {
   );
 }
 
-/** Short crossfade between routes — keeps transitions feeling deliberate, not jumpy. */
-function RouteTransition({ children }: { children: React.ReactNode }) {
-  const reduce = useReducedMotion();
-  const location = useLocation();
-  if (reduce) return <>{children}</>;
-  return (
-    <AnimatePresence mode="wait" initial={false}>
-      <motion.div
-        key={location.pathname}
-        initial={{ opacity: 0, y: 6 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -4 }}
-        transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
-      >
-        {children}
-      </motion.div>
-    </AnimatePresence>
-  );
-}
-
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   return (
@@ -325,13 +289,11 @@ function RootComponent() {
             browsers and did nothing observable in others. This adds no tab
             stop; it only makes the element programmatically focusable. */}
         <main id="main-content" tabIndex={-1} className="flex-1 section-anchor focus:outline-none">
-          <RouteTransition>
-            <Outlet />
-          </RouteTransition>
+          <Outlet />
         </main>
         {/* Footer spacing lives on the layout, not on SiteFooter — keeps short pages
             from carrying an enormous gap when they don't need one. */}
-        <div className="mt-24">
+        <div className="mt-12">
           <SiteFooter />
         </div>
       </div>

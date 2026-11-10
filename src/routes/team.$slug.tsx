@@ -30,7 +30,7 @@ export const Route = createFileRoute("/team/$slug")({
     if (!entry) return {};
     const { member: m, team, slug } = entry;
     const url = canonical(`/team/${slug}`);
-    const title = `${m.name} — ${m.role}, Purdue SMIF`;
+    const title = `${m.name}: ${m.role}, Purdue SMIF`;
     // Prefer the member's own bio; fall back to a factual sentence so the
     // description is never empty for the members who have no bio written yet.
     const description = m.bio
@@ -99,8 +99,8 @@ function ProfilePhoto({ entry }: { entry: DirectoryEntry }) {
 
   if (!src) {
     return (
-      <div className="grid aspect-square w-full place-items-center bg-gradient-gold">
-        <span className="font-display text-6xl font-bold text-ink/40">{initials}</span>
+      <div className="grid aspect-square w-full place-items-center bg-gold">
+        <span className="font-display text-6xl font-bold text-ink">{initials}</span>
       </div>
     );
   }
@@ -131,11 +131,11 @@ function MemberProfile() {
 
   return (
     <>
-      <section className="border-b border-border bg-secondary/40">
+      <section className="border-b border-border bg-background">
         <div className="container-prose py-10">
           <Link
             to="/team"
-            className="group link-underline inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-gold-deep hover:text-ink"
+            className="group link-underline inline-flex items-center gap-2 text-xs font-semibold text-gold-deep hover:text-ink"
           >
             <ArrowLeft className="h-3.5 w-3.5 arrow-slide" />
             All of the team
@@ -158,11 +158,9 @@ function MemberProfile() {
           </Reveal>
 
           <Reveal className="md:col-span-3" delay={0.08}>
-            <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">
-              {m.role}
-            </span>
-            <h1 className="mt-3 font-display text-4xl font-bold md:text-5xl">{m.name}</h1>
-            <p className="mt-3 font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">
+            <span className="text-xs font-semibold text-gold-deep">{m.role}</span>
+            <h1 className="mt-3 font-display">{m.name}</h1>
+            <p className="mt-3 font-mono text-xs text-muted-foreground">
               {team}
               {m.year ? ` · ${m.year}` : ""}
             </p>
@@ -180,7 +178,7 @@ function MemberProfile() {
                     href={`mailto:${m.email}`}
                     className="group link-underline inline-flex items-center gap-2 text-foreground hover:text-gold-deep"
                   >
-                    <Mail className="h-4 w-4 icon-pop" />
+                    <Mail className="h-4 w-4" />
                     <span className="font-mono">{m.email}</span>
                   </a>
                 )}
@@ -191,7 +189,7 @@ function MemberProfile() {
                     rel="noopener noreferrer"
                     className="group link-underline inline-flex items-center gap-2 text-foreground hover:text-gold-deep"
                   >
-                    <Linkedin className="h-4 w-4 icon-pop" />
+                    <Linkedin className="h-4 w-4" />
                     <span className="font-mono">LinkedIn</span>
                   </a>
                 )}
@@ -202,9 +200,9 @@ function MemberProfile() {
       </section>
 
       {teammates.length > 0 && (
-        <section className="border-t border-border bg-secondary/30">
+        <section className="border-t border-border bg-background">
           <div className="container-prose py-16">
-            <h2 className="font-display text-2xl font-bold">Also on {team}</h2>
+            <h2 className="font-display">Also on {team}</h2>
             {/* Per-cell borders rather than a gap-px bg-border grid, so a short
                 last row leaves blank page instead of a gray filler cell. */}
             <ul className="mt-8 grid border-l border-t border-border sm:grid-cols-2 lg:grid-cols-3">
@@ -215,9 +213,7 @@ function MemberProfile() {
                     params={{ slug: t.slug }}
                     className="group flex flex-col gap-1 p-5 transition-colors duration-200 hover:bg-secondary/50"
                   >
-                    <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-gold-deep">
-                      {t.member.role}
-                    </span>
+                    <span className="text-xs font-semibold text-gold-deep">{t.member.role}</span>
                     <span className="font-display text-lg font-bold leading-tight">
                       {t.member.name}
                     </span>

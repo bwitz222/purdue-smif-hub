@@ -18,7 +18,7 @@ const SECTIONS: readonly PageSection[] = [
   { id: "faq", label: "FAQ" },
 ];
 
-const PAGE_TITLE = "About Purdue SMIF — Student Investment Club & Fund";
+const PAGE_TITLE = "About Purdue SMIF: Student Investment Club & Fund";
 const PAGE_DESCRIPTION =
   "How Purdue's student investment club works: the history, philosophy, and process behind every real-money position, and what sets it apart from other clubs.";
 
@@ -109,7 +109,7 @@ const FAQ = [
   },
   {
     q: "Does Purdue SMIF invest real money?",
-    a: "Yes. The fund manages real capital on behalf of the university rather than a simulated portfolio. Every position is researched, debated, and voted on before it is entered, and the complete holdings list — with cost basis, weights, and returns — is published on this site.",
+    a: "Yes. The fund manages real capital on behalf of the university rather than a simulated portfolio. Every position is researched, debated, and voted on before it is entered, and the complete holdings list, with cost basis, weights, and returns, is published on this site.",
   },
   {
     q: "Who oversees the fund?",
@@ -184,18 +184,11 @@ function About() {
     <>
       {/* ── Page header ───────────────────────────────────────────── */}
       <section className="relative bg-ink text-background overflow-hidden">
-        <div className="container-prose py-28">
+        <div className="container-prose section-y">
           <Reveal>
             <span className="rule-gold mb-8 animate-expand-x" />
-            <h1
-              className="font-display font-bold text-background max-w-3xl"
-              style={{ fontSize: "clamp(2.8rem, 6vw, 5.5rem)", lineHeight: "1.02" }}
-            >
-              A legacy of
-              <br />
-              disciplined
-              <br />
-              <span className="text-gold/80">investing.</span>
+            <h1 className="font-display text-background max-w-3xl">
+              A legacy of disciplined investing.
             </h1>
             <p className="mt-8 max-w-xl text-on-dark-secondary leading-relaxed text-lg">
               Founded at the Daniels School of Business. Built on the conviction that the best way
@@ -213,11 +206,11 @@ function About() {
       <section
         id="history"
         aria-labelledby="history-h"
-        className="container-prose py-24 grid gap-16 md:grid-cols-3 section-anchor"
+        className="container-prose section-y grid gap-16 md:grid-cols-3 section-anchor"
       >
         <Reveal className="md:col-span-1">
           <span className="rule-gold block mb-5" />
-          <h2 id="history-h" className="font-display text-2xl font-bold">
+          <h2 id="history-h" className="font-display">
             Our History
           </h2>
         </Reveal>
@@ -231,8 +224,8 @@ function About() {
             </p>
             <p className="mt-6">
               The record is public. Continuous audited monthly statements begin in October 2013,
-              when the fund moved to its current custodian — we publish that series rather than a
-              reconstruction of the years before it — and every position the fund holds appears on
+              when the fund moved to its current custodian, we publish that series rather than a
+              reconstruction of the years before it, and every position the fund holds appears on
               this site alongside the returns it has produced. Few student organizations open their
               book that way; we do it because a portfolio that claims to be real should be
               inspectable.
@@ -240,9 +233,9 @@ function About() {
             <p className="mt-6">
               Each cycle, the fund admits 15 to 25 analysts from a pool of more than 100 applicants.
               Members have placed at Morgan Stanley, Barclays, BMO Capital Markets, Wells Fargo, and
-              Big 4 accounting firms. Analysts arrive from across the university — finance and
+              Big 4 accounting firms. Analysts arrive from across the university, finance and
               accounting, but also engineering, computer science, agricultural economics,
-              mathematics, and the liberal arts — because the work rewards curiosity and argument
+              mathematics, and the liberal arts, because the work rewards curiosity and argument
               more than it rewards a particular major.
             </p>
           </Reveal>
@@ -253,9 +246,7 @@ function About() {
             squeezed into the column the smaller marks stop being legible. It
             scrolls horizontally below ~680px for the same reason. */}
         <Reveal className="md:col-span-3">
-          <h3 className="text-xs font-semibold uppercase tracking-[0.32em] text-gold-deep mb-6">
-            Where Our Members Go
-          </h3>
+          <h3 className="mb-6">Where Our Members Go</h3>
           <div
             role="group"
             aria-label="Employer logos, scrollable horizontally"
@@ -286,12 +277,12 @@ function About() {
       <section
         id="real-money"
         aria-labelledby="real-money-h"
-        className="border-t border-border bg-secondary/40 section-anchor"
+        className="border-t border-border bg-background section-anchor"
       >
-        <div className="container-prose py-24 grid gap-16 md:grid-cols-3">
+        <div className="container-prose section-y grid gap-16 md:grid-cols-3">
           <Reveal className="md:col-span-1">
             <span className="rule-gold block mb-5" />
-            <h2 id="real-money-h" className="font-display text-2xl font-bold">
+            <h2 id="real-money-h" className="font-display">
               An investment club that manages real money
             </h2>
           </Reveal>
@@ -308,7 +299,7 @@ function About() {
                 That one difference shapes the rest. Analysts join a sector team rather than a
                 general meeting. Positions are governed by a written investment policy statement.
                 Nothing enters the portfolio without a researched thesis and a committee vote. The
-                path runs analyst, senior analyst, portfolio manager, executive board — and the work
+                path runs analyst, senior analyst, portfolio manager, executive board, and the work
                 at each step is the work an investment professional actually does.
               </p>
               <p className="mt-6">
@@ -347,12 +338,12 @@ function About() {
       <section
         id="philosophy"
         aria-labelledby="philosophy-h"
-        className="bg-ink text-background py-24 section-anchor"
+        className="bg-ink text-background section-y section-anchor"
       >
         <div className="container-prose grid gap-16 md:grid-cols-3">
           <Reveal>
             <span className="rule-gold block mb-5" />
-            <h2 id="philosophy-h" className="font-display text-2xl font-bold text-gold">
+            <h2 id="philosophy-h" className="font-display text-gold">
               Philosophy
             </h2>
           </Reveal>
@@ -374,15 +365,11 @@ function About() {
       <section
         id="process"
         aria-labelledby="process-h"
-        className="container-prose py-24 section-anchor"
+        className="container-prose section-y section-anchor"
       >
         <Reveal className="mb-16">
           <span className="rule-gold block mb-5" />
-          <h2
-            id="process-h"
-            className="font-display font-bold text-ink"
-            style={{ fontSize: "clamp(2rem, 4vw, 3.25rem)" }}
-          >
+          <h2 id="process-h" className="font-display text-ink">
             Our process
           </h2>
         </Reveal>
@@ -395,7 +382,7 @@ function About() {
               <div className="font-display text-5xl font-bold text-gold-deep/80 leading-none mb-6 group-hover:text-gold-deep transition-colors duration-300">
                 {n}
               </div>
-              <h3 className="font-display text-xl font-semibold text-ink mb-3">{t}</h3>
+              <h3 className="font-display text-ink mb-3">{t}</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">{d}</p>
             </RevealItem>
           ))}
@@ -406,12 +393,12 @@ function About() {
       <section
         id="ips"
         aria-labelledby="ips-h"
-        className="bg-secondary/40 border-t border-border py-24 section-anchor"
+        className="bg-background border-t border-border section-y section-anchor"
       >
         <div className="container-prose grid gap-16 md:grid-cols-3">
           <Reveal className="md:col-span-1">
             <span className="rule-gold block mb-5" />
-            <h2 id="ips-h" className="font-display text-2xl font-bold">
+            <h2 id="ips-h" className="font-display">
               Investment Policy Statement
             </h2>
             <p className="mt-4 text-sm text-muted-foreground leading-relaxed">
@@ -426,7 +413,7 @@ function About() {
                   key={t}
                   className="bg-background p-6 hover:bg-secondary/50 transition-colors duration-200"
                 >
-                  <h3 className="font-display text-base font-bold text-ink mb-2">{t}</h3>
+                  <h3 className="font-display text-ink mb-2">{t}</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">{d}</p>
                 </RevealItem>
               ))}
@@ -445,11 +432,11 @@ function About() {
       <section
         id="governance"
         aria-labelledby="governance-h"
-        className="container-prose py-24 grid gap-16 md:grid-cols-3 section-anchor"
+        className="container-prose section-y grid gap-16 md:grid-cols-3 section-anchor"
       >
         <Reveal className="md:col-span-1">
           <span className="rule-gold block mb-5" />
-          <h2 id="governance-h" className="font-display text-2xl font-bold">
+          <h2 id="governance-h" className="font-display">
             Governance &amp; oversight
           </h2>
         </Reveal>
@@ -471,16 +458,12 @@ function About() {
           </Reveal>
 
           <Reveal delay={0.15}>
-            <h3 className="text-xs font-semibold uppercase tracking-[0.32em] text-gold-deep mb-6 pt-2">
-              Faculty Advisors
-            </h3>
+            <h3 className="mb-6 pt-2">Faculty Advisors</h3>
             <ul className="grid gap-px bg-border border border-border sm:grid-cols-3">
               {facultyAdvisors.map((f) => (
                 <li key={f.name} className="bg-background p-6">
                   <div className="font-display text-base font-bold text-ink">{f.name}</div>
-                  <div className="mt-1 font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-                    {f.year}
-                  </div>
+                  <div className="mt-1 font-mono text-xs text-muted-foreground">{f.year}</div>
                   {f.bio && (
                     <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{f.bio}</p>
                   )}
@@ -498,12 +481,12 @@ function About() {
       <section
         id="faq"
         aria-labelledby="faq-h"
-        className="border-t border-border bg-secondary/40 section-anchor"
+        className="border-t border-border bg-background section-anchor"
       >
-        <div className="container-prose py-24">
+        <div className="container-prose section-y">
           <Reveal className="max-w-3xl mb-12">
             <span className="rule-gold block mb-5" />
-            <h2 id="faq-h" className="font-display text-3xl font-bold md:text-4xl">
+            <h2 id="faq-h" className="font-display">
               Questions about the fund.
             </h2>
           </Reveal>
@@ -515,7 +498,7 @@ function About() {
                 key={q}
                 className="bg-background p-6 hover:bg-secondary/50 transition-colors duration-200"
               >
-                <h3 className="font-display text-base font-bold text-ink mb-2">{q}</h3>
+                <h3 className="font-display text-ink mb-2">{q}</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">{a}</p>
               </RevealItem>
             ))}
@@ -527,11 +510,9 @@ function About() {
       <section className="bg-ink text-background py-20">
         <Reveal className="container-prose flex flex-col md:flex-row items-center justify-between gap-8">
           <div>
-            <h2 className="font-display text-3xl font-bold text-background">
-              Ready to put our process to work?
-            </h2>
+            <h2 className="font-display text-background">Ready to put our process to work?</h2>
             <p className="mt-3 max-w-md text-sm text-background/65">
-              Apply to be part of the research process — from pitch to portfolio decision.
+              Apply to be part of the research process, from pitch to portfolio decision.
             </p>
           </div>
           <div className="flex gap-4 shrink-0">

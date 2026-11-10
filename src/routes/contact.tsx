@@ -21,16 +21,16 @@ export const Route = createFileRoute("/contact")({
   component: Contact,
   head: () => ({
     meta: [
-      { title: "Contact Purdue SMIF — Student Managed Investment Fund" },
+      { title: "Contact Purdue SMIF: Student Managed Investment Fund" },
       {
         name: "description",
         content:
-          "Get in touch with the Purdue Student Managed Investment Fund — prospective members, alumni, sponsors, and recruiters. We reply within two business days.",
+          "Get in touch with the Purdue Student Managed Investment Fund, prospective members, alumni, sponsors, and recruiters. We reply within two business days.",
       },
       ...socialMeta({
         title: "Contact Purdue SMIF",
         description:
-          "Get in touch with the Purdue Student Managed Investment Fund — prospective members, alumni, sponsors, and recruiters. We reply within two business days.",
+          "Get in touch with the Purdue Student Managed Investment Fund, prospective members, alumni, sponsors, and recruiters. We reply within two business days.",
         url: canonical("/contact"),
         image: OG_CONTACT,
       }),
@@ -142,11 +142,11 @@ function Contact() {
 
   return (
     <>
-      <section className="border-b border-border bg-secondary/40">
-        <div className="container-prose py-24">
+      <section className="border-b border-border bg-background">
+        <div className="container-prose section-y">
           <Reveal>
             <span className="rule-gold mb-6" />
-            <h1 className="font-display text-5xl font-bold md:text-6xl max-w-3xl">Get in touch.</h1>
+            <h1 className="font-display max-w-3xl">Get in touch.</h1>
             <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
               Prospective members, alumni, sponsors, and recruiters: we'd love to hear from you.
             </p>
@@ -154,15 +154,15 @@ function Contact() {
         </div>
       </section>
 
-      <section className="container-prose py-24">
+      <section className="container-prose section-y">
         <Reveal>
-          <h2 className="font-display text-3xl font-bold">Reach the Fund</h2>
+          <h2 className="font-display">Reach the Fund</h2>
         </Reveal>
         <RevealGroup className="mt-10 grid gap-10 md:grid-cols-3">
           <RevealItem className="flex gap-5">
-            <Mail className="h-6 w-6 text-gold-deep flex-shrink-0 mt-1 icon-pop" />
+            <Mail className="h-6 w-6 text-gold-deep flex-shrink-0 mt-1" />
             <div>
-              <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Email</div>
+              <div className="text-xs text-muted-foreground">Email</div>
               <a
                 href="mailto:smif26@purdue.edu"
                 className="link-underline mt-1 inline-block font-display text-lg font-semibold hover:text-gold-deep"
@@ -172,11 +172,9 @@ function Contact() {
             </div>
           </RevealItem>
           <RevealItem className="flex gap-5">
-            <MapPin className="h-6 w-6 text-gold-deep flex-shrink-0 mt-1 icon-pop" />
+            <MapPin className="h-6 w-6 text-gold-deep flex-shrink-0 mt-1" />
             <div>
-              <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                Address
-              </div>
+              <div className="text-xs text-muted-foreground">Address</div>
               <div className="mt-1 font-display text-lg font-semibold">
                 Daniels School of Business
               </div>
@@ -188,11 +186,9 @@ function Contact() {
             </div>
           </RevealItem>
           <RevealItem className="flex gap-5">
-            <Linkedin className="h-6 w-6 text-gold-deep flex-shrink-0 mt-1 icon-pop" />
+            <Linkedin className="h-6 w-6 text-gold-deep flex-shrink-0 mt-1" />
             <div>
-              <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                LinkedIn
-              </div>
+              <div className="text-xs text-muted-foreground">LinkedIn</div>
               <a
                 href="https://www.linkedin.com/company/purdue-smif/"
                 target="_blank"
@@ -207,15 +203,11 @@ function Contact() {
       </section>
 
       {/* Send a note */}
-      <section className="border-t border-border bg-secondary/30 py-24">
+      <section className="border-t border-border bg-background section-y">
         <div className="container-prose grid gap-12 lg:grid-cols-5">
           <Reveal className="lg:col-span-2">
             <span className="rule-gold mb-5 block" />
-            <h2 className="font-display text-4xl font-bold text-ink leading-tight">
-              Tell us why
-              <br />
-              you're writing.
-            </h2>
+            <h2 className="font-display text-ink">Tell us why you're writing.</h2>
             <p className="mt-5 text-muted-foreground leading-relaxed">
               The fastest path to a thoughtful reply. We read every message and respond within two
               business days.
@@ -229,7 +221,7 @@ function Contact() {
               className="bg-background border border-border p-8 lg:p-10 space-y-6"
             >
               <div>
-                <Label htmlFor="topic" className="text-xs uppercase tracking-[0.16em] text-ink">
+                <Label htmlFor="topic" className="text-xs text-ink">
                   Topic
                 </Label>
                 <Select value={topic} onValueChange={setTopic}>
@@ -258,7 +250,7 @@ function Contact() {
 
               <div className="grid gap-6 sm:grid-cols-2">
                 <div>
-                  <Label htmlFor="name" className="text-xs uppercase tracking-[0.16em] text-ink">
+                  <Label htmlFor="name" className="text-xs text-ink">
                     Name
                   </Label>
                   <Input
@@ -278,7 +270,7 @@ function Contact() {
                   )}
                 </div>
                 <div>
-                  <Label htmlFor="email" className="text-xs uppercase tracking-[0.16em] text-ink">
+                  <Label htmlFor="email" className="text-xs text-ink">
                     Email
                   </Label>
                   <Input
@@ -301,7 +293,7 @@ function Contact() {
               </div>
 
               <div>
-                <Label htmlFor="message" className="text-xs uppercase tracking-[0.16em] text-ink">
+                <Label htmlFor="message" className="text-xs text-ink">
                   Message
                 </Label>
                 <Textarea

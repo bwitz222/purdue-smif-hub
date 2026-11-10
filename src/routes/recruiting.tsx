@@ -70,13 +70,11 @@ function useCountdown() {
 
 function CountdownUnit({ value, label }: { value: number | string; label: string }) {
   return (
-    <div className="flex flex-1 sm:flex-none flex-col items-center border border-gold/30 bg-ink/40 px-4 py-3 min-w-[72px] hover-raise">
+    <div className="flex flex-1 sm:flex-none flex-col items-center border border-gold/30 bg-ink/40 px-4 py-3 min-w-[72px]">
       <span className="font-display text-3xl font-bold text-gold tabular-nums md:text-4xl">
         {value}
       </span>
-      <span className="mt-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-on-dark-secondary">
-        {label}
-      </span>
+      <span className="mt-1 text-xs font-semibold text-on-dark-secondary">{label}</span>
     </div>
   );
 }
@@ -104,9 +102,7 @@ function Countdown() {
         role="status"
         className="mt-10 border border-gold/30 bg-ink/60 p-6 text-background md:p-8"
       >
-        <div className="text-xs font-semibold uppercase tracking-[0.3em] text-gold">
-          Applications Closed
-        </div>
+        <div className="text-xs font-semibold text-gold">Applications Closed</div>
         <p className="mt-2 text-sm text-on-dark-secondary">
           Applications for the Fall 2026 cycle are closed. Watch this page or follow us on Instagram
           for the next application window.
@@ -125,9 +121,7 @@ function Countdown() {
 
   return (
     <div className="mt-10 border border-gold/30 bg-ink/60 p-6 text-background md:p-8">
-      <div className="text-xs font-semibold uppercase tracking-[0.3em] text-gold">
-        Next: {headline}
-      </div>
+      <div className="text-xs font-semibold text-gold">Next: {headline}</div>
       <p className="mt-1 text-sm text-on-dark-secondary">{sub}</p>
       {/* Accessible plain-text countdown, hidden visually. Always present
           so screen readers + no-JS users get a complete sentence. */}
@@ -456,13 +450,8 @@ function Recruiting() {
   return (
     <>
       <section className="border-b border-border bg-ink text-background">
-        <div className="container-prose py-24">
-          <span className="animate-fade-in text-xs font-semibold uppercase tracking-[0.3em] text-gold">
-            Recruiting
-          </span>
-          <h1 className="animate-fade-up mt-4 font-display text-5xl font-bold md:text-6xl max-w-3xl">
-            Join the Fund.
-          </h1>
+        <div className="container-prose section-y">
+          <h1 className="animate-fade-up mt-4 font-display max-w-3xl">Join the Fund.</h1>
           <p className="animate-fade-up delay-100 mt-6 max-w-2xl text-lg text-background/70">
             Our recruiting calendar, plus a complete guide to preparing for both behavioral and
             technical interviews with SMIF.
@@ -500,14 +489,11 @@ function Recruiting() {
       >
         <Reveal className="flex items-end justify-between gap-6 border-b border-border pb-6">
           <div>
-            <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">
-              Fall 2026
-            </span>
-            <h2 id="calendar-h" className="mt-3 font-display text-3xl font-bold md:text-4xl">
-              Recruiting Calendar
+            <h2 id="calendar-h" className="font-display">
+              Fall 2026 Recruiting Calendar
             </h2>
           </div>
-          <span className="hidden md:inline font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
+          <span className="hidden md:inline font-mono text-xs text-muted-foreground">
             All times Eastern
           </span>
         </Reveal>
@@ -521,9 +507,9 @@ function Recruiting() {
           <button
             type="button"
             onClick={downloadICS}
-            className="press group inline-flex items-center gap-2 border border-ink px-4 py-2 text-xs font-semibold uppercase tracking-wider hover:bg-ink hover:text-background cursor-pointer"
+            className="press group inline-flex items-center gap-2 border border-ink px-4 py-2 text-xs font-semibold hover:bg-ink hover:text-background cursor-pointer"
           >
-            <Download className="h-3.5 w-3.5 icon-pop" />
+            <Download className="h-3.5 w-3.5" />
             Download all events (.ics)
             <span className="sr-only">, {CALENDAR.length} events as a calendar file</span>
           </button>
@@ -543,16 +529,16 @@ function Recruiting() {
                   // (5 axe color-contrast failures on this route). Lifting
                   // muted text to the foreground token inside past rows keeps
                   // the de-emphasised look above 4.5:1.
-                  className={`group row-rail block w-full text-left transition hover:bg-secondary/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 px-2 -mx-2 cursor-pointer ${isPast ? "opacity-70 [&_.text-muted-foreground]:text-foreground" : ""}`}
+                  className={`group row-rail block w-full text-left transition hover:bg-secondary/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 px-2 -mx-2 cursor-pointer ${isPast ? "[&_.text-muted-foreground]:text-foreground" : ""}`}
                 >
                   {/* Mobile: single ≥44px stacked tap block with right-aligned add-to-cal affordance. */}
                   <div className="md:hidden flex items-start gap-3 py-4 min-h-[64px]">
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 text-[11px] font-mono uppercase tracking-[0.16em] text-gold-deep">
+                      <div className="flex items-center gap-2 text-xs font-mono text-gold-deep">
                         <Calendar className="h-3.5 w-3.5 shrink-0" />
                         <span className="truncate">{e.date}</span>
                         {isPast && (
-                          <span className="ml-1 inline-block px-1.5 py-0.5 text-[10px] font-mono uppercase tracking-wider bg-muted text-muted-foreground border border-border">
+                          <span className="ml-1 inline-block px-1.5 py-0.5 text-xs font-mono bg-muted text-muted-foreground border border-border">
                             Past
                           </span>
                         )}
@@ -575,7 +561,7 @@ function Recruiting() {
                       aria-hidden="true"
                       className="mt-0.5 inline-flex h-11 w-11 shrink-0 items-center justify-center border border-border text-gold-deep group-hover:border-gold-deep group-active:bg-secondary/60"
                     >
-                      <CalendarPlus className="h-4 w-4 icon-pop" />
+                      <CalendarPlus className="h-4 w-4" />
                     </span>
                   </div>
 
@@ -590,11 +576,11 @@ function Recruiting() {
                         {e.name}
                         <CalendarPlus
                           aria-hidden="true"
-                          className="h-4 w-4 shrink-0 text-muted-foreground/60 transition-colors duration-200 group-hover:text-gold-deep"
+                          className="h-4 w-4 shrink-0 text-muted-foreground transition-colors duration-200 group-hover:text-gold-deep"
                         />
                       </span>
                       {isPast && (
-                        <span className="ml-2 inline-block px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider bg-muted text-muted-foreground border border-border">
+                        <span className="ml-2 inline-block px-2 py-0.5 text-xs font-mono bg-muted text-muted-foreground border border-border">
                           Past
                         </span>
                       )}
@@ -634,11 +620,11 @@ function Recruiting() {
       <section
         id="prep"
         aria-labelledby="prep-h"
-        className="border-t border-border bg-secondary/40 section-anchor"
+        className="border-t border-border bg-background section-anchor"
       >
         <div className="container-prose py-20">
           <Reveal>
-            <h2 id="prep-h" className="font-display text-3xl font-bold md:text-4xl">
+            <h2 id="prep-h" className="font-display">
               Tips &amp; Tricks to Prep
             </h2>
           </Reveal>
@@ -654,15 +640,10 @@ function Recruiting() {
           <div className="mt-14">
             <Reveal className="flex items-center gap-3">
               <span className="animate-expand-x h-px w-10 bg-gold" />
-              <span className="font-mono text-xs uppercase tracking-[0.3em] text-gold-deep">
-                Round 1
-              </span>
+              <span className="font-mono text-xs text-gold-deep">Round 1</span>
             </Reveal>
             <Reveal>
-              <h3
-                id="behavioral"
-                className="section-anchor mt-3 font-display text-2xl font-bold md:text-3xl"
-              >
+              <h3 id="behavioral" className="section-anchor mt-3 font-display">
                 Behavioral Interview
               </h3>
               <p className="mt-3 max-w-3xl text-muted-foreground">
@@ -723,15 +704,10 @@ function Recruiting() {
           <div className="mt-16">
             <Reveal className="flex items-center gap-3">
               <span className="animate-expand-x h-px w-10 bg-gold" />
-              <span className="font-mono text-xs uppercase tracking-[0.3em] text-gold-deep">
-                Round 2
-              </span>
+              <span className="font-mono text-xs text-gold-deep">Round 2</span>
             </Reveal>
             <Reveal>
-              <h3
-                id="technical"
-                className="section-anchor mt-3 font-display text-2xl font-bold md:text-3xl"
-              >
+              <h3 id="technical" className="section-anchor mt-3 font-display">
                 Technical Interview
               </h3>
               <p className="mt-3 max-w-3xl text-muted-foreground">
@@ -789,8 +765,8 @@ function Recruiting() {
           </div>
 
           {/* Day-of */}
-          <Reveal className="mt-14 border border-gold/30 bg-background p-6 md:p-8 hover-lift-sm">
-            <h3 id="day-of" className="section-anchor font-display text-xl font-bold">
+          <Reveal className="mt-14 border border-gold/30 bg-background p-6 md:p-8">
+            <h3 id="day-of" className="section-anchor font-display">
               Day-Of Checklist
             </h3>
             <ul className="mt-4 grid gap-2 text-sm text-muted-foreground md:grid-cols-2 list-disc pl-5 marker:text-gold-deep">
@@ -804,8 +780,8 @@ function Recruiting() {
           </Reveal>
 
           {/* Reading list */}
-          <Reveal className="mt-10 border border-border bg-background p-6 md:p-8 hover-lift-sm">
-            <h3 id="reading" className="section-anchor font-display text-xl font-bold">
+          <Reveal className="mt-10 border border-border bg-background p-6 md:p-8">
+            <h3 id="reading" className="section-anchor font-display">
               Recommended Reading
             </h3>
             <ul className="mt-4 space-y-2 text-sm text-muted-foreground list-disc pl-5 marker:text-gold-deep">
