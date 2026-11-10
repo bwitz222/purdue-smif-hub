@@ -55,6 +55,72 @@ export function applyQuotes(
   });
 }
 
+export type PortfolioSummary = {
+  investedCapital: number;
+  cashHoldings: number;
+  portfolioValue: number;
+  totalDayGain: number;
+  totalDayChange: number;
+  totalReturn: number;
+  totalReturnPct: number;
+  weightedBeta: number;
+};
+
+/**
+ * Everything /holdings shows about the book, derived from one set of quotes:
+ * positions with live value and weight, plus the summary KPIs. Day P&L derives
+ * each position's prior value from (value / (1 + pct/100)), so the dollar and
+ * percent day change share one base and their signs always agree.
+ */
+export function buildPortfolio(
+  base: Holding[],
+  quotes: Record<string, QuoteLike | undefined>,
+  cashHoldings: number,
+  fallbackBeta = 1,
+): { holdings: Holding[]; summary: PortfolioSummary } {
+  const updated = applyQuotes(base, quotes);
+  const investedValue = updated.reduce((s, r) => s + r.value, 0);
+  const priorInvested = updated.reduce((s, r) => {
+    const q = quotes[r.symbol];
+    if (!q) return s + r.value; // no quote: treat as unchanged
+    return s + (1 + q.changePct / 100 !== 0 ? r.value / (1 + q.changePct / 100) : r.value);
+  }, 0);
+  const totalDayGain = investedValue - priorInvested;
+  const portfolioValue = investedValue + cashHoldings;
+  const costBasisTotal = updated.reduce((s, r) => s + r.costBasis, 0);
+  const totalReturn = investedValue - costBasisTotal;
+  return {
+    holdings: updated.map((r) => ({
+      ...r,
+      allocation: portfolioValue > 0 ? (r.value / portfolioValue) * 100 : r.allocation,
+    })),
+    summary: {
+      investedCapital: investedValue,
+      cashHoldings,
+      portfolioValue,
+      totalDayGain,
+      totalDayChange: priorInvested > 0 ? (totalDayGain / priorInvested) * 100 : 0,
+      totalReturn,
+      totalReturnPct: costBasisTotal > 0 ? (totalReturn / costBasisTotal) * 100 : 0,
+      weightedBeta:
+        investedValue > 0
+          ? updated.reduce((s, r) => s + r.beta * r.value, 0) / investedValue
+          : fallbackBeta,
+    },
+  };
+}
+
+/**
+ * Best and worst day changes. The book is split in half rather than sliced from
+ * both ends blind: with fewer than six positions the two windows would overlap
+ * and one ticker could be listed as both a leader and a laggard.
+ */
+export function topMovers(holdings: Holding[], n = 3): { gainers: Holding[]; losers: Holding[] } {
+  const sorted = [...holdings].sort((a, b) => b.dayChange - a.dayChange);
+  const half = Math.min(n, Math.floor(sorted.length / 2));
+  return { gainers: sorted.slice(0, half), losers: sorted.slice(sorted.length - half).reverse() };
+}
+
 // Sector breakdown in DOLLARS by industry, with SPY (or any ETF listed in
 // ETF_SECTOR_WEIGHTS) split across its constituent sectors by weight.
 function sectorDollarBreakdown(
