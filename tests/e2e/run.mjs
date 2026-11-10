@@ -33,6 +33,11 @@ const PAGES = [
   "/apply",
   "/contact",
   "/finance-clubs-at-purdue",
+  "/student-managed-investment-funds",
+  "/stock-pitches",
+  "/recruiting/technical-interview-prep",
+  "/recruiting/behavioral-interview-prep",
+  "/learn/glossary",
 ];
 
 const results = [];

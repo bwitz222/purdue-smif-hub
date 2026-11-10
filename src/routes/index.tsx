@@ -1,7 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import skyline640 from "@/assets/nyc-skyline-640.webp";
+import skyline1024 from "@/assets/nyc-skyline-1024.webp";
 import skylineImg from "@/assets/nyc-skyline.webp";
+import teamPhoto480 from "@/assets/team-photo-480.webp";
+import teamPhoto800 from "@/assets/team-photo-800.webp";
 import teamPhoto from "@/assets/team-photo.webp";
 import campusImg from "@/assets/hero-campus.webp";
+import { PLACEMENT_FIRMS } from "@/data/fund-facts";
 import { applyUrl } from "@/lib/apply-url";
 import { ArrowRight, ChevronRight, ExternalLink } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
@@ -37,7 +42,10 @@ export const Route = createFileRoute("/")({
     ],
     links: [
       { rel: "canonical", href: canonical("/") },
-      { rel: "preload", as: "image", href: teamPhoto, fetchPriority: "high" },
+      // No manual image preload: React preloads the eager team photo itself, once,
+      // from its srcSet and sizes. A second, hand-written preload for the same
+      // image was a duplicate request and, with fetchpriority high, made phones
+      // fetch a below-the-fold photo ahead of the text that is the first paint.
     ],
   }),
 });
@@ -122,12 +130,17 @@ function Index() {
           A5: Black overlay, 65 to 80%, with White text). No gradient. */}
       <section className="relative isolate overflow-hidden bg-ink flex flex-col">
         <div aria-hidden="true" className="absolute inset-0">
+          {/* Texture under an 85% Black overlay, so it is served small and at low
+              priority: it was the largest paint on a phone (LCP 3.1s) while
+              carrying no information. The headline is now what paints first. */}
           <img
-            src={skylineImg}
+            src={skyline1024}
+            srcSet={`${skyline640} 640w, ${skyline1024} 1024w, ${skylineImg} 1600w`}
+            sizes="100vw"
             alt=""
             width={1600}
             height={1216}
-            loading="lazy"
+            fetchPriority="low"
             decoding="async"
             className="h-full w-full object-cover"
           />
@@ -180,11 +193,12 @@ function Index() {
                 is pre-cropped to 3:4, which makes object-cover a no-op here. */}
             <div className="lg:col-span-5">
               <img
-                src={teamPhoto}
+                src={teamPhoto800}
+                srcSet={`${teamPhoto480} 480w, ${teamPhoto800} 800w, ${teamPhoto} 1200w`}
+                sizes="(min-width: 1024px) 456px, 100vw"
                 alt="Members of the Purdue Student Managed Investment Fund on the staircase at the Daniels School of Business."
                 width={1200}
                 height={1600}
-                fetchPriority="high"
                 decoding="async"
                 className="animate-fade-up delay-200 w-full max-h-[70vh] lg:max-h-none aspect-[3/4] object-cover"
               />
@@ -225,6 +239,59 @@ function Index() {
               </div>
             ))}
           </dl>
+        </div>
+      </section>
+
+      {/* The plain answer to "what is the Purdue Student Managed Investment
+          Fund?", for a reader and for a search engine. Every fact here is stated
+          elsewhere on the site: the founding year and AUM in the hero, the
+          structure and process on /about and /sectors, the employers on /about. */}
+      <section className="bg-background section-y" aria-labelledby="what-is-smif-h">
+        <div className="container-prose grid gap-8 md:grid-cols-12 md:gap-16">
+          <h2 id="what-is-smif-h" className="md:col-span-4">
+            What is the Purdue Student Managed Investment Fund?
+          </h2>
+          <div className="space-y-5 md:col-span-8">
+            <p>
+              The Purdue Student Managed Investment Fund (SMIF) is a student-run investment fund at
+              Purdue University's Daniels School of Business, founded in {s.founded_year}. Students
+              manage real university capital, currently {houseCurrency(s.aum_display)}, across U.S.
+              equities and fixed income, under a written investment policy statement and faculty
+              oversight.
+            </p>
+            <p>
+              Eight equity sector teams research the market from the bottom up. Analysts pitch
+              positions to the full fund, and nothing enters the portfolio without a written thesis,
+              a valuation, and a majority vote. Performance is benchmarked against the S&amp;P 500
+              and reported quarterly, and every holding is published on the{" "}
+              <Link to="/holdings" className="link-underline font-bold text-gold-deep">
+                Holdings page
+              </Link>
+              .
+            </p>
+            <p>Members go on to work at firms including {PLACEMENT_FIRMS.join(", ")}.</p>
+            <p>
+              Choosing between student investment clubs? Compare{" "}
+              <Link
+                to="/finance-clubs-at-purdue"
+                className="link-underline font-bold text-gold-deep"
+              >
+                finance clubs at Purdue
+              </Link>
+              , read how{" "}
+              <Link
+                to="/student-managed-investment-funds"
+                className="link-underline font-bold text-gold-deep"
+              >
+                student managed investment funds work
+              </Link>
+              , or see{" "}
+              <Link to="/apply" className="link-underline font-bold text-gold-deep">
+                how to join Purdue SMIF
+              </Link>
+              .
+            </p>
+          </div>
         </div>
       </section>
 
