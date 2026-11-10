@@ -47,7 +47,12 @@ export function ContentHero({
           </ol>
         </nav>
         <span className="rule-gold mb-6" />
-        <h1 className="text-background">{h1}</h1>
+        <h1
+          className="font-display font-bold text-background"
+          style={{ fontSize: "clamp(2.2rem, 5vw, 4rem)", lineHeight: "1.05" }}
+        >
+          {h1}
+        </h1>
         <p className="mt-6 text-lg text-on-dark-secondary">{lead}</p>
       </div>
     </section>
@@ -79,7 +84,9 @@ export function ProseSection({
 }) {
   return (
     <section id={id} aria-labelledby={`${id}-h`} className="section-anchor space-y-5">
-      <h2 id={`${id}-h`}>{title}</h2>
+      <h2 id={`${id}-h`} className="font-display text-3xl font-bold text-ink md:text-4xl">
+        {title}
+      </h2>
       {children}
     </section>
   );
@@ -91,7 +98,7 @@ export function FaqSection({ id = "faq", faq }: { id?: string; faq: readonly Faq
       <div className="divide-y divide-border border-y border-border">
         {faq.map((f) => (
           <div key={f.q} className="py-5">
-            <h3 className="text-xl text-ink">{f.q}</h3>
+            <h3 className="font-display text-xl font-bold text-ink">{f.q}</h3>
             <p className="mt-2">{f.a}</p>
           </div>
         ))}
@@ -109,7 +116,9 @@ export function NextSteps({
 }) {
   return (
     <section aria-labelledby="next-h" className="border-t border-ink pt-8">
-      <h2 id="next-h">{title}</h2>
+      <h2 id="next-h" className="font-display text-3xl font-bold text-ink md:text-4xl">
+        {title}
+      </h2>
       <ul className="mt-5 space-y-3 list-disc pl-5 marker:text-gold-deep">{children}</ul>
     </section>
   );

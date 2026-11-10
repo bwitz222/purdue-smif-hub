@@ -473,7 +473,7 @@ function GuideSummary({
         <span className="h-px w-10 bg-gold" />
         <span className="font-mono text-xs text-gold-deep">{round}</span>
       </div>
-      <h3 id={id} className="section-anchor mt-3 font-display">
+      <h3 id={id} className="section-anchor mt-3 font-display text-2xl font-bold md:text-3xl">
         {title}
       </h3>
       <p className="mt-3 text-muted-foreground">{intro}</p>

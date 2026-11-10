@@ -113,6 +113,18 @@
   .font-mono {
     font-variant-numeric: tabular-nums;
   }
+  /* Grid children may shrink below their content width. Without this a single
+     wide child (a table, an image with a min-width) stretches the whole page
+     past the viewport on a phone (/about overflowed by 330px at 375px). */
+  .grid > * {
+    min-width: 0;
+  }
+  /* A horizontal scroller must also contain its absolutely positioned
+     children: visually hidden text inside a wide table otherwise sits outside
+     the clip and widens the whole page. */
+  .overflow-x-auto {
+    position: relative;
+  }
   /* Global keyboard-focus indicator */
   :focus-visible {
     outline: 2px solid var(--gold);
@@ -205,6 +217,10 @@
   }
   .text-on-dark-dim {
     color: var(--text-on-dark-dim);
+  }
+  /* Vertical rhythm for the content pages (matches the py-24 sections). */
+  .section-y {
+    padding-block: clamp(4rem, 8vw, 6rem);
   }
   .container-prose {
     max-width: 1280px;

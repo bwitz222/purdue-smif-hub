@@ -182,7 +182,7 @@ function TeamCard({
         <div className="flex items-start gap-4">
           <Icon className="mt-1 h-6 w-6 shrink-0 text-ink" />
           <div>
-            <h3 className="font-display text-ink">{name}</h3>
+            <h3 className="font-display text-xl font-bold text-ink">{name}</h3>
             <p className="mt-1.5 text-sm text-muted-foreground">{lead}</p>
           </div>
         </div>

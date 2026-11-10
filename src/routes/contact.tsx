@@ -21,16 +21,16 @@ export const Route = createFileRoute("/contact")({
   component: Contact,
   head: () => ({
     meta: [
-      { title: "Contact Purdue SMIF — Student Managed Investment Fund" },
+      { title: "Contact Purdue SMIF: Student Managed Investment Fund" },
       {
         name: "description",
         content:
-          "Get in touch with the Purdue Student Managed Investment Fund — prospective members, alumni, sponsors, and recruiters. We reply within two business days.",
+          "Get in touch with the Purdue Student Managed Investment Fund: prospective members, alumni, sponsors, and recruiters. We reply within two business days.",
       },
       ...socialMeta({
         title: "Contact Purdue SMIF",
         description:
-          "Get in touch with the Purdue Student Managed Investment Fund — prospective members, alumni, sponsors, and recruiters. We reply within two business days.",
+          "Get in touch with the Purdue Student Managed Investment Fund: prospective members, alumni, sponsors, and recruiters. We reply within two business days.",
         url: canonical("/contact"),
         image: OG_CONTACT,
       }),

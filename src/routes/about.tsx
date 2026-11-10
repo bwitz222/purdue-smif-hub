@@ -19,7 +19,7 @@ const SECTIONS: readonly PageSection[] = [
   { id: "faq", label: "FAQ" },
 ];
 
-const PAGE_TITLE = "About Purdue SMIF — Student Investment Club & Fund";
+const PAGE_TITLE = "About Purdue SMIF: Student Investment Club & Fund";
 const PAGE_DESCRIPTION =
   "How Purdue's student investment club works: the history, philosophy, and process behind every real-money position, and what sets it apart from other clubs.";
 

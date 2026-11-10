@@ -30,7 +30,7 @@ import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import { socialMeta, canonical, OG_HOME } from "@/lib/seo";
 import { PerformanceSparkline } from "@/components/PerformanceSparkline";
 
-const HOME_TITLE = "Purdue SMIF — Student Managed Investment Fund";
+const HOME_TITLE = "Purdue SMIF: Student Managed Investment Fund";
 const HOME_DESCRIPTION =
   "Purdue SMIF is the student investment club at the Daniels School of Business: the university's student-managed fund, where analysts invest real capital.";
 

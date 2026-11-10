@@ -21,7 +21,7 @@ function NotFoundComponent() {
       {/* React 19 hoists these into <head>. Without them a soft-404 inherits the
           root title/description and stays indexable — unknown /team/<slug>
           values land here, so that would publish an endless supply of them. */}
-      <title>Page not found — Purdue SMIF</title>
+      <title>Page not found: Purdue SMIF</title>
       <meta name="robots" content="noindex, follow" />
       <div className="max-w-md text-center text-background">
         <span className="mx-auto mb-8 grid h-16 w-16 place-items-center bg-background p-2">
@@ -86,7 +86,7 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
   const router = useRouter();
   return (
     <div className="flex min-h-dvh items-center justify-center bg-ink px-4">
-      <title>Something went wrong — Purdue SMIF</title>
+      <title>Something went wrong: Purdue SMIF</title>
       <meta name="robots" content="noindex, follow" />
       <div className="max-w-md text-center text-background">
         <span className="rule-gold block mb-5 mx-auto" />

@@ -17,7 +17,7 @@ export const Route = createFileRoute("/apply")({
   component: Apply,
   head: () => ({
     meta: [
-      { title: "Apply to Join — Purdue Student Managed Investment Fund" },
+      { title: "Apply to Join: Purdue Student Managed Investment Fund" },
       {
         name: "description",
         content:
@@ -240,7 +240,9 @@ function Apply() {
           FAQ above, with links to the guides for the two interview rounds. */}
       <section className="bg-background border-t border-border section-y" aria-labelledby="after-h">
         <div className="container-prose max-w-3xl">
-          <h2 id="after-h">What happens after you apply</h2>
+          <h2 id="after-h" className="font-display text-3xl font-bold text-ink md:text-4xl">
+            What happens after you apply
+          </h2>
           <p className="mt-5">
             The application is a Qualtrics form that takes about 10 minutes. Next comes an informal
             coffee chat with current members, then the interview round: a markets question,

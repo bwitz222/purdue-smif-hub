@@ -20,8 +20,10 @@ function levelText(f: Freshness): string {
 function Row({ label, f }: { label: string; f: Freshness }) {
   return (
     <div className="border-t border-ink pt-3">
-      <dt className="text-xs text-muted-foreground">{label}</dt>
-      <dd className="mt-1 font-display text-lg text-ink">{asOfText(f)}</dd>
+      <dt className="text-[10px] font-mono uppercase tracking-[0.18em] text-muted-foreground">
+        {label}
+      </dt>
+      <dd className="mt-1 font-display text-lg font-bold text-ink">{asOfText(f)}</dd>
       <dd
         className={`text-xs ${f.level === "stale" ? "font-bold text-ink" : "text-muted-foreground"}`}
       >
@@ -55,8 +57,10 @@ export function DataStatus({ status }: { status: LiveStatus }) {
         <Row label="Risk metrics" f={status.risk} />
         <Row label="Sector weights (SPY)" f={status.weights} />
         <div className="border-t border-ink pt-3">
-          <dt className="text-xs text-muted-foreground">Last checked</dt>
-          <dd className="mt-1 font-display text-lg text-ink" aria-live="polite">
+          <dt className="text-[10px] font-mono uppercase tracking-[0.18em] text-muted-foreground">
+            Last checked
+          </dt>
+          <dd className="mt-1 font-display text-lg font-bold text-ink" aria-live="polite">
             {status.isFetching ? "Checking…" : (checked ?? "n/a")}
           </dd>
           <dd>

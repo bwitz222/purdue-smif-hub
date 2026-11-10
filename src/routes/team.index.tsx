@@ -35,7 +35,7 @@ export const Route = createFileRoute("/team/")({
   }),
   head: () => ({
     meta: [
-      { title: "Meet the Team — Purdue Student Managed Investment Fund" },
+      { title: "Meet the Team: Purdue Student Managed Investment Fund" },
       {
         name: "description",
         content:
