@@ -20,7 +20,13 @@ import { socialMeta, canonical, breadcrumbLd, OG_SECTORS } from "@/lib/seo";
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import { getLiveQuotes } from "@/lib/quotes.functions";
 import { getRiskMetrics } from "@/lib/risk.functions";
-import { applyQuotes, teamAllocations, baseHoldings } from "@/lib/portfolio";
+import {
+  applyQuotes,
+  teamAllocations,
+  baseHoldings,
+  teamSlug,
+  type TeamAllocation,
+} from "@/lib/portfolio";
 import { getEtfSectorWeights } from "@/lib/etf-weights.functions";
 import { liveQueryOptions } from "@/lib/live-query";
 import { sectorTeams, fixedIncomeMacro, portfolioManagers, LEAD_ROLE } from "@/data/team";
@@ -31,7 +37,7 @@ type EquityTeam = {
   name: string;
   lead: string;
 };
-type ProcessTeam = EquityTeam;
+type ProcessTeam = EquityTeam & { links?: { to: "/holdings" | "/performance"; label: string }[] };
 
 const EQUITY_TEAMS: EquityTeam[] = [
   {
@@ -86,6 +92,10 @@ const PROCESS_TEAMS: ProcessTeam[] = [
     Icon: Briefcase,
     name: "Portfolio + Risk Management",
     lead: "Allocation, risk oversight, trading, and performance attribution.",
+    links: [
+      { to: "/holdings", label: "See the full book" },
+      { to: "/performance", label: "See performance" },
+    ],
   },
 ];
 
@@ -135,6 +145,8 @@ export const Route = createFileRoute("/sectors")({
 const fmtPct = (n: number) => `${n.toFixed(1)}%`;
 const fmtUSD0 = (n: number) =>
   n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+// Typeset minus, explicit plus: the sign carries the meaning, color only echoes it.
+const fmtSigned = (n: number) => `${n >= 0 ? "+" : "\u2212"}${Math.abs(n).toFixed(1)}%`;
 
 // Portfolio manager name(s) for a given team, pulled from team.ts. Matched on
 // the declared role rather than on array position: a team whose lead seat is
@@ -152,6 +164,124 @@ function pmsForProcessTeam(name: string): string[] {
   if (name === "Fixed Income & Macro") return leadsOf(fixedIncomeMacro);
   if (name === "Portfolio + Risk Management") return leadsOf(portfolioManagers);
   return [];
+}
+
+// One coverage team, read against the holdings book. Every ticker links to its
+// row on /holdings, the footer link opens /holdings scoped to this team, and
+// the card carries an anchor id so /holdings can link back to it.
+function TeamCard({
+  Icon,
+  name,
+  lead,
+  alloc,
+  pms,
+}: {
+  Icon: typeof Cpu;
+  name: string;
+  lead: string;
+  alloc: TeamAllocation | undefined;
+  pms: string[];
+}) {
+  const positions = alloc?.positions ?? [];
+  return (
+    <article
+      id={teamSlug(name)}
+      className="group section-anchor flex h-full flex-col p-6 transition-colors duration-200 hover:bg-secondary/30 sm:p-8"
+    >
+      <div className="flex items-start justify-between gap-6">
+        <div className="flex items-start gap-4">
+          <Icon className="mt-1 h-6 w-6 shrink-0 text-ink" />
+          <div>
+            <h3 className="font-display text-ink">{name}</h3>
+            <p className="mt-1.5 text-sm text-muted-foreground">{lead}</p>
+          </div>
+        </div>
+        <div className="text-right shrink-0">
+          <div className="font-display text-3xl font-bold text-ink leading-none">
+            {alloc ? fmtPct(alloc.pctOfInvested) : "n/a"}
+          </div>
+          <div className="mt-1 text-xs font-mono text-muted-foreground">
+            {alloc ? fmtUSD0(alloc.dollars) : ""}
+          </div>
+        </div>
+      </div>
+
+      {alloc && (
+        <p className="mt-4 text-xs font-mono text-muted-foreground">
+          {fmtUSD0(alloc.directDollars)} held directly
+          {alloc.etfDollars > 0 && <> + {fmtUSD0(alloc.etfDollars)} through SPY</>}
+        </p>
+      )}
+
+      <div className="mt-6">
+        <div className="text-xs font-mono text-muted-foreground">
+          {pms.length > 1 ? "Portfolio Managers" : "Portfolio Manager"}
+        </div>
+        <div className="mt-1.5 text-sm text-ink">
+          {pms.length ? pms.join(", ") : <span className="italic">Open seat</span>}
+        </div>
+      </div>
+
+      <div className="mt-6">
+        <div className="flex items-baseline justify-between gap-3">
+          <h4 className="text-sm text-ink">
+            {positions.length} {positions.length === 1 ? "position" : "positions"}
+          </h4>
+          {alloc && positions.length > 0 && (
+            <span className="text-xs font-mono text-muted-foreground">
+              {fmtSigned(alloc.returnPct)} on cost
+            </span>
+          )}
+        </div>
+        {positions.length ? (
+          <ul className="mt-2 border-t border-border text-sm">
+            {positions.map((h) => (
+              <li key={h.symbol} className="border-b border-border">
+                <Link
+                  to="/holdings"
+                  search={{ q: h.symbol }}
+                  className="row-rail grid min-h-11 grid-cols-[3.5rem_1fr_auto_4rem] items-center gap-3 px-2 hover:bg-secondary"
+                >
+                  <span className="font-mono font-bold text-gold-deep">{h.symbol}</span>
+                  <span className="truncate text-ink">{h.company}</span>
+                  <span className="font-mono text-ink">{fmtUSD0(h.value)}</span>
+                  <span
+                    className={`text-right font-mono ${h.returnPct >= 0 ? "text-gain" : "text-loss"}`}
+                  >
+                    {fmtSigned(h.returnPct)}
+                  </span>
+                  <span className="sr-only">, open {h.symbol} in Holdings</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="mt-2 text-sm italic">
+            No direct positions yet. This team's share comes from SPY.
+          </p>
+        )}
+      </div>
+
+      <div className="mt-auto flex flex-wrap items-center gap-x-6 gap-y-2 pt-6">
+        <Link
+          to="/holdings"
+          search={{ team: name }}
+          className="link-underline inline-flex min-h-6 items-center gap-1.5 text-sm font-bold text-gold-deep hover:text-ink"
+        >
+          View in Holdings
+          <ArrowRight className="h-3.5 w-3.5 arrow-slide" />
+        </Link>
+        <Link
+          to="/team"
+          search={{ sector: name }}
+          className="link-underline inline-flex min-h-6 items-center gap-1.5 text-sm font-bold text-gold-deep hover:text-ink"
+        >
+          View team
+          <ArrowRight className="h-3.5 w-3.5 arrow-slide" />
+        </Link>
+      </div>
+    </article>
+  );
 }
 
 function Sectors() {
@@ -179,11 +309,22 @@ function Sectors() {
     ...liveQueryOptions,
   });
 
+  const updated = useMemo(() => applyQuotes(baseHoldings, quoteData?.quotes ?? {}), [quoteData]);
   const teams = useMemo(() => {
-    const updated = applyQuotes(baseHoldings, quoteData?.quotes ?? {});
     const allocations = teamAllocations(updated, etfWeights?.weights);
     return new Map(allocations.map((a) => [a.team, a]));
-  }, [quoteData, etfWeights]);
+  }, [updated, etfWeights]);
+  // Book-level totals, so the cards can be read against /holdings: the teams
+  // below sum to invested capital, direct positions plus SPY look-through.
+  const book = useMemo(() => {
+    const all = Array.from(teams.values());
+    return {
+      invested: updated.reduce((sum, h) => sum + h.value, 0),
+      direct: all.reduce((sum, t) => sum + t.directDollars, 0),
+      lookThrough: all.reduce((sum, t) => sum + t.etfDollars, 0),
+      positions: all.reduce((sum, t) => sum + t.positions.length, 0),
+    };
+  }, [teams, updated]);
 
   // True session date of the quotes (Polygon's latest completed close), from
   // the risk metrics' as_of — not quoteData.cachedAt, which is the fetch time.
@@ -234,6 +375,33 @@ function Sectors() {
                 <>Last reported snapshot</>
               )}
             </div>
+            <dl className="mt-10 grid max-w-3xl grid-cols-2 gap-x-8 gap-y-6 md:grid-cols-4">
+              <div className="border-t border-ink pt-3">
+                <dd className="font-display text-2xl text-ink">{fmtUSD0(book.invested)}</dd>
+                <dt className="text-sm">Invested capital</dt>
+              </div>
+              <div className="border-t border-ink pt-3">
+                <dd className="font-display text-2xl text-ink">{book.positions}</dd>
+                <dt className="text-sm">Single-name positions</dt>
+              </div>
+              <div className="border-t border-ink pt-3">
+                <dd className="font-display text-2xl text-ink">{fmtUSD0(book.direct)}</dd>
+                <dt className="text-sm">Held directly by teams</dt>
+              </div>
+              <div className="border-t border-ink pt-3">
+                <dd className="font-display text-2xl text-ink">{fmtUSD0(book.lookThrough)}</dd>
+                <dt className="text-sm">SPY, split by sector</dt>
+              </div>
+            </dl>
+            <p className="mt-6 max-w-2xl text-sm">
+              Each team's percentage is its share of invested capital, the same figure as the Sector
+              Allocation on{" "}
+              <Link to="/holdings" className="link-underline font-bold text-gold-deep">
+                Holdings
+              </Link>
+              . SPY has no single sector, so it is divided across all eleven by State Street's
+              published weights and credited to the team that owns each one.
+            </p>
           </Reveal>
         </div>
       </section>
@@ -246,83 +414,24 @@ function Sectors() {
           </span>
         </div>
         <RevealGroup className="grid gap-px bg-border md:grid-cols-2" stagger={0.04}>
-          {EQUITY_TEAMS.map(({ Icon, name, lead }) => {
-            const alloc = teams.get(name);
-            const pms = pmsForEquityTeam(name);
-            return (
-              <RevealItem key={name} className="bg-background">
-                <article className="group flex h-full flex-col p-8 transition-colors duration-200 hover:bg-secondary/30">
-                  <div className="flex items-start justify-between gap-6">
-                    <div className="flex items-start gap-4">
-                      <Icon className="mt-1 h-6 w-6 shrink-0 text-gold-deep icon-pop" />
-                      <div>
-                        <h3 className="font-display text-xl font-bold text-ink">{name}</h3>
-                        <p className="mt-1.5 text-sm text-muted-foreground">{lead}</p>
-                      </div>
-                    </div>
-                    <div className="text-right shrink-0">
-                      <div className="font-display text-3xl font-bold text-ink leading-none">
-                        {alloc ? fmtPct(alloc.pctOfInvested) : "—"}
-                      </div>
-                      <div className="mt-1 text-[10px] font-mono uppercase tracking-[0.18em] text-muted-foreground">
-                        {alloc ? fmtUSD0(alloc.dollars) : ""}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="mt-6 grid gap-6 sm:grid-cols-2">
-                    <div>
-                      <div className="text-[10px] font-mono uppercase tracking-[0.22em] text-muted-foreground">
-                        Portfolio Manager
-                      </div>
-                      <div className="mt-1.5 text-sm text-ink">
-                        {pms.length ? (
-                          pms.join(", ")
-                        ) : (
-                          <span className="text-muted-foreground italic">Open seat</span>
-                        )}
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-[10px] font-mono uppercase tracking-[0.22em] text-muted-foreground">
-                        Top holdings
-                      </div>
-                      <ul className="mt-1.5 space-y-0.5 text-sm text-ink">
-                        {alloc && alloc.topHoldings.length ? (
-                          alloc.topHoldings.map((h) => (
-                            <li key={h.symbol} className="flex items-baseline gap-2">
-                              <span className="font-mono text-xs text-gold-deep">{h.symbol}</span>
-                              <span className="truncate text-muted-foreground">{h.company}</span>
-                            </li>
-                          ))
-                        ) : (
-                          <li className="text-muted-foreground italic">No direct positions yet</li>
-                        )}
-                      </ul>
-                    </div>
-                  </div>
-
-                  <div className="mt-8 pt-5 border-t border-border">
-                    <Link
-                      to="/team"
-                      search={{ sector: name }}
-                      className="link-underline inline-flex min-h-6 items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-gold-deep hover:text-ink transition-colors"
-                    >
-                      View team
-                      <ArrowRight className="h-3.5 w-3.5 arrow-slide" />
-                    </Link>
-                  </div>
-                </article>
-              </RevealItem>
-            );
-          })}
+          {EQUITY_TEAMS.map(({ Icon, name, lead }) => (
+            <RevealItem key={name} className="bg-background">
+              <TeamCard
+                Icon={Icon}
+                name={name}
+                lead={lead}
+                alloc={teams.get(name)}
+                pms={pmsForEquityTeam(name)}
+              />
+            </RevealItem>
+          ))}
         </RevealGroup>
       </section>
 
       <section className="container-prose pb-24">
         <h2 className="font-display text-2xl md:text-3xl font-bold text-ink mb-8">Process teams</h2>
         <RevealGroup className="grid gap-px bg-border md:grid-cols-2" stagger={0.04}>
-          {PROCESS_TEAMS.map(({ Icon, name, lead }) => {
+          {PROCESS_TEAMS.map(({ Icon, name, lead, links }) => {
             const pms = pmsForProcessTeam(name);
             return (
               <RevealItem key={name} className="bg-background">
@@ -346,7 +455,17 @@ function Sectors() {
                       )}
                     </div>
                   </div>
-                  <div className="mt-auto pt-8">
+                  <div className="mt-auto flex flex-wrap items-center gap-x-6 gap-y-2 pt-8">
+                    {links?.map((l) => (
+                      <Link
+                        key={l.to}
+                        to={l.to}
+                        className="link-underline inline-flex min-h-6 items-center gap-1.5 text-sm font-bold text-gold-deep hover:text-ink"
+                      >
+                        {l.label}
+                        <ArrowRight className="h-3.5 w-3.5 arrow-slide" />
+                      </Link>
+                    ))}
                     <Link
                       to="/team"
                       search={{ sector: name }}
