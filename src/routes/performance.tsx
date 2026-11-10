@@ -88,11 +88,17 @@ const fmtMult = (v: number) => `${v.toFixed(2)}×`;
 const fmtPctPlain = (v: number) => `${v.toFixed(1)}%`; // no leading + (vol, tracking error…)
 // A KPI whose window isn't fully populated renders "—" rather than a number
 // measuring a shorter period than its label claims.
-const fmtPctOrDash = (v: number | null) => (v === null ? "—" : fmtPct(v));
+const fmtPctOrDash = (v: number | null) => (v === null ? "n/a" : fmtPct(v));
 const fmtRatio = (v: number) => v.toFixed(2); // Sharpe, beta, correlation…
 
-const SMIF_COLOR = "#CEB888";
-const BENCH_COLOR = "#6B6860";
+// Chart rules, house style A4: primary series Aged Gold at 2pt, benchmark Black
+// and dashed, axis text Steel, gridlines Light Gray, flat Purdue Gold fills.
+const SMIF_COLOR = "#8E6F3E";
+const SMIF_FILL = "#CFB991";
+const BENCH_COLOR = "#000000";
+const AXIS_COLOR = "#555960";
+const GRID_COLOR = "#D4D5D8";
+const CHART_FONT = '"Times New Roman", Times, "Liberation Serif", serif';
 
 function ChartTooltip({
   active,
@@ -107,7 +113,7 @@ function ChartTooltip({
 }) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="border border-border bg-background px-4 py-3 shadow-elegant">
+    <div className="border border-border bg-background px-4 py-3">
       <div className="font-display text-sm font-bold text-ink">{label}</div>
       <div className="mt-2 space-y-1">
         {payload.map((p) => (
@@ -142,7 +148,7 @@ function MonthlyTooltip({
   const fmt = (v: number) =>
     mode === "growth" ? fmtMult(v) : `${v > 0 ? "+" : ""}${v.toFixed(2)}%`;
   return (
-    <div className="border border-border bg-background px-4 py-3 shadow-elegant">
+    <div className="border border-border bg-background px-4 py-3">
       <div className="font-display text-sm font-bold text-ink">
         {label ? formatMonth(label) : ""}
       </div>
@@ -390,22 +396,10 @@ function Performance() {
     <>
       {/* ── Page header ─────────────────────────────────────────── */}
       <section className="relative bg-ink text-background overflow-hidden">
-        <div className="container-prose py-28">
-          <div className="flex items-center gap-3 mb-8">
-            <span className="rule-gold" />
-            <span className="text-xs font-semibold uppercase tracking-[0.32em] text-gold/70">
-              Performance
-            </span>
-          </div>
-          <h1
-            className="font-display font-bold text-background max-w-3xl"
-            style={{ fontSize: "clamp(2.8rem, 6vw, 5.5rem)", lineHeight: "1.02" }}
-          >
-            Benchmarked.
-            <br />
-            Transparent.
-            <br />
-            <span className="text-gold/80">Quarterly.</span>
+        <div className="container-prose section-y">
+          <span className="rule-gold mb-6" />
+          <h1 className="font-display text-background max-w-3xl">
+            Performance, benchmarked and reported quarterly.
           </h1>
           <p className="mt-8 max-w-xl text-on-dark-secondary leading-relaxed text-lg">
             Measured against the S&amp;P 500 Total Return Index (SPY). The fund was established in
@@ -419,10 +413,10 @@ function Performance() {
 
       {!monthlyData && !allAudited && (
         <div className="container-prose pt-10">
-          <div className="border border-gold/40 bg-secondary/30 p-5 md:p-6 flex items-start gap-4">
+          <div className="border border-gold/40 bg-background p-5 md:p-6 flex items-start gap-4">
             <span className="rule-gold mt-2 shrink-0" aria-hidden="true" />
             <div className="flex-1">
-              <div className="text-[10px] font-mono font-semibold uppercase tracking-[0.28em] text-gold-deep mb-1">
+              <div className="text-xs font-mono font-semibold text-gold-deep mb-1">
                 Work in progress
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed">
@@ -441,11 +435,8 @@ function Performance() {
           className={`grid gap-px bg-border ${KPI_STATS.length === 4 ? "md:grid-cols-4" : "md:grid-cols-3"}`}
         >
           {KPI_STATS.map(({ l, v, pos }) => (
-            <div
-              key={l}
-              className="bg-card p-8 flex flex-col gap-1 border border-border hover-raise"
-            >
-              <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">{l}</div>
+            <div key={l} className="bg-card p-8 flex flex-col gap-1 border border-border">
+              <div className="text-xs text-muted-foreground">{l}</div>
               <div
                 className={`font-display text-4xl font-bold mt-1 inline-flex items-baseline gap-1.5 ${pos ? "text-gain" : "text-loss"}`}
               >
@@ -468,9 +459,7 @@ function Performance() {
             would be nothing to switch between. */}
         {monthlyData && windows["5y"] && (
           <Reveal className="flex flex-wrap items-center gap-x-4 gap-y-2" delay={0.01}>
-            <span className="text-[10px] font-mono uppercase tracking-[0.22em] text-muted-foreground">
-              Measurement window
-            </span>
+            <span className="text-xs font-mono text-muted-foreground">Measurement window</span>
             <div
               className="inline-flex border border-border"
               role="group"
@@ -486,7 +475,7 @@ function Performance() {
                   key={b.k}
                   onClick={() => setPerfWindow(b.k)}
                   aria-pressed={activeWindow === b.k}
-                  className={`press px-4 py-2 text-xs font-semibold uppercase tracking-wider cursor-pointer ${
+                  className={`press px-4 py-2 text-xs font-semibold cursor-pointer ${
                     activeWindow === b.k
                       ? "bg-ink text-background"
                       : "bg-background text-ink hover:bg-secondary"
@@ -507,26 +496,19 @@ function Performance() {
         {a && a.observations >= 12 && (
           <Reveal className="space-y-4" delay={0.02}>
             <div className="flex items-baseline justify-between gap-4">
-              <h2 className="font-display text-2xl font-bold text-ink md:text-3xl">
-                Risk &amp; return analytics
-              </h2>
-              <span className="text-[10px] font-mono uppercase tracking-[0.22em] text-muted-foreground whitespace-nowrap">
+              <h2 className="font-display text-ink">Risk &amp; return analytics</h2>
+              <span className="text-xs font-mono text-muted-foreground whitespace-nowrap">
                 {a.observations} mo · monthly basis
               </span>
             </div>
             <div className="grid gap-px bg-border sm:grid-cols-2 lg:grid-cols-4">
               {analyticsPrimary.map(({ l, v, tone, sub }) => (
-                <div
-                  key={l}
-                  className="bg-card p-6 flex flex-col gap-1 border border-border hover-raise"
-                >
-                  <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                    {l}
-                  </div>
+                <div key={l} className="bg-card p-6 flex flex-col gap-1 border border-border">
+                  <div className="text-xs text-muted-foreground">{l}</div>
                   <div className={`font-display text-3xl font-bold mt-1 ${toneClass(tone)}`}>
                     {v}
                   </div>
-                  <div className="text-[11px] text-muted-foreground font-mono">{sub}</div>
+                  <div className="text-xs text-muted-foreground font-mono">{sub}</div>
                 </div>
               ))}
             </div>
@@ -534,11 +516,9 @@ function Performance() {
               {analyticsSecondary.map(({ l, v, tone }) => (
                 <div
                   key={l}
-                  className="bg-card px-6 py-5 flex flex-col gap-0.5 border border-border hover-raise"
+                  className="bg-card px-6 py-5 flex flex-col gap-0.5 border border-border"
                 >
-                  <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-                    {l}
-                  </div>
+                  <div className="text-xs text-muted-foreground">{l}</div>
                   <div className={`font-display text-xl font-bold ${toneClass(tone)}`}>{v}</div>
                 </div>
               ))}
@@ -558,12 +538,10 @@ function Performance() {
           <Reveal className="border border-border bg-card p-6 md:p-10" delay={0.04}>
             <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between mb-8">
               <div>
-                <div className="text-xs uppercase tracking-[0.22em] text-muted-foreground mb-2">
+                <div className="text-xs text-muted-foreground mb-2">
                   {windowLabel} · Monthly · updated {formatMonth(monthlyData.lastMonth)}
                 </div>
-                <h2 className="font-display text-2xl font-bold text-ink md:text-3xl">
-                  {monthlyChartTitle}
-                </h2>
+                <h2 className="font-display text-ink">{monthlyChartTitle}</h2>
               </div>
 
               <div className="flex flex-wrap gap-2">
@@ -578,7 +556,7 @@ function Performance() {
                     <button
                       key={b.k}
                       onClick={() => setIncMode(b.k)}
-                      className={`press px-4 py-2 text-xs font-semibold uppercase tracking-wider cursor-pointer ${
+                      className={`press px-4 py-2 text-xs font-semibold cursor-pointer ${
                         incMode === b.k
                           ? "bg-ink text-background"
                           : "bg-background text-ink hover:bg-secondary"
@@ -600,7 +578,7 @@ function Performance() {
                     <button
                       key={b.k}
                       onClick={() => setIncSeries(b.k)}
-                      className={`press px-4 py-2 text-xs font-semibold uppercase tracking-wider cursor-pointer ${
+                      className={`press px-4 py-2 text-xs font-semibold cursor-pointer ${
                         incSeries === b.k
                           ? "bg-gold-deep text-background"
                           : "bg-background text-ink hover:bg-secondary"
@@ -620,41 +598,31 @@ function Performance() {
                     data={monthlySeries}
                     margin={{ top: 10, right: 20, left: 0, bottom: 0 }}
                   >
-                    <defs>
-                      <linearGradient id="smifGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor={SMIF_COLOR} stopOpacity={0.35} />
-                        <stop offset="100%" stopColor={SMIF_COLOR} stopOpacity={0} />
-                      </linearGradient>
-                      <linearGradient id="benchGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor={BENCH_COLOR} stopOpacity={0.18} />
-                        <stop offset="100%" stopColor={BENCH_COLOR} stopOpacity={0} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid stroke="#E0DDD5" strokeDasharray="3 3" vertical={false} />
+                    <CartesianGrid stroke={GRID_COLOR} strokeDasharray="3 3" vertical={false} />
                     <XAxis
                       dataKey="month"
-                      stroke="#6B6860"
-                      tick={{ fontSize: 11, fontFamily: "IBM Plex Mono" }}
+                      stroke={AXIS_COLOR}
+                      tick={{ fontSize: 13, fontFamily: CHART_FONT }}
                       tickLine={false}
-                      axisLine={{ stroke: "#E0DDD5" }}
+                      axisLine={{ stroke: GRID_COLOR }}
                       tickFormatter={monthlyTickFormatter}
                       interval={0}
                       minTickGap={20}
                     />
                     <YAxis
-                      stroke="#6B6860"
-                      tick={{ fontSize: 11, fontFamily: "IBM Plex Mono" }}
+                      stroke={AXIS_COLOR}
+                      tick={{ fontSize: 13, fontFamily: CHART_FONT }}
                       tickLine={false}
                       axisLine={false}
                       tickFormatter={(v) => `${v.toFixed(1)}×`}
                     />
                     <Tooltip
-                      cursor={{ stroke: "#CEB888", strokeDasharray: "4 4", strokeWidth: 1 }}
+                      cursor={{ stroke: SMIF_COLOR, strokeDasharray: "4 4", strokeWidth: 1 }}
                       content={<MonthlyTooltip mode={incMode} />}
                     />
                     <Legend
-                      iconType="circle"
-                      wrapperStyle={{ fontSize: 11, paddingTop: 16, fontFamily: "IBM Plex Mono" }}
+                      iconType="plainline"
+                      wrapperStyle={{ fontSize: 13, paddingTop: 16, fontFamily: CHART_FONT }}
                     />
                     {showIncSmif && (
                       <Area
@@ -662,8 +630,9 @@ function Performance() {
                         dataKey="smif"
                         name="SMIF"
                         stroke={SMIF_COLOR}
-                        strokeWidth={2.5}
-                        fill="url(#smifGrad)"
+                        strokeWidth={2}
+                        fill={SMIF_FILL}
+                        fillOpacity={0.4}
                       />
                     )}
                     {showIncBench && (
@@ -674,7 +643,7 @@ function Performance() {
                         stroke={BENCH_COLOR}
                         strokeWidth={2}
                         strokeDasharray="6 4"
-                        fill="url(#benchGrad)"
+                        fill="none"
                       />
                     )}
                   </AreaChart>
@@ -683,32 +652,32 @@ function Performance() {
                     data={monthlySeries}
                     margin={{ top: 10, right: 20, left: 0, bottom: 0 }}
                   >
-                    <CartesianGrid stroke="#E0DDD5" strokeDasharray="3 3" vertical={false} />
+                    <CartesianGrid stroke={GRID_COLOR} strokeDasharray="3 3" vertical={false} />
                     <XAxis
                       dataKey="month"
-                      stroke="#6B6860"
-                      tick={{ fontSize: 11, fontFamily: "IBM Plex Mono" }}
+                      stroke={AXIS_COLOR}
+                      tick={{ fontSize: 13, fontFamily: CHART_FONT }}
                       tickLine={false}
-                      axisLine={{ stroke: "#E0DDD5" }}
+                      axisLine={{ stroke: GRID_COLOR }}
                       tickFormatter={monthlyTickFormatter}
                       interval={0}
                       minTickGap={20}
                     />
                     <YAxis
-                      stroke="#6B6860"
-                      tick={{ fontSize: 11, fontFamily: "IBM Plex Mono" }}
+                      stroke={AXIS_COLOR}
+                      tick={{ fontSize: 13, fontFamily: CHART_FONT }}
                       tickLine={false}
                       axisLine={false}
                       tickFormatter={(v) => `${v.toFixed(0)}%`}
                     />
-                    <ReferenceLine y={0} stroke="#E0DDD5" strokeWidth={1} />
+                    <ReferenceLine y={0} stroke={GRID_COLOR} strokeWidth={1} />
                     <Tooltip
-                      cursor={{ stroke: "#CEB888", strokeDasharray: "4 4", strokeWidth: 1 }}
+                      cursor={{ stroke: SMIF_COLOR, strokeDasharray: "4 4", strokeWidth: 1 }}
                       content={<MonthlyTooltip mode={incMode} />}
                     />
                     <Legend
-                      iconType="circle"
-                      wrapperStyle={{ fontSize: 11, paddingTop: 16, fontFamily: "IBM Plex Mono" }}
+                      iconType="plainline"
+                      wrapperStyle={{ fontSize: 13, paddingTop: 16, fontFamily: CHART_FONT }}
                     />
                     {showIncSmif && (
                       <Line
@@ -717,7 +686,7 @@ function Performance() {
                         name="SMIF"
                         dot={false}
                         stroke={SMIF_COLOR}
-                        strokeWidth={2.5}
+                        strokeWidth={2}
                       />
                     )}
                     {showIncBench && (
@@ -749,10 +718,8 @@ function Performance() {
         <Reveal className="border border-border bg-card p-6 md:p-10" delay={0.08}>
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between mb-8">
             <div>
-              <div className="text-xs uppercase tracking-[0.22em] text-muted-foreground mb-2">
-                Annual · Audited Years
-              </div>
-              <h2 className="font-display text-2xl font-bold text-ink md:text-3xl">
+              <div className="text-xs text-muted-foreground mb-2">Annual · Audited Years</div>
+              <h2 className="font-display text-ink">
                 {mode === "cumulative" ? `Growth of $1 since ${baseYear}` : "Annual returns"}
               </h2>
             </div>
@@ -768,7 +735,7 @@ function Performance() {
                   <button
                     key={b.k}
                     onClick={() => setMode(b.k)}
-                    className={`press px-4 py-2 text-xs font-semibold uppercase tracking-wider cursor-pointer ${
+                    className={`press px-4 py-2 text-xs font-semibold cursor-pointer ${
                       mode === b.k
                         ? "bg-ink text-background"
                         : "bg-background text-ink hover:bg-secondary"
@@ -790,7 +757,7 @@ function Performance() {
                   <button
                     key={b.k}
                     onClick={() => setSeries(b.k)}
-                    className={`press px-4 py-2 text-xs font-semibold uppercase tracking-wider cursor-pointer ${
+                    className={`press px-4 py-2 text-xs font-semibold cursor-pointer ${
                       series === b.k
                         ? "bg-gold-deep text-background"
                         : "bg-background text-ink hover:bg-secondary"
@@ -806,32 +773,32 @@ function Performance() {
           <div className="h-[380px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={data} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
-                <CartesianGrid stroke="#E0DDD5" strokeDasharray="3 3" vertical={false} />
+                <CartesianGrid stroke={GRID_COLOR} strokeDasharray="3 3" vertical={false} />
                 <XAxis
                   dataKey="year"
-                  stroke="#6B6860"
-                  tick={{ fontSize: 11, fontFamily: "IBM Plex Mono" }}
+                  stroke={AXIS_COLOR}
+                  tick={{ fontSize: 13, fontFamily: CHART_FONT }}
                   tickLine={false}
-                  axisLine={{ stroke: "#E0DDD5" }}
+                  axisLine={{ stroke: GRID_COLOR }}
                   minTickGap={24}
                   interval="preserveStartEnd"
                 />
 
                 <YAxis
-                  stroke="#6B6860"
-                  tick={{ fontSize: 11, fontFamily: "IBM Plex Mono" }}
+                  stroke={AXIS_COLOR}
+                  tick={{ fontSize: 13, fontFamily: CHART_FONT }}
                   tickLine={false}
                   axisLine={false}
                   tickFormatter={(v) => (mode === "cumulative" ? `${v.toFixed(1)}×` : `${v}%`)}
                 />
-                {mode === "annual" && <ReferenceLine y={0} stroke="#E0DDD5" strokeWidth={1} />}
+                {mode === "annual" && <ReferenceLine y={0} stroke={GRID_COLOR} strokeWidth={1} />}
                 <Tooltip
-                  cursor={{ stroke: "#CEB888", strokeDasharray: "4 4", strokeWidth: 1 }}
+                  cursor={{ stroke: SMIF_COLOR, strokeDasharray: "4 4", strokeWidth: 1 }}
                   content={<ChartTooltip mode={mode} />}
                 />
                 <Legend
-                  iconType="circle"
-                  wrapperStyle={{ fontSize: 11, paddingTop: 16, fontFamily: "IBM Plex Mono" }}
+                  iconType="plainline"
+                  wrapperStyle={{ fontSize: 13, paddingTop: 16, fontFamily: CHART_FONT }}
                 />
                 {showSmif && (
                   <Line
@@ -839,7 +806,7 @@ function Performance() {
                     dataKey="smif"
                     name="SMIF"
                     stroke={SMIF_COLOR}
-                    strokeWidth={2.5}
+                    strokeWidth={2}
                     dot={{ r: 4, fill: SMIF_COLOR, strokeWidth: 0 }}
                     activeDot={{ r: 6, stroke: SMIF_COLOR, strokeWidth: 2, fill: "#fff" }}
                   />
@@ -862,20 +829,21 @@ function Performance() {
         </Reveal>
 
         {/* ── Annual returns table ───────────────────────────────── */}
-        <Reveal className="overflow-x-auto border border-border">
+        <div
+          role="region"
+          aria-label="Annual returns, scrollable horizontally"
+          tabIndex={0}
+          className="overflow-x-auto border border-border"
+        >
           <table className="w-full min-w-[520px] text-left">
             <thead className="bg-ink text-background">
               <tr>
-                <th className="px-3 py-3 md:px-6 md:py-4 text-xs font-semibold uppercase tracking-wider">
-                  Year
-                </th>
-                <th className="px-3 py-3 md:px-6 md:py-4 text-xs font-semibold uppercase tracking-wider text-right">
-                  SMIF
-                </th>
-                <th className="px-3 py-3 md:px-6 md:py-4 text-xs font-semibold uppercase tracking-wider text-right">
+                <th className="px-3 py-3 md:px-6 md:py-4 text-xs font-semibold">Year</th>
+                <th className="px-3 py-3 md:px-6 md:py-4 text-xs font-semibold text-right">SMIF</th>
+                <th className="px-3 py-3 md:px-6 md:py-4 text-xs font-semibold text-right">
                   S&P 500 TR
                 </th>
-                <th className="px-3 py-3 md:px-6 md:py-4 text-xs font-semibold uppercase tracking-wider text-right">
+                <th className="px-3 py-3 md:px-6 md:py-4 text-xs font-semibold text-right">
                   Spread
                 </th>
               </tr>
@@ -916,10 +884,10 @@ function Performance() {
               })}
             </tbody>
           </table>
-        </Reveal>
+        </div>
 
         <div className="border-t border-border pt-6 pb-8 mt-4 space-y-2 text-xs text-muted-foreground max-w-3xl">
-          <div className="text-[10px] font-mono font-semibold uppercase tracking-[0.28em] text-muted-foreground">
+          <div className="text-xs font-mono font-semibold text-muted-foreground">
             Methodology &amp; disclaimer
           </div>
           <p>

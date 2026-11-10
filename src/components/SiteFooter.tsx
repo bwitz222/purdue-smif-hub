@@ -21,21 +21,17 @@ export function SiteFooter() {
               />
             </span>
             <div>
-              <div className="font-display text-lg font-bold">Purdue SMIF</div>
-              <div className="text-xs uppercase tracking-[0.14em] text-on-dark-secondary">
-                Student Managed Investment Fund
-              </div>
+              <div className="text-lg font-bold">Purdue SMIF</div>
+              <div className="text-sm text-on-dark-secondary">Student Managed Investment Fund</div>
             </div>
           </div>
-          <p className="mt-6 max-w-md text-sm font-normal text-on-dark-secondary">
+          <p className="mt-6 max-w-md text-sm text-on-dark-secondary">
             A student-run investment fund at the Daniels School of Business, managing real capital
             with a disciplined, thesis-driven process since 1995.
           </p>
         </div>
         <nav aria-label="Footer">
-          <h2 className="text-sm font-medium text-gold mb-4 uppercase tracking-[0.14em]">
-            Explore
-          </h2>
+          <h2 className="mb-3 text-base font-bold text-background">Explore</h2>
           {/* min-h-6 on each link: 24px targets (WCAG 2.5.8); space-y-1 keeps the
               list the same height it had with 20px links and space-y-2. */}
           <ul className="space-y-1 text-sm text-on-dark-secondary">
@@ -53,9 +49,7 @@ export function SiteFooter() {
         </nav>
 
         <div>
-          <h2 className="text-sm font-medium text-gold mb-4 uppercase tracking-[0.14em]">
-            Contact
-          </h2>
+          <h2 className="mb-3 text-base font-bold text-background">Contact</h2>
           <ul className="space-y-1 text-sm text-on-dark-secondary">
             <li>Daniels School of Business</li>
             <li>403 Mitch Daniels Blvd</li>
@@ -74,9 +68,7 @@ export function SiteFooter() {
           </ul>
         </div>
         <div>
-          <h2 className="text-sm font-medium text-gold mb-4 uppercase tracking-[0.14em]">
-            Find Us
-          </h2>
+          <h2 className="mb-3 text-base font-bold text-background">Find Us</h2>
           <ul className="space-y-1 text-sm text-on-dark-secondary">
             <li>
               <a
@@ -85,7 +77,7 @@ export function SiteFooter() {
                 rel="noopener noreferrer"
                 className="group link-underline inline-flex min-h-6 items-center gap-2 hover:text-gold transition-colors duration-200"
               >
-                <GraduationCap className="h-4 w-4 icon-pop" />
+                <GraduationCap className="h-4 w-4" />
                 BoilerLink
               </a>
             </li>
@@ -96,7 +88,7 @@ export function SiteFooter() {
                 rel="noopener noreferrer"
                 className="group link-underline inline-flex min-h-6 items-center gap-2 hover:text-gold transition-colors duration-200"
               >
-                <Instagram className="h-4 w-4 icon-pop" />
+                <Instagram className="h-4 w-4" />
                 Instagram
               </a>
             </li>
@@ -107,7 +99,7 @@ export function SiteFooter() {
                 rel="noopener noreferrer"
                 className="group link-underline inline-flex min-h-6 items-center gap-2 hover:text-gold transition-colors duration-200"
               >
-                <Linkedin className="h-4 w-4 icon-pop" />
+                <Linkedin className="h-4 w-4" />
                 LinkedIn
               </a>
             </li>
@@ -118,22 +110,11 @@ export function SiteFooter() {
                 rel="noopener noreferrer"
                 className="group link-underline inline-flex min-h-6 items-center gap-2 hover:text-gold transition-colors duration-200"
               >
-                <Newspaper className="h-4 w-4 icon-pop" />
+                <Newspaper className="h-4 w-4" />
                 Substack
               </a>
             </li>
           </ul>
-        </div>
-      </div>
-      <div className="border-t border-background/10">
-        <div className="container-prose py-5 flex items-center gap-4">
-          <span className="text-[10px] font-mono uppercase tracking-[0.32em] text-on-dark-muted whitespace-nowrap">
-            Est. 1995
-          </span>
-          <span className="flex-1 h-px bg-gradient-gold opacity-50" aria-hidden="true" />
-          <span className="text-[10px] font-mono uppercase tracking-[0.32em] text-on-dark-muted whitespace-nowrap">
-            Present
-          </span>
         </div>
       </div>
       <div className="border-t border-background/10">

@@ -40,7 +40,7 @@ function MemberDetail({ m }: { m: Member }) {
 
   return (
     <div className="flex flex-col">
-      <div className="relative aspect-[4/5] w-full overflow-hidden bg-gradient-gold">
+      <div className="aspect-[4/5] w-full overflow-hidden bg-gold">
         {src ? (
           <img
             src={src}
@@ -58,50 +58,40 @@ function MemberDetail({ m }: { m: Member }) {
           />
         ) : (
           <div className="grid h-full w-full place-items-center">
-            <span className="font-display text-7xl font-bold text-ink/40">{initials}</span>
+            <span className="font-display text-7xl font-bold text-ink">{initials}</span>
           </div>
         )}
-        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/90 via-ink/40 to-transparent p-6 text-background">
-          <div className="text-[10px] font-semibold uppercase tracking-[0.28em] text-gold">
-            {m.role}
-          </div>
-          <SheetHeader className="space-y-1 text-left">
-            <SheetTitle className="font-display text-3xl font-bold text-background">
-              {m.name}
-            </SheetTitle>
-            <SheetDescription className="text-background/70 font-mono text-xs uppercase tracking-[0.2em]">
-              {m.year}
-            </SheetDescription>
-          </SheetHeader>
-        </div>
+      </div>
+      <div className="bg-ink p-6 text-background">
+        <div className="text-sm font-bold text-gold">{m.role}</div>
+        <SheetHeader className="space-y-1 text-left">
+          <SheetTitle className="text-2xl font-normal text-background">{m.name}</SheetTitle>
+          <SheetDescription className="text-sm text-on-dark-secondary">{m.year}</SheetDescription>
+        </SheetHeader>
       </div>
       <div className="p-6 space-y-6">
         <Link
           to="/team/$slug"
           params={{ slug: memberSlug(m.name) }}
-          className="press inline-flex w-full items-center justify-center gap-2 border border-ink px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.16em] hover:bg-ink hover:text-background"
+          className="press inline-flex w-full items-center justify-center gap-2 border border-ink px-4 py-2.5 text-xs font-semibold hover:bg-ink hover:text-background"
         >
           View full profile
         </Link>
         {m.bio && (
           <div>
-            <div className="text-[10px] font-semibold uppercase tracking-[0.28em] text-gold-deep mb-2">
-              Bio
-            </div>
-            <p className="text-sm leading-relaxed text-foreground/80">{m.bio}</p>
+            <div className="text-xs font-semibold text-gold-deep mb-2">Bio</div>
+            <p className="text-sm leading-relaxed text-foreground">{m.bio}</p>
           </div>
         )}
         {(email || m.linkedin) && (
           <div className="border-t border-border pt-5 space-y-3">
-            <div className="text-[10px] font-semibold uppercase tracking-[0.28em] text-gold-deep">
-              Contact
-            </div>
+            <div className="text-xs font-semibold text-gold-deep">Contact</div>
             {email && (
               <a
                 href={`mailto:${email}`}
                 className="group flex items-center gap-3 text-sm text-foreground hover:text-gold-deep transition-colors"
               >
-                <Mail className="h-4 w-4 icon-pop" />
+                <Mail className="h-4 w-4" />
                 <span className="link-underline font-mono">{email}</span>
               </a>
             )}
@@ -112,7 +102,7 @@ function MemberDetail({ m }: { m: Member }) {
                 rel="noopener noreferrer"
                 className="group flex items-center gap-3 text-sm text-foreground hover:text-gold-deep transition-colors"
               >
-                <Linkedin className="h-4 w-4 icon-pop" />
+                <Linkedin className="h-4 w-4" />
                 <span className="link-underline font-mono truncate">LinkedIn profile</span>
               </a>
             )}

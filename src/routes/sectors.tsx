@@ -197,16 +197,11 @@ function Sectors() {
 
   return (
     <>
-      <section className="border-b border-border bg-secondary/40">
-        <div className="container-prose py-24">
+      <section className="border-b border-border bg-background">
+        <div className="container-prose section-y">
           <Reveal>
             <span className="rule-gold mb-5 block" />
-            <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">
-              Coverage
-            </span>
-            <h1 className="mt-4 font-display text-5xl font-bold md:text-6xl max-w-3xl">
-              Our teams.
-            </h1>
+            <h1 className="mt-4 font-display max-w-3xl">Our teams.</h1>
             <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
               Eight equity sector teams cover the investable universe from the bottom up. A Fixed
               Income &amp; Macro group frames the rate and credit backdrop, and Portfolio + Risk
@@ -240,10 +235,8 @@ function Sectors() {
 
       <section className="container-prose py-20">
         <div className="flex items-baseline justify-between mb-8 gap-4">
-          <h2 className="font-display text-2xl md:text-3xl font-bold text-ink">Equity coverage</h2>
-          <span className="text-[10px] font-mono uppercase tracking-[0.22em] text-muted-foreground">
-            % of invested capital
-          </span>
+          <h2 className="font-display text-ink">Equity coverage</h2>
+          <span className="text-xs font-mono text-muted-foreground">% of invested capital</span>
         </div>
         <RevealGroup className="grid gap-px bg-border md:grid-cols-2" stagger={0.04}>
           {EQUITY_TEAMS.map(({ Icon, name, lead }) => {
@@ -254,17 +247,17 @@ function Sectors() {
                 <article className="group flex h-full flex-col p-8 transition-colors duration-200 hover:bg-secondary/30">
                   <div className="flex items-start justify-between gap-6">
                     <div className="flex items-start gap-4">
-                      <Icon className="mt-1 h-6 w-6 shrink-0 text-gold-deep icon-pop" />
+                      <Icon className="mt-1 h-6 w-6 shrink-0 text-ink" />
                       <div>
-                        <h3 className="font-display text-xl font-bold text-ink">{name}</h3>
+                        <h3 className="font-display text-ink">{name}</h3>
                         <p className="mt-1.5 text-sm text-muted-foreground">{lead}</p>
                       </div>
                     </div>
                     <div className="text-right shrink-0">
                       <div className="font-display text-3xl font-bold text-ink leading-none">
-                        {alloc ? fmtPct(alloc.pctOfInvested) : "—"}
+                        {alloc ? fmtPct(alloc.pctOfInvested) : "n/a"}
                       </div>
-                      <div className="mt-1 text-[10px] font-mono uppercase tracking-[0.18em] text-muted-foreground">
+                      <div className="mt-1 text-xs font-mono text-muted-foreground">
                         {alloc ? fmtUSD0(alloc.dollars) : ""}
                       </div>
                     </div>
@@ -272,7 +265,7 @@ function Sectors() {
 
                   <div className="mt-6 grid gap-6 sm:grid-cols-2">
                     <div>
-                      <div className="text-[10px] font-mono uppercase tracking-[0.22em] text-muted-foreground">
+                      <div className="text-xs font-mono text-muted-foreground">
                         Portfolio Manager
                       </div>
                       <div className="mt-1.5 text-sm text-ink">
@@ -284,9 +277,7 @@ function Sectors() {
                       </div>
                     </div>
                     <div>
-                      <div className="text-[10px] font-mono uppercase tracking-[0.22em] text-muted-foreground">
-                        Top holdings
-                      </div>
+                      <div className="text-xs font-mono text-muted-foreground">Top holdings</div>
                       <ul className="mt-1.5 space-y-0.5 text-sm text-ink">
                         {alloc && alloc.topHoldings.length ? (
                           alloc.topHoldings.map((h) => (
@@ -306,7 +297,7 @@ function Sectors() {
                     <Link
                       to="/team"
                       search={{ sector: name }}
-                      className="link-underline inline-flex min-h-6 items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-gold-deep hover:text-ink transition-colors"
+                      className="link-underline inline-flex min-h-6 items-center gap-1.5 text-xs font-semibold text-gold-deep hover:text-ink transition-colors"
                     >
                       View team
                       <ArrowRight className="h-3.5 w-3.5 arrow-slide" />
@@ -320,7 +311,7 @@ function Sectors() {
       </section>
 
       <section className="container-prose pb-24">
-        <h2 className="font-display text-2xl md:text-3xl font-bold text-ink mb-8">Process teams</h2>
+        <h2 className="font-display text-ink mb-8">Process teams</h2>
         <RevealGroup className="grid gap-px bg-border md:grid-cols-2" stagger={0.04}>
           {PROCESS_TEAMS.map(({ Icon, name, lead }) => {
             const pms = pmsForProcessTeam(name);
@@ -328,14 +319,14 @@ function Sectors() {
               <RevealItem key={name} className="bg-background">
                 <article className="group flex h-full flex-col p-8 transition-colors duration-200 hover:bg-secondary/30">
                   <div className="flex items-start gap-4">
-                    <Icon className="mt-1 h-6 w-6 shrink-0 text-gold-deep icon-pop" />
+                    <Icon className="mt-1 h-6 w-6 shrink-0 text-ink" />
                     <div>
-                      <h3 className="font-display text-xl font-bold text-ink">{name}</h3>
+                      <h3 className="font-display text-ink">{name}</h3>
                       <p className="mt-1.5 text-sm text-muted-foreground">{lead}</p>
                     </div>
                   </div>
                   <div className="mt-6">
-                    <div className="text-[10px] font-mono uppercase tracking-[0.22em] text-muted-foreground">
+                    <div className="text-xs font-mono text-muted-foreground">
                       {pms.length > 1 ? "Portfolio Managers" : "Portfolio Manager"}
                     </div>
                     <div className="mt-1.5 text-sm text-ink">
@@ -350,7 +341,7 @@ function Sectors() {
                     <Link
                       to="/team"
                       search={{ sector: name }}
-                      className="link-underline inline-flex min-h-6 items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-gold-deep hover:text-ink transition-colors"
+                      className="link-underline inline-flex min-h-6 items-center gap-1.5 text-xs font-semibold text-gold-deep hover:text-ink transition-colors"
                     >
                       View team
                       <ArrowRight className="h-3.5 w-3.5 arrow-slide" />

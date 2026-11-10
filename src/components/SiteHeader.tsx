@@ -1,7 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Menu, X } from "lucide-react";
-import { motion, useReducedMotion } from "framer-motion";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import smifLogo from "@/assets/smif-logo-mark.png";
@@ -10,33 +9,10 @@ import { NAV } from "@/lib/nav";
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
-  const reduce = useReducedMotion();
-
-  // Toggle a data attribute on the header for scroll shadow — avoids React re-renders on every scroll event.
-  useEffect(() => {
-    const header = document.getElementById("site-header");
-    if (!header) return;
-    let ticking = false;
-    const onScroll = () => {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(() => {
-        header.dataset.scrolled = window.scrollY > 20 ? "true" : "false";
-        ticking = false;
-      });
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   return (
     <>
-      <header
-        id="site-header"
-        data-scrolled="false"
-        className="sticky top-0 z-50 bg-ink border-b border-white/10 transition-shadow duration-300 data-[scrolled=true]:shadow-[0_4px_24px_-4px_rgba(0,0,0,0.4)]"
-      >
+      <header id="site-header" className="sticky top-0 z-50 bg-ink">
         <div className="container-prose flex h-14 items-center justify-between gap-4">
           <Link to="/" className="group flex items-center gap-2.5 shrink-0">
             <img
@@ -45,9 +21,9 @@ export function SiteHeader() {
               width={28}
               height={28}
               decoding="async"
-              className="h-7 w-7 object-contain select-none icon-pop"
+              className="h-7 w-7 object-contain select-none"
             />
-            <span className="font-mono text-xs uppercase tracking-[0.18em] text-on-dark-secondary group-hover:text-gold transition-colors duration-300">
+            <span className="text-base font-bold text-background group-hover:text-gold">
               Purdue SMIF
             </span>
           </Link>
@@ -56,8 +32,8 @@ export function SiteHeader() {
               <Link
                 key={to}
                 to={to}
-                className="relative py-1 text-xs font-semibold uppercase tracking-[0.14em] text-background/65 hover:text-background transition-colors duration-300 after:absolute after:inset-x-0 after:bottom-0 after:h-px after:origin-left after:scale-x-0 after:bg-gold after:transition-transform after:duration-300 after:ease-[cubic-bezier(0.22,1,0.36,1)] hover:after:scale-x-100 motion-reduce:after:transition-none"
-                activeProps={{ className: "text-gold after:scale-x-100" }}
+                className="relative py-1 text-sm text-on-dark-secondary hover:text-background after:absolute after:inset-x-0 after:bottom-0 after:h-px after:origin-left after:scale-x-0 after:bg-gold after:transition-transform after:duration-200 hover:after:scale-x-100 motion-reduce:after:transition-none"
+                activeProps={{ className: "text-background after:scale-x-100" }}
               >
                 {label}
               </Link>
@@ -68,12 +44,12 @@ export function SiteHeader() {
               href={applyUrl("header-apply")}
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden lg:inline-flex items-center px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] bg-gold text-ink transition-[background-color,transform] duration-150 hover:bg-gold-mid active:scale-95"
+              className="press hidden lg:inline-flex items-center rounded-sm px-4 py-1.5 text-sm font-bold bg-gold text-ink hover:bg-gold-mid"
             >
               Apply
             </a>
             <button
-              className="press lg:hidden inline-flex items-center justify-center min-h-11 min-w-11 -mr-2 text-background/70 hover:text-background"
+              className="press lg:hidden inline-flex items-center justify-center min-h-11 min-w-11 -mr-2 text-on-dark-secondary hover:text-background"
               onClick={() => setOpen(true)}
               aria-label="Open menu"
               aria-haspopup="dialog"
@@ -83,6 +59,8 @@ export function SiteHeader() {
             </button>
           </div>
         </div>
+        {/* Report-cover strip from the SMIF deck chrome. The one signature. */}
+        <div className="report-strip" aria-hidden="true" />
       </header>
 
       <Dialog open={open} onOpenChange={setOpen}>
@@ -94,80 +72,40 @@ export function SiteHeader() {
             <DialogDescription>Site navigation links</DialogDescription>
           </VisuallyHidden>
           <div className="container-prose flex h-14 items-center justify-between border-b border-white/10 shrink-0">
-            <span className="font-mono text-xs uppercase tracking-[0.18em] text-on-dark-secondary">
-              Purdue SMIF
-            </span>
+            <span className="text-base font-bold text-background">Purdue SMIF</span>
             <button
               onClick={() => setOpen(false)}
-              className="press inline-flex items-center justify-center min-h-11 min-w-11 -mr-2 text-background/70 hover:text-background"
+              className="press inline-flex items-center justify-center min-h-11 min-w-11 -mr-2 text-on-dark-secondary hover:text-background"
               aria-label="Close menu"
             >
               <X className="h-5 w-5" />
             </button>
           </div>
-          <nav className="flex flex-col justify-center flex-1 container-prose gap-0 pb-8 overflow-y-auto">
-            {NAV.map(({ to, label }, i) =>
-              reduce ? (
-                <div key={to}>
-                  <Link
-                    to={to}
-                    onClick={() => setOpen(false)}
-                    className="block font-display text-[2.2rem] sm:text-[2.6rem] font-semibold text-background/55 hover:text-background border-b border-white/5 py-4 transition-colors duration-300 leading-none"
-                    activeProps={{ className: "text-gold" }}
-                  >
-                    {label}
-                  </Link>
-                </div>
-              ) : (
-                <motion.div
-                  key={to}
-                  initial={{ opacity: 0, x: -24 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.32, delay: 0.05 + i * 0.05, ease: [0.22, 1, 0.36, 1] }}
-                >
-                  <Link
-                    to={to}
-                    onClick={() => setOpen(false)}
-                    className="block font-display text-[2.2rem] sm:text-[2.6rem] font-semibold text-background/55 hover:text-background border-b border-white/5 py-4 transition-colors duration-300 leading-none"
-                    activeProps={{ className: "text-gold" }}
-                  >
-                    {label}
-                  </Link>
-                </motion.div>
-              ),
-            )}
-            {reduce ? (
-              <a
-                href={applyUrl("mobile-menu")}
-                target="_blank"
-                rel="noopener noreferrer"
+          <nav className="flex flex-col flex-1 container-prose pt-4 pb-8 overflow-y-auto">
+            {NAV.map(({ to, label }) => (
+              <Link
+                key={to}
+                to={to}
                 onClick={() => setOpen(false)}
-                className="mt-10 inline-flex items-center justify-center py-4 text-sm font-semibold uppercase tracking-[0.16em] bg-gold text-ink hover:bg-gold-mid transition-colors duration-150"
+                className="block text-2xl text-on-dark-secondary hover:text-background border-b border-white/10 py-4"
+                activeProps={{ className: "text-gold" }}
               >
-                Apply to Join
-              </a>
-            ) : (
-              <motion.a
-                href={applyUrl("mobile-menu")}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => setOpen(false)}
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{
-                  duration: 0.35,
-                  delay: 0.05 + NAV.length * 0.05,
-                  ease: [0.22, 1, 0.36, 1],
-                }}
-                className="mt-10 inline-flex items-center justify-center py-4 text-sm font-semibold uppercase tracking-[0.16em] bg-gold text-ink hover:bg-gold-mid transition-colors duration-150"
-              >
-                Apply to Join
-              </motion.a>
-            )}
+                {label}
+              </Link>
+            ))}
+            <a
+              href={applyUrl("mobile-menu")}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setOpen(false)}
+              className="press mt-8 inline-flex items-center justify-center rounded-sm py-4 text-base font-bold bg-gold text-ink hover:bg-gold-mid"
+            >
+              Apply to Join
+            </a>
           </nav>
           <div className="container-prose pb-6 shrink-0">
-            <span className="text-xs uppercase tracking-[0.18em] text-on-dark-dim font-mono">
-              Daniels School of Business · Est. 1995
+            <span className="text-sm text-on-dark-muted">
+              Daniels School of Business, est. 1995
             </span>
           </div>
         </DialogContent>

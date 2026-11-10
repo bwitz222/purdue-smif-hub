@@ -140,7 +140,7 @@ const SECONDARY_BIO_BY_NAME: Record<string, string> = {
   "Sandhya Gopinath":
     "On the Portfolio + Risk Management team, turns approved pitches into sized positions and helps monitor portfolio risk and performance.",
   "Shaheera Ali":
-    "Covers technology equities on the Information Technology team — software, semiconductors, and IT services — from the bottom up.",
+    "Covers technology equities on the Information Technology team (software, semiconductors, and IT services) from the bottom up.",
 };
 
 export const board: Member[] = [
