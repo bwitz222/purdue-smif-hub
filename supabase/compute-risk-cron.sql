@@ -30,13 +30,16 @@ begin
   end loop;
 end $$;
 
--- 2) Schedule ONE daily run at 01:30 UTC — 30 min after the refresh-quotes job
---    (01:00 UTC) so the latest close is already available.
+-- 2) Schedule two runs, 12:30 and 16:30 UTC, Tuesday to Saturday: 30 min after
+--    each refresh-quotes run so the latest close is already available. The job
+--    appends the newest session with the same grouped-bar call as refresh-quotes,
+--    so it needs the same morning timing (see repoint-refresh-quotes-cron.sql).
+--    Risk metrics have no visitor self-heal, so the second run is their retry.
 --    >>> Replace <VERCEL_REFRESH_HOOK_SECRET> with Vercel → Settings →
 --        Environment Variables → REFRESH_HOOK_SECRET.
 select cron.schedule(
   'compute-risk',
-  '30 1 * * *',
+  '30 12,16 * * 2-6',
   $job$
   select net.http_post(
     url     := 'https://www.purduesmif.org/api/public/hooks/compute-risk',

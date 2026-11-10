@@ -116,14 +116,17 @@ It appears on the site on the next page load; no redeploy. PDF is best for decks
   `--gold-deep` (Aged Gold) is only AA on pure White; it fails on Off White, so gold
   text must not sit on `bg-secondary`. If you change a surface or a text token,
   re-run `npm run test:e2e` — it fails on any new axe violation.
-- **Data freshness is session-aware.** Prices come from Polygon end-of-day closes,
-  and the plan releases each close about two days late, so the newest session the
-  site can show trails the market. `quote-refresh.server.ts` is the one refresh
-  implementation (nightly cron hook and visitor self-heal); it records the trading
-  session in `quote_meta` and retries while the cache is behind the latest completed
-  close. `/holdings` shows each data set's own close via `DataStatus`, and
+- **Data freshness is session-aware.** Prices come from Polygon end-of-day closes.
+  Polygon has a session's bar out by the _next morning_ (not on the night of the close; inferred from job timestamps, not a documented time), so the jobs run at
+  12:00 and 16:00 UTC (see `supabase/reschedule-crons.sql`); at 01:00 UTC they always
+  got the session before the one that had just closed. `quote-refresh.server.ts` is
+  the one refresh implementation (cron hook and visitor self-heal); it records the
+  trading session in `quote_meta` and retries while the cache is behind the latest
+  completed close. `/holdings` shows each data set's own close via `DataStatus`, and
   `src/lib/market-calendar.ts` (NYSE holidays through 2027) decides "behind" in
-  sessions. Add the next year's holidays each January.
+  sessions. Add the next year's holidays each January. A second price source was
+  tried (Zacks, branch `claude/zacks-second-source`) and not merged: its closes were
+  identical to Polygon's, and its SPY price did not match the real close.
 - **One snapshot per page.** `useLiveBook` polls quotes, cash, risk metrics and ETF
   weights together and derives everything from them; don't fetch these separately in
   a component.
