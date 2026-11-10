@@ -1,7 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ExternalLink } from "lucide-react";
 import { socialMeta, canonical, breadcrumbLd, OG_APPLY } from "@/lib/seo";
-import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import {
   Accordion,
   AccordionItem,
@@ -117,7 +116,7 @@ function Apply() {
       {/* Hero */}
       <section className="bg-ink text-background">
         <div className="container-prose section-y max-w-3xl">
-          <Reveal>
+          <div>
             <span className="rule-gold mb-6" />
             <h1 className="font-display" style={{ lineHeight: "1.02" }}>
               We can't wait to meet you.
@@ -134,17 +133,17 @@ function Apply() {
               has the current dates. Below: what we look for, how the process works, and answers to
               the questions we hear most often.
             </p>
-          </Reveal>
+          </div>
         </div>
       </section>
 
       {/* What we look for */}
       <section className="bg-background border-t border-border section-y">
         <div className="container-prose">
-          <Reveal className="max-w-2xl mb-14">
+          <div className="max-w-2xl mb-14">
             <span className="rule-gold mb-5 block" />
             <h2 className="font-display text-ink">What we look for in applicants</h2>
-          </Reveal>
+          </div>
           <div className="border-t border-ink">
             {LOOKING_FOR.map(({ title, body }) => (
               <div
@@ -162,32 +161,29 @@ function Apply() {
       {/* Timeline */}
       <section className="bg-background border-t border-border section-y">
         <div className="container-prose">
-          <Reveal className="max-w-2xl mb-14">
+          <div className="max-w-2xl mb-14">
             <h2 className="font-display text-ink">Four steps, about three weeks.</h2>
-          </Reveal>
-          <RevealGroup
-            className="grid md:grid-cols-4 gap-px bg-border border border-border"
-            stagger={0.08}
-          >
+          </div>
+          <div className="grid md:grid-cols-4 gap-px bg-border border border-border">
             {TIMELINE.map((step) => (
-              <RevealItem key={step.n} className="bg-background p-8 lg:p-10">
+              <div key={step.n} className="bg-background p-8 lg:p-10">
                 <div className="font-mono text-xs text-gold-deep mb-4">Step {step.n}</div>
                 <h3 className="font-display text-ink mb-3">{step.title}</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">{step.body}</p>
-              </RevealItem>
+              </div>
             ))}
-          </RevealGroup>
+          </div>
         </div>
       </section>
 
       {/* FAQ */}
       <section className="bg-background border-t border-border section-y">
         <div className="container-prose max-w-3xl">
-          <Reveal className="mb-12">
+          <div className="mb-12">
             <span className="rule-gold mb-5 block" />
             <h2 className="font-display text-ink">Questions, answered.</h2>
-          </Reveal>
-          <Reveal>
+          </div>
+          <div>
             <Accordion type="single" collapsible className="border-t border-border">
               {FAQ.map((item, i) => (
                 <AccordionItem key={i} value={`item-${i}`} className="border-border">
@@ -200,13 +196,13 @@ function Apply() {
                 </AccordionItem>
               ))}
             </Accordion>
-          </Reveal>
+          </div>
         </div>
       </section>
 
       {/* Final CTA */}
       <section className="bg-ink text-background section-y">
-        <Reveal className="container-prose max-w-3xl text-center">
+        <div className="container-prose max-w-3xl text-center">
           <span className="rule-gold block mb-6 mx-auto" />
           <h2 className="font-display text-background">Ready when you are.</h2>
           <p className="mt-6 text-on-dark-secondary max-w-xl mx-auto">
@@ -231,7 +227,7 @@ function Apply() {
               Recruiting calendar & prep guide
             </Link>
           </div>
-        </Reveal>
+        </div>
       </section>
 
       {/* Quiet footer line */}

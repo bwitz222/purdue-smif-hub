@@ -17,15 +17,7 @@ export interface Member {
 
 export const memberEmail = (m: Member) => m.email;
 
-export function MemberCard({
-  m,
-  variant = "default",
-  onSelect,
-}: {
-  m: Member;
-  variant?: "default" | "board";
-  onSelect?: (m: Member) => void;
-}) {
+export function MemberCard({ m, onSelect }: { m: Member; onSelect?: (m: Member) => void }) {
   const initials = m.name
     .split(" ")
     .map((p) => p[0])

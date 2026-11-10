@@ -24,7 +24,6 @@ import {
 } from "recharts";
 import { formatMonth } from "@/lib/format-month";
 import { socialMeta, canonical, breadcrumbLd, OG_PERFORMANCE } from "@/lib/seo";
-import { Reveal } from "@/components/Reveal";
 import {
   getFundPerformance,
   getFundMonthlyHistory,
@@ -431,7 +430,7 @@ function Performance() {
 
       <section className="container-prose py-10 space-y-12 pt-14">
         {/* ── KPI cards ─────────────────────────────────────────── */}
-        <Reveal
+        <div
           className={`grid gap-px bg-border ${KPI_STATS.length === 4 ? "md:grid-cols-4" : "md:grid-cols-3"}`}
         >
           {KPI_STATS.map(({ l, v, pos }) => (
@@ -449,7 +448,7 @@ function Performance() {
               </div>
             </div>
           ))}
-        </Reveal>
+        </div>
 
         {/* ── Measurement window ────────────────────────────────── */}
         {/* Governs the analytics block and the monthly chart below it. Both
@@ -458,7 +457,7 @@ function Performance() {
             when the history is too short to support a 5Y figure, since there
             would be nothing to switch between. */}
         {monthlyData && windows["5y"] && (
-          <Reveal className="flex flex-wrap items-center gap-x-4 gap-y-2" delay={0.01}>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
             <span className="text-xs font-mono text-muted-foreground">Measurement window</span>
             <div
               className="inline-flex border border-border"
@@ -489,12 +488,12 @@ function Performance() {
               Applies to the analytics and monthly chart below. The annual table and the 1Y / 5Y /
               inception cards above are unaffected.
             </span>
-          </Reveal>
+          </div>
         )}
 
         {/* ── Risk & return analytics ───────────────────────────── */}
         {a && a.observations >= 12 && (
-          <Reveal className="space-y-4" delay={0.02}>
+          <div className="space-y-4">
             <div className="flex items-baseline justify-between gap-4">
               <h2 className="font-display text-ink">Risk &amp; return analytics</h2>
               <span className="text-xs font-mono text-muted-foreground whitespace-nowrap">
@@ -530,12 +529,12 @@ function Performance() {
               custodian-transition bridge months. Sharpe and Sortino assume a 0% risk-free rate;
               alpha, beta, and correlation are measured against the S&amp;P 500 total-return index.
             </p>
-          </Reveal>
+          </div>
         )}
 
         {/* ── Monthly series (windowed, live) ────────────────────── */}
         {monthlyData && monthlyData.series.length > 0 && (
-          <Reveal className="border border-border bg-card p-6 md:p-10" delay={0.04}>
+          <div className="border border-border bg-card p-6 md:p-10">
             <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between mb-8">
               <div>
                 <div className="text-xs text-muted-foreground mb-2">
@@ -711,11 +710,11 @@ function Performance() {
               reinvested dividends). Custodian-transition months (Nov 2024, Mar 2025) bridged at 0%
               return.
             </p>
-          </Reveal>
+          </div>
         )}
 
         {/* ── Annual chart ─────────────────────────────────────── */}
-        <Reveal className="border border-border bg-card p-6 md:p-10" delay={0.08}>
+        <div className="border border-border bg-card p-6 md:p-10">
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between mb-8">
             <div>
               <div className="text-xs text-muted-foreground mb-2">Annual · Audited Years</div>
@@ -826,7 +825,7 @@ function Performance() {
               </LineChart>
             </ResponsiveContainer>
           </div>
-        </Reveal>
+        </div>
 
         {/* ── Annual returns table ───────────────────────────────── */}
         <div

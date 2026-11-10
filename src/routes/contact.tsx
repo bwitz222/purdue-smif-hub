@@ -15,7 +15,6 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 
 export const Route = createFileRoute("/contact")({
   component: Contact,
@@ -144,22 +143,22 @@ function Contact() {
     <>
       <section className="border-b border-border bg-background">
         <div className="container-prose section-y">
-          <Reveal>
+          <div>
             <span className="rule-gold mb-6" />
             <h1 className="font-display max-w-3xl">Get in touch.</h1>
             <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
               Prospective members, alumni, sponsors, and recruiters: we'd love to hear from you.
             </p>
-          </Reveal>
+          </div>
         </div>
       </section>
 
       <section className="container-prose section-y">
-        <Reveal>
+        <div>
           <h2 className="font-display">Reach the Fund</h2>
-        </Reveal>
-        <RevealGroup className="mt-10 grid gap-10 md:grid-cols-3">
-          <RevealItem className="flex gap-5">
+        </div>
+        <div className="mt-10 grid gap-10 md:grid-cols-3">
+          <div className="flex gap-5">
             <Mail className="h-6 w-6 text-gold-deep flex-shrink-0 mt-1" />
             <div>
               <div className="text-xs text-muted-foreground">Email</div>
@@ -170,8 +169,8 @@ function Contact() {
                 smif26@purdue.edu
               </a>
             </div>
-          </RevealItem>
-          <RevealItem className="flex gap-5">
+          </div>
+          <div className="flex gap-5">
             <MapPin className="h-6 w-6 text-gold-deep flex-shrink-0 mt-1" />
             <div>
               <div className="text-xs text-muted-foreground">Address</div>
@@ -184,8 +183,8 @@ function Contact() {
                 West Lafayette, IN 47907
               </div>
             </div>
-          </RevealItem>
-          <RevealItem className="flex gap-5">
+          </div>
+          <div className="flex gap-5">
             <Linkedin className="h-6 w-6 text-gold-deep flex-shrink-0 mt-1" />
             <div>
               <div className="text-xs text-muted-foreground">LinkedIn</div>
@@ -198,23 +197,23 @@ function Contact() {
                 Purdue SMIF
               </a>
             </div>
-          </RevealItem>
-        </RevealGroup>
+          </div>
+        </div>
       </section>
 
       {/* Send a note */}
       <section className="border-t border-border bg-background section-y">
         <div className="container-prose grid gap-12 lg:grid-cols-5">
-          <Reveal className="lg:col-span-2">
+          <div className="lg:col-span-2">
             <span className="rule-gold mb-5 block" />
             <h2 className="font-display text-ink">Tell us why you're writing.</h2>
             <p className="mt-5 text-muted-foreground leading-relaxed">
               The fastest path to a thoughtful reply. We read every message and respond within two
               business days.
             </p>
-          </Reveal>
+          </div>
 
-          <Reveal className="lg:col-span-3" delay={0.1}>
+          <div className="lg:col-span-3">
             <form
               onSubmit={handleSubmit}
               noValidate
@@ -339,7 +338,7 @@ function Contact() {
                 <Send className="h-4 w-4 arrow-slide" />
               </button>
             </form>
-          </Reveal>
+          </div>
         </div>
       </section>
     </>

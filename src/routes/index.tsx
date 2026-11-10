@@ -4,7 +4,6 @@ import teamPhoto from "@/assets/team-photo.webp";
 import campusImg from "@/assets/hero-campus.webp";
 import { applyUrl } from "@/lib/apply-url";
 import { ArrowRight, ChevronRight, ExternalLink } from "lucide-react";
-import { CountUp } from "@/components/CountUp";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getFundStats } from "@/lib/fund-stats.functions";
@@ -61,7 +60,7 @@ const FALLBACK_STATS = {
 };
 
 // House style B4: no K/M/B abbreviations. "$600K" becomes "$600,000",
-// "$1.2M" becomes "$1.2 Million". Returns the pieces CountUp needs, plus the
+// "$1.2M" becomes "$1.2 Million". Returns the number and unit pieces, plus the
 // full string for running text.
 function parseStatDisplay(display: string): { prefix: string; value: number; suffix: string } {
   const match = display.match(/^([^\d.-]*)([\d.]+)\s*([KMB])?(.*)$/i);
@@ -203,22 +202,22 @@ function Index() {
                   {stat.kind === "aum" ? (
                     <>
                       {aum.prefix && <span>{aum.prefix}</span>}
-                      <CountUp to={aum.value} />
+                      {aum.value.toLocaleString("en-US")}
                       <span>{aum.suffix}</span>
                     </>
                   ) : stat.kind === "members" ? (
                     <>
                       {members.prefix && <span>{members.prefix}</span>}
-                      <CountUp to={members.value} />
+                      {members.value.toLocaleString("en-US")}
                       <span>{members.suffix}</span>
                     </>
                   ) : stat.kind === "track" ? (
                     <>
-                      <CountUp to={trackRecordYears} />
+                      {trackRecordYears}
                       <span>+</span>
                     </>
                   ) : (
-                    <CountUp to={s.sector_teams} />
+                    s.sector_teams
                   )}
                 </dd>
                 <dt className="order-2 mt-3 text-sm text-background">{stat.label}</dt>

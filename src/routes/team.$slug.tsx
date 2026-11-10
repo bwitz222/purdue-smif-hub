@@ -1,7 +1,6 @@
 import { createFileRoute, notFound, Link } from "@tanstack/react-router";
 import { ArrowLeft, Mail, Linkedin } from "lucide-react";
 import { useState } from "react";
-import { Reveal } from "@/components/Reveal";
 import {
   findMemberBySlug,
   hasIndexableProfile,
@@ -145,7 +144,7 @@ function MemberProfile() {
 
       <section className="container-prose py-16">
         <div className="grid gap-12 md:grid-cols-5">
-          <Reveal className="md:col-span-2">
+          <div className="md:col-span-2">
             <div className="border border-border bg-card overflow-hidden">
               {/* Keyed on the slug so navigating between two profiles remounts
                   the photo. ProfilePhoto seeds `src` from useState and never
@@ -155,9 +154,9 @@ function MemberProfile() {
                   left the previous member's headshot beside the new name. */}
               <ProfilePhoto key={entry.slug} entry={entry} />
             </div>
-          </Reveal>
+          </div>
 
-          <Reveal className="md:col-span-3" delay={0.08}>
+          <div className="md:col-span-3">
             <span className="text-xs font-semibold text-gold-deep">{m.role}</span>
             <h1 className="mt-3 font-display">{m.name}</h1>
             <p className="mt-3 font-mono text-xs text-muted-foreground">
@@ -195,7 +194,7 @@ function MemberProfile() {
                 )}
               </div>
             )}
-          </Reveal>
+          </div>
         </div>
       </section>
 

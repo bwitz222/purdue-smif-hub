@@ -4,7 +4,6 @@ import { useReducedMotion } from "framer-motion";
 import { Search, X } from "lucide-react";
 import { MemberCard, type Member } from "@/components/MemberCard";
 import { MemberDetailSheet } from "@/components/MemberDetailSheet";
-import { RevealGroup, RevealItem } from "@/components/Reveal";
 import {
   board,
   sectorTeams,
@@ -388,13 +387,13 @@ function Team() {
               blurb="Seven students elected each spring to lead the fund's strategy, research, risk, recruiting, education, and operations."
               count={hasFilter ? filteredBoard.length : undefined}
             />
-            <RevealGroup className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" stagger={0.06}>
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {filteredBoard.map((m) => (
-                <RevealItem key={m.name} className="h-full [&>div]:h-full">
-                  <MemberCard m={m} variant="board" onSelect={setSelected} />
-                </RevealItem>
+                <div key={m.name} className="h-full [&>div]:h-full">
+                  <MemberCard m={m} onSelect={setSelected} />
+                </div>
               ))}
-            </RevealGroup>
+            </div>
           </section>
         )}
 
@@ -427,16 +426,13 @@ function Team() {
                         {team.members.length} {team.members.length === 1 ? "member" : "members"}
                       </span>
                     </div>
-                    <RevealGroup
-                      className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
-                      stagger={0.05}
-                    >
+                    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                       {team.members.map((m) => (
-                        <RevealItem key={m.name} className="h-full [&>div]:h-full">
+                        <div key={m.name} className="h-full [&>div]:h-full">
                           <MemberCard m={m} onSelect={setSelected} />
-                        </RevealItem>
+                        </div>
                       ))}
-                    </RevealGroup>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -452,13 +448,13 @@ function Team() {
               blurb="Covers rates, credit, FX, and global macro themes, informing both the fixed income sleeve and the equity portfolio's macro overlay."
               count={hasFilter ? filteredFim.length : undefined}
             />
-            <RevealGroup className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" stagger={0.06}>
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {filteredFim.map((m) => (
-                <RevealItem key={m.name} className="h-full [&>div]:h-full">
+                <div key={m.name} className="h-full [&>div]:h-full">
                   <MemberCard m={m} onSelect={setSelected} />
-                </RevealItem>
+                </div>
               ))}
-            </RevealGroup>
+            </div>
           </section>
         )}
 
@@ -471,13 +467,13 @@ function Team() {
                 blurb="Implement allocation decisions, monitor portfolio risk, manage trading and rebalancing, and own performance attribution."
                 count={hasFilter ? filteredPm.length : undefined}
               />
-              <RevealGroup className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" stagger={0.06}>
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {filteredPm.map((m) => (
-                  <RevealItem key={m.name} className="h-full [&>div]:h-full">
+                  <div key={m.name} className="h-full [&>div]:h-full">
                     <MemberCard m={m} onSelect={setSelected} />
-                  </RevealItem>
+                  </div>
                 ))}
-              </RevealGroup>
+              </div>
             </div>
           </section>
         )}
@@ -491,13 +487,13 @@ function Team() {
                 blurb="Daniels School of Business faculty who advise SMIF on curriculum, risk, and investment process."
                 count={hasFilter ? filteredFaculty.length : undefined}
               />
-              <RevealGroup className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" stagger={0.06}>
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {filteredFaculty.map((m) => (
-                  <RevealItem key={m.name} className="h-full [&>div]:h-full">
+                  <div key={m.name} className="h-full [&>div]:h-full">
                     <MemberCard m={m} onSelect={setSelected} />
-                  </RevealItem>
+                  </div>
                 ))}
-              </RevealGroup>
+              </div>
             </div>
           </section>
         )}
