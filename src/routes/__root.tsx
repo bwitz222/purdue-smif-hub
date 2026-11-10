@@ -11,7 +11,6 @@ import {
 import appCss from "../styles.css?url";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { Toaster } from "@/components/ui/sonner";
 import smifLogo from "@/assets/smif-logo-mark-128.webp";
 
 function NotFoundComponent() {
@@ -297,7 +296,6 @@ function RootComponent() {
           <SiteFooter />
         </div>
       </div>
-      <Toaster />
     </QueryClientProvider>
   );
 }
