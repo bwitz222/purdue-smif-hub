@@ -126,4 +126,5 @@ Each quarter confirm that these read the same on the site, its structured data, 
 - **Sitemap dates:** static pages share `LAST_CONTENT_UPDATE` in `src/lib/seo.ts`. Bump it whenever page copy changes, or the dates stop being truthful.
 - **Holidays:** the market calendar and its "behind by N sessions" labels list NYSE holidays through 2027.
 - **Always test header and redirect rules on a deployed preview.** They looked correct in the build config and broke four pages on the real deployment.
-- **Not verified:** the `@PurdueSMIF` Twitter handle (the site returned an error), the contact form's database insert (no credentials locally), and edge header behavior on a deployed preview.
+- **Verified on a deployed preview:** pages return 200 with no redirect loop; the first request to a page is a cache MISS and the second a HIT (`x-vercel-cache`), so edge caching works. Vercel removes `s-maxage` from the header it shows clients, so the visible value is just `public`. The security headers are present, and `/about/` redirects to `/about` (307).
+- **Not verified:** the `@PurdueSMIF` Twitter handle (the site returned an error) and the contact form's database insert (no credentials locally; do one real submission after deploy).
