@@ -1,11 +1,11 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Calendar, CalendarPlus, MapPin, Clock, Download } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useReducedMotion } from "framer-motion";
+import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { jumpToSection } from "@/lib/jump-to";
-import { socialMeta, canonical, breadcrumbLd, OG_RECRUITING } from "@/lib/seo";
+import { socialMeta, canonical, breadcrumbLd, OG_RECRUITING, isEmittableEvent } from "@/lib/seo";
 import { OnThisPage, type PageSection } from "@/components/OnThisPage";
-import { PrepCard } from "@/components/PrepCard";
+import { BEHAVIORAL_CARDS, DAY_OF, TECHNICAL_CARDS, type PrepCardData } from "@/data/prep-guide";
 
 import { applyUrl } from "@/lib/apply-url";
 
@@ -398,45 +398,87 @@ export const Route = createFileRoute("/recruiting")({
     ],
     links: [{ rel: "canonical", href: canonical("/recruiting") }],
     scripts: [
-      {
-        type: "application/ld+json",
-        children: JSON.stringify(
-          CALENDAR.map((e) => {
-            const times = parseEventTimes(e.time);
-            return {
-              "@context": "https://schema.org",
-              "@type": "Event",
-              name: `Purdue SMIF: ${e.name}`,
-              // Date-only when the slot is still TBD — schema.org accepts a
-              // bare date, and it is the honest statement of what is known.
-              startDate: times
-                ? `${e.iso}T${pad2(times.start.h)}:${pad2(times.start.m)}:00-04:00`
-                : e.iso,
-              endDate: times
-                ? `${e.iso}T${pad2(times.end.h)}:${pad2(times.end.m)}:00-04:00`
-                : e.iso,
-              eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
-              eventStatus: "https://schema.org/EventScheduled",
-              location: {
-                "@type": "Place",
-                name: e.location,
-                address: {
-                  "@type": "PostalAddress",
-                  addressLocality: "West Lafayette",
-                  addressRegion: "IN",
-                  addressCountry: "US",
-                },
-              },
-              organizer: { "@id": "https://www.purduesmif.org/#organization" },
-              url: "https://www.purduesmif.org/recruiting",
-            };
-          }),
-        ),
-      },
+      // Only events with a confirmed time and venue are published as structured
+      // data; a "TBD" start or location is invalid for event rich results. The
+      // unconfirmed ones stay in the visible calendar below.
+      ...(CALENDAR.some(isEmittableEvent)
+        ? [
+            {
+              type: "application/ld+json",
+              children: JSON.stringify(
+                CALENDAR.filter(isEmittableEvent).map((e) => {
+                  const times = parseEventTimes(e.time);
+                  return {
+                    "@context": "https://schema.org",
+                    "@type": "Event",
+                    name: `Purdue SMIF: ${e.name}`,
+                    // Date-only when the slot is still TBD — schema.org accepts a
+                    // bare date, and it is the honest statement of what is known.
+                    startDate: times
+                      ? `${e.iso}T${pad2(times.start.h)}:${pad2(times.start.m)}:00-04:00`
+                      : e.iso,
+                    endDate: times
+                      ? `${e.iso}T${pad2(times.end.h)}:${pad2(times.end.m)}:00-04:00`
+                      : e.iso,
+                    eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+                    eventStatus: "https://schema.org/EventScheduled",
+                    location: {
+                      "@type": "Place",
+                      name: e.location,
+                      address: {
+                        "@type": "PostalAddress",
+                        addressLocality: "West Lafayette",
+                        addressRegion: "IN",
+                        addressCountry: "US",
+                      },
+                    },
+                    organizer: { "@id": "https://www.purduesmif.org/#organization" },
+                    url: "https://www.purduesmif.org/recruiting",
+                  };
+                }),
+              ),
+            },
+          ]
+        : []),
       breadcrumbLd("Recruiting", "/recruiting"),
     ],
   }),
 });
+
+function GuideSummary({
+  id,
+  round,
+  title,
+  intro,
+  cards,
+  link,
+}: {
+  id: string;
+  round: string;
+  title: string;
+  intro: string;
+  cards: readonly PrepCardData[];
+  link: React.ReactNode;
+}) {
+  return (
+    <div>
+      <div className="flex items-center gap-3">
+        <span className="h-px w-10 bg-gold" />
+        <span className="font-mono text-xs text-gold-deep">{round}</span>
+      </div>
+      <h3 id={id} className="section-anchor mt-3 font-display">
+        {title}
+      </h3>
+      <p className="mt-3 text-muted-foreground">{intro}</p>
+      <ul className="mt-5 space-y-2 text-sm text-muted-foreground list-disc pl-5 marker:text-gold-deep">
+        {cards.map((c) => (
+          <li key={c.title}>{c.title}</li>
+        ))}
+      </ul>
+      <p className="mt-5">{link}</p>
+    </div>
+  );
+}
 
 function Recruiting() {
   // SSR-safe "now" — null on server, set on client mount
@@ -613,6 +655,27 @@ function Recruiting() {
           </a>{" "}
           to be added to our mailing list for updates.
         </p>
+        <p className="mt-4 text-sm text-muted-foreground">
+          New here? Read{" "}
+          <Link to="/apply" className="link-underline text-gold-deep font-medium hover:text-ink">
+            how to join Purdue SMIF
+          </Link>
+          , compare{" "}
+          <Link
+            to="/finance-clubs-at-purdue"
+            className="link-underline text-gold-deep font-medium hover:text-ink"
+          >
+            finance clubs at Purdue
+          </Link>
+          , or see how{" "}
+          <Link
+            to="/stock-pitches"
+            className="link-underline text-gold-deep font-medium hover:text-ink"
+          >
+            SMIF stock pitches work
+          </Link>
+          .
+        </p>
       </section>
 
       {/* Prep Guide */}
@@ -635,132 +698,40 @@ function Recruiting() {
             </p>
           </div>
 
-          {/* Behavioral */}
-          <div className="mt-14">
-            <div className="flex items-center gap-3">
-              <span className="animate-expand-x h-px w-10 bg-gold" />
-              <span className="font-mono text-xs text-gold-deep">Round 1</span>
-            </div>
-            <div>
-              <h3 id="behavioral" className="section-anchor mt-3 font-display">
-                Behavioral Interview
-              </h3>
-              <p className="mt-3 max-w-3xl text-muted-foreground">
-                We want to understand who you are, why you're interested in markets, and how you
-                work with others. Be specific, be honest, and have stories ready.
-              </p>
-            </div>
-
-            <div className="mt-8 grid gap-6 md:grid-cols-2">
-              <div>
-                <PrepCard
-                  headingLevel="h4"
-                  title="Know Your 'Why'"
-                  items={[
-                    "Why finance? Why investing? Why SMIF specifically?",
-                    "Tie answers to specific experiences (a class, a book, a market event), not buzzwords.",
-                    "Have a thoughtful answer for 'why this sector' if asked.",
-                  ]}
-                />
-              </div>
-              <div>
-                <PrepCard
-                  headingLevel="h4"
-                  title="STAR Stories"
-                  items={[
-                    "Prepare 3-4 stories: leadership, teamwork, conflict, failure.",
-                    "Situation → Task → Action → Result. Keep each story to ~90 seconds.",
-                    "Reuse stories across questions; depth beats breadth.",
-                  ]}
-                />
-              </div>
-              <div>
-                <PrepCard
-                  headingLevel="h4"
-                  title="Know SMIF"
-                  items={[
-                    "Read our About, Sectors, and Holdings pages before you walk in.",
-                    "Understand the structure: analyst → senior analyst → portfolio manager → executive board.",
-                    "Reference a recent publication or holding that genuinely caught your interest.",
-                  ]}
-                />
-              </div>
-              <div>
-                <PrepCard
-                  headingLevel="h4"
-                  title="Ask Sharp Questions"
-                  items={[
-                    "Always have 2-3 questions ready for your interviewers.",
-                    "Avoid questions answered on the website. Ask about their experience, not logistics.",
-                    "Good prompt: 'What's a position you pushed back on in committee and why?'",
-                  ]}
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Technical */}
-          <div className="mt-16">
-            <div className="flex items-center gap-3">
-              <span className="animate-expand-x h-px w-10 bg-gold" />
-              <span className="font-mono text-xs text-gold-deep">Round 2</span>
-            </div>
-            <div>
-              <h3 id="technical" className="section-anchor mt-3 font-display">
-                Technical Interview
-              </h3>
-              <p className="mt-3 max-w-3xl text-muted-foreground">
-                You don't need to be an investment banking analyst already. We test fundamentals,
-                market awareness, and your ability to defend an investment thesis.
-              </p>
-            </div>
-
-            <div className="mt-8 grid gap-6 md:grid-cols-2">
-              <div>
-                <PrepCard
-                  headingLevel="h4"
-                  title="Accounting Foundations"
-                  items={[
-                    "Walk through the three financial statements and how they link.",
-                    "Depreciation +$10: walk through the impact on IS, CF, and BS (after taxes).",
-                    "Know the difference between EBITDA, operating income, and net income.",
-                  ]}
-                />
-              </div>
-              <div>
-                <PrepCard
-                  headingLevel="h4"
-                  title="Valuation Basics"
-                  items={[
-                    "Understand the big picture: a company is worth the present value of its future cash flows.",
-                    "Learn the three main approaches: DCF (intrinsic), comparables (relative), and precedent transactions.",
-                    "Start with P/E and EV/EBITDA: know what they measure and when each is useful.",
-                  ]}
-                />
-              </div>
-              <div>
-                <PrepCard
-                  headingLevel="h4"
-                  title="Market Awareness"
-                  items={[
-                    "Know where the S&P 500, Nasdaq, 10Y Treasury, and Fed Funds rate sit directionally.",
-                    "Be ready to discuss one recent market headline and its implications.",
-                    "Daily reads: WSJ, Bloomberg, FT, Axios Markets, Matt Levine's Money Stuff.",
-                  ]}
-                />
-              </div>
-              <div>
-                <PrepCard
-                  headingLevel="h4"
-                  title="Stock Pitch"
-                  items={[
-                    "Prepare one long idea: thesis, 2-3 catalysts, valuation, and key risks.",
-                    "Pick a name you genuinely understand, not the most complex one you can find.",
-                    "Structure: 'I'd buy X at $Y because… Catalysts are… Valuation supports… Risks are…'",
-                  ]}
-                />
-              </div>
-            </div>
+          {/* The behavioral and technical guides each have their own page now. The
+              ids stay on these summaries so older #behavioral and #technical links,
+              and the in-page nav, still land here. */}
+          <div className="mt-14 grid gap-12 md:grid-cols-2">
+            <GuideSummary
+              id="behavioral"
+              round="Round 1"
+              title="Behavioral Interview"
+              intro="We want to understand who you are, why you're interested in markets, and how you work with others. Be specific, be honest, and have stories ready."
+              cards={BEHAVIORAL_CARDS}
+              link={
+                <Link
+                  to="/recruiting/behavioral-interview-prep"
+                  className="link-underline font-bold text-gold-deep hover:text-ink"
+                >
+                  Read the full behavioral interview guide
+                </Link>
+              }
+            />
+            <GuideSummary
+              id="technical"
+              round="Round 2"
+              title="Technical Interview"
+              intro="You don't need to be an investment banking analyst already. We test fundamentals, market awareness, and your ability to defend an investment thesis."
+              cards={TECHNICAL_CARDS}
+              link={
+                <Link
+                  to="/recruiting/technical-interview-prep"
+                  className="link-underline font-bold text-gold-deep hover:text-ink"
+                >
+                  Read the full technical interview guide
+                </Link>
+              }
+            />
           </div>
 
           {/* Day-of */}
@@ -769,12 +740,9 @@ function Recruiting() {
               Day-Of Checklist
             </h3>
             <ul className="mt-4 grid gap-2 text-sm text-muted-foreground md:grid-cols-2 list-disc pl-5 marker:text-gold-deep">
-              <li>Business professional dress: suit and tie or equivalent.</li>
-              <li>Arrive 10 minutes early. Silence your phone.</li>
-              <li>Bring printed copies of your resume and a notepad.</li>
-              <li>Know your resume cold; anything on it is fair game.</li>
-              <li>Firm handshake, eye contact, and smile.</li>
-              <li>Be yourself. We evaluate fit as much as skill.</li>
+              {DAY_OF.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
             </ul>
           </div>
 

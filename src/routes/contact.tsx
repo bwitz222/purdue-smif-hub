@@ -1,10 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Mail, MapPin, Linkedin, Send } from "lucide-react";
 import { useState } from "react";
-import { z } from "zod";
-import { toast } from "sonner";
+import { useServerFn } from "@tanstack/react-start";
 import { socialMeta, canonical, breadcrumbLd, OG_CONTACT } from "@/lib/seo";
-import { supabase } from "@/integrations/supabase/client";
+import { submitInquiry } from "@/lib/contact.functions";
+import { TOPICS, validateInquiry, type InquiryErrors } from "@/lib/contact-validation";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -63,21 +63,7 @@ export const Route = createFileRoute("/contact")({
   }),
 });
 
-const TOPICS = ["Prospective member", "Alumni", "Sponsor / Recruiter", "Press", "Other"] as const;
-
-const inquirySchema = z.object({
-  topic: z.enum(TOPICS, { errorMap: () => ({ message: "Please choose a topic" }) }),
-  name: z.string().trim().min(1, "Name is required").max(120),
-  email: z.string().trim().email("Enter a valid email").max(255),
-  message: z
-    .string()
-    .trim()
-    .min(20, "Message must be at least 20 characters")
-    .max(4000, "Message must be under 4000 characters"),
-  company: z.string().max(255).optional(),
-});
-
-type FormErrors = Partial<Record<keyof z.infer<typeof inquirySchema>, string>>;
+type Notice = { kind: "success" | "error"; text: string } | null;
 
 function Contact() {
   const [topic, setTopic] = useState<string>("");
@@ -85,7 +71,9 @@ function Contact() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [company, setCompany] = useState(""); // honeypot
-  const [errors, setErrors] = useState<FormErrors>({});
+  const [errors, setErrors] = useState<InquiryErrors>({});
+  const [notice, setNotice] = useState<Notice>(null);
+  const send = useServerFn(submitInquiry);
   const [submitting, setSubmitting] = useState(false);
 
   const resetForm = () => {
@@ -100,40 +88,23 @@ function Contact() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Honeypot — silently succeed
-    if (company.trim().length > 0) {
-      toast.success("Thanks! We'll reply within 2 business days.");
-      resetForm();
-      return;
-    }
-
-    const parsed = inquirySchema.safeParse({ topic, name, email, message, company });
-    if (!parsed.success) {
-      const fieldErrors: FormErrors = {};
-      for (const issue of parsed.error.issues) {
-        const key = issue.path[0] as keyof FormErrors;
-        if (key && !fieldErrors[key]) fieldErrors[key] = issue.message;
-      }
-      setErrors(fieldErrors);
+    setNotice(null);
+    const parsed = validateInquiry({ topic, name, email, message });
+    if (!parsed.ok) {
+      setErrors(parsed.errors);
       return;
     }
 
     setErrors({});
     setSubmitting(true);
     try {
-      const { error } = await supabase.from("contact_inquiries").insert({
-        topic: parsed.data.topic,
-        name: parsed.data.name,
-        email: parsed.data.email,
-        message: parsed.data.message,
-        company: null,
-      });
-      if (error) throw error;
-      toast.success("Thanks! We'll reply within 2 business days.");
+      // The honeypot value rides along; the server drops the message if it is set.
+      await send({ data: { ...parsed.data, company } });
+      setNotice({ kind: "success", text: "Thanks! We'll reply within 2 business days." });
       resetForm();
     } catch (err) {
-      console.error("[contact] insert error:", err);
-      toast.error("Couldn't send your message. Please try again.");
+      console.error("[contact] send error:", err);
+      setNotice({ kind: "error", text: "Couldn't send your message. Please try again." });
     } finally {
       setSubmitting(false);
     }
@@ -145,9 +116,10 @@ function Contact() {
         <div className="container-prose section-y">
           <div>
             <span className="rule-gold mb-6" />
-            <h1 className="font-display max-w-3xl">Get in touch.</h1>
+            <h1 className="font-display max-w-3xl">Contact Purdue SMIF</h1>
             <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
-              Prospective members, alumni, sponsors, and recruiters: we'd love to hear from you.
+              Get in touch. Prospective members, alumni, sponsors, and recruiters: we'd love to hear
+              from you.
             </p>
           </div>
         </div>
@@ -327,6 +299,15 @@ function Contact() {
                   onChange={(e) => setCompany(e.target.value)}
                 />
               </div>
+
+              {notice && (
+                <p
+                  role="status"
+                  className={`border-l-4 pl-3 text-sm ${notice.kind === "success" ? "border-gold text-ink" : "border-ink font-bold text-ink"}`}
+                >
+                  {notice.text}
+                </p>
+              )}
 
               <button
                 type="submit"

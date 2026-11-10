@@ -301,11 +301,26 @@ function Sectors() {
         <div className="container-prose section-y">
           <div>
             <span className="rule-gold mb-5 block" />
-            <h1 className="mt-4 font-display max-w-3xl">Our teams.</h1>
+            <h1 className="mt-4 font-display max-w-3xl">Purdue SMIF sector teams</h1>
             <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
               Eight equity sector teams cover the investable universe from the bottom up. A Fixed
               Income &amp; Macro group frames the rate and credit backdrop, and Portfolio + Risk
-              Management oversees allocation, trading, and performance.
+              Management oversees allocation, trading, and performance. Analysts on each team pitch
+              ideas to the full fund; see{" "}
+              <Link
+                to="/stock-pitches"
+                className="link-underline font-bold text-gold-deep hover:text-ink"
+              >
+                how SMIF stock pitches work
+              </Link>
+              , or read about{" "}
+              <Link
+                to="/student-managed-investment-funds"
+                className="link-underline font-bold text-gold-deep hover:text-ink"
+              >
+                student managed investment funds
+              </Link>
+              .
             </p>
             <div
               aria-live="polite"

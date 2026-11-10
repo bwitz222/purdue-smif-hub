@@ -119,8 +119,9 @@ function Apply() {
           <div>
             <span className="rule-gold mb-6" />
             <h1 className="font-display" style={{ lineHeight: "1.02" }}>
-              We can't wait to meet you.
+              How to join Purdue SMIF
             </h1>
+            <p className="mt-4 text-xl text-gold">We can't wait to meet you.</p>
             {/* Status-neutral on purpose: "Applications are open" was hardcoded
                 here while /recruiting (which derives open/closed from the
                 event calendar) said the cycle had closed. The calendar owns
@@ -197,6 +198,53 @@ function Apply() {
               ))}
             </Accordion>
           </div>
+        </div>
+      </section>
+
+      {/* What happens after you apply: restates the timeline and the onboarding
+          FAQ above, with links to the guides for the two interview rounds. */}
+      <section className="bg-background border-t border-border section-y" aria-labelledby="after-h">
+        <div className="container-prose max-w-3xl">
+          <h2 id="after-h">What happens after you apply</h2>
+          <p className="mt-5">
+            The application is a Qualtrics form that takes about 10 minutes. Next comes an informal
+            coffee chat with current members, then the interview round: a markets question,
+            behavioral questions, and fit. Prepare with the{" "}
+            <Link
+              to="/recruiting/behavioral-interview-prep"
+              className="link-underline font-medium text-gold-deep hover:text-ink"
+            >
+              behavioral interview guide
+            </Link>{" "}
+            and the{" "}
+            <Link
+              to="/recruiting/technical-interview-prep"
+              className="link-underline font-medium text-gold-deep hover:text-ink"
+            >
+              technical interview guide
+            </Link>
+            . Offers are extended within two weeks of interview close.
+          </p>
+          <p className="mt-5">
+            Once you are accepted, analyst onboarding includes a one-week bootcamp on accounting,
+            valuation, and the pitch template. You are paired with a senior mentor and join a sector
+            team in week two. Wondering where SMIF fits among Purdue's student organizations?
+            Compare{" "}
+            <Link
+              to="/finance-clubs-at-purdue"
+              className="link-underline font-medium text-gold-deep hover:text-ink"
+            >
+              finance clubs at Purdue
+            </Link>
+            , or read how{" "}
+            <Link
+              to="/student-managed-investment-funds"
+              className="link-underline font-medium text-gold-deep hover:text-ink"
+            >
+              student managed investment funds work
+            </Link>
+            .
+          </p>
         </div>
       </section>
 

@@ -1,3 +1,6 @@
+# Everything public is open to search and AI crawlers alike: the site is meant to
+# be found and quoted accurately. A machine-readable summary is at /llms.txt and
+# the full text at /llms-full.txt.
 User-agent: *
 Allow: /
 

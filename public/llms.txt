@@ -5,10 +5,10 @@
 ## Facts
 
 - Full name: Purdue Student Managed Investment Fund
-- Also known as: Purdue SMIF, Purdue Investment Fund, Purdue Investment Club, Purdue Finance Club
+- Also known as: Purdue SMIF, Purdue Investment Fund
 - Founded: 1995
 - Affiliation: Mitch Daniels School of Business, Purdue University
-- Assets under management: approximately $600K of real university capital
+- Assets under management: approximately $600,000 of real university capital (the live figure, with its as-of date, is on the Holdings page)
 - Benchmark: S&P 500 Total Return Index; audited monthly performance tracked since October 2013
 - Structure: 8 equity sector teams, a Fixed Income & Macro team, and a Portfolio + Risk Management team, overseen by a 7-member executive board
 - Faculty advisors: Lulu Zeng, Alexander Boquist, and Larissa Adamic, Daniels School of Business
@@ -35,6 +35,7 @@
 
 ## Optional
 
+- [Full text](https://www.purduesmif.org/llms-full.txt): The fact sheet, process, and FAQ in one file, drawn from the site's own pages.
 - [Sitemap](https://www.purduesmif.org/sitemap.xml): Every indexable URL, including individual member profiles.
 - [BoilerLink profile](https://boilerlink.purdue.edu/organization/smif): Purdue's official student organization directory listing.
-- [Substack](https://purduesmif.substack.com/): Interim research writeups and commentary.
+- [The Boiler Beta](https://purduesmif.substack.com/): Investment publications and articles written by Purdue SMIF members (Substack).

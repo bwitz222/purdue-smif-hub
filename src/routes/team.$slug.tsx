@@ -1,5 +1,6 @@
 import { createFileRoute, notFound, Link } from "@tanstack/react-router";
 import { ArrowLeft, Mail, Linkedin } from "lucide-react";
+import { TEAM_INDUSTRIES, teamSlug } from "@/lib/portfolio";
 import { useState } from "react";
 import {
   findMemberBySlug,
@@ -7,7 +8,15 @@ import {
   memberDirectory,
   type DirectoryEntry,
 } from "@/data/team";
-import { socialMeta, canonical, SITE_URL, OG_TEAM } from "@/lib/seo";
+import {
+  socialMeta,
+  canonical,
+  memberDescription,
+  memberTitle,
+  ORG_ID,
+  SITE_URL,
+  OG_TEAM,
+} from "@/lib/seo";
 
 /**
  * Per-member profile.
@@ -29,12 +38,15 @@ export const Route = createFileRoute("/team/$slug")({
     if (!entry) return {};
     const { member: m, team, slug } = entry;
     const url = canonical(`/team/${slug}`);
-    const title = `${m.name}: ${m.role}, Purdue SMIF`;
-    // Prefer the member's own bio; fall back to a factual sentence so the
-    // description is never empty for the members who have no bio written yet.
-    const description = m.bio
-      ? m.bio.slice(0, 300)
-      : `${m.name} is ${/^[aeiou]/i.test(m.role) ? "an" : "a"} ${m.role} on the ${team} team at the Purdue Student Managed Investment Fund.`;
+    const title = memberTitle(m);
+    // Built from name, role, team and class year, never from the free-text bio:
+    // bios run past 280 characters and carry personal detail that does not
+    // belong in a search snippet. Capped at 155 characters.
+    const description = memberDescription(m, team);
+    // The headshot is a bundled asset served from this host. It goes in the
+    // Person markup; the social card stays the shared 1536x1024 team card
+    // because og:image dimensions must match the file.
+    const image = m.photo ? new URL(m.photo, SITE_URL).toString() : undefined;
 
     return {
       meta: [
@@ -62,9 +74,13 @@ export const Route = createFileRoute("/team/$slug")({
               name: m.name,
               jobTitle: m.role,
               description: m.bio || undefined,
-              affiliation: { "@id": `${SITE_URL}/#organization` },
-              memberOf: { "@type": "Organization", name: `${team}, Purdue SMIF` },
-              email: m.email ? `mailto:${m.email}` : undefined,
+              image,
+              affiliation: { "@id": ORG_ID },
+              // The fund itself, by @id. The sector team is named in jobTitle and the
+              // description; a made-up Organization node per team would be a second,
+              // unverifiable entity. No email: a student's address does not belong
+              // in structured data that scrapers read in bulk.
+              memberOf: { "@id": ORG_ID },
               sameAs: m.linkedin ? [m.linkedin] : undefined,
             },
           }),
@@ -202,6 +218,17 @@ function MemberProfile() {
         <section className="border-t border-border bg-background">
           <div className="container-prose py-16">
             <h2 className="font-display">Also on {team}</h2>
+            {team in TEAM_INDUSTRIES && (
+              <p className="mt-3">
+                <Link
+                  to="/sectors"
+                  hash={teamSlug(team)}
+                  className="link-underline font-bold text-gold-deep hover:text-ink"
+                >
+                  See what the {team} team holds
+                </Link>
+              </p>
+            )}
             {/* Per-cell borders rather than a gap-px bg-border grid, so a short
                 last row leaves blank page instead of a gray filler cell. */}
             <ul className="mt-8 grid border-l border-t border-border sm:grid-cols-2 lg:grid-cols-3">

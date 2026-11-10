@@ -1,0 +1,16 @@
+{
+  "name": "Purdue Student Managed Investment Fund",
+  "short_name": "Purdue SMIF",
+  "description": "The student-run investment fund at Purdue University's Daniels School of Business.",
+  "lang": "en",
+  "start_url": "/",
+  "scope": "/",
+  "display": "browser",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "icons": [
+    { "src": "/apple-touch-icon.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/smif-logo.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/favicon.ico", "sizes": "256x256", "type": "image/x-icon" }
+  ]
+}
