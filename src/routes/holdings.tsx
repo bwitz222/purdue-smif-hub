@@ -1,37 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useMemo, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
-import {
-  ArrowUpDown,
-  ArrowUp,
-  ArrowDown,
-  RefreshCw,
-  AlertCircle,
-  Filter,
-  Search,
-} from "lucide-react";
+import { ArrowUpDown, ArrowUp, ArrowDown, AlertCircle, Filter, Search } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  holdings as baseHoldings,
-  portfolioSummary as baseSummary,
-  type Holding,
-} from "@/data/holdings";
-import { getLiveQuotes, getCachedQuotes } from "@/lib/quotes.functions";
-import { getFundStats } from "@/lib/fund-stats.functions";
-import { getRiskMetrics } from "@/lib/risk.functions";
+import { holdings as baseHoldings, type Holding } from "@/data/holdings";
+import { getCachedQuotes } from "@/lib/quotes.functions";
 import { CountUp } from "@/components/CountUp";
 import { Reveal } from "@/components/Reveal";
 import { socialMeta, canonical, breadcrumbLd, OG_HOLDINGS } from "@/lib/seo";
-import {
-  applyQuotes,
-  sectorPercentBreakdown,
-  teamForIndustry,
-  teamSlug,
-  TEAM_INDUSTRIES,
-} from "@/lib/portfolio";
-import { getEtfSectorWeights } from "@/lib/etf-weights.functions";
-import { liveQueryOptions } from "@/lib/live-query";
+import { teamForIndustry, teamSlug, TEAM_INDUSTRIES } from "@/lib/portfolio";
+import { useLiveBook } from "@/lib/use-live-book";
+import { DataStatus } from "@/components/DataStatus";
+import { asOfText } from "@/lib/market-calendar";
 
 type HoldingsSearch = { team?: string; sector?: string; q?: string };
 
@@ -116,7 +95,6 @@ function KpiCard({
   value,
   sub,
   accent,
-  animatedValue,
   asOf,
   hint,
   muted,
@@ -125,7 +103,6 @@ function KpiCard({
   value: string;
   sub?: string;
   accent?: "positive" | "negative" | "neutral";
-  animatedValue?: React.ReactNode;
   asOf?: string;
   hint?: string;
   muted?: boolean;
@@ -138,9 +115,7 @@ function KpiCard({
       {muted ? (
         <div className="text-lg font-semibold text-muted-foreground mt-2">{value}</div>
       ) : (
-        <div className={`font-display text-3xl font-bold ${valueColor} mt-1`}>
-          {animatedValue ?? value}
-        </div>
+        <div className={`font-display text-3xl font-bold ${valueColor} mt-1`}>{value}</div>
       )}
       {sub && <div className="text-xs text-muted-foreground font-mono mt-0.5">{sub}</div>}
       {asOf && (
@@ -187,46 +162,21 @@ function HoldingsPage() {
     setQuery(search.q ?? "");
     setDebouncedQuery(search.q ?? "");
   }, [search.sector, search.q, search.team]);
-  const fetchQuotes = useServerFn(getLiveQuotes);
-  const symbols = useMemo(() => baseHoldings.map((h) => h.symbol), []);
-  // The server serves the end-of-day cache and self-heals it when stale; the
-  // client polls on the shared live-data cadence (see liveQueryOptions) so
-  // /holdings, /sectors and / stay on the same update logic. Each fetch
-  // recomputes every derived value here (KPIs, weighted beta, sector
-  // breakdown, leaders/laggards, table).
+  // One snapshot of the book: quotes, cash, risk metrics and ETF weights are
+  // polled together, and the summary, movers, sector allocation and table are
+  // all derived from it (see use-live-book.ts).
   const initial = Route.useLoaderData();
   const {
-    data: quoteData,
-    isFetching,
-    error,
-    refetch,
-  } = useQuery({
-    queryKey: ["live-quotes", symbols],
-    queryFn: () => fetchQuotes({ data: { symbols } }),
-    ...liveQueryOptions,
-    // SSR seed from quote_cache; initialDataUpdatedAt anchors staleness to the
-    // cache's real age so a >30-min-old cache still refetches (and self-heals)
-    // immediately on mount.
-    initialData: initial.cachedQuotes ?? undefined,
-    initialDataUpdatedAt: initial.cachedQuotes?.cachedAt,
-  });
-
-  const fetchFundStats = useServerFn(getFundStats);
-  const { data: fundStats } = useQuery({
-    queryKey: ["fund-stats"],
-    queryFn: () => fetchFundStats(),
-    ...liveQueryOptions,
-  });
-  const cashHoldings = fundStats?.cash_holdings ?? baseSummary.cashHoldings;
-
-  // Pre-computed daily risk metrics (Volatility, Sharpe, VaR, Exposure). Computed
-  // by the daily compute-risk job; the page only reads and formats them.
-  const fetchRisk = useServerFn(getRiskMetrics);
-  const { data: risk } = useQuery({
-    queryKey: ["risk-metrics"],
-    queryFn: () => fetchRisk(),
-    ...liveQueryOptions,
-  });
+    holdings,
+    summary: portfolioSummary,
+    sectorBreakdown,
+    movers,
+    risk,
+    quoteData,
+    status,
+  } = useLiveBook(initial.cachedQuotes);
+  const { isFetching, error } = status;
+  const refetch = status.refetchAll;
 
   useEffect(() => {
     const id = setTimeout(() => setDebouncedQuery(query), 200);
@@ -269,69 +219,6 @@ function HoldingsPage() {
     };
   }, []);
 
-  const { holdings, portfolioSummary } = useMemo(() => {
-    const quotes = quoteData?.quotes ?? {};
-    // Day P&L math: derive priorValue per position from (value / (1 + pct/100))
-    // so the aggregate day-change dollar and percent are computed off the SAME
-    // prior-day base and their signs always agree.
-    const updated: Holding[] = baseHoldings.map((h) => {
-      const q = quotes[h.symbol];
-      if (!q) return h;
-      const price = q.price;
-      const value = price * h.shares;
-      const totalReturn = value - h.costBasis;
-      const returnPct = h.costBasis > 0 ? (totalReturn / h.costBasis) * 100 : 0;
-      const dayChange = q.changePct;
-      const priorValue = 1 + dayChange / 100 !== 0 ? value / (1 + dayChange / 100) : value;
-      const dayGain = value - priorValue;
-      return { ...h, price, value, totalReturn, returnPct, dayChange, dayGain };
-    });
-    const investedValue = updated.reduce((s, r) => s + r.value, 0);
-    const priorInvested = updated.reduce((s, r) => {
-      const q = quotes[r.symbol];
-      if (!q) return s + r.value; // no quote: treat as unchanged
-      return s + (1 + q.changePct / 100 !== 0 ? r.value / (1 + q.changePct / 100) : r.value);
-    }, 0);
-    const totalDayGain = investedValue - priorInvested;
-    const portfolioValue = investedValue + cashHoldings;
-    const costBasisTotal = updated.reduce((s, r) => s + r.costBasis, 0);
-    const totalReturn = investedValue - costBasisTotal;
-    const totalReturnPct = costBasisTotal > 0 ? (totalReturn / costBasisTotal) * 100 : 0;
-    const totalDayChange = priorInvested > 0 ? (totalDayGain / priorInvested) * 100 : 0;
-    const weightedBeta =
-      investedValue > 0
-        ? updated.reduce((s, r) => s + r.beta * r.value, 0) / investedValue
-        : baseSummary.weightedBeta;
-    const withAlloc = updated.map((r) => ({
-      ...r,
-      allocation: portfolioValue > 0 ? (r.value / portfolioValue) * 100 : r.allocation,
-    }));
-    return {
-      holdings: withAlloc,
-      portfolioSummary: {
-        investedCapital: portfolioValue - cashHoldings,
-        cashHoldings,
-        portfolioValue,
-        totalDayGain,
-        totalDayChange,
-        totalReturn,
-        totalReturnPct,
-        weightedBeta,
-      },
-    };
-  }, [quoteData, cashHoldings]);
-
-  const fetchEtfWeights = useServerFn(getEtfSectorWeights);
-  const { data: etfWeights } = useQuery({
-    queryKey: ["etf-sector-weights"],
-    queryFn: () => fetchEtfWeights(),
-    ...liveQueryOptions,
-  });
-  const sectorBreakdown = useMemo(
-    () => sectorPercentBreakdown(holdings, etfWeights?.weights),
-    [holdings, etfWeights],
-  );
-
   const teamIndustries = team ? TEAM_INDUSTRIES[team] : undefined;
   const scoped = useMemo(
     () => (teamIndustries ? holdings.filter((h) => teamIndustries.includes(h.industry)) : holdings),
@@ -359,14 +246,6 @@ function HoldingsPage() {
         : String(bv).localeCompare(String(av));
     });
   }, [sortKey, sortDir, sector, scoped, debouncedQuery]);
-  const movers = useMemo(() => {
-    const sorted = [...holdings].sort((a, b) => b.dayChange - a.dayChange);
-    // Split the book rather than taking slice(0,3) and slice(-3) blind: with
-    // fewer than six positions those windows overlap and the same ticker is
-    // listed as both a leader and a laggard.
-    const half = Math.min(3, Math.floor(sorted.length / 2));
-    return { gainers: sorted.slice(0, half), losers: sorted.slice(sorted.length - half).reverse() };
-  }, [holdings]);
   const emptyMessage =
     sector !== "All" && debouncedQuery
       ? `No positions match "${debouncedQuery}" in ${sector}`
@@ -397,13 +276,8 @@ function HoldingsPage() {
 
   // Risk-card display strings. Volatility/Sharpe/VaR need >=60 obs of history;
   // exposure needs none, so it renders even when history is insufficient.
-  const riskAsOf = risk?.asOf
-    ? new Date(risk.asOf + "T00:00:00").toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-      })
-    : undefined;
+  const riskAsOf = risk?.asOf ? asOfText(status.risk) : undefined;
+  const quotesAsOf = status.quotes.sessionDate ? asOfText(status.quotes) : undefined;
   const noRisk = !risk;
   const insufficient = !!risk && !risk.sufficient;
   // Each metric is guarded on its own value, not on `sufficient`. They are
@@ -495,50 +369,8 @@ function HoldingsPage() {
           >
             Current portfolio.
           </h1>
-          <div
-            aria-live="polite"
-            aria-atomic="true"
-            className="mt-5 inline-flex items-center gap-2 border border-border bg-background/60 px-3 py-1.5 text-xs font-mono text-muted-foreground"
-          >
-            {isFetching ? (
-              <>
-                <RefreshCw className="h-3 w-3 animate-spin text-gold" /> Refreshing quotes…
-              </>
-            ) : riskAsOf ? (
-              <>
-                <span className="h-1.5 w-1.5 rounded-full bg-gold" aria-hidden="true" />
-                {/* Session date of the data (Polygon's latest completed close),
-                    NOT the fetch time — cachedAt is shown as "Updated" below. */}
-                As of {riskAsOf} close
-              </>
-            ) : quoteData?.cachedAt ? (
-              <>
-                <span className="h-1.5 w-1.5 rounded-full bg-gold" aria-hidden="true" />
-                Latest end-of-day close
-              </>
-            ) : (
-              <>Last reported snapshot</>
-            )}
-          </div>
-          {quoteData?.cachedAt && (
-            <div className="mt-1.5 text-[10px] font-mono uppercase tracking-[0.18em] text-muted-foreground">
-              Updated{" "}
-              {new Date(quoteData.cachedAt).toLocaleString("en-US", {
-                month: "short",
-                day: "numeric",
-                hour: "numeric",
-                minute: "2-digit",
-                timeZoneName: "short",
-              })}
-            </div>
-          )}
-          {quoteData?.cachedAt &&
-            Date.now() - new Date(quoteData.cachedAt).getTime() > 24 * 60 * 60 * 1000 && (
-              <div className="mt-2 text-xs text-muted-foreground italic" role="status">
-                Snapshot is more than 24 hours old; prices may have changed.
-              </div>
-            )}
-          <p className="mt-5 max-w-2xl text-muted-foreground leading-relaxed">
+          <DataStatus status={status} />
+          <p className="mt-8 max-w-2xl text-muted-foreground leading-relaxed">
             A snapshot of every position held by the Purdue Student Managed Investment Fund, with
             cost basis, returns, and portfolio weighting.
           </p>
@@ -572,52 +404,27 @@ function HoldingsPage() {
         <Reveal className="grid gap-px bg-border sm:grid-cols-2 lg:grid-cols-4">
           <KpiCard
             label="Portfolio Value"
+            asOf={quotesAsOf}
             value={fmtUSD(portfolioSummary.portfolioValue, { maximumFractionDigits: 0 })}
-            animatedValue={
-              <CountUp
-                to={portfolioSummary.portfolioValue}
-                duration={1.8}
-                format={(n) => fmtUSD(n, { maximumFractionDigits: 0 })}
-              />
-            }
           />
           <KpiCard
             label="Cash Holdings"
             value={fmtUSD(portfolioSummary.cashHoldings, { maximumFractionDigits: 0 })}
             sub={`${((portfolioSummary.cashHoldings / portfolioSummary.portfolioValue) * 100).toFixed(1)}% of portfolio`}
-            animatedValue={
-              <CountUp
-                to={portfolioSummary.cashHoldings}
-                duration={1.4}
-                format={(n) => fmtUSD(n, { maximumFractionDigits: 0 })}
-              />
-            }
           />
           <KpiCard
             label="Total Return"
+            asOf={quotesAsOf}
             value={fmtPct(portfolioSummary.totalReturnPct)}
             sub={fmtUSD(portfolioSummary.totalReturn, { maximumFractionDigits: 0 })}
             accent={portfolioSummary.totalReturnPct >= 0 ? "positive" : "negative"}
-            animatedValue={
-              <CountUp
-                to={portfolioSummary.totalReturnPct}
-                duration={1.6}
-                format={(n) => fmtPct(n)}
-              />
-            }
           />
           <KpiCard
-            label="Day P&L"
+            label="Day P&L (latest session)"
             value={fmtUSD(portfolioSummary.totalDayGain, { maximumFractionDigits: 0 })}
-            sub={fmtPct(portfolioSummary.totalDayChange) + " today"}
+            sub={`${fmtPct(portfolioSummary.totalDayChange)} on the latest session`}
+            asOf={quotesAsOf}
             accent={dayAccent}
-            animatedValue={
-              <CountUp
-                to={portfolioSummary.totalDayGain}
-                duration={1.4}
-                format={(n) => fmtUSD(n, { maximumFractionDigits: 0 })}
-              />
-            }
           />
           <KpiCard
             label="Annualized Volatility"
@@ -672,7 +479,8 @@ function HoldingsPage() {
                 Sector Allocation
               </h2>
               <div className="text-[10px] font-mono uppercase tracking-[0.18em] text-muted-foreground">
-                % of invested capital
+                % of invested capital{quotesAsOf ? `, ${quotesAsOf}` : ""}
+                {status.weights.sessionDate && <> · SPY weights {asOfText(status.weights)}</>}
               </div>
             </div>
             <div className="space-y-2.5">
@@ -719,7 +527,7 @@ function HoldingsPage() {
                 Weighted Beta
               </div>
               <div className="font-display text-4xl font-bold text-ink">
-                <CountUp to={portfolioSummary.weightedBeta} decimals={2} duration={1.4} />
+                {portfolioSummary.weightedBeta.toFixed(2)}
               </div>
               <div className="text-xs text-muted-foreground mt-1 font-mono">
                 vs. 1.00 S&amp;P 500
@@ -730,11 +538,7 @@ function HoldingsPage() {
                 Invested Capital
               </div>
               <div className="font-display text-2xl font-bold text-ink">
-                <CountUp
-                  to={portfolioSummary.investedCapital}
-                  duration={1.6}
-                  format={(n) => fmtUSD(n, { maximumFractionDigits: 0 })}
-                />
+                {fmtUSD(portfolioSummary.investedCapital, { maximumFractionDigits: 0 })}
               </div>
             </div>
           </div>
@@ -743,12 +547,12 @@ function HoldingsPage() {
         {!(isFetching && !quoteData) && (
           <Reveal>
             <h2 className="mb-4 text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-              Today's Movers
+              Movers{quotesAsOf ? `, ${quotesAsOf}` : ""}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-border">
               {[
-                { title: "Today's Leaders", items: movers.gainers },
-                { title: "Today's Laggards", items: movers.losers },
+                { title: "Leaders", items: movers.gainers },
+                { title: "Laggards", items: movers.losers },
               ].map((panel) => (
                 <div key={panel.title} className="bg-card border border-border p-6 hover-lift-sm">
                   <div className="flex items-baseline justify-between mb-4 gap-3">

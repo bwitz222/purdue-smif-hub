@@ -1,7 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
 import {
   ArrowRight,
   Cpu,
@@ -16,19 +14,11 @@ import {
   Briefcase,
   RefreshCw,
 } from "lucide-react";
+import { useLiveBook } from "@/lib/use-live-book";
+import { asOfText } from "@/lib/market-calendar";
 import { socialMeta, canonical, breadcrumbLd, OG_SECTORS } from "@/lib/seo";
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
-import { getLiveQuotes } from "@/lib/quotes.functions";
-import { getRiskMetrics } from "@/lib/risk.functions";
-import {
-  applyQuotes,
-  teamAllocations,
-  baseHoldings,
-  teamSlug,
-  type TeamAllocation,
-} from "@/lib/portfolio";
-import { getEtfSectorWeights } from "@/lib/etf-weights.functions";
-import { liveQueryOptions } from "@/lib/live-query";
+import { teamAllocations, teamSlug, type TeamAllocation } from "@/lib/portfolio";
 import { sectorTeams, fixedIncomeMacro, portfolioManagers, LEAD_ROLE } from "@/data/team";
 import type { Member } from "@/components/MemberCard";
 
@@ -285,31 +275,9 @@ function TeamCard({
 }
 
 function Sectors() {
-  const fetchQuotes = useServerFn(getLiveQuotes);
-  const symbols = useMemo(() => baseHoldings.map((h) => h.symbol), []);
-  const { data: quoteData, isFetching } = useQuery({
-    queryKey: ["live-quotes", symbols],
-    queryFn: () => fetchQuotes({ data: { symbols } }),
-    ...liveQueryOptions,
-  });
-
-  // Only used for the true market-session date on the banner; shares the
-  // ["risk-metrics"] cache with /holdings so it's a deduped, near-free read.
-  const fetchRisk = useServerFn(getRiskMetrics);
-  const { data: risk } = useQuery({
-    queryKey: ["risk-metrics"],
-    queryFn: () => fetchRisk(),
-    ...liveQueryOptions,
-  });
-
-  const fetchEtfWeights = useServerFn(getEtfSectorWeights);
-  const { data: etfWeights } = useQuery({
-    queryKey: ["etf-sector-weights"],
-    queryFn: () => fetchEtfWeights(),
-    ...liveQueryOptions,
-  });
-
-  const updated = useMemo(() => applyQuotes(baseHoldings, quoteData?.quotes ?? {}), [quoteData]);
+  // Same snapshot as /holdings: quotes, risk and ETF weights polled together.
+  const { holdings: updated, etfWeights, status } = useLiveBook();
+  const { isFetching } = status;
   const teams = useMemo(() => {
     const allocations = teamAllocations(updated, etfWeights?.weights);
     return new Map(allocations.map((a) => [a.team, a]));
@@ -326,15 +294,7 @@ function Sectors() {
     };
   }, [teams, updated]);
 
-  // True session date of the quotes (Polygon's latest completed close), from
-  // the risk metrics' as_of — not quoteData.cachedAt, which is the fetch time.
-  const asOf = risk?.asOf
-    ? new Date(risk.asOf + "T00:00:00").toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-      })
-    : null;
+  const asOf = status.quotes.sessionDate ? asOfText(status.quotes) : null;
 
   return (
     <>
@@ -364,12 +324,7 @@ function Sectors() {
               ) : asOf ? (
                 <>
                   <span className="h-1.5 w-1.5 rounded-full bg-gold" aria-hidden="true" />
-                  Allocations as of {asOf} close
-                </>
-              ) : quoteData?.cachedAt ? (
-                <>
-                  <span className="h-1.5 w-1.5 rounded-full bg-gold" aria-hidden="true" />
-                  Allocations · latest end-of-day close
+                  Allocations as of {asOf}
                 </>
               ) : (
                 <>Last reported snapshot</>

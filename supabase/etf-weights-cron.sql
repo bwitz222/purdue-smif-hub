@@ -28,7 +28,8 @@ select cron.schedule(
                  'Content-Type', 'application/json',
                  'x-refresh-secret', '<VERCEL_REFRESH_HOOK_SECRET>'
                ),
-    body    := '{}'::jsonb
+    body    := '{}'::jsonb,
+    timeout_milliseconds := 120000 -- pg_net's default is 5s; the hook keeps working after that, but the logged response would read as a timeout
   );
   $job$
 );

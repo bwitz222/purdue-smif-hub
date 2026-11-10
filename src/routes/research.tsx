@@ -1,7 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { ArrowUpRight, Download, ExternalLink, Rss, Search } from "lucide-react";
-import { Reveal } from "@/components/Reveal";
 import { socialMeta, canonical, breadcrumbLd, OG_RESEARCH } from "@/lib/seo";
 import { getPublications, type PublicationRow } from "@/lib/publications.functions";
 import { findMemberBySlug, memberSlug } from "@/data/team";
@@ -282,9 +281,9 @@ function Research() {
           >
             Latest
           </h2>
-          <Reveal>
+          <div>
             <FeaturedPublication pub={latest} />
-          </Reveal>
+          </div>
         </section>
       )}
 

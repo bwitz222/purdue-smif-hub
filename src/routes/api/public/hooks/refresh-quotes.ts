@@ -1,51 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { holdings as baseHoldings } from "@/data/holdings";
 
-type PolygonBar = { T: string; c: number; o: number };
-type PolygonGroupedResponse = { results?: PolygonBar[]; status?: string };
-
-function toYmd(d: Date): string {
-  return d.toISOString().slice(0, 10);
-}
-
-// Walk back up to 10 days to find the TWO most recent trading days
-// (skipping weekends/holidays/not-yet-published days).
-async function fetchTwoDaysGroupedBars(
-  apiKey: string,
-): Promise<{ latest: Map<string, PolygonBar> | null; prior: Map<string, PolygonBar> | null }> {
-  const found: Array<Map<string, PolygonBar>> = [];
-  const today = new Date();
-  // Start at back=0 (today): Polygon publishes the grouped end-of-day bar a few
-  // hours after the close, so as soon as it exists we capture the *latest*
-  // session. If today's bar isn't out yet (or it's a weekend/holiday) the day
-  // returns 0 results and we fall through to the prior trading days.
-  for (let back = 0; back <= 10 && found.length < 2; back++) {
-    const d = new Date(today);
-    d.setUTCDate(d.getUTCDate() - back);
-    const url = `https://api.polygon.io/v2/aggs/grouped/locale/us/market/stocks/${toYmd(
-      d,
-    )}?adjusted=true&apiKey=${apiKey}`;
-    try {
-      const res = await fetch(url);
-      if (res.status === 429 || res.status === 401) break;
-      // 403 NOT_AUTHORIZED means this particular (too-recent) day isn't available
-      // on the current Polygon plan — skip it and fall through to the most recent
-      // authorized session instead of aborting the whole refresh.
-      if (res.status === 403) continue;
-      if (!res.ok) continue;
-      const json = (await res.json()) as PolygonGroupedResponse;
-      if (json.results && json.results.length > 0) {
-        const m = new Map<string, PolygonBar>();
-        for (const b of json.results) m.set(b.T, b);
-        found.push(m);
-      }
-    } catch {
-      // try previous day
-    }
-  }
-  return { latest: found[0] ?? null, prior: found[1] ?? null };
-}
-
 export const Route = createFileRoute("/api/public/hooks/refresh-quotes")({
   server: {
     handlers: {
@@ -69,57 +24,26 @@ export const Route = createFileRoute("/api/public/hooks/refresh-quotes")({
           );
         }
 
-        const { latest, prior } = await fetchTwoDaysGroupedBars(apiKey);
-        if (!latest || latest.size === 0) {
-          return new Response(
-            JSON.stringify({ ok: false, error: "No bars returned from provider" }),
-            { status: 502, headers: { "Content-Type": "application/json" } },
-          );
-        }
-
-        const symbols = baseHoldings.map((h) => h.symbol);
-        const fetchedAt = new Date().toISOString();
-        const upserts: Array<{
-          symbol: string;
-          price: number;
-          change_pct: number;
-          fetched_at: string;
-        }> = [];
-        for (const symbol of symbols) {
-          const bar = latest.get(symbol);
-          if (!bar || !isFinite(bar.c)) continue;
-          const priorBar = prior?.get(symbol);
-          let changePct = 0;
-          if (priorBar && isFinite(priorBar.c) && priorBar.c > 0) {
-            changePct = ((bar.c - priorBar.c) / priorBar.c) * 100;
-          } else if (bar.o > 0) {
-            changePct = ((bar.c - bar.o) / bar.o) * 100;
-          }
-          upserts.push({
-            symbol,
-            price: bar.c,
-            change_pct: isFinite(changePct) ? changePct : 0,
-            fetched_at: fetchedAt,
-          });
-        }
-
-        if (upserts.length === 0) {
-          return new Response(JSON.stringify({ ok: true, updated: 0, fetchedAt }), {
-            status: 200,
-            headers: { "Content-Type": "application/json" },
-          });
-        }
-
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-        const { error } = await supabaseAdmin
-          .from("quote_cache")
-          .upsert(upserts, { onConflict: "symbol" });
-        if (error) {
-          return new Response(JSON.stringify({ ok: false, error: error.message }), {
+        const { refreshQuoteCache } = await import("@/lib/quote-refresh.server");
+        const symbols = baseHoldings.map((h) => h.symbol);
+        const outcome = await refreshQuoteCache(supabaseAdmin, symbols, apiKey);
+        if (outcome.status === "db-error") {
+          return new Response(JSON.stringify({ ok: false, error: outcome.error }), {
             status: 500,
             headers: { "Content-Type": "application/json" },
           });
         }
+        if (outcome.status !== "ok") {
+          return new Response(
+            JSON.stringify({
+              ok: false,
+              error: `No bars returned from provider (${outcome.status})`,
+            }),
+            { status: 502, headers: { "Content-Type": "application/json" } },
+          );
+        }
+        const { fetchedAt, updated, sessionDate } = outcome;
 
         // Refresh SPY total-return benchmark (monthly) from Alpha Vantage.
         let benchUpdated = 0;
@@ -169,7 +93,7 @@ export const Route = createFileRoute("/api/public/hooks/refresh-quotes")({
         }
 
         return new Response(
-          JSON.stringify({ ok: true, updated: upserts.length, benchUpdated, fetchedAt }),
+          JSON.stringify({ ok: true, updated, sessionDate, benchUpdated, fetchedAt }),
           { status: 200, headers: { "Content-Type": "application/json" } },
         );
       },
