@@ -1,0 +1,92 @@
+# Purdue SMIF: full text
+
+> The Purdue Student Managed Investment Fund (SMIF) is a student-run investment fund at the Daniels School of Business, Purdue University. Founded in 1995, it manages real university capital across U.S. equities and fixed income, benchmarked against the S&P 500 and reported quarterly. Every position is researched, debated, and voted on by students before it is entered.
+
+This file collects the facts, process, and FAQ answers published on https://www.purduesmif.org in one place. It adds nothing that is not on the site. For the short version see https://www.purduesmif.org/llms.txt. Figures that change (assets, holdings, returns) are published with an as-of date on the Holdings and Performance pages; treat those pages, not this file, as current.
+
+## Fact sheet
+
+- Full name: Purdue Student Managed Investment Fund
+- Also known as: Purdue SMIF, Purdue Investment Fund
+- Founded: 1995
+- Affiliation: Mitch Daniels School of Business, Purdue University
+- Assets under management: approximately $600,000 of real university capital
+- Benchmark: S&P 500 Total Return Index; audited monthly performance tracked since October 2013, when the fund moved to its current custodian
+- Structure: 8 equity sector teams, a Fixed Income & Macro team, and a Portfolio + Risk Management team, overseen by a 7-member executive board
+- Faculty advisors: Lulu Zeng, Alexander Boquist, and Larissa Adamic, Daniels School of Business
+- Admissions: roughly 15–25 analysts admitted per cycle from 100–150 applications; open to all majors and all colleges at Purdue
+- Time commitment: approximately 6 hours per week
+- Email: smif26@purdue.edu
+- Address: Daniels School of Business, 403 Mitch Daniels Blvd, West Lafayette, IN 47907
+- Publications: The Boiler Beta, a Substack of investment publications and articles written by Purdue SMIF members (https://purduesmif.substack.com/)
+- Official directory listing: https://boilerlink.purdue.edu/organization/smif
+- Not to be confused with: the Student Managed Venture Fund (SMVF), a separate Master of Finance venture capital program at the Daniels School
+
+## What the fund is
+
+SMIF is Purdue's student investment club with a real portfolio: it gives students the opportunity to manage actual investment capital under faculty mentorship. Analysts apply institutional-grade frameworks to fundamental equity research, building skills that translate to careers in asset management, investment banking, and equity research.
+
+Every semester, analysts pitch positions to the full fund. Accepted ideas enter the real portfolio. Rejected ideas come with feedback that sharpens the next pitch.
+
+## How the fund decides what to buy
+
+Four steps. Analysts screen their sector for mispricing or structural change, build the financial model and stress-test the assumptions, defend the thesis live before the full investment committee, and then the members vote. Nothing enters the portfolio without a written thesis, a valuation, and a majority vote, and every holding is reviewed quarterly against its original thesis.
+
+## Questions and answers
+
+### When was the Purdue Student Managed Investment Fund founded?
+
+SMIF was founded in 1995 at Purdue University's Daniels School of Business. Continuous audited monthly records begin in October 2013, when the fund moved to its current custodian; that series is published in full on the performance page (https://www.purduesmif.org/performance).
+
+### Does Purdue SMIF invest real money?
+
+Yes. The fund manages real capital on behalf of the university rather than a simulated portfolio. Every position is researched, debated, and voted on before it is entered, and the complete holdings list, with cost basis, weights, and returns, is published on the holdings page (https://www.purduesmif.org/holdings).
+
+### Who oversees the fund?
+
+An executive board of seven students, elected each spring, runs strategy, research, risk, recruiting, education, and operations. That sits inside faculty oversight: holdings, factor exposures, drawdowns, and concentration are reviewed with the faculty advisors quarterly, and performance is reported each semester to the Daniels School and university stakeholders.
+
+### How is performance measured and reported?
+
+Returns are benchmarked against the S&P 500 Total Return Index and calculated using the Modified Dietz method, which adjusts for the timing of cash flows. Performance is reported quarterly, with annual and cumulative returns, volatility, Sharpe, alpha, beta, and drawdown published on the performance page.
+
+### What can the fund invest in?
+
+Primarily U.S.-listed equities and fixed income, with ADRs permitted. The investment policy statement prohibits options, futures, leverage, and short positions, caps position sizes per name and per sector, and requires meaningful exposure across all covered sectors.
+
+### Is SMIF a finance club or an investment club?
+
+Both, in the sense students usually mean: SMIF is a student organization at the Daniels School of Business that recruits by application each semester. The difference from most finance clubs at Purdue is that the portfolio holds real university capital rather than a simulated book, so every position is researched, debated, and voted on before it is entered.
+
+### How is SMIF different from other finance clubs at Purdue?
+
+Real money and a formal process. Analysts join a sector team, publish written research, and defend pitches before a committee vote. Current holdings and performance against the S&P 500 are published on the site. Members progress from analyst to senior analyst to portfolio manager and the executive board. A fuller comparison of Purdue's finance and investment clubs is at https://www.purduesmif.org/finance-clubs-at-purdue.
+
+## Joining
+
+Applications run each fall and spring semester. The process has four steps: submit the application (a Qualtrics form, about 10 minutes), a coffee chat with current members, a technical interview (a markets question, behavioral, and fit), and a decision, with offers extended within two weeks of interview close.
+
+- Do I need finance experience? No. Every analyst is trained from scratch on financial statement analysis, valuation, and pitch construction. About a third of analysts come from non-business majors.
+- Is SMIF only for finance majors? No. The fund recruits from engineering, computer science, agriculture, science, and the liberal arts.
+- What is the time commitment? About 6 hours per week: one full fund meeting, one sector team meeting, plus independent research. Sector leads and portfolio managers invest more.
+- Can I be in SMIF and other clubs at the same time? Yes, and most analysts are.
+- How competitive is it? Typically 100–150 applications per recruiting cycle and 15–25 analysts accepted.
+- Can freshmen apply? Yes. Freshmen, sophomores, and juniors are all welcome. Seniors should reach out directly if interested.
+
+Apply and see the current calendar: https://www.purduesmif.org/apply and https://www.purduesmif.org/recruiting
+
+## Pages
+
+- Home: https://www.purduesmif.org/
+- Finance Clubs at Purdue: https://www.purduesmif.org/finance-clubs-at-purdue
+- About (history, philosophy, process, investment policy, governance): https://www.purduesmif.org/about
+- Team (executive board, sector teams, portfolio managers; profiles at /team/<slug>): https://www.purduesmif.org/team
+- Sectors: https://www.purduesmif.org/sectors
+- Holdings: https://www.purduesmif.org/holdings
+- Performance: https://www.purduesmif.org/performance
+- Research: https://www.purduesmif.org/research
+- Learn: https://www.purduesmif.org/learn
+- Recruiting (calendar and interview preparation): https://www.purduesmif.org/recruiting
+- Apply: https://www.purduesmif.org/apply
+- Contact: https://www.purduesmif.org/contact
+- Sitemap: https://www.purduesmif.org/sitemap.xml

@@ -1,6 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, ExternalLink } from "lucide-react";
-import { socialMeta, canonical, breadcrumbLd, OG_ABOUT } from "@/lib/seo";
+import {
+  socialMeta,
+  canonical,
+  breadcrumbLd,
+  ORG_ID,
+  OG_FINANCE_CLUBS,
+  PAGE_META,
+} from "@/lib/seo";
 import { applyUrl } from "@/lib/apply-url";
 import { OnThisPage, type PageSection } from "@/components/OnThisPage";
 
@@ -13,9 +20,15 @@ const SECTIONS: readonly PageSection[] = [
   { id: "faq", label: "FAQ" },
 ];
 
-const PAGE_TITLE = "Finance & Investment Clubs at Purdue: A Complete Guide | Purdue SMIF";
-const PAGE_DESCRIPTION =
-  "An honest guide to the finance and investment clubs at Purdue University, what each one does, who it suits, and which club manages real money. Written by the Student Managed Investment Fund.";
+const PAGE_TITLE = PAGE_META.financeClubs.title;
+const PAGE_DESCRIPTION = PAGE_META.financeClubs.description;
+
+// Real dates, from this file's git history: first committed 2026-08-14, last
+// edited 2026-11-10. Bump DATE_MODIFIED (and the visible line below) whenever
+// the guide's content changes; do not derive it from the clock.
+const DATE_PUBLISHED = "2026-08-14";
+const DATE_MODIFIED = "2026-11-10";
+const UPDATED_LABEL = "November 2026";
 
 /**
  * Category landing page.
@@ -124,11 +137,14 @@ export const Route = createFileRoute("/finance-clubs-at-purdue")({
       { title: PAGE_TITLE },
       { name: "description", content: PAGE_DESCRIPTION },
       ...socialMeta({
-        title: "Finance & Investment Clubs at Purdue: A Complete Guide",
+        title: PAGE_TITLE,
         description: PAGE_DESCRIPTION,
         url: canonical("/finance-clubs-at-purdue"),
-        image: OG_ABOUT,
+        type: "article",
+        image: OG_FINANCE_CLUBS,
       }),
+      { property: "article:published_time", content: DATE_PUBLISHED },
+      { property: "article:modified_time", content: DATE_MODIFIED },
     ],
     links: [{ rel: "canonical", href: canonical("/finance-clubs-at-purdue") }],
     scripts: [
@@ -154,8 +170,13 @@ export const Route = createFileRoute("/finance-clubs-at-purdue")({
           headline: "Finance and Investment Clubs at Purdue: A Complete Guide",
           description: PAGE_DESCRIPTION,
           url: "https://www.purduesmif.org/finance-clubs-at-purdue",
-          author: { "@id": "https://www.purduesmif.org/#organization" },
-          publisher: { "@id": "https://www.purduesmif.org/#organization" },
+          mainEntityOfPage: "https://www.purduesmif.org/finance-clubs-at-purdue",
+          datePublished: DATE_PUBLISHED,
+          dateModified: DATE_MODIFIED,
+          image: OG_FINANCE_CLUBS,
+          inLanguage: "en",
+          author: { "@id": ORG_ID },
+          publisher: { "@id": ORG_ID },
           about: [
             { "@type": "Thing", name: "Finance clubs at Purdue University" },
             { "@type": "Thing", name: "Investment clubs at Purdue University" },
@@ -187,6 +208,9 @@ function FinanceClubs() {
               main ones, what each is actually for, and how to choose. It is written by the Student
               Managed Investment Fund, the club that manages real university capital, so we have
               said plainly where we fit and where another organization is the better first stop.
+            </p>
+            <p className="mt-4 text-sm text-on-dark-muted">
+              <time dateTime={DATE_MODIFIED}>Updated {UPDATED_LABEL}</time>
             </p>
           </div>
         </div>
