@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { socialMeta, canonical, breadcrumbLd, OG_ABOUT } from "@/lib/seo";
 import { applyUrl } from "@/lib/apply-url";
+import { PLACEMENT_FIRMS, PROCESS, IPS } from "@/data/fund-facts";
 import { OnThisPage, type PageSection } from "@/components/OnThisPage";
 import { facultyAdvisors } from "@/data/team";
 import placementsImg from "@/assets/placements-2026.png";
@@ -64,33 +65,6 @@ export const Route = createFileRoute("/about")({
   }),
 });
 
-/** Mirrors the logos in `placements-2026.png`. Kept as text because the logo
-    wall is a single image — screen readers and crawlers cannot read it. */
-const PLACEMENT_FIRMS = [
-  "Morgan Stanley",
-  "Barclays",
-  "BMO",
-  "Wells Fargo",
-  "Deloitte",
-  "PwC",
-  "EY",
-  "Accenture",
-  "Crowe",
-  "MFS Investment Management",
-  "Julius Bär",
-  "CBRE",
-  "Zurich Insurance",
-  "Huntington Bank",
-  "State Farm",
-  "Simon Property Group",
-  "IBM",
-  "Caterpillar",
-  "Cummins",
-  "Northrop Grumman",
-  "CenterPoint Energy",
-  "NASA",
-] as const;
-
 /**
  * Questions about the fund itself — how it is governed, measured, and funded.
  *
@@ -125,56 +99,6 @@ const FAQ = [
   {
     q: "What can the fund invest in?",
     a: "Primarily U.S.-listed equities and fixed income, with ADRs permitted. The investment policy statement prohibits options, futures, leverage, and short positions, caps position sizes per name and per sector, and requires meaningful exposure across all covered sectors.",
-  },
-];
-
-const PROCESS = [
-  {
-    n: "01",
-    t: "Idea Generation",
-    d: "Analysts screen their sectors for compelling setups: catalysts, mispricing, or structural change the market hasn't priced.",
-  },
-  {
-    n: "02",
-    t: "Deep Research",
-    d: "Financial modeling, channel checks, and management review. Every assumption documented, every risk stress-tested.",
-  },
-  {
-    n: "03",
-    t: "Pitch & Debate",
-    d: "Theses defended live before the full investment committee. Pushback is expected. Weak arguments don't survive.",
-  },
-  {
-    n: "04",
-    t: "Vote & Monitor",
-    d: "Members vote. Accepted positions enter the real portfolio. Every holding reviewed quarterly against its original thesis.",
-  },
-];
-
-const IPS = [
-  {
-    t: "Objective",
-    d: "Long-term capital appreciation benchmarked against the S&P 500, while providing an authentic asset-management learning experience.",
-  },
-  {
-    t: "Eligible Universe",
-    d: "Primarily U.S.-listed equities and fixed income; ADRs permitted. No options, futures, leverage, or short positions.",
-  },
-  {
-    t: "Diversification",
-    d: "Position sizes capped per name and per sector. Maintain meaningful exposure across all covered sectors.",
-  },
-  {
-    t: "Risk Controls",
-    d: "Ongoing monitoring of factor exposures, drawdowns, and concentration. Quarterly reviews with the faculty advisors.",
-  },
-  {
-    t: "Decision Process",
-    d: "Every trade requires a written thesis, valuation, and a majority vote of the investment committee.",
-  },
-  {
-    t: "Reporting",
-    d: "Performance and attribution reported each semester to the Daniels School and university stakeholders.",
   },
 ];
 
