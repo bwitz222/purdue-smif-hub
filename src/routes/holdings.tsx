@@ -1,7 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useMemo, useEffect } from "react";
 import { ArrowUpDown, ArrowUp, ArrowDown, AlertCircle, Filter, Search } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
 import { holdings as baseHoldings, type Holding } from "@/data/holdings";
 import { getCachedQuotes } from "@/lib/quotes.functions";
 import { socialMeta, canonical, breadcrumbLd, OG_HOLDINGS } from "@/lib/seo";
@@ -306,48 +305,41 @@ function HoldingsPage() {
   return (
     <>
       {/* Sticky compact summary — appears on scroll */}
-      <AnimatePresence>
-        {showSticky && (
-          <motion.div
-            initial={{ y: -60, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -60, opacity: 0 }}
-            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed top-[3.875rem] left-0 right-0 z-40 border-b border-border bg-background"
-          >
-            <div className="container-prose flex items-center justify-between gap-4 py-2.5 text-xs">
-              <div className="flex items-center gap-5 font-mono overflow-x-auto">
-                <span className="text-muted-foreground hidden sm:inline">Portfolio</span>
-                <span>
-                  <span className="text-muted-foreground">Value</span>{" "}
-                  <span className="font-semibold text-ink">
-                    {fmtUSD(portfolioSummary.portfolioValue, { maximumFractionDigits: 0 })}
-                  </span>
-                </span>
-                <span>
-                  <span className="text-muted-foreground">Day</span>{" "}
-                  <span
-                    className={`font-semibold ${dayAccent === "positive" ? "text-gain" : "text-loss"}`}
-                  >
-                    {fmtPct(portfolioSummary.totalDayChange)}
-                  </span>
-                </span>
-                <span className="hidden sm:inline">
-                  <span className="text-muted-foreground">Total</span>{" "}
-                  <span
-                    className={`font-semibold ${portfolioSummary.totalReturnPct >= 0 ? "text-gain" : "text-loss"}`}
-                  >
-                    {fmtPct(portfolioSummary.totalReturnPct)}
-                  </span>
-                </span>
-              </div>
-              <span className="hidden md:inline text-xs text-muted-foreground whitespace-nowrap">
-                {rows.length} positions
+      <div
+        aria-hidden={!showSticky}
+        className={`fixed top-[3.875rem] left-0 right-0 z-40 border-b border-border bg-background transition-[transform,opacity,visibility] duration-300 ease-out motion-reduce:transition-none ${showSticky ? "visible translate-y-0 opacity-100" : "invisible -translate-y-full opacity-0"}`}
+      >
+        <div className="container-prose flex items-center justify-between gap-4 py-2.5 text-xs">
+          <div className="flex items-center gap-5 font-mono overflow-x-auto">
+            <span className="text-muted-foreground hidden sm:inline">Portfolio</span>
+            <span>
+              <span className="text-muted-foreground">Value</span>{" "}
+              <span className="font-semibold text-ink">
+                {fmtUSD(portfolioSummary.portfolioValue, { maximumFractionDigits: 0 })}
               </span>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </span>
+            <span>
+              <span className="text-muted-foreground">Day</span>{" "}
+              <span
+                className={`font-semibold ${dayAccent === "positive" ? "text-gain" : "text-loss"}`}
+              >
+                {fmtPct(portfolioSummary.totalDayChange)}
+              </span>
+            </span>
+            <span className="hidden sm:inline">
+              <span className="text-muted-foreground">Total</span>{" "}
+              <span
+                className={`font-semibold ${portfolioSummary.totalReturnPct >= 0 ? "text-gain" : "text-loss"}`}
+              >
+                {fmtPct(portfolioSummary.totalReturnPct)}
+              </span>
+            </span>
+          </div>
+          <span className="hidden md:inline text-xs text-muted-foreground whitespace-nowrap">
+            {rows.length} positions
+          </span>
+        </div>
+      </div>
 
       <section className="border-b border-border bg-background">
         <div className="container-prose py-20">
