@@ -117,7 +117,7 @@ It appears on the site on the next page load; no redeploy. PDF is best for decks
   text must not sit on `bg-secondary`. If you change a surface or a text token,
   re-run `npm run test:e2e` — it fails on any new axe violation.
 - **Data freshness is session-aware.** Prices come from Polygon end-of-day closes.
-  Polygon releases a session's bar the _next morning_, so the nightly jobs run at
+  Polygon has a session's bar out by the _next morning_ (not on the night of the close; inferred from job timestamps, not a documented time), so the jobs run at
   12:00 and 16:00 UTC (see `supabase/reschedule-crons.sql`); at 01:00 UTC they always
   got the session before the one that had just closed. `quote-refresh.server.ts` is
   the one refresh implementation (cron hook and visitor self-heal); it records the
