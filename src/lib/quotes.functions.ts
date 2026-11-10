@@ -1,4 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
+import { holdings as baseHoldings } from "@/data/holdings";
+import { mergeQuotes, type QuoteSource } from "@/lib/quote-sources";
 
 type Quote = { symbol: string; price: number; changePct: number };
 
@@ -8,6 +10,8 @@ export type QuotePayload = {
   cachedAt: number;
   /** The trading session the prices belong to (YYYY-MM-DD), once recorded. */
   sessionDate: string | null;
+  /** Where the prices came from: the Polygon cache, or a newer second source. */
+  source: QuoteSource | null;
 };
 
 // When the cache is stale or behind the latest completed session, the visitor's
@@ -19,7 +23,11 @@ const REFRESH_TIMEOUT_MS = 6000;
 
 type Row = { symbol: string; price: number; change_pct: number; fetched_at: string };
 
-function toPayload(rows: Row[], sessionDate: string | null): QuotePayload {
+function toPayload(
+  rows: Row[],
+  sessionDate: string | null,
+  source: QuoteSource | null,
+): QuotePayload {
   const quotes: Record<string, Quote> = {};
   let newest = 0;
   for (const r of rows) {
@@ -35,6 +43,7 @@ function toPayload(rows: Row[], sessionDate: string | null): QuotePayload {
     quotes,
     cachedAt: newest > 0 ? newest : Date.now(),
     sessionDate,
+    source,
   };
 }
 
@@ -48,10 +57,11 @@ export const getCachedQuotes = createServerFn({ method: "GET" }).handler(
     // baseline (shares and cost basis from src/data/holdings.ts) that renders
     // fine without live prices. A stale or missing service-role key has taken
     // this path in production before; the right outcome is the baseline table.
-    const { QUOTE_SESSION_KEY, readMeta, sessionDateFromMeta } =
+    const { QUOTE_SESSION_KEY, readExternalCloses, readMeta, sessionDateFromMeta } =
       await import("@/lib/quote-refresh.server");
     let rows: Row[] = [];
     let sessionDate: string | null = null;
+    let source: QuoteSource | null = null;
     try {
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
       const res = await supabaseAdmin
@@ -60,11 +70,19 @@ export const getCachedQuotes = createServerFn({ method: "GET" }).handler(
       if (res.error) throw res.error;
       rows = res.data ?? [];
       const meta = await readMeta(supabaseAdmin, [QUOTE_SESSION_KEY]);
-      sessionDate = sessionDateFromMeta(meta[QUOTE_SESSION_KEY]);
+      const merged = mergeQuotes({
+        cache: rows,
+        cacheSession: sessionDateFromMeta(meta[QUOTE_SESSION_KEY]),
+        external: await readExternalCloses(supabaseAdmin),
+        symbols: baseHoldings.map((h) => h.symbol),
+      });
+      rows = merged.rows;
+      sessionDate = merged.sessionDate;
+      source = merged.source;
     } catch (err) {
       console.error("[quotes] cached-quote read failed, serving baseline:", err);
     }
-    return toPayload(rows, sessionDate);
+    return toPayload(rows, sessionDate, source);
   },
 );
 
@@ -83,6 +101,7 @@ export const getLiveQuotes = createServerFn({ method: "POST" })
       QUOTE_ATTEMPT_KEY,
       QUOTE_SESSION_KEY,
       needsRefresh,
+      readExternalCloses,
       readMeta,
       refreshQuoteCache,
       sessionDateFromMeta,
@@ -135,5 +154,12 @@ export const getLiveQuotes = createServerFn({ method: "POST" })
       if (finished) ({ rows, meta } = await readCache());
     }
 
-    return toPayload(rows, sessionDateFromMeta(meta[QUOTE_SESSION_KEY]));
+    // A second source may hold a newer close than Polygon has released yet.
+    const merged = mergeQuotes({
+      cache: rows,
+      cacheSession: sessionDateFromMeta(meta[QUOTE_SESSION_KEY]),
+      external: await readExternalCloses(supabaseAdmin),
+      symbols: data.symbols,
+    });
+    return toPayload(merged.rows as Row[], merged.sessionDate, merged.source);
   });

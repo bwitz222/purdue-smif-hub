@@ -17,7 +17,7 @@ function levelText(f: Freshness): string {
   }
 }
 
-function Row({ label, f }: { label: string; f: Freshness }) {
+function Row({ label, f, note }: { label: string; f: Freshness; note?: React.ReactNode }) {
   return (
     <div className="border-t border-ink pt-3">
       <dt className="text-xs text-muted-foreground">{label}</dt>
@@ -27,6 +27,7 @@ function Row({ label, f }: { label: string; f: Freshness }) {
       >
         {levelText(f)}
       </dd>
+      {note && <dd className="text-xs text-muted-foreground">{note}</dd>}
     </div>
   );
 }
@@ -51,7 +52,27 @@ export function DataStatus({ status }: { status: LiveStatus }) {
         Data freshness
       </h2>
       <dl className="grid grid-cols-2 gap-x-8 gap-y-5 md:grid-cols-4">
-        <Row label="Prices and day change" f={status.quotes} />
+        <Row
+          label="Prices and day change"
+          f={status.quotes}
+          note={
+            status.priceSource === "zacks" ? (
+              <>
+                Source:{" "}
+                <a
+                  href="https://www.zacks.com/?utm_source=smif_site"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="link-underline font-bold text-gold-deep"
+                >
+                  Zacks Investment Research
+                </a>
+              </>
+            ) : status.priceSource === "polygon" ? (
+              "Source: Polygon.io"
+            ) : undefined
+          }
+        />
         <Row label="Risk metrics" f={status.risk} />
         <Row label="Sector weights (SPY)" f={status.weights} />
         <div className="border-t border-ink pt-3">

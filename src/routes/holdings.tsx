@@ -880,8 +880,19 @@ function HoldingsPage() {
           </div>
           <p>
             <span className="font-semibold text-foreground">Data source:</span> quotes are
-            Polygon.io end-of-day closes, refreshed daily after the market close (and on page visits
-            when the cache is stale). Share counts and cost basis are maintained by the fund.
+            end-of-day closes. Polygon.io is the primary source, refreshed daily after the market
+            close (and on page visits when the cache is stale). When{" "}
+            <a
+              href="https://www.zacks.com/?utm_source=smif_site"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="link-underline font-bold text-gold-deep"
+            >
+              Zacks Investment Research
+            </a>{" "}
+            has a newer close than Polygon has released, that close is shown instead, and the source
+            is named under Prices and day change. Share counts and cost basis are maintained by the
+            fund.
           </p>
           <p>
             <span className="font-semibold text-foreground">Methodology:</span> position value =

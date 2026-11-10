@@ -9,6 +9,7 @@ import { getEtfSectorWeights } from "@/lib/etf-weights.functions";
 import { liveQueryOptions } from "@/lib/live-query";
 import { buildPortfolio, sectorPercentBreakdown, topMovers } from "@/lib/portfolio";
 import { freshnessOf, type Freshness } from "@/lib/market-calendar";
+import type { QuoteSource } from "@/lib/quote-sources";
 
 /** The current instant, re-read every minute on the client; null until mounted. */
 function useNow(intervalMs = 60_000): Date | null {
@@ -81,6 +82,7 @@ export function useLiveBook(initialQuotes?: QuotePayload | null) {
   const quotesSession = quoteData?.sessionDate ?? risk?.asOf ?? null;
   const status: LiveStatus = {
     quotes: freshnessOf(quotesSession, now),
+    priceSource: quoteData?.source ?? null,
     risk: freshnessOf(risk?.asOf ?? null, now),
     weights: freshnessOf(etfWeights?.asOf ?? null, now),
     checkedAt: Math.max(
@@ -118,6 +120,8 @@ export function useLiveBook(initialQuotes?: QuotePayload | null) {
 
 export type LiveStatus = {
   quotes: Freshness;
+  /** Who supplied the prices on the page, for attribution. */
+  priceSource: QuoteSource | null;
   risk: Freshness;
   weights: Freshness;
   /** Epoch ms of the most recent successful fetch of any input. */

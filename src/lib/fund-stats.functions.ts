@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { holdings as baseHoldings } from "@/data/holdings";
+import { mergeQuotes } from "@/lib/quote-sources";
 
 export type FundStats = {
   aum_display: string;
@@ -20,20 +21,36 @@ export const getFundStats = createServerFn({ method: "GET" }).handler(
   async (): Promise<FundStats | null> => {
     try {
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-      const [statsRes, quotesRes] = await Promise.all([
+      const { QUOTE_SESSION_KEY, readExternalCloses, readMeta, sessionDateFromMeta } =
+        await import("@/lib/quote-refresh.server");
+      const [statsRes, quotesRes, external, meta] = await Promise.all([
         supabaseAdmin
           .from("fund_stats")
           .select("aum_display, active_members, founded_year, sector_teams, cash_holdings")
           .eq("id", true)
           .maybeSingle(),
-        supabaseAdmin.from("quote_cache").select("symbol, price"),
+        supabaseAdmin.from("quote_cache").select("symbol, price, change_pct, fetched_at"),
+        readExternalCloses(supabaseAdmin),
+        readMeta(supabaseAdmin, [QUOTE_SESSION_KEY]),
       ]);
       const data = statsRes.data;
       if (statsRes.error || !data) return null;
 
       const cash = Number(data.cash_holdings) || 0;
       const quotes = new Map<string, number>();
-      for (const q of quotesRes.data ?? []) {
+      // Same prices as /holdings: a newer second-source close wins over the cache.
+      const priced = mergeQuotes({
+        cache: (quotesRes.data ?? []).map((q) => ({
+          symbol: q.symbol,
+          price: Number(q.price),
+          change_pct: Number(q.change_pct),
+          fetched_at: q.fetched_at,
+        })),
+        cacheSession: sessionDateFromMeta(meta[QUOTE_SESSION_KEY]),
+        external,
+        symbols: baseHoldings.map((h) => h.symbol),
+      });
+      for (const q of priced.rows) {
         const p = Number(q.price);
         if (isFinite(p)) quotes.set(q.symbol, p);
       }

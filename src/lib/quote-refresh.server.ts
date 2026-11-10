@@ -9,6 +9,7 @@
 // return 403 and are skipped, which is why the newest session it can give us is
 // recorded alongside the prices (QUOTE_SESSION_KEY).
 import { sessionsBehind } from "@/lib/market-calendar";
+import type { ExternalClose } from "@/lib/quote-sources";
 
 type PolygonBar = { T: string; c: number; o: number };
 type PolygonGroupedResponse = { results?: PolygonBar[]; status?: string };
@@ -178,4 +179,29 @@ export async function refreshQuoteCache(
     await writeMeta(supabaseAdmin, QUOTE_SESSION_KEY, Date.parse(`${latestDate}T00:00:00Z`));
   }
   return { status: "ok", updated: rows.length, sessionDate: latestDate, fetchedAt };
+}
+
+/**
+ * Closes pushed by a second source (see external_quotes). Never throws: if the
+ * table has not been created yet, or the read fails, the site simply shows the
+ * Polygon cache as before.
+ */
+export async function readExternalCloses(supabaseAdmin: SupabaseAdmin): Promise<ExternalClose[]> {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from("external_quotes")
+      .select("symbol, source, session_date, price, prev_close, fetched_at");
+    if (error || !data) return [];
+    return data.map((r) => ({
+      symbol: r.symbol,
+      source: r.source,
+      session_date: r.session_date,
+      price: Number(r.price),
+      prev_close: r.prev_close === null ? null : Number(r.prev_close),
+      fetched_at: r.fetched_at,
+    }));
+  } catch (e) {
+    console.error("[quotes] external closes read failed:", e);
+    return [];
+  }
 }

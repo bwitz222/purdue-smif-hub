@@ -10,8 +10,10 @@ const status = (
   quotes: string | null,
   risk: string | null,
   weights: string | null,
+  priceSource: LiveStatus["priceSource"] = null,
 ): LiveStatus => ({
   quotes: freshnessOf(quotes, now),
+  priceSource,
   risk: freshnessOf(risk, now),
   weights: freshnessOf(weights, now),
   checkedAt: Date.parse("2026-11-10T19:00:00Z"),
@@ -45,6 +47,16 @@ describe("DataStatus", () => {
     const out = html(status(null, null, null));
     expect(out).toContain("n/a");
     expect(out).not.toContain("behind");
+  });
+
+  it("names the source of the prices, linking Zacks when it supplied them", () => {
+    const zacks = html(status("2026-11-09", "2026-11-06", "2026-11-06", "zacks"));
+    expect(zacks).toContain("Zacks Investment Research");
+    expect(zacks).toContain("https://www.zacks.com/");
+    expect(html(status("2026-11-06", "2026-11-06", "2026-11-06", "polygon"))).toContain(
+      "Source: Polygon.io",
+    );
+    expect(html(status(null, null, null))).not.toContain("Source:");
   });
 
   it("exposes a way to check for new data", () => {

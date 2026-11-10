@@ -365,6 +365,33 @@ export type Database = {
         };
         Relationships: [];
       };
+      external_quotes: {
+        Row: {
+          fetched_at: string;
+          prev_close: number | null;
+          price: number;
+          session_date: string;
+          source: string;
+          symbol: string;
+        };
+        Insert: {
+          fetched_at?: string;
+          prev_close?: number | null;
+          price: number;
+          session_date: string;
+          source: string;
+          symbol: string;
+        };
+        Update: {
+          fetched_at?: string;
+          prev_close?: number | null;
+          price?: number;
+          session_date?: string;
+          source?: string;
+          symbol?: string;
+        };
+        Relationships: [];
+      };
       quote_meta: {
         Row: {
           key: string;
