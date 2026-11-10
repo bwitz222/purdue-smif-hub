@@ -16,9 +16,11 @@ import {
   OG_SECTORS,
   OG_APPLY,
   OG_CONTACT,
+  OG_FINANCE_CLUBS,
 } from "./seo";
 
 const OG_IMAGES = {
+  OG_FINANCE_CLUBS,
   OG_IMAGE,
   OG_HOLDINGS,
   OG_TEAM,
