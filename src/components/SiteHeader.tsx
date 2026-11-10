@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import smifLogo from "@/assets/smif-logo-mark.png";
+import smifLogo from "@/assets/smif-logo-mark-128.webp";
 import { applyUrl } from "@/lib/apply-url";
 import { NAV } from "@/lib/nav";
 
