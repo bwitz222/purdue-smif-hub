@@ -623,6 +623,16 @@ function EmptyState({ series, query }: { series: (typeof SERIES)[number] | null;
       <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-muted-foreground">
         {c.support}
       </p>
+      {series?.value === "pitch" && (
+        <p className="mx-auto mt-4 max-w-md text-sm">
+          <Link
+            to="/stock-pitches"
+            className="link-underline font-bold text-gold-deep hover:text-ink"
+          >
+            How SMIF stock pitches work
+          </Link>
+        </p>
+      )}
     </div>
   );
 }

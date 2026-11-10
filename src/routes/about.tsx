@@ -113,6 +113,9 @@ function About() {
             <h1 className="font-display text-background max-w-3xl">
               A legacy of disciplined investing.
             </h1>
+            <p className="mt-4 text-xl text-gold">
+              The Purdue Student Managed Investment Fund: history, governance, and process.
+            </p>
             <p className="mt-8 max-w-xl text-on-dark-secondary leading-relaxed text-lg">
               Founded at the Daniels School of Business. Built on the conviction that the best way
               to learn investing is to actually invest.
@@ -252,6 +255,23 @@ function About() {
                 </Link>{" "}
                 shows exactly what our analysts decided to own.
               </p>
+              <p className="mt-6">
+                Weighing your options? Our guide to{" "}
+                <Link
+                  to="/finance-clubs-at-purdue"
+                  className="link-underline font-medium text-gold-deep hover:text-ink"
+                >
+                  finance clubs at Purdue
+                </Link>{" "}
+                compares SMIF with the other student finance and investment organizations, and{" "}
+                <Link
+                  to="/student-managed-investment-funds"
+                  className="link-underline font-medium text-gold-deep hover:text-ink"
+                >
+                  student managed investment funds explained
+                </Link>{" "}
+                covers how funds like this are built and what to compare.
+              </p>
             </div>
           </div>
         </div>
@@ -310,6 +330,24 @@ function About() {
             </div>
           ))}
         </div>
+        <p className="mt-8 max-w-2xl text-muted-foreground">
+          See{" "}
+          <Link
+            to="/stock-pitches"
+            className="link-underline font-medium text-gold-deep hover:text-ink"
+          >
+            how SMIF stock pitches work
+          </Link>
+          , read the analysts' latest{" "}
+          <Link to="/research" className="link-underline font-medium text-gold-deep hover:text-ink">
+            research
+          </Link>
+          , or learn{" "}
+          <Link to="/apply" className="link-underline font-medium text-gold-deep hover:text-ink">
+            how to join Purdue SMIF
+          </Link>
+          .
+        </p>
       </section>
 
       {/* ── IPS ───────────────────────────────────────────────────── */}
