@@ -2,7 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, ExternalLink } from "lucide-react";
 import { socialMeta, canonical, breadcrumbLd, OG_ABOUT } from "@/lib/seo";
 import { applyUrl } from "@/lib/apply-url";
-import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import { OnThisPage, type PageSection } from "@/components/OnThisPage";
 
 /** Anchors for the in-page nav. Each id must match a <section id> below. */
@@ -175,7 +174,7 @@ function FinanceClubs() {
       {/* ── Page header ───────────────────────────────────────────── */}
       <section className="relative bg-ink text-background overflow-hidden">
         <div className="container-prose section-y">
-          <Reveal>
+          <div>
             <span className="rule-gold mb-8 animate-expand-x" />
             <h1 className="font-display text-background max-w-4xl">
               Finance and investment clubs at Purdue.
@@ -189,7 +188,7 @@ function FinanceClubs() {
               Managed Investment Fund, the club that manages real university capital, so we have
               said plainly where we fit and where another organization is the better first stop.
             </p>
-          </Reveal>
+          </div>
         </div>
       </section>
 
@@ -202,7 +201,7 @@ function FinanceClubs() {
         className="border-b border-border bg-background section-anchor"
       >
         <div className="container-prose section-y">
-          <Reveal className="max-w-3xl">
+          <div className="max-w-3xl">
             <h2 id="short-answer-h" className="mt-4 font-display">
               Pick by the work, not the name.
             </h2>
@@ -230,7 +229,7 @@ function FinanceClubs() {
                 and a bad thesis costs the university money rather than points in a game.
               </p>
             </div>
-          </Reveal>
+          </div>
         </div>
       </section>
 
@@ -241,7 +240,7 @@ function FinanceClubs() {
         className="border-b border-border section-anchor"
       >
         <div className="container-prose section-y">
-          <Reveal className="max-w-3xl mb-12">
+          <div className="max-w-3xl mb-12">
             <h2 id="organizations-h" className="mt-4 font-display">
               The main organizations.
             </h2>
@@ -250,11 +249,11 @@ function FinanceClubs() {
               than a schedule. BoilerLink, Purdue&apos;s official student organization directory,
               carries the current details for every group listed here.
             </p>
-          </Reveal>
+          </div>
 
           {/* Wide table scrolls inside its own container so the page body never
               scrolls horizontally on mobile. */}
-          <Reveal>
+          <div>
             <div
               role="region"
               aria-label="Club comparison table, scrollable horizontally"
@@ -299,7 +298,7 @@ function FinanceClubs() {
                 </tbody>
               </table>
             </div>
-          </Reveal>
+          </div>
         </div>
       </section>
 
@@ -310,7 +309,7 @@ function FinanceClubs() {
         className="border-b border-border bg-background section-anchor"
       >
         <div className="container-prose section-y">
-          <Reveal className="max-w-3xl">
+          <div className="max-w-3xl">
             <h2 id="where-we-fit-h" className="mt-4 font-display">
               What the Student Managed Investment Fund is.
             </h2>
@@ -355,7 +354,7 @@ function FinanceClubs() {
                 <ArrowRight className="h-4 w-4 arrow-slide" />
               </Link>
             </div>
-          </Reveal>
+          </div>
         </div>
       </section>
 
@@ -366,12 +365,12 @@ function FinanceClubs() {
         className="border-b border-border section-anchor"
       >
         <div className="container-prose section-y">
-          <Reveal className="max-w-3xl mb-12">
+          <div className="max-w-3xl mb-12">
             <h2 id="how-to-choose-h" className="mt-4 font-display">
               Three questions worth answering first.
             </h2>
-          </Reveal>
-          <RevealGroup className="grid gap-10 md:grid-cols-3">
+          </div>
+          <div className="grid gap-10 md:grid-cols-3">
             {[
               {
                 t: "What do you want to be doing?",
@@ -386,12 +385,12 @@ function FinanceClubs() {
                 d: "There is no shame in not knowing what EBITDA is yet. Education-first clubs exist precisely for that, and they feed the more selective organizations. Nearly every senior analyst in SMIF was a beginner two years earlier.",
               },
             ].map((c) => (
-              <RevealItem key={c.t}>
+              <div key={c.t}>
                 <h3 className="font-display">{c.t}</h3>
                 <p className="mt-4 text-sm text-muted-foreground leading-relaxed">{c.d}</p>
-              </RevealItem>
+              </div>
             ))}
-          </RevealGroup>
+          </div>
         </div>
       </section>
 
@@ -402,29 +401,29 @@ function FinanceClubs() {
         className="border-b border-border bg-background section-anchor"
       >
         <div className="container-prose section-y">
-          <Reveal className="max-w-3xl mb-12">
+          <div className="max-w-3xl mb-12">
             <h2 id="faq-h" className="mt-4 font-display">
               Questions, answered.
             </h2>
-          </Reveal>
+          </div>
           {/* Answers render as visible prose rather than inside a collapsed
               accordion. The schema above carries the same text, but plain-text
               extractors only see what is actually rendered. */}
-          <RevealGroup className="grid gap-x-14 gap-y-10 md:grid-cols-2">
+          <div className="grid gap-x-14 gap-y-10 md:grid-cols-2">
             {FAQ.map(({ q, a }) => (
-              <RevealItem key={q}>
+              <div key={q}>
                 <h3 className="font-display">{q}</h3>
                 <p className="mt-3 text-sm text-muted-foreground leading-relaxed">{a}</p>
-              </RevealItem>
+              </div>
             ))}
-          </RevealGroup>
+          </div>
         </div>
       </section>
 
       {/* ── Closing CTA ───────────────────────────────────────────── */}
       <section className="bg-ink text-background">
         <div className="container-prose section-y">
-          <Reveal className="max-w-2xl">
+          <div className="max-w-2xl">
             <span className="rule-gold mb-6 block" />
             <h2 className="font-display text-background">
               Think the real portfolio is the one you want?
@@ -452,7 +451,7 @@ function FinanceClubs() {
                 Recruiting calendar
               </Link>
             </div>
-          </Reveal>
+          </div>
         </div>
       </section>
     </>

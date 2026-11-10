@@ -1,7 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ExternalLink, Download } from "lucide-react";
 import { socialMeta, canonical, breadcrumbLd, OG_LEARN } from "@/lib/seo";
-import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import { OnThisPage, type PageSection } from "@/components/OnThisPage";
 import { applyUrl } from "@/lib/apply-url";
 import dcfAmzn from "@/assets/dcf-model-amzn.xlsx?url";
@@ -299,7 +298,7 @@ function Learn() {
       {/* Hero */}
       <section className="bg-ink text-background">
         <div className="container-prose section-y max-w-3xl">
-          <Reveal>
+          <div>
             <h1 className="mt-4 font-display" style={{ lineHeight: "1.02" }}>
               Learn the craft, then prove it.
             </h1>
@@ -307,7 +306,7 @@ function Learn() {
               The same material our analysts train on, and a companion to the courses we teach.
               Build the foundation, then defend a real pitch with real capital on the line.
             </p>
-          </Reveal>
+          </div>
         </div>
       </section>
 
@@ -320,23 +319,23 @@ function Learn() {
         className="bg-background border-t border-border section-y section-anchor"
       >
         <div className="container-prose">
-          <Reveal className="max-w-2xl mb-14">
+          <div className="max-w-2xl mb-14">
             <span className="rule-gold mb-5 block" />
             <h2 id="tracks-h" className="font-display text-ink">
               Two tracks, one standard.
             </h2>
-          </Reveal>
-          <RevealGroup className="grid md:grid-cols-2 border-t border-border" stagger={0.1}>
+          </div>
+          <div className="grid md:grid-cols-2 border-t border-border">
             {TRACKS.map((t) => (
-              <RevealItem
+              <div
                 key={t.title}
                 className="border-b md:border-b-0 md:border-r border-border last:border-r-0 p-8 lg:p-10"
               >
                 <h3 className="font-display text-ink mb-3">{t.title}</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">{t.body}</p>
-              </RevealItem>
+              </div>
             ))}
-          </RevealGroup>
+          </div>
         </div>
       </section>
 
@@ -347,14 +346,14 @@ function Learn() {
         className="bg-background border-t border-border section-y section-anchor"
       >
         <div className="container-prose">
-          <Reveal className="max-w-2xl mb-14">
+          <div className="max-w-2xl mb-14">
             <h2 id="path-h" className="font-display text-ink">
               The learning path.
             </h2>
-          </Reveal>
-          <RevealGroup className="border-t border-border" stagger={0.06}>
+          </div>
+          <div className="border-t border-border">
             {CURRICULUM.map((m) => (
-              <RevealItem
+              <div
                 key={m.n}
                 className="grid md:grid-cols-[auto_1fr] gap-6 md:gap-10 border-b border-border py-8"
               >
@@ -363,9 +362,9 @@ function Learn() {
                   <h3 className="font-display text-ink mb-2">{m.title}</h3>
                   <p className="text-muted-foreground leading-relaxed">{m.body}</p>
                 </div>
-              </RevealItem>
+              </div>
             ))}
-          </RevealGroup>
+          </div>
         </div>
       </section>
 
@@ -376,24 +375,21 @@ function Learn() {
         className="bg-background border-t border-border section-y section-anchor"
       >
         <div className="container-prose">
-          <Reveal className="max-w-2xl mb-14">
+          <div className="max-w-2xl mb-14">
             <span className="rule-gold mb-5 block" />
             <h2 id="reading-h" className="font-display text-ink">
               Reading list.
             </h2>
-          </Reveal>
-          <RevealGroup
-            className="grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-border border border-border"
-            stagger={0.05}
-          >
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-border border border-border">
             {READING.map((b) => (
-              <RevealItem key={b.title} className="bg-background p-7 lg:p-8 flex flex-col">
+              <div key={b.title} className="bg-background p-7 lg:p-8 flex flex-col">
                 <h3 className="font-display text-ink">{b.title}</h3>
                 <p className="mt-2 font-mono text-xs text-muted-foreground">{b.author}</p>
                 <p className="mt-4 text-sm text-muted-foreground leading-relaxed">{b.note}</p>
-              </RevealItem>
+              </div>
             ))}
-          </RevealGroup>
+          </div>
         </div>
       </section>
 
@@ -404,17 +400,14 @@ function Learn() {
         className="bg-background border-t border-border section-y section-anchor"
       >
         <div className="container-prose">
-          <Reveal className="max-w-2xl mb-14">
+          <div className="max-w-2xl mb-14">
             <h2 id="tools-h" className="font-display text-ink">
               Tools we use.
             </h2>
-          </Reveal>
-          <RevealGroup
-            className="grid sm:grid-cols-2 lg:grid-cols-4 gap-px bg-border border border-border"
-            stagger={0.05}
-          >
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-px bg-border border border-border">
             {TOOLS.map((t) => (
-              <RevealItem key={t.name} className="bg-background">
+              <div key={t.name} className="bg-background">
                 <a
                   href={t.url}
                   target="_blank"
@@ -433,9 +426,9 @@ function Learn() {
                   <p className="text-sm text-muted-foreground leading-relaxed">{t.note}</p>
                   <span className="sr-only">(opens in new tab)</span>
                 </a>
-              </RevealItem>
+              </div>
             ))}
-          </RevealGroup>
+          </div>
         </div>
       </section>
 
@@ -446,7 +439,7 @@ function Learn() {
         className="bg-background border-t border-border section-y section-anchor"
       >
         <div className="container-prose">
-          <Reveal className="max-w-2xl mb-14">
+          <div className="max-w-2xl mb-14">
             <span className="rule-gold mb-5 block" />
             <h2 id="models-h" className="font-display text-ink">
               Example models.
@@ -455,13 +448,10 @@ function Learn() {
               Worked examples from our analyst training. Open them, tear them apart, and build your
               own.
             </p>
-          </Reveal>
-          <RevealGroup
-            className="grid sm:grid-cols-2 gap-px bg-border border border-border"
-            stagger={0.05}
-          >
+          </div>
+          <div className="grid sm:grid-cols-2 gap-px bg-border border border-border">
             {EXAMPLES.map((e) => (
-              <RevealItem key={e.title} className="bg-background">
+              <div key={e.title} className="bg-background">
                 <a
                   href={e.href}
                   download={e.filename}
@@ -479,9 +469,9 @@ function Learn() {
                   <p className="font-mono text-xs text-muted-foreground mb-3">{e.kind}</p>
                   <p className="text-sm text-muted-foreground leading-relaxed">{e.note}</p>
                 </a>
-              </RevealItem>
+              </div>
             ))}
-          </RevealGroup>
+          </div>
         </div>
       </section>
 
@@ -492,32 +482,29 @@ function Learn() {
         className="bg-background border-t border-border section-y section-anchor"
       >
         <div className="container-prose">
-          <Reveal className="max-w-2xl mb-14">
+          <div className="max-w-2xl mb-14">
             <h2 id="glossary-h" className="font-display text-ink">
               Key terms.
             </h2>
-          </Reveal>
-          <RevealGroup
-            className="grid md:grid-cols-2 gap-px bg-border border border-border"
-            stagger={0.04}
-          >
+          </div>
+          <div className="grid md:grid-cols-2 gap-px bg-border border border-border">
             {GLOSSARY.map((g) => (
-              <RevealItem key={g.term} className="bg-background p-7 lg:p-8">
+              <div key={g.term} className="bg-background p-7 lg:p-8">
                 {/* id matches the DefinedTerm @id minted above, which pointed
                     at twelve fragments that did not exist in the document. */}
                 <h3 id={termSlug(g.term)} className="scroll-mt-24 font-display text-ink mb-2">
                   {g.term}
                 </h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">{g.def}</p>
-              </RevealItem>
+              </div>
             ))}
-          </RevealGroup>
+          </div>
         </div>
       </section>
 
       {/* Final CTA */}
       <section className="bg-ink text-background section-y">
-        <Reveal className="container-prose max-w-3xl text-center">
+        <div className="container-prose max-w-3xl text-center">
           <span className="rule-gold block mb-6 mx-auto" />
           <h2 className="font-display text-background">
             The resources are free. Membership is by application.
@@ -544,7 +531,7 @@ function Learn() {
               Recruiting & prep guide
             </Link>
           </div>
-        </Reveal>
+        </div>
       </section>
     </>
   );

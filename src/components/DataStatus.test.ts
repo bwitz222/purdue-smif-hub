@@ -6,7 +6,11 @@ import { freshnessOf } from "@/lib/market-calendar";
 import type { LiveStatus } from "@/lib/use-live-book";
 
 const now = new Date("2026-11-10T19:05:00Z"); // last completed session: Mon 2026-11-09
-const status = (quotes: string | null, risk: string | null, weights: string | null): LiveStatus => ({
+const status = (
+  quotes: string | null,
+  risk: string | null,
+  weights: string | null,
+): LiveStatus => ({
   quotes: freshnessOf(quotes, now),
   risk: freshnessOf(risk, now),
   weights: freshnessOf(weights, now),

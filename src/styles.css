@@ -137,10 +137,7 @@
   --text-on-dark-muted: var(--medium-gray);
   --text-on-dark-dim: var(--medium-gray);
 
-  /* Spacing rhythm: tight inside a group, wider between groups, widest between
-     sections. */
-  --space-group: 0.75rem;
-  --space-block: 2rem;
+  /* Section rhythm: the one spacing token components share. */
   --space-section: clamp(4rem, 7vw, 6.5rem);
 
   /* Elevation: surfaces are flat and defined by a hairline. One shadow exists,
@@ -286,9 +283,6 @@
   .text-loss {
     color: var(--loss);
   }
-  .bg-gain {
-    background-color: var(--gain);
-  }
   .bg-loss {
     background-color: var(--loss-fill);
   }
@@ -369,8 +363,7 @@
   }
 
   /* Card hover: the hairline turns gold. No lift, no shadow. */
-  .hover-lift,
-  .hover-lift-sm {
+  .hover-lift {
     transition: border-color var(--dur-base) ease;
   }
   .hover-lift:hover {
@@ -471,19 +464,6 @@
   }
   .delay-300 {
     animation-delay: 300ms;
-  }
-  .delay-400 {
-    animation-delay: 400ms;
-  }
-  .delay-500 {
-    animation-delay: 500ms;
-  }
-  .scrollbar-none {
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
-  .scrollbar-none::-webkit-scrollbar {
-    display: none;
   }
   /* Fragment targets clear the sticky header (56px bar plus the 6px strip). */
   .section-anchor {

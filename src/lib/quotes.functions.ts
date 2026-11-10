@@ -8,8 +8,6 @@ export type QuotePayload = {
   cachedAt: number;
   /** The trading session the prices belong to (YYYY-MM-DD), once recorded. */
   sessionDate: string | null;
-  fresh: boolean;
-  stale: boolean;
 };
 
 // When the cache is stale or behind the latest completed session, the visitor's
@@ -18,11 +16,10 @@ export type QuotePayload = {
 // background and the next request is fresh. The refresh logic itself lives in
 // quote-refresh.server.ts, shared with the nightly cron hook.
 const REFRESH_TIMEOUT_MS = 6000;
-const STALE_AFTER_MS = 24 * 60 * 60 * 1000;
 
 type Row = { symbol: string; price: number; change_pct: number; fetched_at: string };
 
-function toPayload(rows: Row[], sessionDate: string | null, refreshAfterMs: number): QuotePayload {
+function toPayload(rows: Row[], sessionDate: string | null): QuotePayload {
   const quotes: Record<string, Quote> = {};
   let newest = 0;
   for (const r of rows) {
@@ -34,13 +31,10 @@ function toPayload(rows: Row[], sessionDate: string | null, refreshAfterMs: numb
     const ts = new Date(r.fetched_at).getTime();
     if (ts > newest) newest = ts;
   }
-  const ageMs = newest > 0 ? Date.now() - newest : Infinity;
   return {
     quotes,
     cachedAt: newest > 0 ? newest : Date.now(),
     sessionDate,
-    fresh: ageMs <= refreshAfterMs,
-    stale: ageMs > STALE_AFTER_MS,
   };
 }
 
@@ -54,7 +48,7 @@ export const getCachedQuotes = createServerFn({ method: "GET" }).handler(
     // baseline (shares and cost basis from src/data/holdings.ts) that renders
     // fine without live prices. A stale or missing service-role key has taken
     // this path in production before; the right outcome is the baseline table.
-    const { REFRESH_AFTER_MS, QUOTE_SESSION_KEY, readMeta, sessionDateFromMeta } =
+    const { QUOTE_SESSION_KEY, readMeta, sessionDateFromMeta } =
       await import("@/lib/quote-refresh.server");
     let rows: Row[] = [];
     let sessionDate: string | null = null;
@@ -70,7 +64,7 @@ export const getCachedQuotes = createServerFn({ method: "GET" }).handler(
     } catch (err) {
       console.error("[quotes] cached-quote read failed, serving baseline:", err);
     }
-    return toPayload(rows, sessionDate, REFRESH_AFTER_MS);
+    return toPayload(rows, sessionDate);
   },
 );
 
@@ -88,7 +82,6 @@ export const getLiveQuotes = createServerFn({ method: "POST" })
       COOLDOWN_KEY,
       QUOTE_ATTEMPT_KEY,
       QUOTE_SESSION_KEY,
-      REFRESH_AFTER_MS,
       needsRefresh,
       readMeta,
       refreshQuoteCache,
@@ -142,5 +135,5 @@ export const getLiveQuotes = createServerFn({ method: "POST" })
       if (finished) ({ rows, meta } = await readCache());
     }
 
-    return toPayload(rows, sessionDateFromMeta(meta[QUOTE_SESSION_KEY]), REFRESH_AFTER_MS);
+    return toPayload(rows, sessionDateFromMeta(meta[QUOTE_SESSION_KEY]));
   });

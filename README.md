@@ -108,13 +108,25 @@ It appears on the site on the next page load; no redeploy. PDF is best for decks
   whole page down. Both now catch and fall back to static data. If you add a
   loader that fetches, degrade rather than throw — `npm run test:e2e` runs with no
   Supabase credentials specifically to catch this.
-- **Motion is a shared vocabulary**, not per-component CSS. `.press`,
-  `.hover-lift`, `.hover-raise`, `.row-rail`, `.arrow-slide`, `.icon-pop`,
-  `.link-underline` are defined in `src/styles.css` and are all gated behind
-  `prefers-reduced-motion`.
-- **Colour tokens are contrast-checked.** `--gold-deep` is set to a value that
-  clears WCAG AA on every ground it is used against. If you darken a background or
-  lighten that token, re-run `npm run test:e2e` — it fails on any new axe violation.
+- **Motion is minimal and shared.** The only entrance animation is the home hero
+  (`.animate-fade-up` and friends); everything else responds to the user.
+  `.press`, `.hover-lift`, `.row-rail`, `.arrow-slide` and `.link-underline` live in
+  `src/styles.css` and are gated behind `prefers-reduced-motion`.
+- **Colour tokens are contrast-checked.** The palette is the SMIF house style.
+  `--gold-deep` (Aged Gold) is only AA on pure White; it fails on Off White, so gold
+  text must not sit on `bg-secondary`. If you change a surface or a text token,
+  re-run `npm run test:e2e` — it fails on any new axe violation.
+- **Data freshness is session-aware.** Prices come from Polygon end-of-day closes,
+  and the plan releases each close about two days late, so the newest session the
+  site can show trails the market. `quote-refresh.server.ts` is the one refresh
+  implementation (nightly cron hook and visitor self-heal); it records the trading
+  session in `quote_meta` and retries while the cache is behind the latest completed
+  close. `/holdings` shows each data set's own close via `DataStatus`, and
+  `src/lib/market-calendar.ts` (NYSE holidays through 2027) decides "behind" in
+  sessions. Add the next year's holidays each January.
+- **One snapshot per page.** `useLiveBook` polls quotes, cash, risk metrics and ETF
+  weights together and derives everything from them; don't fetch these separately in
+  a component.
 - **`src/routeTree.gen.ts` is generated.** Don't edit it.
 
 ## Deployment

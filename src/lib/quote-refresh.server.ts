@@ -23,11 +23,11 @@ export const QUOTE_SESSION_KEY = "quotes_session";
 /** When a visitor last triggered a catch-up attempt; throttles retries. */
 export const QUOTE_ATTEMPT_KEY = "quotes_last_attempt";
 
-export const COOLDOWN_MS = 5 * 60 * 1000;
+const COOLDOWN_MS = 5 * 60 * 1000;
 /** Cache older than this is refreshed by the next visitor. */
-export const REFRESH_AFTER_MS = 6 * 60 * 60 * 1000;
+const REFRESH_AFTER_MS = 6 * 60 * 60 * 1000;
 /** While the cache is behind the latest completed session, retry at most this often. */
-export const CATCH_UP_RETRY_MS = 30 * 60 * 1000;
+const CATCH_UP_RETRY_MS = 30 * 60 * 1000;
 
 const toYmd = (d: Date) => d.toISOString().slice(0, 10);
 
@@ -78,10 +78,10 @@ async function fetchTwoDaysGroupedBars(apiKey: string): Promise<GroupedResult> {
   return result();
 }
 
-export type QuoteRow = { symbol: string; price: number; change_pct: number; fetched_at: string };
+type QuoteRow = { symbol: string; price: number; change_pct: number; fetched_at: string };
 
 /** Day change is vs the prior session's close; falls back to open-to-close. */
-export function buildQuoteRows(
+function buildQuoteRows(
   symbols: string[],
   latest: Map<string, PolygonBar>,
   prior: Map<string, PolygonBar> | null,

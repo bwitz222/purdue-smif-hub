@@ -17,7 +17,6 @@ import {
 import { useLiveBook } from "@/lib/use-live-book";
 import { asOfText } from "@/lib/market-calendar";
 import { socialMeta, canonical, breadcrumbLd, OG_SECTORS } from "@/lib/seo";
-import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import { teamAllocations, teamSlug, type TeamAllocation } from "@/lib/portfolio";
 import { sectorTeams, fixedIncomeMacro, portfolioManagers, LEAD_ROLE } from "@/data/team";
 import type { Member } from "@/components/MemberCard";
@@ -300,7 +299,7 @@ function Sectors() {
     <>
       <section className="border-b border-border bg-background">
         <div className="container-prose section-y">
-          <Reveal>
+          <div>
             <span className="rule-gold mb-5 block" />
             <h1 className="mt-4 font-display max-w-3xl">Our teams.</h1>
             <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
@@ -352,7 +351,7 @@ function Sectors() {
               . SPY has no single sector, so it is divided across all eleven by State Street's
               published weights and credited to the team that owns each one.
             </p>
-          </Reveal>
+          </div>
         </div>
       </section>
 
@@ -361,9 +360,9 @@ function Sectors() {
           <h2 className="font-display text-ink">Equity coverage</h2>
           <span className="text-xs font-mono text-muted-foreground">% of invested capital</span>
         </div>
-        <RevealGroup className="grid gap-px bg-border md:grid-cols-2" stagger={0.04}>
+        <div className="grid gap-px bg-border md:grid-cols-2">
           {EQUITY_TEAMS.map(({ Icon, name, lead }) => (
-            <RevealItem key={name} className="bg-background">
+            <div key={name} className="bg-background">
               <TeamCard
                 Icon={Icon}
                 name={name}
@@ -371,18 +370,18 @@ function Sectors() {
                 alloc={teams.get(name)}
                 pms={pmsForEquityTeam(name)}
               />
-            </RevealItem>
+            </div>
           ))}
-        </RevealGroup>
+        </div>
       </section>
 
       <section className="container-prose pb-24">
         <h2 className="font-display text-ink mb-8">Process teams</h2>
-        <RevealGroup className="grid gap-px bg-border md:grid-cols-2" stagger={0.04}>
+        <div className="grid gap-px bg-border md:grid-cols-2">
           {PROCESS_TEAMS.map(({ Icon, name, lead, links }) => {
             const pms = pmsForProcessTeam(name);
             return (
-              <RevealItem key={name} className="bg-background">
+              <div key={name} className="bg-background">
                 <article className="group flex h-full flex-col p-8 transition-colors duration-200 hover:bg-secondary/30">
                   <div className="flex items-start gap-4">
                     <Icon className="mt-1 h-6 w-6 shrink-0 text-ink" />
@@ -424,10 +423,10 @@ function Sectors() {
                     </Link>
                   </div>
                 </article>
-              </RevealItem>
+              </div>
             );
           })}
-        </RevealGroup>
+        </div>
       </section>
     </>
   );

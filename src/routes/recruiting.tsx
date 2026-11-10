@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useReducedMotion } from "framer-motion";
 import { jumpToSection } from "@/lib/jump-to";
 import { socialMeta, canonical, breadcrumbLd, OG_RECRUITING } from "@/lib/seo";
-import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import { OnThisPage, type PageSection } from "@/components/OnThisPage";
 import { PrepCard } from "@/components/PrepCard";
 
@@ -487,7 +486,7 @@ function Recruiting() {
         aria-labelledby="calendar-h"
         className="container-prose py-20 section-anchor"
       >
-        <Reveal className="flex items-end justify-between gap-6 border-b border-border pb-6">
+        <div className="flex items-end justify-between gap-6 border-b border-border pb-6">
           <div>
             <h2 id="calendar-h" className="font-display">
               Fall 2026 Recruiting Calendar
@@ -496,7 +495,7 @@ function Recruiting() {
           <span className="hidden md:inline font-mono text-xs text-muted-foreground">
             All times Eastern
           </span>
-        </Reveal>
+        </div>
 
         <p className="mt-4 text-sm text-muted-foreground">
           Select any event to open it prefilled in Google Calendar, or download the full schedule
@@ -515,11 +514,11 @@ function Recruiting() {
           </button>
         </div>
 
-        <RevealGroup className="mt-8 divide-y divide-border border-b border-border">
+        <div className="mt-8 divide-y divide-border border-b border-border">
           {CALENDAR.map((e) => {
             const isPast = nowMs !== null && new Date(e.iso + "T23:59:59-04:00").getTime() < nowMs;
             return (
-              <RevealItem key={e.iso + e.name}>
+              <div key={e.iso + e.name}>
                 <a
                   href={toGoogleCalendarLink(e)}
                   target="_blank"
@@ -599,10 +598,10 @@ function Recruiting() {
                       every row. The action is appended for screen readers. */}
                   <span className="sr-only">, add to Google Calendar (opens in new tab)</span>
                 </a>
-              </RevealItem>
+              </div>
             );
           })}
-        </RevealGroup>
+        </div>
 
         <p className="mt-6 text-sm text-muted-foreground">
           Locations and times subject to change. Email{" "}
@@ -623,26 +622,26 @@ function Recruiting() {
         className="border-t border-border bg-background section-anchor"
       >
         <div className="container-prose py-20">
-          <Reveal>
+          <div>
             <h2 id="prep-h" className="font-display">
               Tips &amp; Tricks to Prep
             </h2>
-          </Reveal>
-          <Reveal delay={0.06}>
+          </div>
+          <div>
             <p className="mt-4 max-w-3xl text-muted-foreground">
               We recruit for curiosity, work ethic, and intellectual honesty, not pedigree. A
               finance background helps, but we've taken students from every major. Use the guide
               below to walk in confident and prepared.
             </p>
-          </Reveal>
+          </div>
 
           {/* Behavioral */}
           <div className="mt-14">
-            <Reveal className="flex items-center gap-3">
+            <div className="flex items-center gap-3">
               <span className="animate-expand-x h-px w-10 bg-gold" />
               <span className="font-mono text-xs text-gold-deep">Round 1</span>
-            </Reveal>
-            <Reveal>
+            </div>
+            <div>
               <h3 id="behavioral" className="section-anchor mt-3 font-display">
                 Behavioral Interview
               </h3>
@@ -650,10 +649,10 @@ function Recruiting() {
                 We want to understand who you are, why you're interested in markets, and how you
                 work with others. Be specific, be honest, and have stories ready.
               </p>
-            </Reveal>
+            </div>
 
-            <RevealGroup className="mt-8 grid gap-6 md:grid-cols-2">
-              <RevealItem>
+            <div className="mt-8 grid gap-6 md:grid-cols-2">
+              <div>
                 <PrepCard
                   headingLevel="h4"
                   title="Know Your 'Why'"
@@ -663,8 +662,8 @@ function Recruiting() {
                     "Have a thoughtful answer for 'why this sector' if asked.",
                   ]}
                 />
-              </RevealItem>
-              <RevealItem>
+              </div>
+              <div>
                 <PrepCard
                   headingLevel="h4"
                   title="STAR Stories"
@@ -674,8 +673,8 @@ function Recruiting() {
                     "Reuse stories across questions; depth beats breadth.",
                   ]}
                 />
-              </RevealItem>
-              <RevealItem>
+              </div>
+              <div>
                 <PrepCard
                   headingLevel="h4"
                   title="Know SMIF"
@@ -685,8 +684,8 @@ function Recruiting() {
                     "Reference a recent publication or holding that genuinely caught your interest.",
                   ]}
                 />
-              </RevealItem>
-              <RevealItem>
+              </div>
+              <div>
                 <PrepCard
                   headingLevel="h4"
                   title="Ask Sharp Questions"
@@ -696,17 +695,17 @@ function Recruiting() {
                     "Good prompt: 'What's a position you pushed back on in committee and why?'",
                   ]}
                 />
-              </RevealItem>
-            </RevealGroup>
+              </div>
+            </div>
           </div>
 
           {/* Technical */}
           <div className="mt-16">
-            <Reveal className="flex items-center gap-3">
+            <div className="flex items-center gap-3">
               <span className="animate-expand-x h-px w-10 bg-gold" />
               <span className="font-mono text-xs text-gold-deep">Round 2</span>
-            </Reveal>
-            <Reveal>
+            </div>
+            <div>
               <h3 id="technical" className="section-anchor mt-3 font-display">
                 Technical Interview
               </h3>
@@ -714,10 +713,10 @@ function Recruiting() {
                 You don't need to be an investment banking analyst already. We test fundamentals,
                 market awareness, and your ability to defend an investment thesis.
               </p>
-            </Reveal>
+            </div>
 
-            <RevealGroup className="mt-8 grid gap-6 md:grid-cols-2">
-              <RevealItem>
+            <div className="mt-8 grid gap-6 md:grid-cols-2">
+              <div>
                 <PrepCard
                   headingLevel="h4"
                   title="Accounting Foundations"
@@ -727,8 +726,8 @@ function Recruiting() {
                     "Know the difference between EBITDA, operating income, and net income.",
                   ]}
                 />
-              </RevealItem>
-              <RevealItem>
+              </div>
+              <div>
                 <PrepCard
                   headingLevel="h4"
                   title="Valuation Basics"
@@ -738,8 +737,8 @@ function Recruiting() {
                     "Start with P/E and EV/EBITDA: know what they measure and when each is useful.",
                   ]}
                 />
-              </RevealItem>
-              <RevealItem>
+              </div>
+              <div>
                 <PrepCard
                   headingLevel="h4"
                   title="Market Awareness"
@@ -749,8 +748,8 @@ function Recruiting() {
                     "Daily reads: WSJ, Bloomberg, FT, Axios Markets, Matt Levine's Money Stuff.",
                   ]}
                 />
-              </RevealItem>
-              <RevealItem>
+              </div>
+              <div>
                 <PrepCard
                   headingLevel="h4"
                   title="Stock Pitch"
@@ -760,12 +759,12 @@ function Recruiting() {
                     "Structure: 'I'd buy X at $Y because… Catalysts are… Valuation supports… Risks are…'",
                   ]}
                 />
-              </RevealItem>
-            </RevealGroup>
+              </div>
+            </div>
           </div>
 
           {/* Day-of */}
-          <Reveal className="mt-14 border border-gold/30 bg-background p-6 md:p-8">
+          <div className="mt-14 border border-gold/30 bg-background p-6 md:p-8">
             <h3 id="day-of" className="section-anchor font-display">
               Day-Of Checklist
             </h3>
@@ -777,10 +776,10 @@ function Recruiting() {
               <li>Firm handshake, eye contact, and smile.</li>
               <li>Be yourself. We evaluate fit as much as skill.</li>
             </ul>
-          </Reveal>
+          </div>
 
           {/* Reading list */}
-          <Reveal className="mt-10 border border-border bg-background p-6 md:p-8">
+          <div className="mt-10 border border-border bg-background p-6 md:p-8">
             <h3 id="reading" className="section-anchor font-display">
               Recommended Reading
             </h3>
@@ -806,7 +805,7 @@ function Recruiting() {
                 daily Bloomberg newsletter.
               </li>
             </ul>
-          </Reveal>
+          </div>
 
           <p className="mt-10 text-sm text-muted-foreground">
             Questions? Reach out at{" "}

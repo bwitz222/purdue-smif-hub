@@ -1,5 +1,5 @@
 // Shared portfolio math used by /holdings and /sectors so the two pages
-// can't drift apart. Given the static baseHoldings (shares × cost basis)
+// can't drift apart. Given the static holdings (shares × cost basis)
 // and a symbol->quote map, this computes:
 //   • updated holdings with live value
 //   • sector allocation of INVESTED capital (industries), attributing SPY
@@ -7,7 +7,7 @@
 // Team-level aggregation (e.g. "Healthcare & Utilities" = Healthcare +
 // Utilities) is layered on top by consumers using TEAM_INDUSTRIES below.
 
-import { holdings as baseHoldings, type Holding } from "@/data/holdings";
+import type { Holding } from "@/data/holdings";
 
 // SPY sector weights (%) — hardcoded snapshot of State Street's published
 // sector breakdown (ssga.com SPY fund page, "Fund Sector Breakdown", as of
@@ -37,10 +37,7 @@ const ETF_SECTOR_WEIGHTS: EtfSectorWeights = {
 
 export type QuoteLike = { price: number; changePct: number };
 
-export function applyQuotes(
-  base: Holding[],
-  quotes: Record<string, QuoteLike | undefined>,
-): Holding[] {
+function applyQuotes(base: Holding[], quotes: Record<string, QuoteLike | undefined>): Holding[] {
   return base.map((h) => {
     const q = quotes[h.symbol];
     if (!q) return h;
@@ -236,6 +233,3 @@ export function teamAllocations(
     };
   });
 }
-
-// Re-export baseHoldings for consumers that need the untouched static set.
-export { baseHoldings };

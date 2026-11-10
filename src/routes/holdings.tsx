@@ -1,33 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useMemo, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
-import {
-  ArrowUpDown,
-  ArrowUp,
-  ArrowDown,
-  RefreshCw,
-  AlertCircle,
-  Filter,
-  Search,
-} from "lucide-react";
+import { ArrowUpDown, ArrowUp, ArrowDown, AlertCircle, Filter, Search } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  holdings as baseHoldings,
-  portfolioSummary as baseSummary,
-  type Holding,
-} from "@/data/holdings";
+import { holdings as baseHoldings, type Holding } from "@/data/holdings";
 import { getCachedQuotes } from "@/lib/quotes.functions";
-import { CountUp } from "@/components/CountUp";
-import { Reveal } from "@/components/Reveal";
 import { socialMeta, canonical, breadcrumbLd, OG_HOLDINGS } from "@/lib/seo";
-import {
-  applyQuotes,
-  sectorPercentBreakdown,
-  teamForIndustry,
-  teamSlug,
-  TEAM_INDUSTRIES,
-} from "@/lib/portfolio";
+import { teamForIndustry, teamSlug, TEAM_INDUSTRIES } from "@/lib/portfolio";
 import { useLiveBook } from "@/lib/use-live-book";
 import { DataStatus } from "@/components/DataStatus";
 import { asOfText } from "@/lib/market-calendar";
@@ -115,7 +93,6 @@ function KpiCard({
   value,
   sub,
   accent,
-  animatedValue,
   asOf,
   hint,
   muted,
@@ -124,7 +101,6 @@ function KpiCard({
   value: string;
   sub?: string;
   accent?: "positive" | "negative" | "neutral";
-  animatedValue?: React.ReactNode;
   asOf?: string;
   hint?: string;
   muted?: boolean;
@@ -137,9 +113,7 @@ function KpiCard({
       {muted ? (
         <div className="text-lg font-semibold text-muted-foreground mt-2">{value}</div>
       ) : (
-        <div className={`font-display text-3xl font-bold ${valueColor} mt-1`}>
-          {animatedValue ?? value}
-        </div>
+        <div className={`font-display text-3xl font-bold ${valueColor} mt-1`}>{value}</div>
       )}
       {sub && <div className="text-xs text-muted-foreground font-mono mt-0.5">{sub}</div>}
       {asOf && <div className="text-xs font-mono text-muted-foreground mt-1">As of {asOf}</div>}
@@ -409,30 +383,16 @@ function HoldingsPage() {
             for a reader and nothing for a parser to segment on. Styled with the
             page's own label typography so they read as native furniture. */}
         <h2 className="text-muted-foreground">Portfolio Summary</h2>
-        <Reveal className="grid gap-px bg-border sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-px bg-border sm:grid-cols-2 lg:grid-cols-4">
           <KpiCard
             label="Portfolio Value"
             asOf={quotesAsOf}
             value={fmtUSD(portfolioSummary.portfolioValue, { maximumFractionDigits: 0 })}
-            animatedValue={
-              <CountUp
-                to={portfolioSummary.portfolioValue}
-                duration={1.8}
-                format={(n) => fmtUSD(n, { maximumFractionDigits: 0 })}
-              />
-            }
           />
           <KpiCard
             label="Cash Holdings"
             value={fmtUSD(portfolioSummary.cashHoldings, { maximumFractionDigits: 0 })}
             sub={`${((portfolioSummary.cashHoldings / portfolioSummary.portfolioValue) * 100).toFixed(1)}% of portfolio`}
-            animatedValue={
-              <CountUp
-                to={portfolioSummary.cashHoldings}
-                duration={1.4}
-                format={(n) => fmtUSD(n, { maximumFractionDigits: 0 })}
-              />
-            }
           />
           <KpiCard
             label="Total Return"
@@ -440,13 +400,6 @@ function HoldingsPage() {
             value={fmtPct(portfolioSummary.totalReturnPct)}
             sub={fmtUSD(portfolioSummary.totalReturn, { maximumFractionDigits: 0 })}
             accent={portfolioSummary.totalReturnPct >= 0 ? "positive" : "negative"}
-            animatedValue={
-              <CountUp
-                to={portfolioSummary.totalReturnPct}
-                duration={1.6}
-                format={(n) => fmtPct(n)}
-              />
-            }
           />
           <KpiCard
             label="Day P&L (latest session)"
@@ -454,13 +407,6 @@ function HoldingsPage() {
             sub={`${fmtPct(portfolioSummary.totalDayChange)} on the latest session`}
             asOf={quotesAsOf}
             accent={dayAccent}
-            animatedValue={
-              <CountUp
-                to={portfolioSummary.totalDayGain}
-                duration={1.4}
-                format={(n) => fmtUSD(n, { maximumFractionDigits: 0 })}
-              />
-            }
           />
           <KpiCard
             label="Annualized Volatility"
@@ -504,9 +450,9 @@ function HoldingsPage() {
             asOf={risk?.grossExposurePct != null ? riskAsOf : undefined}
             hint="Share of NAV invested in the market. Gross counts all positions, net is longs minus shorts, equal here because the fund is long-only."
           />
-        </Reveal>
+        </div>
 
-        <Reveal className="grid gap-px bg-border md:grid-cols-3">
+        <div className="grid gap-px bg-border md:grid-cols-3">
           <div className="md:col-span-2 bg-card border border-border p-6">
             <div className="flex items-baseline justify-between mb-5 gap-3">
               {/* Was a div duplicated by an sr-only h2 above the grid, which
@@ -518,7 +464,7 @@ function HoldingsPage() {
               </div>
             </div>
             <div className="space-y-2.5">
-              {sectorBreakdown.map(([s, pct], i) => (
+              {sectorBreakdown.map(([s, pct]) => (
                 <div key={s} className="flex items-center gap-3 text-sm">
                   {teamForIndustry(s) ? (
                     <Link
@@ -552,7 +498,7 @@ function HoldingsPage() {
             <div>
               <div className="text-xs text-muted-foreground mb-2">Weighted Beta</div>
               <div className="font-display text-4xl font-bold text-ink">
-                <CountUp to={portfolioSummary.weightedBeta} decimals={2} duration={1.4} />
+                {portfolioSummary.weightedBeta.toFixed(2)}
               </div>
               <div className="text-xs text-muted-foreground mt-1 font-mono">
                 vs. 1.00 S&amp;P 500
@@ -561,18 +507,14 @@ function HoldingsPage() {
             <div className="border-t border-border pt-5">
               <div className="text-xs text-muted-foreground mb-2">Invested Capital</div>
               <div className="font-display text-2xl font-bold text-ink">
-                <CountUp
-                  to={portfolioSummary.investedCapital}
-                  duration={1.6}
-                  format={(n) => fmtUSD(n, { maximumFractionDigits: 0 })}
-                />
+                {fmtUSD(portfolioSummary.investedCapital, { maximumFractionDigits: 0 })}
               </div>
             </div>
           </div>
-        </Reveal>
+        </div>
 
         {!(isFetching && !quoteData) && (
-          <Reveal>
+          <div>
             <h2 className="mb-4 text-muted-foreground">
               Movers{quotesAsOf ? `, ${quotesAsOf}` : ""}
             </h2>
@@ -624,7 +566,7 @@ function HoldingsPage() {
                 </div>
               ))}
             </div>
-          </Reveal>
+          </div>
         )}
 
         <h2 className="text-muted-foreground">Holdings</h2>
