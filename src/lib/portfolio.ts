@@ -91,7 +91,7 @@ export function sectorPercentBreakdown(
 // Coverage team → the industry buckets it owns. Kept in one place so
 // /sectors and /team can't disagree with /holdings on which sector owns
 // which industries. Combined teams collapse multiple industries.
-const TEAM_INDUSTRIES: Record<string, string[]> = {
+export const TEAM_INDUSTRIES: Record<string, string[]> = {
   "Information Technology": ["Technology"],
   "Healthcare & Utilities": ["Healthcare", "Utilities"],
   Financials: ["Financials"],
@@ -102,18 +102,47 @@ const TEAM_INDUSTRIES: Record<string, string[]> = {
   Communications: ["Communication Services"],
 };
 
+// URL-safe id for a team name ("Healthcare & Utilities" -> "healthcare-utilities").
+// /sectors puts it on each card as an anchor, and /holdings links to it.
+export function teamSlug(team: string): string {
+  return team
+    .toLowerCase()
+    .replace(/&/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+// Which coverage team owns an industry bucket, or undefined for an industry no
+// team covers (the tests assert there are none among current holdings).
+export function teamForIndustry(industry: string): string | undefined {
+  return Object.entries(TEAM_INDUSTRIES).find(([, inds]) => inds.includes(industry))?.[0];
+}
+
 export type TeamAllocation = {
   team: string;
   industries: string[];
+  /** Direct positions plus the team's share of ETF look-through. */
   dollars: number;
   pctOfInvested: number;
-  topHoldings: Holding[]; // top by value, excludes ETFs (SPY)
+  /** Market value of the team's own single-name positions. */
+  directDollars: number;
+  /** The team's share of SPY (and any other look-through ETF). */
+  etfDollars: number;
+  /** Every direct position, largest first. ETFs are excluded: SPY has no single sector. */
+  positions: Holding[];
+  costBasis: number;
+  /** Return on the direct positions only, in percent. */
+  returnPct: number;
+  /** First three of `positions`. */
+  topHoldings: Holding[];
 };
 
+const isLookThroughEtf = (symbol: string, etfWeights: EtfSectorWeights) =>
+  Boolean(etfWeights[symbol] ?? ETF_SECTOR_WEIGHTS[symbol]);
+
 // Aggregates industries into coverage-team allocations. Uses the SAME
-// sectorDollarBreakdown as /holdings so the numbers tie out. Top holdings
-// list is drawn from direct (non-ETF) positions only, since SPY has no
-// single sector.
+// sectorDollarBreakdown as /holdings so the numbers tie out: for every team,
+// directDollars + etfDollars === dollars, and the teams sum to invested capital.
 export function teamAllocations(
   holdings: Holding[],
   etfWeights: EtfSectorWeights = ETF_SECTOR_WEIGHTS,
@@ -122,16 +151,22 @@ export function teamAllocations(
   const invested = holdings.reduce((s, h) => s + h.value, 0);
   return Object.entries(TEAM_INDUSTRIES).map(([team, industries]) => {
     const dollars = industries.reduce((s, ind) => s + (dollarsByIndustry.get(ind) || 0), 0);
-    const direct = holdings
-      .filter((h) => !ETF_SECTOR_WEIGHTS[h.symbol] && industries.includes(h.industry))
-      .sort((a, b) => b.value - a.value)
-      .slice(0, 3);
+    const positions = holdings
+      .filter((h) => !isLookThroughEtf(h.symbol, etfWeights) && industries.includes(h.industry))
+      .sort((a, b) => b.value - a.value);
+    const directDollars = positions.reduce((s, h) => s + h.value, 0);
+    const costBasis = positions.reduce((s, h) => s + h.costBasis, 0);
     return {
       team,
       industries,
       dollars,
       pctOfInvested: invested > 0 ? (dollars / invested) * 100 : 0,
-      topHoldings: direct,
+      directDollars,
+      etfDollars: Math.max(0, dollars - directDollars),
+      positions,
+      costBasis,
+      returnPct: costBasis > 0 ? ((directDollars - costBasis) / costBasis) * 100 : 0,
+      topHoldings: positions.slice(0, 3),
     };
   });
 }

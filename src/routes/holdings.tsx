@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useMemo, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -23,12 +23,29 @@ import { getRiskMetrics } from "@/lib/risk.functions";
 import { CountUp } from "@/components/CountUp";
 import { Reveal } from "@/components/Reveal";
 import { socialMeta, canonical, breadcrumbLd, OG_HOLDINGS } from "@/lib/seo";
-import { applyQuotes, sectorPercentBreakdown } from "@/lib/portfolio";
+import {
+  applyQuotes,
+  sectorPercentBreakdown,
+  teamForIndustry,
+  teamSlug,
+  TEAM_INDUSTRIES,
+} from "@/lib/portfolio";
 import { getEtfSectorWeights } from "@/lib/etf-weights.functions";
 import { liveQueryOptions } from "@/lib/live-query";
 
+type HoldingsSearch = { team?: string; sector?: string; q?: string };
+
 export const Route = createFileRoute("/holdings")({
   component: HoldingsPage,
+  // Deep links from /sectors: ?team=Financials narrows the table to that
+  // coverage team's positions, ?q=AMZN pre-fills the search. Unknown teams are
+  // dropped so a stale link falls back to the full book.
+  validateSearch: (search: Record<string, unknown>): HoldingsSearch => ({
+    team:
+      typeof search.team === "string" && search.team in TEAM_INDUSTRIES ? search.team : undefined,
+    sector: typeof search.sector === "string" && search.sector ? search.sector : undefined,
+    q: typeof search.q === "string" && search.q.trim() ? search.q.trim() : undefined,
+  }),
   // SSR loader — seed the quote table from quote_cache (read-only, no
   // provider round-trip) so crawlers and no-JS visitors see real prices and
   // a real Day P&L instead of the static baseline / $0. The client-side
@@ -152,10 +169,20 @@ function SortIcon({ active, dir }: { active: boolean; dir: "asc" | "desc" }) {
 function HoldingsPage() {
   const [sortKey, setSortKey] = useState<SortKey>("allocation");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
-  const [sector, setSector] = useState<string>("All");
+  const search = Route.useSearch();
+  const navigate = Route.useNavigate();
+  const team = search.team;
+  const [sector, setSector] = useState<string>(search.sector ?? "All");
   const [showSticky, setShowSticky] = useState(false);
-  const [query, setQuery] = useState("");
-  const [debouncedQuery, setDebouncedQuery] = useState("");
+  const [query, setQuery] = useState(search.q ?? "");
+  const [debouncedQuery, setDebouncedQuery] = useState(search.q ?? "");
+  // A link from /sectors can land while this page is already mounted (browser
+  // back/forward), so follow the URL rather than only reading it once.
+  useEffect(() => {
+    setSector(search.sector ?? "All");
+    setQuery(search.q ?? "");
+    setDebouncedQuery(search.q ?? "");
+  }, [search.sector, search.q, search.team]);
   const fetchQuotes = useServerFn(getLiveQuotes);
   const symbols = useMemo(() => baseHoldings.map((h) => h.symbol), []);
   // The server serves the end-of-day cache and self-heals it when stale; the
@@ -301,12 +328,17 @@ function HoldingsPage() {
     [holdings, etfWeights],
   );
 
+  const teamIndustries = team ? TEAM_INDUSTRIES[team] : undefined;
+  const scoped = useMemo(
+    () => (teamIndustries ? holdings.filter((h) => teamIndustries.includes(h.industry)) : holdings),
+    [holdings, teamIndustries],
+  );
   const sectors = useMemo<string[]>(
-    () => ["All", ...Array.from(new Set(holdings.map((h) => h.industry)))],
-    [holdings],
+    () => ["All", ...Array.from(new Set(scoped.map((h) => h.industry)))],
+    [scoped],
   );
   const rows = useMemo(() => {
-    let filtered = sector === "All" ? holdings : holdings.filter((h) => h.industry === sector);
+    let filtered = sector === "All" ? scoped : scoped.filter((h) => h.industry === sector);
     if (debouncedQuery) {
       const q = debouncedQuery.toLowerCase();
       filtered = filtered.filter(
@@ -322,7 +354,7 @@ function HoldingsPage() {
         ? String(av).localeCompare(String(bv))
         : String(bv).localeCompare(String(av));
     });
-  }, [sortKey, sortDir, sector, holdings, debouncedQuery]);
+  }, [sortKey, sortDir, sector, scoped, debouncedQuery]);
   const movers = useMemo(() => {
     const sorted = [...holdings].sort((a, b) => b.dayChange - a.dayChange);
     // Split the book rather than taking slice(0,3) and slice(-3) blind: with
@@ -626,12 +658,23 @@ function HoldingsPage() {
             <div className="space-y-2.5">
               {sectorBreakdown.map(([s, pct], i) => (
                 <div key={s} className="flex items-center gap-3 text-sm">
-                  <span
-                    className="w-32 md:w-44 flex-shrink-0 truncate text-xs text-foreground"
-                    title={s}
-                  >
-                    {s}
-                  </span>
+                  {teamForIndustry(s) ? (
+                    <Link
+                      to="/sectors"
+                      hash={teamSlug(teamForIndustry(s) as string)}
+                      className="link-underline w-32 md:w-44 flex-shrink-0 truncate text-xs text-foreground hover:text-gold-deep"
+                      title={`${s}: covered by the ${teamForIndustry(s)} team`}
+                    >
+                      {s}
+                    </Link>
+                  ) : (
+                    <span
+                      className="w-32 md:w-44 flex-shrink-0 truncate text-xs text-foreground"
+                      title={s}
+                    >
+                      {s}
+                    </span>
+                  )}
                   <div className="flex-1 h-1.5 bg-muted relative">
                     {/* True 0–100 scale: bar width = pct so visual length matches the actual weight. */}
                     <div className="h-full bg-gold" style={{ width: `${Math.min(100, pct)}%` }} />
@@ -684,7 +727,13 @@ function HoldingsPage() {
                       <li key={h.symbol}>
                         <button
                           type="button"
-                          onClick={() => setSector(h.industry)}
+                          onClick={() => {
+                            // A mover can sit outside the team being viewed; carry the
+                            // industry in the URL so the team scope drops cleanly.
+                            if (team && !TEAM_INDUSTRIES[team]?.includes(h.industry))
+                              navigate({ search: { sector: h.industry }, replace: true });
+                            else setSector(h.industry);
+                          }}
                           className="group row-rail w-full flex items-center gap-3 px-2 py-2 -mx-2 text-left hover:bg-secondary/40 cursor-pointer press"
                         >
                           {/* Visible text is the accessible name (WCAG 2.5.3, label
@@ -715,6 +764,37 @@ function HoldingsPage() {
         )}
 
         <h2 className="text-muted-foreground">Holdings</h2>
+        {team && (
+          <div
+            role="status"
+            className="flex flex-wrap items-center justify-between gap-3 border border-border border-l-4 border-l-gold bg-background px-4 py-3 text-sm"
+          >
+            <span className="text-ink">
+              Showing the <strong>{team}</strong> team's {scoped.length}{" "}
+              {scoped.length === 1 ? "position" : "positions"} ({teamIndustries?.join(", ")}). SPY
+              is not listed here; its look-through share is counted in the sector allocation above.
+            </span>
+            <span className="flex items-center gap-4">
+              <Link
+                to="/sectors"
+                hash={teamSlug(team)}
+                className="link-underline inline-flex min-h-6 items-center font-bold text-gold-deep hover:text-ink"
+              >
+                Back to team
+              </Link>
+              <button
+                type="button"
+                onClick={() => {
+                  setSector("All");
+                  navigate({ search: {}, replace: true });
+                }}
+                className="inline-flex min-h-6 items-center font-bold text-ink underline underline-offset-4 cursor-pointer"
+              >
+                Show all holdings
+              </button>
+            </span>
+          </div>
+        )}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="relative w-full sm:max-w-xs">
             <Search
@@ -784,6 +864,7 @@ function HoldingsPage() {
               onClick={() => {
                 setSector("All");
                 setQuery("");
+                if (team) navigate({ search: {}, replace: true });
               }}
               className="inline-flex items-center gap-2 mt-5 border border-ink px-4 py-2 text-xs hover:bg-ink hover:text-background press cursor-pointer"
             >
@@ -800,7 +881,21 @@ function HoldingsPage() {
                     <div className="min-w-0">
                       <div className="font-mono text-sm font-bold text-gold-deep">{h.symbol}</div>
                       <div className="text-sm font-medium truncate">{h.company}</div>
-                      <div className="text-xs text-muted-foreground mt-0.5">{h.industry}</div>
+                      <div className="text-xs text-muted-foreground mt-0.5">
+                        {h.industry}
+                        {teamForIndustry(h.industry) && (
+                          <>
+                            {" · "}
+                            <Link
+                              to="/sectors"
+                              hash={teamSlug(teamForIndustry(h.industry) as string)}
+                              className="link-underline font-bold text-gold-deep"
+                            >
+                              {teamForIndustry(h.industry)} team
+                            </Link>
+                          </>
+                        )}
+                      </div>
                     </div>
                     <div className="text-right shrink-0">
                       <div className="font-mono text-sm">{fmtUSD(h.price)}</div>
@@ -884,6 +979,15 @@ function HoldingsPage() {
                       <td className="px-4 py-3 font-mono font-bold text-gold-deep">{h.symbol}</td>
                       <td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">
                         {h.industry}
+                        {teamForIndustry(h.industry) && (
+                          <Link
+                            to="/sectors"
+                            hash={teamSlug(teamForIndustry(h.industry) as string)}
+                            className="link-underline block text-gold-deep hover:text-ink"
+                          >
+                            {teamForIndustry(h.industry)} team
+                          </Link>
+                        )}
                       </td>
                       <td className="px-4 py-3 text-right font-mono">{fmtUSD(h.price)}</td>
                       <td className="px-4 py-3 text-right font-mono text-muted-foreground">
