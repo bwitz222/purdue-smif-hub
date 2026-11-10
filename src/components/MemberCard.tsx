@@ -43,10 +43,10 @@ export function MemberCard({ m, onSelect }: { m: Member; onSelect?: (m: Member) 
       className={`group flex flex-col border border-border bg-card ${
         interactive
           ? "hover-lift cursor-pointer focus-within:ring-2 focus-within:ring-gold"
-          : "transition-[border-color,box-shadow] duration-200 hover:border-gold "
+          : "transition-[border-color,box-shadow] duration-200 hover:border-gold hover:shadow-elegant"
       }`}
     >
-      <div className="aspect-square w-full overflow-hidden bg-gold">
+      <div className="aspect-square w-full overflow-hidden bg-gradient-gold">
         {src ? (
           <img
             src={src}
@@ -54,7 +54,7 @@ export function MemberCard({ m, onSelect }: { m: Member; onSelect?: (m: Member) 
             width={640}
             height={640}
             decoding="async"
-            className="h-full w-full object-cover"
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
             style={{
               objectPosition: m.photoPosition ?? "center",
               transform: m.photoScale ? `scale(${m.photoScale})` : undefined,
@@ -65,12 +65,14 @@ export function MemberCard({ m, onSelect }: { m: Member; onSelect?: (m: Member) 
           />
         ) : (
           <div className="grid h-full w-full place-items-center">
-            <span className="font-display text-5xl font-bold text-ink">{initials}</span>
+            <span className="font-display text-5xl font-bold text-ink/40">{initials}</span>
           </div>
         )}
       </div>
       <div className="flex flex-1 flex-col p-6">
-        <div className="text-xs font-semibold text-gold-deep">{m.role}</div>
+        <div className="text-xs font-semibold uppercase tracking-[0.18em] text-gold-deep">
+          {m.role}
+        </div>
         <Link
           to="/team/$slug"
           params={{ slug: memberSlug(m.name) }}

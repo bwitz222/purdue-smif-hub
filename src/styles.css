@@ -2,58 +2,14 @@
 @source "../src";
 @import "tw-animate-css";
 
-/* ───────────────────────────────────────────────────────────────────────────
-   DESIGN TOKENS
-   Direction: the fund's own paperwork. The site reads like the Semester Report
-   and the holdings statement: Black cover panels, one thin gold strip, a single
-   Times serif, tables as the main imagery. Every value below comes from the
-   Purdue SMIF house style (colors, type, chart rules) or is derived from it.
-   Nothing visible should be a framework default.
-   ─────────────────────────────────────────────────────────────────────────── */
-
 @theme inline {
-  /* One face everywhere (house style A2). Liberation Serif is the metric
-     compatible stand-in on Android and Linux, where Times New Roman is absent.
-     No webfont request: faster first paint and no font-swap shift. */
-  --font-display: "Times New Roman", Times, "Liberation Serif", serif;
-  --font-body: "Times New Roman", Times, "Liberation Serif", serif;
-  --font-mono: "Times New Roman", Times, "Liberation Serif", serif;
-
-  /* Type scale. Times sets small for its size, so every step runs one notch
-     above the Tailwind default. Anchors from house style A2: label 13/18,
-     body 16/26, section header 22/28, page title 32/40. */
-  --text-xs: 0.8125rem;
-  --text-xs--line-height: 1.125rem;
-  --text-sm: 0.9375rem;
-  --text-sm--line-height: 1.4rem;
-  --text-base: 1rem;
-  --text-base--line-height: 1.625rem;
-  --text-lg: 1.125rem;
-  --text-lg--line-height: 1.75rem;
-  --text-xl: 1.25rem;
-  --text-xl--line-height: 1.75rem;
-  --text-2xl: 1.375rem;
-  --text-2xl--line-height: 1.75rem;
-  --text-3xl: 1.75rem;
-  --text-3xl--line-height: 2.125rem;
-  --text-4xl: 2rem;
-  --text-4xl--line-height: 2.5rem;
-  --text-5xl: 2.5rem;
-  --text-5xl--line-height: 1.15;
-  --text-6xl: 2.75rem;
-  --text-6xl--line-height: 1.1;
-  --text-7xl: 3.25rem;
-  --text-7xl--line-height: 1.05;
-  --text-8xl: 4rem;
-  --text-8xl--line-height: 1;
-
-  /* Radius by hierarchy: panels, tables and photos are square (they are report
-     pages); controls get a 2px corner; only avatars and status dots are round. */
-  --radius-sm: 2px;
-  --radius-md: 2px;
+  --font-display: "Cormorant Garamond", "Georgia", serif;
+  --font-body: "IBM Plex Sans", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", "Menlo", monospace;
+  --radius-sm: 0px;
+  --radius-md: 0px;
   --radius-lg: 0px;
   --radius-xl: 0px;
-
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -81,145 +37,77 @@
 }
 
 :root {
-  /* Named palette (house style A1). Roles in the comments. */
-  --purdue-gold: #cfb991; /* fills, rules, bars. Text only on Black or dark panels */
-  --black: #000000; /* header, hero, headings */
-  --dark-black: #1a1a1a; /* secondary dark panel, so two dark bands never fuse */
-  --steel: #555960; /* body text: 7.0:1 on White, 6.3:1 on Off White */
-  --purdue-gray: #6f727b; /* chart underperformance, large text */
-  --medium-gray: #9b9ea4; /* quiet text on dark panels only (6.5:1 on Dark Black) */
-  --light-gray: #d4d5d8; /* hairlines, secondary text on dark panels */
-  --off-white: #f5f2ec; /* band surface. Carries Steel or Black text only */
-  --aged-gold: #8e6f3e; /* gold text on pure White only (4.67:1; 4.18:1 on Off White fails) */
-  --deep-gold: #b8a070; /* strip diagonal, hover fill. Never text on light */
-  --white: #ffffff;
-
-  /* Semantic mapping */
-  --background: var(--white);
-  --foreground: var(--steel);
-  --card: var(--white);
-  --card-foreground: var(--steel);
-  --popover: var(--white);
-  --popover-foreground: var(--steel);
-  --primary: var(--black);
-  --primary-foreground: var(--white);
-  --secondary: var(--off-white);
-  --secondary-foreground: var(--black);
-  --muted: var(--off-white);
-  --muted-foreground: var(--steel);
-  --accent: var(--purdue-gold);
-  --accent-foreground: var(--black);
-  /* Errors are carried by the message text and role="alert", not by a red the
-     house palette does not have. */
-  --destructive: var(--black);
-  --destructive-foreground: var(--white);
-  --border: var(--light-gray);
-  --input: var(--light-gray);
-  --ring: var(--aged-gold);
-
-  --gold: var(--purdue-gold);
-  --gold-mid: var(--deep-gold);
-  --gold-deep: var(--aged-gold);
-  --ink: var(--black);
-  --ink-soft: var(--dark-black);
-  --focus: var(--aged-gold);
-
-  /* Financial signal (house style A4): outperformance is Aged Gold,
-     underperformance is gray. Never red. Every signed number also carries a
-     +/- sign, so color is never the only cue. */
-  --gain: var(--aged-gold);
-  --loss: var(--steel);
-  --loss-fill: var(--purdue-gray);
-
-  /* Text on dark panels */
-  --text-on-dark-primary: var(--white);
-  --text-on-dark-secondary: var(--light-gray);
-  --text-on-dark-muted: var(--medium-gray);
-  --text-on-dark-dim: var(--medium-gray);
-
-  /* Section rhythm: the one spacing token components share. */
-  --space-section: clamp(4rem, 7vw, 6.5rem);
-
-  /* Elevation: surfaces are flat and defined by a hairline. One shadow exists,
-     for things that float above the page (dialogs, sheets). */
-  --shadow-overlay: 0 8px 24px rgba(0, 0, 0, 0.18);
-
-  /* Motion: one entrance (the home hero) plus responses to the user. */
-  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --dur-fast: 0.15s;
-  --dur-base: 0.2s;
-  --dur-enter: 0.6s;
+  --background: #fafaf6;
+  --foreground: #0a0a0a;
+  --card: #ffffff;
+  --card-foreground: #0a0a0a;
+  --popover: #ffffff;
+  --popover-foreground: #0a0a0a;
+  --primary: #0a0a0a;
+  --primary-foreground: #fafaf6;
+  --secondary: #f2efe7;
+  --secondary-foreground: #0a0a0a;
+  --muted: #ededea;
+  --muted-foreground: #5a5955;
+  --accent: #ceb888;
+  --accent-foreground: #0a0a0a;
+  --destructive: #c0392b;
+  --destructive-foreground: #fafaf6;
+  --border: #e0ddd5;
+  --input: #e0ddd5;
+  --ring: #ceb888;
+  /* #CEB888 is the official Purdue "Boilermaker Gold" (ratified brand color).
+     --gold-deep is a derived shade, not the ratified color, so it is free to move:
+     it was #8E6F3E, which measured 4.31-4.47:1 on the light grounds and failed
+     WCAG AA (4.5:1) on every page. #7F6335 clears it at 5.19:1 worst case, and
+     also as a background under paper-colored text. */
+  --gold: #ceb888;
+  --gold-mid: #b8975a;
+  --gold-deep: #7f6335;
+  --ink: #0a0a0a;
+  --ink-soft: #1c1c1a;
+  /* Semantic financial colors — distinct from destructive (error) red */
+  --gain: #2e7d52;
+  --loss: #b94040;
+  /* Semantic on-dark text tokens — replace ad-hoc text-background/[n] values */
+  --text-on-dark-primary: rgba(250, 250, 246, 0.95);
+  --text-on-dark-secondary: rgba(250, 250, 246, 0.75);
+  --text-on-dark-muted: rgba(250, 250, 246, 0.55);
+  --text-on-dark-dim: rgba(250, 250, 246, 0.55);
+  --gradient-hero: linear-gradient(160deg, rgba(10, 10, 10, 0.88) 0%, rgba(10, 10, 10, 0.52) 100%);
+  --gradient-gold: linear-gradient(135deg, #ceb888 0%, #8e6f3e 100%);
+  --shadow-elegant: 0 24px 60px -20px rgba(10, 10, 10, 0.22);
+  --shadow-gold: 0 10px 40px -10px rgba(142, 111, 62, 0.35);
 }
 
 @layer base {
   * {
     border-color: var(--color-border);
   }
-  html {
-    -webkit-text-size-adjust: 100%;
-  }
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-body);
-    font-size: 1rem;
-    line-height: 1.625;
+    font-size: 16px;
+    line-height: 1.65;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
-  /* Heading scale, one place. House style A2: page title 32/40, section header
-     22/28, paragraph heading bold. Titles are Regular, paragraph headings Bold.
-     Mobile is composed at its own step, not shrunk from desktop. */
   h1,
   h2,
   h3,
   h4 {
     font-family: var(--font-display);
-    color: var(--ink);
+    letter-spacing: -0.02em;
+    line-height: 1.05;
     text-wrap: balance;
-  }
-  /* Headings on dark panels read White unless a utility says otherwise. :where()
-     keeps this at zero extra specificity so text-gold and friends still win. */
-  :where(.bg-ink, .bg-ink-soft) :is(h1, h2, h3, h4) {
-    color: var(--white);
-  }
-  h1 {
-    font-size: 2rem;
-    line-height: 2.5rem;
-    font-weight: 400;
-    letter-spacing: -0.005em;
-  }
-  h2 {
-    font-size: 1.5rem;
-    line-height: 1.875rem;
-    font-weight: 400;
-  }
-  h3 {
-    font-size: 1.125rem;
-    line-height: 1.5rem;
-    font-weight: 700;
-  }
-  h4 {
-    font-size: 1rem;
-    line-height: 1.375rem;
-    font-weight: 700;
-  }
-  @media (min-width: 768px) {
-    h1 {
-      font-size: 2.5rem;
-      line-height: 3rem;
-    }
-    h2 {
-      font-size: 1.75rem;
-      line-height: 2.125rem;
-    }
   }
   p {
     text-wrap: pretty;
   }
   ::selection {
     background: var(--gold);
-    color: var(--black);
+    color: var(--ink);
   }
   table,
   .font-mono {
@@ -227,28 +115,24 @@
   }
   /* Grid children may shrink below their content width. Without this a single
      wide child (a table, an image with a min-width) stretches the whole page
-     past the viewport on a phone. */
+     past the viewport on a phone (/about overflowed by 330px at 375px). */
   .grid > * {
     min-width: 0;
   }
   /* A horizontal scroller must also contain its absolutely positioned
-     children. Visually hidden text inside a wide table otherwise sits outside
+     children: visually hidden text inside a wide table otherwise sits outside
      the clip and widens the whole page. */
   .overflow-x-auto {
     position: relative;
   }
-  /* Keyboard focus: Aged Gold on light surfaces (4.67:1), Purdue Gold on dark
-     panels. Purdue Gold on White is 1.9:1 and would be invisible. */
+  /* Global keyboard-focus indicator */
   :focus-visible {
-    outline: 2px solid var(--focus);
+    outline: 2px solid var(--gold);
     outline-offset: 3px;
   }
-  header :focus-visible,
-  footer :focus-visible,
-  .bg-ink :focus-visible,
-  .bg-ink-soft :focus-visible {
-    outline-color: var(--gold);
-  }
+  /* Smooth every interactive hover/focus state site-wide. Deliberately does NOT
+     include transform/opacity so it never fights framer-motion (which animates
+     those inline per-frame); transform effects are opt-in via .press/.hover-lift. */
   a,
   button,
   [role="button"],
@@ -258,9 +142,14 @@
   select,
   textarea {
     transition:
-      color var(--dur-base) ease,
-      background-color var(--dur-base) ease,
-      border-color var(--dur-base) ease;
+      color 0.18s ease,
+      background-color 0.18s ease,
+      border-color 0.18s ease,
+      box-shadow 0.18s ease;
+  }
+  /* Pause the ticker when any keyboard focus lands inside it */
+  .ticker-wrap:focus-within .ticker-inner {
+    animation-play-state: paused;
   }
 }
 
@@ -269,7 +158,7 @@
     color: var(--gold);
   }
   .text-gold-mid {
-    color: var(--deep-gold);
+    color: var(--gold-mid);
   }
   .text-gold-deep {
     color: var(--gold-deep);
@@ -283,14 +172,17 @@
   .text-loss {
     color: var(--loss);
   }
+  .bg-gain {
+    background-color: var(--gain);
+  }
   .bg-loss {
-    background-color: var(--loss-fill);
+    background-color: var(--loss);
   }
   .bg-gold {
     background-color: var(--gold);
   }
   .bg-gold-mid {
-    background-color: var(--deep-gold);
+    background-color: var(--gold-mid);
   }
   .bg-ink {
     background-color: var(--ink);
@@ -301,6 +193,19 @@
   .border-gold {
     border-color: var(--gold);
   }
+  .bg-gradient-gold {
+    background-image: var(--gradient-gold);
+  }
+  .bg-gradient-hero {
+    background-image: var(--gradient-hero);
+  }
+  .shadow-elegant {
+    box-shadow: var(--shadow-elegant);
+  }
+  .shadow-gold {
+    box-shadow: var(--shadow-gold);
+  }
+  /* Semantic on-dark text utilities */
   .text-on-dark-primary {
     color: var(--text-on-dark-primary);
   }
@@ -313,63 +218,62 @@
   .text-on-dark-dim {
     color: var(--text-on-dark-dim);
   }
+  /* Vertical rhythm for the content pages (matches the py-24 sections). */
+  .section-y {
+    padding-block: clamp(4rem, 8vw, 6rem);
+  }
   .container-prose {
     max-width: 1280px;
     margin-inline: auto;
-    padding-inline: 1.25rem;
+    padding-inline: 1.5rem;
   }
   @media (min-width: 768px) {
     .container-prose {
       padding-inline: 3rem;
     }
   }
-  .section-y {
-    padding-block: var(--space-section);
-  }
-
-  /* Section rule: a short Purdue Gold bar under a title (house style A6). */
   .rule-gold {
     display: block;
-    width: 3rem;
-    height: 3px;
-    background: var(--gold);
+    width: 2.5rem;
+    height: 2px;
+    background: var(--gradient-gold);
   }
 
-  /* The site's one signature: the report-cover strip from the SMIF deck chrome.
-     Black, a Deep Gold diagonal, then Purdue Gold, 6px tall. It sits under the
-     sticky header on every page. Flat fills, hard stops. */
-  .report-strip {
-    display: block;
-    height: 6px;
-    background: linear-gradient(
-      100deg,
-      var(--black) 0 64%,
-      var(--deep-gold) 64% 66.5%,
-      var(--gold) 66.5% 100%
-    );
-  }
+  /* ── Interactive motion vocabulary ─────────────────────────────────────────
+     Opt-in classes so every clickable/hoverable surface shares one feel. */
 
-  /* ── Responses to the user. Nothing here animates on its own. ───────────── */
-
+  /* Tactile press for buttons, chips, and clickable rows. */
   .press {
     transition:
-      transform var(--dur-fast) var(--ease-out),
-      background-color var(--dur-base) ease,
-      border-color var(--dur-base) ease,
-      color var(--dur-base) ease;
+      transform 0.12s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.2s ease,
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      color 0.2s ease;
   }
   .press:active {
-    transform: scale(0.98);
+    transform: scale(0.97);
   }
 
-  /* Card hover: the hairline turns gold. No lift, no shadow. */
-  .hover-lift {
-    transition: border-color var(--dur-base) ease;
+  /* Card elevation on hover — gold border + elegant shadow, matches MemberCard. */
+  .hover-lift,
+  .hover-lift-sm {
+    transition:
+      transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.22s ease,
+      border-color 0.22s ease;
   }
   .hover-lift:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-elegant);
     border-color: var(--gold);
   }
+  .hover-lift-sm:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-elegant);
+  }
 
+  /* Left-anchored underline that wipes in on hover/focus (for text links). */
   .link-underline {
     position: relative;
   }
@@ -380,25 +284,47 @@
     bottom: -1px;
     height: 1.5px;
     width: 100%;
-    background: var(--gold);
+    background: var(--gradient-gold);
     transform: scaleX(0);
     transform-origin: left;
-    transition: transform var(--dur-base) var(--ease-out);
+    transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
   }
   .link-underline:hover::after,
   .link-underline:focus-visible::after {
     transform: scaleX(1);
   }
 
+  /* Arrow/icon that nudges forward when its .group parent is hovered. */
   .arrow-slide {
-    transition: transform var(--dur-base) var(--ease-out);
+    transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
   }
   .group:hover .arrow-slide {
-    transform: translateX(3px);
+    transform: translateX(4px);
   }
 
-  /* Row hover for tabular data: a gold rail down the left edge, not a
-     transform, which would misalign columns mid-scan. */
+  /* Icon that swells slightly with its .group parent — for links whose
+     affordance is the glyph (social, download, external) rather than an arrow. */
+  .icon-pop {
+    transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .group:hover .icon-pop {
+    transform: scale(1.12);
+  }
+
+  /* Numeric/stat surfaces: a restrained lift with no border recolor, so dense
+     data grids don't strobe gold on every pointer move. */
+  .hover-raise {
+    transition:
+      transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.22s ease;
+  }
+  .hover-raise:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-gold);
+  }
+
+  /* Row hover for tabular/list data — a gold rail wipes down the left edge
+     instead of a transform, which would misalign columns mid-scan. */
   .row-rail {
     position: relative;
   }
@@ -409,20 +335,38 @@
     top: 0;
     bottom: 0;
     width: 2px;
-    background: var(--gold);
-    opacity: 0;
-    transition: opacity var(--dur-base) ease;
+    background: var(--gradient-gold);
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
   }
   .row-rail:hover::before,
   .row-rail:focus-visible::before {
-    opacity: 1;
+    transform: scaleY(1);
   }
-
-  /* ── The one orchestrated moment: the home hero on first load. ──────────── */
+  .ticker-wrap {
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .ticker-inner {
+    display: inline-flex;
+    animation: ticker 32s linear infinite;
+  }
+  .ticker-inner:hover {
+    animation-play-state: paused;
+  }
+  @keyframes ticker {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
   @keyframes fade-up {
     from {
       opacity: 0;
-      transform: translateY(12px);
+      transform: translateY(20px);
     }
     to {
       opacity: 1;
@@ -448,13 +392,13 @@
     }
   }
   .animate-fade-up {
-    animation: fade-up var(--dur-enter) var(--ease-out) both;
+    animation: fade-up 0.72s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
   .animate-fade-in {
-    animation: fade-in var(--dur-enter) ease both;
+    animation: fade-in 0.55s ease both;
   }
   .animate-expand-x {
-    animation: expand-x var(--dur-enter) var(--ease-out) both;
+    animation: expand-x 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
   .delay-100 {
     animation-delay: 100ms;
@@ -465,26 +409,64 @@
   .delay-300 {
     animation-delay: 300ms;
   }
-  /* Fragment targets clear the sticky header (56px bar plus the 6px strip). */
+  .delay-400 {
+    animation-delay: 400ms;
+  }
+  .delay-500 {
+    animation-delay: 500ms;
+  }
+  .delay-600 {
+    animation-delay: 600ms;
+  }
+  .delay-700 {
+    animation-delay: 700ms;
+  }
+  .scrollbar-none {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+  /* Fragment targets clear the sticky header instead of landing under it.
+     The header bar is h-14 (56px) plus a 1px border; 5rem leaves the anchored
+     heading a little breathing room above it. /team sets its own scroll-mt-40
+     because that page stacks a second sticky bar (the filter chips) below the
+     header — don't fold the two together. */
   .section-anchor {
-    scroll-margin-top: 5.5rem;
+    scroll-margin-top: 5rem;
   }
   @media (prefers-reduced-motion: reduce) {
     .animate-fade-up,
     .animate-fade-in,
-    .animate-expand-x {
+    .animate-expand-x,
+    .ticker-inner {
       animation: none !important;
       opacity: 1 !important;
     }
     .press,
+    .hover-lift,
+    .hover-lift-sm,
+    .hover-raise,
     .arrow-slide,
+    .icon-pop,
     .row-rail::before,
     .link-underline::after {
       transition: none !important;
     }
     .press:active,
-    .group:hover .arrow-slide {
+    .hover-lift:hover,
+    .hover-lift-sm:hover,
+    .hover-raise:hover,
+    .group:hover .arrow-slide,
+    .group:hover .icon-pop {
       transform: none !important;
+    }
+    /* The rail stays a hover affordance under reduced motion — it just
+       appears instead of wiping in. */
+    .row-rail:hover::before,
+    .row-rail:focus-visible::before {
+      transform: scaleY(1) !important;
     }
   }
 }

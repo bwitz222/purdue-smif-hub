@@ -86,14 +86,16 @@ function SectionHeader({
   return (
     <div className="mb-12 max-w-3xl">
       <div className="flex items-center gap-3">
-        <span className="text-xs font-semibold text-gold-deep">{kicker}</span>
+        <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">
+          {kicker}
+        </span>
         {typeof count === "number" && (
-          <span className="text-xs font-mono text-muted-foreground">
+          <span className="text-[10px] font-mono uppercase tracking-[0.22em] text-muted-foreground">
             {count} {count === 1 ? "result" : "results"}
           </span>
         )}
       </div>
-      <h2 className="mt-3 font-display">{title}</h2>
+      <h2 className="mt-3 font-display text-3xl font-bold md:text-4xl">{title}</h2>
       {blurb && <p className="mt-4 text-muted-foreground">{blurb}</p>}
     </div>
   );
@@ -268,9 +270,14 @@ function Team() {
 
   return (
     <>
-      <section className="border-b border-border bg-background">
-        <div className="container-prose section-y">
-          <h1 className="mt-4 font-display max-w-3xl">The people behind the portfolio.</h1>
+      <section className="border-b border-border bg-secondary/40">
+        <div className="container-prose py-24">
+          <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">
+            Team
+          </span>
+          <h1 className="mt-4 font-display text-5xl font-bold md:text-6xl max-w-3xl">
+            The people behind the portfolio.
+          </h1>
           <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
             {studentCount} students and {facultyCount} faculty advisors working together to manage
             real capital for Purdue. Executive board members also serve as sector leads or senior
@@ -287,7 +294,9 @@ function Team() {
             ].map(([n, l]) => (
               <div key={l} className="border-t-2 border-gold pt-3">
                 <div className="font-display text-3xl font-bold">{n}</div>
-                <div className="text-xs text-muted-foreground mt-1">{l}</div>
+                <div className="text-xs uppercase tracking-wider text-muted-foreground mt-1">
+                  {l}
+                </div>
               </div>
             ))}
           </div>
@@ -295,7 +304,7 @@ function Team() {
       </section>
 
       {/* Sticky filter bar — chip row works on mobile and desktop. */}
-      <div className="sticky top-[3.875rem] z-30 border-b border-border bg-background">
+      <div className="sticky top-14 z-30 border-b border-border bg-background/95 backdrop-blur-md">
         <div className="container-prose py-3 md:py-4 flex flex-col gap-3">
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-4">
             <div className="relative flex-1 md:max-w-md">
@@ -318,7 +327,7 @@ function Team() {
                 </button>
               )}
             </div>
-            <div className="text-xs font-mono text-muted-foreground whitespace-nowrap md:ml-auto md:text-right">
+            <div className="text-[11px] font-mono uppercase tracking-[0.2em] text-muted-foreground whitespace-nowrap md:ml-auto md:text-right">
               {hasFilter
                 ? `${totalResults} ${totalResults === 1 ? "match" : "matches"}`
                 : `${totalMembers} members`}
@@ -342,7 +351,7 @@ function Team() {
                   type="button"
                   aria-pressed={active}
                   onClick={() => handleScopeChange(o.value)}
-                  className={`press shrink-0 snap-start min-h-9 rounded-sm border px-3.5 text-xs font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-1 ${
+                  className={`press shrink-0 snap-start min-h-9 rounded-full border px-3.5 text-[11px] font-semibold uppercase tracking-[0.14em] focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-1 ${
                     active
                       ? "border-ink bg-ink text-background"
                       : "border-border bg-background text-muted-foreground hover:border-ink hover:text-foreground"
@@ -358,7 +367,7 @@ function Team() {
 
       <div ref={gridRef}>
         {totalResults === 0 && (
-          <section className="container-prose section-y text-center">
+          <section className="container-prose py-24 text-center">
             <p className="font-display text-2xl text-muted-foreground">
               No members match your search.
             </p>
@@ -369,7 +378,7 @@ function Team() {
                 setSectorFilter("all");
                 navigate({ search: () => ({}), replace: true });
               }}
-              className="press mt-6 inline-flex items-center px-4 py-2 text-xs font-semibold border border-ink hover:bg-ink hover:text-background cursor-pointer"
+              className="press mt-6 inline-flex items-center px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] border border-ink hover:bg-ink hover:text-background cursor-pointer"
             >
               Reset filters
             </button>
@@ -395,7 +404,7 @@ function Team() {
         )}
 
         {showSectors && filteredSectors.length > 0 && (
-          <section className="border-y border-border bg-background py-20">
+          <section className="border-y border-border bg-secondary/30 py-20">
             <div className="container-prose">
               <SectionHeader
                 kicker="Equity Research"
@@ -414,12 +423,12 @@ function Team() {
                   >
                     <div className="mb-8 flex flex-wrap items-end justify-between gap-4 border-b border-border pb-4">
                       <div>
-                        <h3 className="font-display">{team.name}</h3>
+                        <h3 className="font-display text-2xl font-bold">{team.name}</h3>
                         <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
                           {team.description}
                         </p>
                       </div>
-                      <span className="text-xs text-gold-deep">
+                      <span className="text-xs uppercase tracking-[0.18em] text-gold-deep">
                         {team.members.length} {team.members.length === 1 ? "member" : "members"}
                       </span>
                     </div>
@@ -456,7 +465,7 @@ function Team() {
         )}
 
         {showPm && filteredPm.length > 0 && (
-          <section id="pm" className="border-t border-border bg-background py-20 scroll-mt-40">
+          <section id="pm" className="border-t border-border bg-secondary/30 py-20 scroll-mt-40">
             <div className="container-prose">
               <SectionHeader
                 kicker="Portfolio + Risk Management"

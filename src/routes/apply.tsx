@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, BookOpen, Users, TrendingUp } from "lucide-react";
 import { socialMeta, canonical, breadcrumbLd, OG_APPLY } from "@/lib/seo";
+import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import {
   Accordion,
   AccordionItem,
@@ -51,14 +52,17 @@ export const Route = createFileRoute("/apply")({
 
 const LOOKING_FOR = [
   {
+    Icon: BookOpen,
     title: "Intellectual curiosity",
     body: "We want students who read 10-Ks for fun and can defend a thesis under pressure. Major doesn't matter: engineering, finance, ag econ, CS, liberal arts.",
   },
   {
+    Icon: Users,
     title: "Collaborative rigor",
     body: "Pitches are defended live before the committee. The best analysts come prepared, listen well, and update their views when the evidence demands it.",
   },
   {
+    Icon: TrendingUp,
     title: "Long-term commitment",
     body: "We invest in analysts who plan to stick around. Promotion paths to sector lead, portfolio manager, and co-president are real.",
   },
@@ -115,10 +119,13 @@ function Apply() {
     <>
       {/* Hero */}
       <section className="bg-ink text-background">
-        <div className="container-prose section-y max-w-3xl">
-          <div>
+        <div className="container-prose py-28 max-w-3xl">
+          <Reveal>
             <span className="rule-gold mb-6" />
-            <h1 className="font-display" style={{ lineHeight: "1.02" }}>
+            <h1
+              className="font-display text-5xl font-bold md:text-6xl"
+              style={{ lineHeight: "1.02" }}
+            >
               How to join Purdue SMIF
             </h1>
             <p className="mt-4 text-xl text-gold">We can't wait to meet you.</p>
@@ -134,57 +141,85 @@ function Apply() {
               has the current dates. Below: what we look for, how the process works, and answers to
               the questions we hear most often.
             </p>
-          </div>
+          </Reveal>
         </div>
       </section>
 
       {/* What we look for */}
-      <section className="bg-background border-t border-border section-y">
+      <section className="bg-background border-t border-border py-28">
         <div className="container-prose">
-          <div className="max-w-2xl mb-14">
+          <Reveal className="max-w-2xl mb-14">
             <span className="rule-gold mb-5 block" />
-            <h2 className="font-display text-ink">What we look for in applicants</h2>
-          </div>
-          <div className="border-t border-ink">
-            {LOOKING_FOR.map(({ title, body }) => (
-              <div
+            <span className="text-xs font-semibold uppercase tracking-[0.32em] text-gold-deep block mb-4">
+              What we look for
+            </span>
+            <h2
+              className="font-display font-bold text-ink"
+              style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}
+            >
+              The bar is high.
+              <br />
+              The path is open.
+            </h2>
+          </Reveal>
+          <RevealGroup className="grid md:grid-cols-3 border-t border-border" stagger={0.1}>
+            {LOOKING_FOR.map(({ Icon, title, body }) => (
+              <RevealItem
                 key={title}
-                className="grid gap-2 border-b border-border py-6 md:grid-cols-12 md:gap-10 md:py-8"
+                className="border-b md:border-b-0 md:border-r border-border last:border-r-0 p-8 lg:p-10"
               >
-                <h3 className="text-xl text-ink md:col-span-4">{title}</h3>
-                <p className="max-w-2xl md:col-span-8">{body}</p>
-              </div>
+                <Icon className="h-6 w-6 text-gold-deep mb-6" />
+                <h3 className="font-display text-2xl font-semibold text-ink mb-3">{title}</h3>
+                <p className="text-muted-foreground text-sm leading-relaxed">{body}</p>
+              </RevealItem>
             ))}
-          </div>
+          </RevealGroup>
         </div>
       </section>
 
       {/* Timeline */}
-      <section className="bg-background border-t border-border section-y">
+      <section className="bg-secondary/40 border-t border-border py-28">
         <div className="container-prose">
-          <div className="max-w-2xl mb-14">
-            <h2 className="font-display text-ink">Four steps, about three weeks.</h2>
-          </div>
-          <div className="grid md:grid-cols-4 gap-px bg-border border border-border">
+          <Reveal className="max-w-2xl mb-14">
+            <h2
+              className="font-display font-bold text-ink"
+              style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}
+            >
+              Four steps,
+              <br />
+              about three weeks.
+            </h2>
+          </Reveal>
+          <RevealGroup
+            className="grid md:grid-cols-4 gap-px bg-border border border-border"
+            stagger={0.08}
+          >
             {TIMELINE.map((step) => (
-              <div key={step.n} className="bg-background p-8 lg:p-10">
-                <div className="font-mono text-xs text-gold-deep mb-4">Step {step.n}</div>
-                <h3 className="font-display text-ink mb-3">{step.title}</h3>
+              <RevealItem key={step.n} className="bg-background p-8 lg:p-10">
+                <div className="font-mono text-xs uppercase tracking-[0.22em] text-gold-deep mb-4">
+                  Step {step.n}
+                </div>
+                <h3 className="font-display text-xl font-semibold text-ink mb-3">{step.title}</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">{step.body}</p>
-              </div>
+              </RevealItem>
             ))}
-          </div>
+          </RevealGroup>
         </div>
       </section>
 
       {/* FAQ */}
-      <section className="bg-background border-t border-border section-y">
+      <section className="bg-background border-t border-border py-28">
         <div className="container-prose max-w-3xl">
-          <div className="mb-12">
+          <Reveal className="mb-12">
             <span className="rule-gold mb-5 block" />
-            <h2 className="font-display text-ink">Questions, answered.</h2>
-          </div>
-          <div>
+            <h2
+              className="font-display font-bold text-ink"
+              style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}
+            >
+              Questions, answered.
+            </h2>
+          </Reveal>
+          <Reveal>
             <Accordion type="single" collapsible className="border-t border-border">
               {FAQ.map((item, i) => (
                 <AccordionItem key={i} value={`item-${i}`} className="border-border">
@@ -197,7 +232,7 @@ function Apply() {
                 </AccordionItem>
               ))}
             </Accordion>
-          </div>
+          </Reveal>
         </div>
       </section>
 
@@ -205,7 +240,9 @@ function Apply() {
           FAQ above, with links to the guides for the two interview rounds. */}
       <section className="bg-background border-t border-border section-y" aria-labelledby="after-h">
         <div className="container-prose max-w-3xl">
-          <h2 id="after-h">What happens after you apply</h2>
+          <h2 id="after-h" className="font-display text-3xl font-bold text-ink md:text-4xl">
+            What happens after you apply
+          </h2>
           <p className="mt-5">
             The application is a Qualtrics form that takes about 10 minutes. Next comes an informal
             coffee chat with current members, then the interview round: a markets question,
@@ -249,10 +286,15 @@ function Apply() {
       </section>
 
       {/* Final CTA */}
-      <section className="bg-ink text-background section-y">
-        <div className="container-prose max-w-3xl text-center">
+      <section className="bg-ink text-background py-32">
+        <Reveal className="container-prose max-w-3xl text-center">
           <span className="rule-gold block mb-6 mx-auto" />
-          <h2 className="font-display text-background">Ready when you are.</h2>
+          <h2
+            className="font-display font-bold text-background"
+            style={{ fontSize: "clamp(2rem, 4.5vw, 3.5rem)" }}
+          >
+            Ready when you are.
+          </h2>
           <p className="mt-6 text-on-dark-secondary max-w-xl mx-auto">
             Submit the official application, or head to recruiting for the full event calendar and
             interview prep guide.
@@ -275,7 +317,7 @@ function Apply() {
               Recruiting calendar & prep guide
             </Link>
           </div>
-        </div>
+        </Reveal>
       </section>
 
       {/* Quiet footer line */}

@@ -8,7 +8,16 @@ import teamPhoto from "@/assets/team-photo.webp";
 import campusImg from "@/assets/hero-campus.webp";
 import { PLACEMENT_FIRMS } from "@/data/fund-facts";
 import { applyUrl } from "@/lib/apply-url";
-import { ArrowRight, ChevronRight, ExternalLink } from "lucide-react";
+import {
+  ArrowRight,
+  TrendingUp,
+  Users,
+  Award,
+  BarChart3,
+  ChevronRight,
+  ExternalLink,
+} from "lucide-react";
+import { CountUp } from "@/components/CountUp";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getFundStats } from "@/lib/fund-stats.functions";
@@ -17,6 +26,7 @@ import { SERIES_LABEL } from "@/lib/publication-series";
 import { sectorTeams, totalMemberCount } from "@/data/team";
 import { liveQueryOptions } from "@/lib/live-query";
 
+import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import { socialMeta, canonical, OG_HOME } from "@/lib/seo";
 import { PerformanceSparkline } from "@/components/PerformanceSparkline";
 
@@ -67,37 +77,27 @@ const FALLBACK_STATS = {
   sector_teams: sectorTeams.length,
 };
 
-// House style B4: no K/M/B abbreviations. "$600K" becomes "$600,000",
-// "$1.2M" becomes "$1.2 Million". Returns the number and unit pieces, plus the
-// full string for running text.
+// Parse a display string like "$600K" or "50+" into { prefix, value, suffix }
+// so CountUp can animate the numeric portion while preserving formatting.
 function parseStatDisplay(display: string): { prefix: string; value: number; suffix: string } {
-  const match = display.match(/^([^\d.-]*)([\d.]+)\s*([KMB])?(.*)$/i);
+  const match = display.match(/^([^\d.-]*)([\d.]+)(.*)$/);
   if (!match) return { prefix: "", value: 0, suffix: display };
-  const prefix = match[1] ?? "";
-  const num = parseFloat(match[2]) || 0;
-  const unit = (match[3] ?? "").toUpperCase();
-  const rest = match[4] ?? "";
-  if (unit === "K") return { prefix, value: num * 1000, suffix: rest };
-  if (unit === "M") return { prefix, value: num, suffix: ` Million${rest}` };
-  if (unit === "B") return { prefix, value: num, suffix: ` Billion${rest}` };
-  return { prefix, value: num, suffix: rest };
-}
-
-function houseCurrency(display: string): string {
-  const p = parseStatDisplay(display);
-  return `${p.prefix}${p.value.toLocaleString("en-US", { maximumFractionDigits: 2 })}${p.suffix}`;
+  return { prefix: match[1] ?? "", value: parseFloat(match[2]) || 0, suffix: match[3] ?? "" };
 }
 
 const PILLARS = [
   {
+    Icon: BarChart3,
     title: "Investment Research",
     body: "Bottom-up fundamental analysis across equity sector teams. Every pitch is defended live before the full investment committee, with the same rigor as a professional fund.",
   },
   {
+    Icon: Users,
     title: "Mentorship & Recruiting",
     body: "Direct access to Purdue alumni at investment banks, hedge funds, and asset managers, plus structured preparation to compete for those seats.",
   },
   {
+    Icon: Award,
     title: "Real Portfolio",
     body: "Students vote on every position. Performance is benchmarked against the S&P 500 and reported quarterly. No simulations: real capital, real accountability.",
   },
@@ -124,11 +124,13 @@ function Index() {
   ];
   return (
     <>
-      {/* Hero. The one orchestrated moment on the site: the title block
-          arrives in sequence on first load. Nothing below it moves.
-          The skyline is a texture under a flat 80% Black overlay (house style
-          A5: Black overlay, 65 to 80%, with White text). No gradient. */}
-      <section className="relative isolate overflow-hidden bg-ink flex flex-col">
+      {/* Hero */}
+      <section className="relative isolate overflow-hidden bg-ink min-h-[100dvh] flex flex-col">
+        {/* Texture only. The team photo alongside is the hero's actual
+            subject, so this drops to opacity-15 and no longer drifts — a moving
+            backdrop behind a portrait of real people reads as jitter. It stays
+            because the Mission section directly below is also bg-ink, and a
+            flat hero fuses the two into one undifferentiated dark slab. */}
         <div aria-hidden="true" className="absolute inset-0">
           {/* Texture under an 85% Black overlay, so it is served small and at low
               priority: it was the largest paint on a phone (LCP 3.1s) while
@@ -142,37 +144,46 @@ function Index() {
             height={1216}
             fetchPriority="low"
             decoding="async"
-            className="h-full w-full object-cover"
+            className="h-full w-full object-cover opacity-15"
           />
-          <div className="absolute inset-0 bg-ink/85" />
+          <div className="absolute inset-0 bg-gradient-to-b from-ink/70 via-ink/55 to-ink" />
         </div>
-        <div className="relative flex-1 container-prose flex flex-col justify-center py-14 lg:py-20 text-background">
-          <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+        <div className="relative flex-1 container-prose flex flex-col justify-center py-24 lg:py-28 text-background">
+          <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
             <div className="lg:col-span-7">
-              <span className="rule-gold animate-expand-x mb-6" />
-              <h1 className="animate-fade-up delay-100 text-4xl lg:text-6xl text-background">
-                Purdue Student Managed Investment Fund
+              <div className="animate-fade-in flex items-center gap-3 mb-8">
+                <span className="rule-gold animate-expand-x delay-100" />
+                <span className="text-xs font-semibold uppercase tracking-[0.18em] text-gold/80">
+                  Daniels School of Business · Est. {s.founded_year}
+                </span>
+              </div>
+              <h1
+                className="animate-fade-up delay-200 font-display font-bold text-background"
+                style={{ fontSize: "clamp(2.25rem, 4.2vw, 3.5rem)", lineHeight: "1.06" }}
+              >
+                Purdue <span className="text-gold">Student</span> Managed
+                <br />
+                Investment Fund
               </h1>
               {/* Direct-answer paragraph. This is the featured-snippet / AI Overview
                 extraction zone, so it names the entity, its category, the
-                university, and the hard facts in plain prose, so a crawler that
+                university, and the hard facts in plain prose — a crawler that
                 reads nothing else should still be able to answer "what is
                 Purdue SMIF" and "how much does it manage" from these two
                 sentences. Keep it declarative; do not turn it back into a
                 tagline. */}
-              <p className="animate-fade-up delay-200 mt-6 max-w-2xl text-on-dark-secondary text-lg">
+              <p className="animate-fade-up delay-400 mt-8 max-w-2xl text-on-dark-primary text-base leading-relaxed">
                 The Purdue Student Managed Investment Fund (SMIF) is a student-run investment fund
                 at Purdue University's Daniels School of Business. Founded in {s.founded_year}, SMIF
-                manages {houseCurrency(s.aum_display)} of real university capital across U.S.
-                equities and fixed income, benchmarked against the S&amp;P 500 and reported
-                quarterly.
+                manages {s.aum_display} of real university capital across U.S. equities and fixed
+                income, benchmarked against the S&amp;P 500 and reported quarterly.
               </p>
-              <div className="animate-fade-up delay-300 mt-8 flex flex-wrap gap-3">
+              <div className="animate-fade-up delay-500 mt-10 flex flex-wrap gap-4">
                 <a
                   href={applyUrl("home-hero")}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="press inline-flex items-center gap-2.5 rounded-sm bg-gold px-7 py-3 text-base font-bold text-ink hover:bg-gold-mid"
+                  className="press group inline-flex items-center gap-2.5 bg-gold px-8 py-3.5 text-sm font-semibold text-ink hover:bg-gold-mid"
                 >
                   Apply to Join
                   <ExternalLink className="h-4 w-4" aria-hidden="true" />
@@ -180,7 +191,7 @@ function Index() {
                 </a>
                 <Link
                   to="/holdings"
-                  className="press inline-flex items-center gap-2.5 rounded-sm border border-background/40 px-7 py-3 text-base text-background hover:border-gold hover:text-gold"
+                  className="press inline-flex items-center gap-2.5 border border-background/25 px-8 py-3.5 text-sm font-semibold text-background hover:border-gold hover:text-gold"
                 >
                   View Portfolio
                 </Link>
@@ -188,9 +199,11 @@ function Index() {
             </div>
 
             {/* The photo is the point of this section, so it renders at full
-                opacity, and it is content, not decoration: it carries real alt
-                text and sits outside the aria-hidden backdrop above. The asset
-                is pre-cropped to 3:4, which makes object-cover a no-op here. */}
+                opacity rather than as a darkened backdrop, and it is content —
+                not decoration — so it carries real alt text and sits outside
+                the aria-hidden backdrop above. The asset is pre-cropped to 3:4,
+                which makes object-cover a no-op here: nobody gets cropped a
+                second time at render, at any viewport width. */}
             <div className="lg:col-span-5">
               <img
                 src={teamPhoto800}
@@ -200,45 +213,49 @@ function Index() {
                 width={1200}
                 height={1600}
                 decoding="async"
-                className="animate-fade-up delay-200 w-full max-h-[70vh] lg:max-h-none aspect-[3/4] object-cover"
+                className="animate-fade-up delay-300 w-full aspect-[3/4] object-cover shadow-elegant"
               />
             </div>
           </div>
 
-          {/* Fund facts. Real figures, so they stay; set as a ruled data row. */}
-          <dl className="mt-12 grid grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-8 max-w-4xl">
+          {/* Stats — CountUp carries the entrance; no double-animation */}
+          <div className="mt-16 grid grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-10 max-w-5xl">
             {STATS.map((stat) => (
-              <div key={stat.label} className="flex flex-col border-t border-gold pt-3">
-                <dd
+              <div key={stat.label} className="border-t border-gold/50 pt-4">
+                <div
                   suppressHydrationWarning
-                  className="order-1 text-4xl font-bold text-gold leading-none"
+                  className="font-display text-5xl lg:text-6xl font-bold text-gold leading-none"
                 >
                   {stat.kind === "aum" ? (
                     <>
                       {aum.prefix && <span>{aum.prefix}</span>}
-                      {aum.value.toLocaleString("en-US")}
+                      <CountUp to={aum.value} duration={1.8} />
                       <span>{aum.suffix}</span>
                     </>
                   ) : stat.kind === "members" ? (
                     <>
                       {members.prefix && <span>{members.prefix}</span>}
-                      {members.value.toLocaleString("en-US")}
+                      <CountUp to={members.value} duration={1.4} />
                       <span>{members.suffix}</span>
                     </>
                   ) : stat.kind === "track" ? (
                     <>
-                      {trackRecordYears}
-                      <span>+</span>
+                      <CountUp to={trackRecordYears} duration={1.2} />
+                      <span>Y+</span>
                     </>
                   ) : (
-                    s.sector_teams
+                    <CountUp to={s.sector_teams} duration={1.0} />
                   )}
-                </dd>
-                <dt className="order-2 mt-3 text-sm text-background">{stat.label}</dt>
-                <dd className="order-3 text-xs text-on-dark-muted">{stat.sub}</dd>
+                </div>
+                <div className="mt-4 text-[10px] uppercase tracking-[0.24em] text-on-dark-secondary font-medium">
+                  {stat.label}
+                </div>
+                <div className="mt-1 text-[10px] text-on-dark-dim font-mono uppercase tracking-[0.18em]">
+                  {stat.sub}
+                </div>
               </div>
             ))}
-          </dl>
+          </div>
         </div>
       </section>
 
@@ -246,18 +263,23 @@ function Index() {
           Fund?", for a reader and for a search engine. Every fact here is stated
           elsewhere on the site: the founding year and AUM in the hero, the
           structure and process on /about and /sectors, the employers on /about. */}
-      <section className="bg-background section-y" aria-labelledby="what-is-smif-h">
+      <section
+        className="bg-background border-t border-border py-24"
+        aria-labelledby="what-is-smif-h"
+      >
         <div className="container-prose grid gap-8 md:grid-cols-12 md:gap-16">
-          <h2 id="what-is-smif-h" className="md:col-span-4">
+          <h2
+            id="what-is-smif-h"
+            className="md:col-span-4 font-display text-3xl md:text-4xl font-bold text-ink"
+          >
             What is the Purdue Student Managed Investment Fund?
           </h2>
           <div className="space-y-5 md:col-span-8">
             <p>
               The Purdue Student Managed Investment Fund (SMIF) is a student-run investment fund at
               Purdue University's Daniels School of Business, founded in {s.founded_year}. Students
-              manage real university capital, currently {houseCurrency(s.aum_display)}, across U.S.
-              equities and fixed income, under a written investment policy statement and faculty
-              oversight.
+              manage real university capital, currently {s.aum_display}, across U.S. equities and
+              fixed income, under a written investment policy statement and faculty oversight.
             </p>
             <p>
               Eight equity sector teams research the market from the bottom up. Analysts pitch
@@ -295,101 +317,149 @@ function Index() {
         </div>
       </section>
 
-      {/* Mission. Dark Black, one step off the hero's Black, so the two dark
-          bands read as two sections. */}
-      <section className="bg-ink-soft text-background section-y overflow-hidden">
+      {/* Mission */}
+      <section className="bg-ink text-background py-32 overflow-hidden">
         <div className="container-prose">
-          <div className="grid md:grid-cols-12 gap-10 md:gap-16 items-start">
-            <div className="md:col-span-7 space-y-5">
-              <span className="rule-gold" />
-              <h2 className="text-background max-w-xl">Students manage real capital.</h2>
-              <p className="text-on-dark-primary text-lg">
+          <Reveal className="max-w-2xl mb-20">
+            <span className="rule-gold mb-5 block" />
+            <h2
+              className="font-display font-bold text-background"
+              style={{ fontSize: "clamp(2.4rem, 5vw, 4.5rem)" }}
+            >
+              Real capital.
+              <br />
+              Real research.
+              <br />
+              <span className="text-gold/70">Real outcomes.</span>
+            </h2>
+          </Reveal>
+          <div className="grid md:grid-cols-5 gap-16 items-start">
+            <Reveal className="md:col-span-3 space-y-5" delay={0.1}>
+              <p className="text-background/85 text-lg leading-relaxed">
                 SMIF is Purdue's student investment club with a real portfolio: it gives students
                 the rare opportunity to manage actual investment capital under faculty mentorship.
                 Our analysts apply institutional-grade frameworks to fundamental equity research,
                 building skills that translate directly to careers in asset management, investment
                 banking, and equity research.
               </p>
-              <p className="text-on-dark-secondary">
+              <p className="text-background/75 leading-relaxed">
                 Every semester, analysts pitch positions to the full fund. Accepted ideas enter the
                 real portfolio. Rejected ideas come with feedback that sharpens the next pitch. This
                 is the closest an undergraduate education gets to the actual job.
               </p>
               <Link
                 to="/about"
-                className="group inline-flex min-h-6 items-center gap-2 text-base font-bold text-gold hover:text-background"
+                className="group inline-flex min-h-6 items-center gap-2 text-sm font-semibold text-gold hover:text-gold-mid transition-colors duration-200 mt-2 cursor-pointer"
               >
                 Learn about our process
                 <ChevronRight className="h-4 w-4 arrow-slide" />
               </Link>
-            </div>
-            <div className="md:col-span-5">
+            </Reveal>
+            <Reveal className="md:col-span-2 relative" delay={0.2}>
               <img
                 src={campusImg}
                 alt="Purdue's Daniels School of Business campus"
                 loading="lazy"
                 width={1024}
                 height={683}
-                className="w-full aspect-[4/3] md:aspect-[3/4] object-cover"
+                className="w-full aspect-[3/4] object-cover shadow-elegant"
               />
-            </div>
+              <div className="absolute -bottom-5 -left-5 bg-gold p-5 shadow-gold hidden lg:block">
+                {/* Derived from the current year at render time — see the
+                    footer note; same hydration caveat. */}
+                <div
+                  suppressHydrationWarning
+                  className="font-display text-3xl font-bold text-ink leading-none"
+                >
+                  {trackRecordYears}Y+
+                </div>
+                <div className="text-xs uppercase tracking-wider text-ink/75 mt-1">
+                  Years investing
+                </div>
+              </div>
+            </Reveal>
           </div>
         </div>
       </section>
 
-      {/* Pillars: ruled rows, weighted by what a prospective member is deciding.
-          Title left, substance right. */}
-      <section className="bg-background section-y">
+      {/* Pillars */}
+      <section className="bg-background border-t border-border py-32">
         <div className="container-prose">
-          <div className="flex items-end justify-between mb-10 gap-8 flex-wrap">
-            <h2>Three pillars of the fund</h2>
+          <Reveal className="flex items-end justify-between mb-16 gap-8 flex-wrap">
+            <div>
+              <h2
+                className="font-display font-bold text-ink"
+                style={{ fontSize: "clamp(2.2rem, 4.5vw, 3.75rem)" }}
+              >
+                Three pillars
+                <br />
+                of the fund
+              </h2>
+            </div>
             <Link
               to="/apply"
-              className="group hidden md:inline-flex items-center gap-2 text-base font-bold text-ink border-b-2 border-gold pb-1 hover:text-gold-deep"
+              className="group hidden md:inline-flex items-center gap-2 text-sm font-semibold text-ink border-b-2 border-gold pb-1 hover:text-gold-deep transition-colors duration-200 cursor-pointer"
             >
               Apply to join
               <ArrowRight className="h-4 w-4 arrow-slide" />
             </Link>
-          </div>
-          <div className="border-t border-ink">
-            {PILLARS.map(({ title, body }) => (
-              <div
+          </Reveal>
+          <RevealGroup className="grid md:grid-cols-3 border-t border-border" stagger={0.12}>
+            {PILLARS.map(({ Icon, title, body }) => (
+              <RevealItem
                 key={title}
-                className="grid gap-2 md:grid-cols-12 md:gap-10 border-b border-border py-6 md:py-8"
+                className="group relative border-b md:border-b-0 md:border-r border-border last:border-r-0 p-8 lg:p-10 transition-colors duration-300 hover:bg-secondary/50"
               >
-                <h3 className="md:col-span-4 text-xl text-ink">{title}</h3>
-                <p className="md:col-span-8 max-w-2xl">{body}</p>
-              </div>
+                <div className="mb-8 flex items-center justify-start">
+                  <Icon className="h-6 w-6 text-gold-deep transition-all duration-200 group-hover:text-ink group-hover:scale-110" />
+                </div>
+                <h3 className="font-display text-2xl font-semibold text-ink mb-4">{title}</h3>
+                <p className="text-muted-foreground text-sm leading-relaxed">{body}</p>
+              </RevealItem>
             ))}
-          </div>
+          </RevealGroup>
         </div>
       </section>
 
       {/* Latest research: peer fund sites (Bridgewater, AQR, Oaktree) lead with
           their newest thinking; this surfaces ours. Hidden when there's none. */}
       {latest.length > 0 && (
-        <section className="bg-secondary section-y" aria-labelledby="latest-research-h">
+        <section
+          className="bg-background border-t border-border py-24"
+          aria-labelledby="latest-research-h"
+        >
           <div className="container-prose">
-            <div className="flex items-end justify-between mb-8 gap-8 flex-wrap">
-              <h2 id="latest-research-h">Latest from the fund</h2>
+            <Reveal className="flex items-end justify-between mb-10 gap-8 flex-wrap">
+              <div>
+                <span className="text-xs font-semibold uppercase tracking-[0.32em] text-gold-deep block mb-4">
+                  Research
+                </span>
+                <h2
+                  id="latest-research-h"
+                  className="font-display font-bold text-ink"
+                  style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}
+                >
+                  Latest from the fund
+                </h2>
+              </div>
               <Link
                 to="/research"
-                className="group inline-flex min-h-6 items-center gap-2 text-base font-bold text-ink border-b-2 border-gold pb-1 hover:text-gold-deep"
+                className="group inline-flex min-h-6 items-center gap-2 text-sm font-semibold text-ink border-b-2 border-gold pb-1 hover:text-gold-deep transition-colors duration-200"
               >
                 All research
                 <ArrowRight className="h-4 w-4 arrow-slide" />
               </Link>
-            </div>
-            <div className="grid border-t border-ink md:grid-cols-3">
+            </Reveal>
+            <RevealGroup className="grid border-t border-border md:grid-cols-3" stagger={0.1}>
               {latest.map((p) => (
-                <div
+                <RevealItem
                   key={p.id}
-                  className="border-b md:border-b-0 md:border-r border-border last:border-0 py-6 md:px-8 md:first:pl-0 md:last:pr-0"
+                  className="border-b md:border-b-0 md:border-r border-border last:border-r-0 p-8 transition-colors duration-300 hover:bg-secondary/50"
                 >
-                  <div className="text-sm font-bold text-ink">
+                  <div className="text-[11px] font-semibold uppercase tracking-[0.2em] text-gold-deep">
                     {[SERIES_LABEL[p.category] ?? "Report", p.ticker].filter(Boolean).join(" · ")}
                   </div>
-                  <h3 className="mt-2 text-xl leading-snug text-ink">
+                  <h3 className="mt-3 font-display text-xl font-bold leading-snug text-ink">
                     <a
                       href={p.url}
                       target="_blank"
@@ -399,64 +469,89 @@ function Index() {
                       {p.title}
                     </a>
                   </h3>
-                  <time dateTime={p.created_at} className="mt-3 block text-sm">
+                  <time
+                    dateTime={p.created_at}
+                    className="mt-4 block font-mono text-xs uppercase tracking-[0.14em] text-muted-foreground"
+                  >
                     {/* UTC so the server render and the browser agree on the day. */}
                     {new Date(p.created_at).toLocaleDateString("en-US", {
                       timeZone: "UTC",
-                      month: "long",
+                      month: "short",
                       day: "numeric",
                       year: "numeric",
                     })}
                   </time>
-                </div>
+                </RevealItem>
               ))}
-            </div>
+            </RevealGroup>
           </div>
         </section>
       )}
 
       {/* Performance teaser */}
-      <section className="bg-background border-t border-border py-14">
-        <div className="container-prose flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
-          <h2 className="max-w-md">Benchmarked against the S&amp;P 500. Reported every quarter.</h2>
+      <section className="bg-secondary/60 border-t border-border py-20">
+        <Reveal className="container-prose flex flex-col md:flex-row items-start md:items-center justify-between gap-10">
+          <div>
+            <h2 className="font-display text-3xl md:text-4xl font-bold text-ink">
+              Benchmarked against the S&amp;P 500.
+              <br className="hidden md:block" />
+              Reported every quarter.
+            </h2>
+          </div>
           <div className="flex flex-col md:flex-row items-start md:items-center gap-8 md:gap-10 flex-shrink-0 w-full md:w-auto">
             <PerformanceSparkline />
-            <div className="flex gap-3 flex-shrink-0">
+            <div className="flex gap-4 flex-shrink-0">
               <Link
                 to="/performance"
-                className="press group inline-flex items-center gap-2 rounded-sm bg-ink px-6 py-3 text-base font-bold text-background hover:bg-ink-soft"
+                className="press group inline-flex items-center gap-2 bg-ink px-7 py-3.5 text-sm font-semibold text-background hover:bg-ink/85 cursor-pointer"
               >
                 Performance
                 <ArrowRight className="h-4 w-4 arrow-slide" />
               </Link>
               <Link
                 to="/holdings"
-                className="press inline-flex items-center gap-2 rounded-sm border border-ink px-6 py-3 text-base text-ink hover:bg-ink hover:text-background"
+                className="press inline-flex items-center gap-2 border border-ink px-7 py-3.5 text-sm font-semibold text-ink hover:bg-ink hover:text-background cursor-pointer"
               >
                 Holdings
               </Link>
             </div>
           </div>
-        </div>
+        </Reveal>
       </section>
 
-      {/* Apply. Left-aligned and specific: what happens, when, who. */}
-      <section className="bg-ink text-background section-y">
-        <div className="container-prose grid md:grid-cols-12 gap-8 md:gap-16 items-end">
-          <div className="md:col-span-7">
-            <span className="rule-gold mb-5" />
-            <h2 className="text-background">Join a sector team.</h2>
-            <p className="mt-4 max-w-xl text-on-dark-secondary text-lg">
-              Applications open each fall and spring semester. We're looking for curious, rigorous
-              students from every college at Purdue.
-            </p>
-          </div>
-          <div className="md:col-span-5 flex flex-col sm:flex-row md:justify-end gap-3">
+      {/* CTA */}
+      <section className="bg-ink text-background py-32 relative overflow-hidden">
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden"
+        >
+          <span
+            className="font-display font-bold text-white/[0.03] leading-none whitespace-nowrap"
+            style={{ fontSize: "clamp(5rem, 20vw, 16rem)" }}
+          >
+            SMIF
+          </span>
+        </div>
+        <Reveal className="relative container-prose text-center max-w-3xl mx-auto">
+          <TrendingUp className="mx-auto h-7 w-7 text-gold mb-8 opacity-75" />
+          <h2
+            className="font-display font-bold text-background"
+            style={{ fontSize: "clamp(2.4rem, 5.5vw, 4.5rem)" }}
+          >
+            Ready to invest
+            <br />
+            in your future?
+          </h2>
+          <p className="mt-6 max-w-lg mx-auto text-background/75 leading-relaxed">
+            Applications open each fall and spring semester. We're looking for curious, rigorous
+            students from every college at Purdue.
+          </p>
+          <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
             <a
               href={applyUrl("home-cta")}
               target="_blank"
               rel="noopener noreferrer"
-              className="press inline-flex items-center justify-center gap-2.5 rounded-sm bg-gold px-7 py-3 text-base font-bold text-ink hover:bg-gold-mid"
+              className="press group inline-flex items-center justify-center gap-2.5 bg-gold px-9 py-4 text-sm font-semibold text-ink hover:bg-gold-mid cursor-pointer"
             >
               Apply to Join
               <ExternalLink className="h-4 w-4" aria-hidden="true" />
@@ -464,12 +559,12 @@ function Index() {
             </a>
             <Link
               to="/team"
-              className="press inline-flex items-center justify-center gap-2 rounded-sm border border-background/40 px-7 py-3 text-base text-background hover:border-gold hover:text-gold"
+              className="press inline-flex items-center justify-center gap-2 border border-background/20 px-9 py-4 text-sm font-semibold text-background hover:border-gold hover:text-gold cursor-pointer"
             >
               Meet the Team
             </Link>
           </div>
-        </div>
+        </Reveal>
       </section>
     </>
   );

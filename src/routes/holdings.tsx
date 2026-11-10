@@ -11,7 +11,10 @@ import {
   PAGE_META,
   holdingsDatasetLd,
 } from "@/lib/seo";
+import { CountUp } from "@/components/CountUp";
+import { Reveal } from "@/components/Reveal";
 import { teamForIndustry, teamSlug, TEAM_INDUSTRIES } from "@/lib/portfolio";
+import { motion } from "framer-motion";
 import { useLiveBook } from "@/lib/use-live-book";
 import { DataStatus } from "@/components/DataStatus";
 import { asOfText } from "@/lib/market-calendar";
@@ -118,15 +121,19 @@ function KpiCard({
   const valueColor =
     accent === "positive" ? "text-gain" : accent === "negative" ? "text-loss" : "text-ink";
   return (
-    <div className="border border-border bg-card p-6 flex flex-col gap-1">
-      <div className="text-xs text-muted-foreground">{label}</div>
+    <div className="border border-border bg-card p-6 flex flex-col gap-1 hover-lift-sm">
+      <div className="text-xs uppercase tracking-[0.22em] text-muted-foreground">{label}</div>
       {muted ? (
         <div className="text-lg font-semibold text-muted-foreground mt-2">{value}</div>
       ) : (
         <div className={`font-display text-3xl font-bold ${valueColor} mt-1`}>{value}</div>
       )}
       {sub && <div className="text-xs text-muted-foreground font-mono mt-0.5">{sub}</div>}
-      {asOf && <div className="text-xs font-mono text-muted-foreground mt-1">As of {asOf}</div>}
+      {asOf && (
+        <div className="text-[10px] font-mono uppercase tracking-[0.18em] text-muted-foreground mt-1">
+          As of {asOf}
+        </div>
+      )}
       {/* Rendered as real copy rather than a title attribute. These plain-English
           one-liners are the clearest explanations of Sharpe, VaR, and exposure
           anywhere on the site, and as tooltips they were invisible to text
@@ -318,11 +325,13 @@ function HoldingsPage() {
       {/* Sticky compact summary — appears on scroll */}
       <div
         aria-hidden={!showSticky}
-        className={`fixed top-[3.875rem] left-0 right-0 z-40 border-b border-border bg-background transition-[transform,opacity,visibility] duration-300 ease-out motion-reduce:transition-none ${showSticky ? "visible translate-y-0 opacity-100" : "invisible -translate-y-full opacity-0"}`}
+        className={`fixed top-14 left-0 right-0 z-40 border-b border-border bg-background/95 backdrop-blur-md shadow-sm transition-[transform,opacity,visibility] duration-300 ease-out motion-reduce:transition-none ${showSticky ? "visible translate-y-0 opacity-100" : "invisible -translate-y-full opacity-0"}`}
       >
         <div className="container-prose flex items-center justify-between gap-4 py-2.5 text-xs">
           <div className="flex items-center gap-5 font-mono overflow-x-auto">
-            <span className="text-muted-foreground hidden sm:inline">Portfolio</span>
+            <span className="uppercase tracking-[0.22em] text-muted-foreground hidden sm:inline">
+              Portfolio
+            </span>
             <span>
               <span className="text-muted-foreground">Value</span>{" "}
               <span className="font-semibold text-ink">
@@ -352,10 +361,18 @@ function HoldingsPage() {
         </div>
       </div>
 
-      <section className="border-b border-border bg-background">
+      <section className="border-b border-border bg-secondary/30">
         <div className="container-prose py-20">
           <span className="rule-gold mb-5 block" />
-          <h1 className="font-display text-ink">Current portfolio.</h1>
+          <span className="text-xs font-semibold uppercase tracking-[0.32em] text-gold-deep block mb-4">
+            Portfolio Holdings
+          </span>
+          <h1
+            className="font-display font-bold text-ink"
+            style={{ fontSize: "clamp(2.5rem, 6vw, 5rem)" }}
+          >
+            Current portfolio.
+          </h1>
           <DataStatus status={status} />
           <p className="mt-8 max-w-2xl text-muted-foreground leading-relaxed">
             A snapshot of every position held by the Purdue Student Managed Investment Fund, with
@@ -375,7 +392,7 @@ function HoldingsPage() {
             </div>
             <button
               onClick={() => refetch()}
-              className="border border-ink px-3 py-1.5 text-xs hover:bg-ink hover:text-background press cursor-pointer shrink-0"
+              className="border border-ink px-3 py-1.5 text-xs uppercase tracking-wider hover:bg-ink hover:text-background press cursor-pointer shrink-0"
             >
               Retry
             </button>
@@ -385,8 +402,10 @@ function HoldingsPage() {
             previously had no rendered h2 at all, which left it with no outline
             for a reader and nothing for a parser to segment on. Styled with the
             page's own label typography so they read as native furniture. */}
-        <h2 className="text-muted-foreground">Portfolio Summary</h2>
-        <div className="grid gap-px bg-border sm:grid-cols-2 lg:grid-cols-4">
+        <h2 className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+          Portfolio Summary
+        </h2>
+        <Reveal className="grid gap-px bg-border sm:grid-cols-2 lg:grid-cols-4">
           <KpiCard
             label="Portfolio Value"
             asOf={quotesAsOf}
@@ -451,36 +470,38 @@ function HoldingsPage() {
                 : undefined
             }
             asOf={risk?.grossExposurePct != null ? riskAsOf : undefined}
-            hint="Share of NAV invested in the market. Gross counts all positions, net is longs minus shorts, equal here because the fund is long-only."
+            hint="Share of NAV invested in the market. Gross counts all positions, net is longs minus shorts — equal here because the fund is long-only."
           />
-        </div>
+        </Reveal>
 
-        <div className="grid gap-px bg-border md:grid-cols-3">
+        <Reveal className="grid gap-px bg-border md:grid-cols-3">
           <div className="md:col-span-2 bg-card border border-border p-6">
             <div className="flex items-baseline justify-between mb-5 gap-3">
               {/* Was a div duplicated by an sr-only h2 above the grid, which
                   announced the same text twice. One real heading instead. */}
-              <h2 className="text-muted-foreground">Sector Allocation</h2>
-              <div className="text-xs font-mono text-muted-foreground">
+              <h2 className="text-xs uppercase tracking-[0.22em] text-muted-foreground">
+                Sector Allocation
+              </h2>
+              <div className="text-[10px] font-mono uppercase tracking-[0.18em] text-muted-foreground">
                 % of invested capital{quotesAsOf ? `, ${quotesAsOf}` : ""}
                 {status.weights.sessionDate && <> · SPY weights {asOfText(status.weights)}</>}
               </div>
             </div>
             <div className="space-y-2.5">
-              {sectorBreakdown.map(([s, pct]) => (
+              {sectorBreakdown.map(([s, pct], i) => (
                 <div key={s} className="flex items-center gap-3 text-sm">
                   {teamForIndustry(s) ? (
                     <Link
                       to="/sectors"
                       hash={teamSlug(teamForIndustry(s) as string)}
-                      className="link-underline w-32 md:w-44 flex-shrink-0 truncate text-xs text-foreground hover:text-gold-deep"
+                      className="link-underline w-32 md:w-44 flex-shrink-0 truncate text-xs text-foreground/80 hover:text-gold-deep"
                       title={`${s}: covered by the ${teamForIndustry(s)} team`}
                     >
                       {s}
                     </Link>
                   ) : (
                     <span
-                      className="w-32 md:w-44 flex-shrink-0 truncate text-xs text-foreground"
+                      className="w-32 md:w-44 flex-shrink-0 truncate text-xs text-foreground/80"
                       title={s}
                     >
                       {s}
@@ -488,7 +509,14 @@ function HoldingsPage() {
                   )}
                   <div className="flex-1 h-1.5 bg-muted relative">
                     {/* True 0–100 scale: bar width = pct so visual length matches the actual weight. */}
-                    <div className="h-full bg-gold" style={{ width: `${Math.min(100, pct)}%` }} />
+                    <motion.div
+                      className="h-full bg-gradient-gold origin-left"
+                      initial={{ scaleX: 0 }}
+                      whileInView={{ scaleX: 1 }}
+                      viewport={{ once: true, amount: 0.4 }}
+                      transition={{ duration: 0.9, delay: 0.04 * i, ease: [0.22, 1, 0.36, 1] }}
+                      style={{ width: `${Math.min(100, pct)}%` }}
+                    />
                   </div>
                   <span className="w-12 text-right font-mono text-xs text-muted-foreground tabular-nums">
                     {pct.toFixed(1)}%
@@ -499,7 +527,9 @@ function HoldingsPage() {
           </div>
           <div className="bg-card border border-border p-6 flex flex-col gap-6">
             <div>
-              <div className="text-xs text-muted-foreground mb-2">Weighted Beta</div>
+              <div className="text-xs uppercase tracking-[0.22em] text-muted-foreground mb-2">
+                Weighted Beta
+              </div>
               <div className="font-display text-4xl font-bold text-ink">
                 {portfolioSummary.weightedBeta.toFixed(2)}
               </div>
@@ -508,17 +538,19 @@ function HoldingsPage() {
               </div>
             </div>
             <div className="border-t border-border pt-5">
-              <div className="text-xs text-muted-foreground mb-2">Invested Capital</div>
+              <div className="text-xs uppercase tracking-[0.22em] text-muted-foreground mb-2">
+                Invested Capital
+              </div>
               <div className="font-display text-2xl font-bold text-ink">
                 {fmtUSD(portfolioSummary.investedCapital, { maximumFractionDigits: 0 })}
               </div>
             </div>
           </div>
-        </div>
+        </Reveal>
 
         {!(isFetching && !quoteData) && (
-          <div>
-            <h2 className="mb-4 text-muted-foreground">
+          <Reveal>
+            <h2 className="mb-4 text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
               Movers{quotesAsOf ? `, ${quotesAsOf}` : ""}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-border">
@@ -526,10 +558,14 @@ function HoldingsPage() {
                 { title: "Leaders", items: movers.gainers },
                 { title: "Laggards", items: movers.losers },
               ].map((panel) => (
-                <div key={panel.title} className="bg-card border border-border p-6">
+                <div key={panel.title} className="bg-card border border-border p-6 hover-lift-sm">
                   <div className="flex items-baseline justify-between mb-4 gap-3">
-                    <span className="text-xs text-muted-foreground">{panel.title}</span>
-                    <span className="text-xs font-mono text-muted-foreground">By day change %</span>
+                    <span className="text-xs uppercase tracking-[0.22em] text-muted-foreground">
+                      {panel.title}
+                    </span>
+                    <span className="text-[10px] font-mono uppercase tracking-[0.18em] text-muted-foreground">
+                      By day change %
+                    </span>
                   </div>
                   <ul className="space-y-1">
                     {panel.items.map((h) => (
@@ -547,7 +583,7 @@ function HoldingsPage() {
                         >
                           {/* Visible text is the accessible name (WCAG 2.5.3, label
                               in name); the action is appended for screen readers. */}
-                          <span className="font-mono font-bold text-gold-deep w-16">
+                          <span className="font-mono font-bold text-gold-deep tracking-wider w-16">
                             {h.symbol}
                           </span>
                           <span className="text-sm truncate flex-1">{h.company}</span>
@@ -569,10 +605,12 @@ function HoldingsPage() {
                 </div>
               ))}
             </div>
-          </div>
+          </Reveal>
         )}
 
-        <h2 className="text-muted-foreground">Holdings</h2>
+        <h2 className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+          Holdings
+        </h2>
         {team && (
           <div
             role="status"
@@ -620,7 +658,9 @@ function HoldingsPage() {
             />
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs text-muted-foreground mr-1">Sector</span>
+            <span className="text-xs uppercase tracking-[0.22em] text-muted-foreground mr-1">
+              Sector
+            </span>
             {sectors.length > 8 ? (
               <label className="inline-flex items-center gap-2">
                 <span className="sr-only">Filter by sector</span>
@@ -628,7 +668,7 @@ function HoldingsPage() {
                   value={sector}
                   onChange={(e) => setSector(e.target.value)}
                   aria-label="Filter by sector"
-                  className="min-h-11 border border-border bg-background px-3 text-xs font-semibold text-foreground outline-none focus:border-ink"
+                  className="min-h-11 border border-border bg-background px-3 text-xs font-semibold uppercase tracking-wider text-foreground outline-none focus:border-ink"
                 >
                   {sectors.map((s) => (
                     <option key={s} value={s}>
@@ -648,7 +688,7 @@ function HoldingsPage() {
                     // min-h-11 keeps the touch target ≥44px; py-2.5 makes the
                     // visual block match that height so the hit area and the
                     // rendered chip share the same bounds (no offset clicks).
-                    className={`inline-flex min-h-11 items-center px-3 py-2.5 text-xs font-semibold border press cursor-pointer ${active ? "bg-ink text-background border-ink" : "bg-background text-foreground border-border hover:border-ink hover:bg-secondary"}`}
+                    className={`inline-flex min-h-11 items-center px-3 py-2.5 text-xs font-semibold uppercase tracking-wider border press cursor-pointer ${active ? "bg-ink text-background border-ink" : "bg-background text-foreground border-border hover:border-ink hover:bg-secondary"}`}
                   >
                     {s}
                   </button>
@@ -675,7 +715,7 @@ function HoldingsPage() {
                 setQuery("");
                 if (team) navigate({ search: {}, replace: true });
               }}
-              className="inline-flex items-center gap-2 mt-5 border border-ink px-4 py-2 text-xs hover:bg-ink hover:text-background press cursor-pointer"
+              className="inline-flex items-center gap-2 mt-5 border border-ink px-4 py-2 text-xs uppercase tracking-wider hover:bg-ink hover:text-background press cursor-pointer"
             >
               Clear filter
             </button>
@@ -685,12 +725,14 @@ function HoldingsPage() {
             {/* Mobile: stacked cards */}
             <div className="md:hidden space-y-3">
               {rows.map((h) => (
-                <div key={h.symbol} className="border border-border bg-card p-4">
+                <div key={h.symbol} className="border border-border bg-card p-4 hover-lift-sm">
                   <div className="flex items-baseline justify-between gap-3">
                     <div className="min-w-0">
-                      <div className="font-mono text-sm font-bold text-gold-deep">{h.symbol}</div>
+                      <div className="font-mono text-sm font-bold text-gold-deep tracking-wider">
+                        {h.symbol}
+                      </div>
                       <div className="text-sm font-medium truncate">{h.company}</div>
-                      <div className="text-xs text-muted-foreground mt-0.5">
+                      <div className="text-[11px] text-muted-foreground mt-0.5">
                         {h.industry}
                         {teamForIndustry(h.industry) && (
                           <>
@@ -722,13 +764,17 @@ function HoldingsPage() {
                   </div>
                   <div className="mt-3 grid grid-cols-3 gap-3 border-t border-border pt-3 text-xs">
                     <div>
-                      <div className="text-xs text-muted-foreground">Value</div>
+                      <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                        Value
+                      </div>
                       <div className="font-mono mt-0.5">
                         {fmtUSD(h.value, { maximumFractionDigits: 0 })}
                       </div>
                     </div>
                     <div>
-                      <div className="text-xs text-muted-foreground">Return</div>
+                      <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                        Return
+                      </div>
                       <div
                         className={`font-mono font-semibold mt-0.5 inline-flex items-center gap-0.5 ${h.returnPct >= 0 ? "text-gain" : "text-loss"}`}
                       >
@@ -741,7 +787,9 @@ function HoldingsPage() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-xs text-muted-foreground">Weight</div>
+                      <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                        Weight
+                      </div>
                       <div className="font-mono mt-0.5 text-muted-foreground">
                         {h.allocation.toFixed(2)}%
                       </div>
@@ -764,7 +812,7 @@ function HoldingsPage() {
                         <th
                           key={c.k}
                           aria-sort={ariaSort}
-                          className={`px-4 py-3 text-xs font-semibold whitespace-nowrap ${c.align === "right" ? "text-right" : ""}`}
+                          className={`px-4 py-3 text-xs font-semibold uppercase tracking-[0.14em] whitespace-nowrap ${c.align === "right" ? "text-right" : ""}`}
                         >
                           <button
                             onClick={() => toggleSort(c.k)}
@@ -785,7 +833,9 @@ function HoldingsPage() {
                       className={`border-t border-border hover:bg-secondary/50 transition-colors duration-150 ${idx % 2 === 0 ? "" : "bg-secondary/20"}`}
                     >
                       <td className="px-4 py-3 font-medium whitespace-nowrap">{h.company}</td>
-                      <td className="px-4 py-3 font-mono font-bold text-gold-deep">{h.symbol}</td>
+                      <td className="px-4 py-3 font-mono font-bold text-gold-deep tracking-wider">
+                        {h.symbol}
+                      </td>
                       <td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">
                         {h.industry}
                         {teamForIndustry(h.industry) && (
@@ -843,7 +893,7 @@ function HoldingsPage() {
                     </tr>
                   ))}
                 </tbody>
-                <tfoot className="bg-background border-t-2 border-ink font-semibold">
+                <tfoot className="bg-secondary/60 border-t-2 border-ink font-semibold">
                   <tr>
                     <td className="px-4 py-4" colSpan={6}>
                       Total · {rows.length} position{rows.length !== 1 ? "s" : ""}
@@ -878,7 +928,7 @@ function HoldingsPage() {
         )}
 
         <div className="border-t border-border pt-6 mt-10 space-y-2 text-xs text-muted-foreground max-w-3xl">
-          <div className="text-xs font-mono font-semibold text-muted-foreground">
+          <div className="text-[10px] font-mono font-semibold uppercase tracking-[0.28em] text-muted-foreground">
             Methodology &amp; disclaimer
           </div>
           <p>

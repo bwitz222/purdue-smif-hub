@@ -17,6 +17,7 @@ import {
 import { useLiveBook } from "@/lib/use-live-book";
 import { asOfText } from "@/lib/market-calendar";
 import { socialMeta, canonical, breadcrumbLd, OG_SECTORS } from "@/lib/seo";
+import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import { teamAllocations, teamSlug, type TeamAllocation } from "@/lib/portfolio";
 import { sectorTeams, fixedIncomeMacro, portfolioManagers, LEAD_ROLE } from "@/data/team";
 import type { Member } from "@/components/MemberCard";
@@ -181,7 +182,7 @@ function TeamCard({
         <div className="flex items-start gap-4">
           <Icon className="mt-1 h-6 w-6 shrink-0 text-ink" />
           <div>
-            <h3 className="font-display text-ink">{name}</h3>
+            <h3 className="font-display text-xl font-bold text-ink">{name}</h3>
             <p className="mt-1.5 text-sm text-muted-foreground">{lead}</p>
           </div>
         </div>
@@ -297,11 +298,16 @@ function Sectors() {
 
   return (
     <>
-      <section className="border-b border-border bg-background">
-        <div className="container-prose section-y">
-          <div>
+      <section className="border-b border-border bg-secondary/40">
+        <div className="container-prose py-24">
+          <Reveal>
             <span className="rule-gold mb-5 block" />
-            <h1 className="mt-4 font-display max-w-3xl">Purdue SMIF sector teams</h1>
+            <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">
+              Coverage
+            </span>
+            <h1 className="mt-4 font-display text-5xl font-bold md:text-6xl max-w-3xl">
+              Purdue SMIF sector teams
+            </h1>
             <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
               Eight equity sector teams cover the investable universe from the bottom up. A Fixed
               Income &amp; Macro group frames the rate and credit backdrop, and Portfolio + Risk
@@ -366,18 +372,20 @@ function Sectors() {
               . SPY has no single sector, so it is divided across all eleven by State Street's
               published weights and credited to the team that owns each one.
             </p>
-          </div>
+          </Reveal>
         </div>
       </section>
 
       <section className="container-prose py-20">
         <div className="flex items-baseline justify-between mb-8 gap-4">
-          <h2 className="font-display text-ink">Equity coverage</h2>
-          <span className="text-xs font-mono text-muted-foreground">% of invested capital</span>
+          <h2 className="font-display text-2xl md:text-3xl font-bold text-ink">Equity coverage</h2>
+          <span className="text-[10px] font-mono uppercase tracking-[0.22em] text-muted-foreground">
+            % of invested capital
+          </span>
         </div>
-        <div className="grid gap-px bg-border md:grid-cols-2">
+        <RevealGroup className="grid gap-px bg-border md:grid-cols-2" stagger={0.04}>
           {EQUITY_TEAMS.map(({ Icon, name, lead }) => (
-            <div key={name} className="bg-background">
+            <RevealItem key={name} className="bg-background">
               <TeamCard
                 Icon={Icon}
                 name={name}
@@ -385,28 +393,28 @@ function Sectors() {
                 alloc={teams.get(name)}
                 pms={pmsForEquityTeam(name)}
               />
-            </div>
+            </RevealItem>
           ))}
-        </div>
+        </RevealGroup>
       </section>
 
       <section className="container-prose pb-24">
-        <h2 className="font-display text-ink mb-8">Process teams</h2>
-        <div className="grid gap-px bg-border md:grid-cols-2">
+        <h2 className="font-display text-2xl md:text-3xl font-bold text-ink mb-8">Process teams</h2>
+        <RevealGroup className="grid gap-px bg-border md:grid-cols-2" stagger={0.04}>
           {PROCESS_TEAMS.map(({ Icon, name, lead, links }) => {
             const pms = pmsForProcessTeam(name);
             return (
-              <div key={name} className="bg-background">
+              <RevealItem key={name} className="bg-background">
                 <article className="group flex h-full flex-col p-8 transition-colors duration-200 hover:bg-secondary/30">
                   <div className="flex items-start gap-4">
-                    <Icon className="mt-1 h-6 w-6 shrink-0 text-ink" />
+                    <Icon className="mt-1 h-6 w-6 shrink-0 text-gold-deep icon-pop" />
                     <div>
-                      <h3 className="font-display text-ink">{name}</h3>
+                      <h3 className="font-display text-xl font-bold text-ink">{name}</h3>
                       <p className="mt-1.5 text-sm text-muted-foreground">{lead}</p>
                     </div>
                   </div>
                   <div className="mt-6">
-                    <div className="text-xs font-mono text-muted-foreground">
+                    <div className="text-[10px] font-mono uppercase tracking-[0.22em] text-muted-foreground">
                       {pms.length > 1 ? "Portfolio Managers" : "Portfolio Manager"}
                     </div>
                     <div className="mt-1.5 text-sm text-ink">
@@ -431,17 +439,17 @@ function Sectors() {
                     <Link
                       to="/team"
                       search={{ sector: name }}
-                      className="link-underline inline-flex min-h-6 items-center gap-1.5 text-xs font-semibold text-gold-deep hover:text-ink transition-colors"
+                      className="link-underline inline-flex min-h-6 items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-gold-deep hover:text-ink transition-colors"
                     >
                       View team
                       <ArrowRight className="h-3.5 w-3.5 arrow-slide" />
                     </Link>
                   </div>
                 </article>
-              </div>
+              </RevealItem>
             );
           })}
-        </div>
+        </RevealGroup>
       </section>
     </>
   );

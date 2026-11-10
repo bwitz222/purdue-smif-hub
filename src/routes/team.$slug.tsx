@@ -2,6 +2,7 @@ import { createFileRoute, notFound, Link } from "@tanstack/react-router";
 import { ArrowLeft, Mail, Linkedin } from "lucide-react";
 import { TEAM_INDUSTRIES, teamSlug } from "@/lib/portfolio";
 import { useState } from "react";
+import { Reveal } from "@/components/Reveal";
 import {
   findMemberBySlug,
   hasIndexableProfile,
@@ -114,8 +115,8 @@ function ProfilePhoto({ entry }: { entry: DirectoryEntry }) {
 
   if (!src) {
     return (
-      <div className="grid aspect-square w-full place-items-center bg-gold">
-        <span className="font-display text-6xl font-bold text-ink">{initials}</span>
+      <div className="grid aspect-square w-full place-items-center bg-gradient-gold">
+        <span className="font-display text-6xl font-bold text-ink/40">{initials}</span>
       </div>
     );
   }
@@ -146,11 +147,11 @@ function MemberProfile() {
 
   return (
     <>
-      <section className="border-b border-border bg-background">
+      <section className="border-b border-border bg-secondary/40">
         <div className="container-prose py-10">
           <Link
             to="/team"
-            className="group link-underline inline-flex items-center gap-2 text-xs font-semibold text-gold-deep hover:text-ink"
+            className="group link-underline inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-gold-deep hover:text-ink"
           >
             <ArrowLeft className="h-3.5 w-3.5 arrow-slide" />
             All of the team
@@ -160,7 +161,7 @@ function MemberProfile() {
 
       <section className="container-prose py-16">
         <div className="grid gap-12 md:grid-cols-5">
-          <div className="md:col-span-2">
+          <Reveal className="md:col-span-2">
             <div className="border border-border bg-card overflow-hidden">
               {/* Keyed on the slug so navigating between two profiles remounts
                   the photo. ProfilePhoto seeds `src` from useState and never
@@ -170,12 +171,14 @@ function MemberProfile() {
                   left the previous member's headshot beside the new name. */}
               <ProfilePhoto key={entry.slug} entry={entry} />
             </div>
-          </div>
+          </Reveal>
 
-          <div className="md:col-span-3">
-            <span className="text-xs font-semibold text-gold-deep">{m.role}</span>
-            <h1 className="mt-3 font-display">{m.name}</h1>
-            <p className="mt-3 font-mono text-xs text-muted-foreground">
+          <Reveal className="md:col-span-3" delay={0.08}>
+            <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">
+              {m.role}
+            </span>
+            <h1 className="mt-3 font-display text-4xl font-bold md:text-5xl">{m.name}</h1>
+            <p className="mt-3 font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">
               {team}
               {m.year ? ` · ${m.year}` : ""}
             </p>
@@ -193,7 +196,7 @@ function MemberProfile() {
                     href={`mailto:${m.email}`}
                     className="group link-underline inline-flex items-center gap-2 text-foreground hover:text-gold-deep"
                   >
-                    <Mail className="h-4 w-4" />
+                    <Mail className="h-4 w-4 icon-pop" />
                     <span className="font-mono">{m.email}</span>
                   </a>
                 )}
@@ -204,20 +207,20 @@ function MemberProfile() {
                     rel="noopener noreferrer"
                     className="group link-underline inline-flex items-center gap-2 text-foreground hover:text-gold-deep"
                   >
-                    <Linkedin className="h-4 w-4" />
+                    <Linkedin className="h-4 w-4 icon-pop" />
                     <span className="font-mono">LinkedIn</span>
                   </a>
                 )}
               </div>
             )}
-          </div>
+          </Reveal>
         </div>
       </section>
 
       {teammates.length > 0 && (
-        <section className="border-t border-border bg-background">
+        <section className="border-t border-border bg-secondary/30">
           <div className="container-prose py-16">
-            <h2 className="font-display">Also on {team}</h2>
+            <h2 className="font-display text-2xl font-bold">Also on {team}</h2>
             {team in TEAM_INDUSTRIES && (
               <p className="mt-3">
                 <Link
@@ -239,7 +242,9 @@ function MemberProfile() {
                     params={{ slug: t.slug }}
                     className="group flex flex-col gap-1 p-5 transition-colors duration-200 hover:bg-secondary/50"
                   >
-                    <span className="text-xs font-semibold text-gold-deep">{t.member.role}</span>
+                    <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-gold-deep">
+                      {t.member.role}
+                    </span>
                     <span className="font-display text-lg font-bold leading-tight">
                       {t.member.name}
                     </span>

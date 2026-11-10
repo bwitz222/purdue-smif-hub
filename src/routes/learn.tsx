@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ExternalLink, Download } from "lucide-react";
 import { socialMeta, canonical, breadcrumbLd, OG_LEARN, PAGE_META } from "@/lib/seo";
 import { GLOSSARY, termSlug } from "@/data/glossary";
+import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import { OnThisPage, type PageSection } from "@/components/OnThisPage";
 import { applyUrl } from "@/lib/apply-url";
 import dcfAmzn from "@/assets/dcf-model-amzn.xlsx?url";
@@ -229,10 +230,18 @@ function Learn() {
     <>
       {/* Hero */}
       <section className="bg-ink text-background">
-        <div className="container-prose section-y max-w-3xl">
-          <div>
-            <h1 className="mt-4 font-display" style={{ lineHeight: "1.02" }}>
-              Learn the craft, then prove it.
+        <div className="container-prose py-28 max-w-3xl">
+          <Reveal>
+            <span className="text-xs font-semibold uppercase tracking-[0.28em] text-gold">
+              Education
+            </span>
+            <h1
+              className="mt-4 font-display text-5xl font-bold md:text-6xl"
+              style={{ lineHeight: "1.02" }}
+            >
+              Learn the craft,
+              <br />
+              <span className="text-gold">then prove it.</span>
             </h1>
             <p className="mt-4 text-xl text-gold">
               Learn investing: equity research, valuation, and portfolio management.
@@ -241,7 +250,7 @@ function Learn() {
               The same material our analysts train on, and a companion to the courses we teach.
               Build the foundation, then defend a real pitch with real capital on the line.
             </p>
-          </div>
+          </Reveal>
         </div>
       </section>
 
@@ -251,26 +260,32 @@ function Learn() {
       <section
         id="tracks"
         aria-labelledby="tracks-h"
-        className="bg-background border-t border-border section-y section-anchor"
+        className="bg-background border-t border-border py-28 section-anchor"
       >
         <div className="container-prose">
-          <div className="max-w-2xl mb-14">
+          <Reveal className="max-w-2xl mb-14">
             <span className="rule-gold mb-5 block" />
-            <h2 id="tracks-h" className="font-display text-ink">
-              Two tracks, one standard.
+            <h2
+              id="tracks-h"
+              className="font-display font-bold text-ink"
+              style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}
+            >
+              Two tracks,
+              <br />
+              one standard.
             </h2>
-          </div>
-          <div className="grid md:grid-cols-2 border-t border-border">
+          </Reveal>
+          <RevealGroup className="grid md:grid-cols-2 border-t border-border" stagger={0.1}>
             {TRACKS.map((t) => (
-              <div
+              <RevealItem
                 key={t.title}
                 className="border-b md:border-b-0 md:border-r border-border last:border-r-0 p-8 lg:p-10"
               >
-                <h3 className="font-display text-ink mb-3">{t.title}</h3>
+                <h3 className="font-display text-2xl font-semibold text-ink mb-3">{t.title}</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">{t.body}</p>
-              </div>
+              </RevealItem>
             ))}
-          </div>
+          </RevealGroup>
         </div>
       </section>
 
@@ -278,28 +293,36 @@ function Learn() {
       <section
         id="path"
         aria-labelledby="path-h"
-        className="bg-background border-t border-border section-y section-anchor"
+        className="bg-secondary/40 border-t border-border py-28 section-anchor"
       >
         <div className="container-prose">
-          <div className="max-w-2xl mb-14">
-            <h2 id="path-h" className="font-display text-ink">
+          <Reveal className="max-w-2xl mb-14">
+            <h2
+              id="path-h"
+              className="font-display font-bold text-ink"
+              style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}
+            >
               The learning path.
             </h2>
-          </div>
-          <div className="border-t border-border">
+          </Reveal>
+          <RevealGroup className="border-t border-border" stagger={0.06}>
             {CURRICULUM.map((m) => (
-              <div
+              <RevealItem
                 key={m.n}
                 className="grid md:grid-cols-[auto_1fr] gap-6 md:gap-10 border-b border-border py-8"
               >
-                <div className="font-mono text-xs text-gold-deep md:pt-1">{m.n}</div>
+                <div className="font-mono text-xs uppercase tracking-[0.22em] text-gold-deep md:pt-1">
+                  {m.n}
+                </div>
                 <div>
-                  <h3 className="font-display text-ink mb-2">{m.title}</h3>
+                  <h3 className="font-display text-xl md:text-2xl font-semibold text-ink mb-2">
+                    {m.title}
+                  </h3>
                   <p className="text-muted-foreground leading-relaxed">{m.body}</p>
                 </div>
-              </div>
+              </RevealItem>
             ))}
-          </div>
+          </RevealGroup>
         </div>
       </section>
 
@@ -307,24 +330,35 @@ function Learn() {
       <section
         id="reading"
         aria-labelledby="reading-h"
-        className="bg-background border-t border-border section-y section-anchor"
+        className="bg-background border-t border-border py-28 section-anchor"
       >
         <div className="container-prose">
-          <div className="max-w-2xl mb-14">
+          <Reveal className="max-w-2xl mb-14">
             <span className="rule-gold mb-5 block" />
-            <h2 id="reading-h" className="font-display text-ink">
+            <h2
+              id="reading-h"
+              className="font-display font-bold text-ink"
+              style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}
+            >
               Reading list.
             </h2>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-border border border-border">
+          </Reveal>
+          <RevealGroup
+            className="grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-border border border-border"
+            stagger={0.05}
+          >
             {READING.map((b) => (
-              <div key={b.title} className="bg-background p-7 lg:p-8 flex flex-col">
-                <h3 className="font-display text-ink">{b.title}</h3>
-                <p className="mt-2 font-mono text-xs text-muted-foreground">{b.author}</p>
+              <RevealItem key={b.title} className="bg-background p-7 lg:p-8 flex flex-col">
+                <h3 className="font-display text-lg font-semibold text-ink leading-snug">
+                  {b.title}
+                </h3>
+                <p className="mt-2 font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                  {b.author}
+                </p>
                 <p className="mt-4 text-sm text-muted-foreground leading-relaxed">{b.note}</p>
-              </div>
+              </RevealItem>
             ))}
-          </div>
+          </RevealGroup>
         </div>
       </section>
 
@@ -332,17 +366,24 @@ function Learn() {
       <section
         id="tools"
         aria-labelledby="tools-h"
-        className="bg-background border-t border-border section-y section-anchor"
+        className="bg-background border-t border-border py-28 section-anchor"
       >
         <div className="container-prose">
-          <div className="max-w-2xl mb-14">
-            <h2 id="tools-h" className="font-display text-ink">
+          <Reveal className="max-w-2xl mb-14">
+            <h2
+              id="tools-h"
+              className="font-display font-bold text-ink"
+              style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}
+            >
               Tools we use.
             </h2>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-px bg-border border border-border">
+          </Reveal>
+          <RevealGroup
+            className="grid sm:grid-cols-2 lg:grid-cols-4 gap-px bg-border border border-border"
+            stagger={0.05}
+          >
             {TOOLS.map((t) => (
-              <div key={t.name} className="bg-background">
+              <RevealItem key={t.name} className="bg-background">
                 <a
                   href={t.url}
                   target="_blank"
@@ -350,7 +391,7 @@ function Learn() {
                   className="group flex flex-col h-full p-7 lg:p-8 hover:bg-secondary/40 transition-colors duration-200"
                 >
                   <div className="flex items-center justify-between mb-3">
-                    <h3 className="font-display text-ink group-hover:text-gold-deep transition-colors">
+                    <h3 className="font-display text-lg font-semibold text-ink group-hover:text-gold-deep transition-colors">
                       {t.name}
                     </h3>
                     <ExternalLink
@@ -361,9 +402,9 @@ function Learn() {
                   <p className="text-sm text-muted-foreground leading-relaxed">{t.note}</p>
                   <span className="sr-only">(opens in new tab)</span>
                 </a>
-              </div>
+              </RevealItem>
             ))}
-          </div>
+          </RevealGroup>
         </div>
       </section>
 
@@ -371,29 +412,36 @@ function Learn() {
       <section
         id="models"
         aria-labelledby="models-h"
-        className="bg-background border-t border-border section-y section-anchor"
+        className="bg-background border-t border-border py-28 section-anchor"
       >
         <div className="container-prose">
-          <div className="max-w-2xl mb-14">
+          <Reveal className="max-w-2xl mb-14">
             <span className="rule-gold mb-5 block" />
-            <h2 id="models-h" className="font-display text-ink">
+            <h2
+              id="models-h"
+              className="font-display font-bold text-ink"
+              style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}
+            >
               Example models.
             </h2>
             <p className="mt-5 text-muted-foreground leading-relaxed">
               Worked examples from our analyst training. Open them, tear them apart, and build your
               own.
             </p>
-          </div>
-          <div className="grid sm:grid-cols-2 gap-px bg-border border border-border">
+          </Reveal>
+          <RevealGroup
+            className="grid sm:grid-cols-2 gap-px bg-border border border-border"
+            stagger={0.05}
+          >
             {EXAMPLES.map((e) => (
-              <div key={e.title} className="bg-background">
+              <RevealItem key={e.title} className="bg-background">
                 <a
                   href={e.href}
                   download={e.filename}
                   className="group flex flex-col h-full p-7 lg:p-8 hover:bg-secondary/40 transition-colors duration-200"
                 >
                   <div className="flex items-center justify-between mb-3">
-                    <h3 className="font-display text-ink group-hover:text-gold-deep transition-colors">
+                    <h3 className="font-display text-lg font-semibold text-ink group-hover:text-gold-deep transition-colors">
                       {e.title}
                     </h3>
                     <Download
@@ -401,12 +449,14 @@ function Learn() {
                       aria-hidden="true"
                     />
                   </div>
-                  <p className="font-mono text-xs text-muted-foreground mb-3">{e.kind}</p>
+                  <p className="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground mb-3">
+                    {e.kind}
+                  </p>
                   <p className="text-sm text-muted-foreground leading-relaxed">{e.note}</p>
                 </a>
-              </div>
+              </RevealItem>
             ))}
-          </div>
+          </RevealGroup>
         </div>
       </section>
 
@@ -414,14 +464,18 @@ function Learn() {
       <section
         id="glossary"
         aria-labelledby="glossary-h"
-        className="bg-background border-t border-border section-y section-anchor"
+        className="bg-secondary/40 border-t border-border py-28 section-anchor"
       >
         <div className="container-prose">
-          <div className="max-w-2xl mb-14">
-            <h2 id="glossary-h" className="font-display text-ink">
+          <Reveal className="max-w-2xl mb-14">
+            <h2
+              id="glossary-h"
+              className="font-display font-bold text-ink"
+              style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}
+            >
               Key terms.
             </h2>
-          </div>
+          </Reveal>
           <p className="max-w-2xl">
             {GLOSSARY.length} terms behind the curriculum and the stock pitches analysts defend,
             each defined in a sentence on the{" "}
@@ -450,11 +504,16 @@ function Learn() {
       </section>
 
       {/* Final CTA */}
-      <section className="bg-ink text-background section-y">
-        <div className="container-prose max-w-3xl text-center">
+      <section className="bg-ink text-background py-32">
+        <Reveal className="container-prose max-w-3xl text-center">
           <span className="rule-gold block mb-6 mx-auto" />
-          <h2 className="font-display text-background">
-            The resources are free. Membership is by application.
+          <h2
+            className="font-display font-bold text-background"
+            style={{ fontSize: "clamp(2rem, 4.5vw, 3.5rem)" }}
+          >
+            The resources are free.
+            <br />
+            <span className="text-gold">The seat is earned.</span>
           </h2>
           <p className="mt-6 text-on-dark-secondary max-w-xl mx-auto">
             Members get the full training and a senior mentor. Applications open each fall and
@@ -499,7 +558,7 @@ function Learn() {
               Recruiting & prep guide
             </Link>
           </div>
-        </div>
+        </Reveal>
       </section>
     </>
   );

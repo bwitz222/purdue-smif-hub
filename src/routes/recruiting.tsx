@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { jumpToSection } from "@/lib/jump-to";
 import { socialMeta, canonical, breadcrumbLd, OG_RECRUITING, isEmittableEvent } from "@/lib/seo";
+import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import { OnThisPage, type PageSection } from "@/components/OnThisPage";
 import { BEHAVIORAL_CARDS, DAY_OF, TECHNICAL_CARDS, type PrepCardData } from "@/data/prep-guide";
 
@@ -69,11 +70,13 @@ function useCountdown() {
 
 function CountdownUnit({ value, label }: { value: number | string; label: string }) {
   return (
-    <div className="flex flex-1 sm:flex-none flex-col items-center border border-gold/30 bg-ink/40 px-4 py-3 min-w-[72px]">
+    <div className="flex flex-1 sm:flex-none flex-col items-center border border-gold/30 bg-ink/40 px-4 py-3 min-w-[72px] hover-raise">
       <span className="font-display text-3xl font-bold text-gold tabular-nums md:text-4xl">
         {value}
       </span>
-      <span className="mt-1 text-xs font-semibold text-on-dark-secondary">{label}</span>
+      <span className="mt-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-on-dark-secondary">
+        {label}
+      </span>
     </div>
   );
 }
@@ -101,7 +104,9 @@ function Countdown() {
         role="status"
         className="mt-10 border border-gold/30 bg-ink/60 p-6 text-background md:p-8"
       >
-        <div className="text-xs font-semibold text-gold">Applications Closed</div>
+        <div className="text-xs font-semibold uppercase tracking-[0.3em] text-gold">
+          Applications Closed
+        </div>
         <p className="mt-2 text-sm text-on-dark-secondary">
           Applications for the Fall 2026 cycle are closed. Watch this page or follow us on Instagram
           for the next application window.
@@ -120,7 +125,9 @@ function Countdown() {
 
   return (
     <div className="mt-10 border border-gold/30 bg-ink/60 p-6 text-background md:p-8">
-      <div className="text-xs font-semibold text-gold">Next: {headline}</div>
+      <div className="text-xs font-semibold uppercase tracking-[0.3em] text-gold">
+        Next: {headline}
+      </div>
       <p className="mt-1 text-sm text-on-dark-secondary">{sub}</p>
       {/* Accessible plain-text countdown, hidden visually. Always present
           so screen readers + no-JS users get a complete sentence. */}
@@ -466,7 +473,7 @@ function GuideSummary({
         <span className="h-px w-10 bg-gold" />
         <span className="font-mono text-xs text-gold-deep">{round}</span>
       </div>
-      <h3 id={id} className="section-anchor mt-3 font-display">
+      <h3 id={id} className="section-anchor mt-3 font-display text-2xl font-bold md:text-3xl">
         {title}
       </h3>
       <p className="mt-3 text-muted-foreground">{intro}</p>
@@ -491,8 +498,13 @@ function Recruiting() {
   return (
     <>
       <section className="border-b border-border bg-ink text-background">
-        <div className="container-prose section-y">
-          <h1 className="animate-fade-up mt-4 font-display max-w-3xl">Join the Fund.</h1>
+        <div className="container-prose py-24">
+          <span className="animate-fade-in text-xs font-semibold uppercase tracking-[0.3em] text-gold">
+            Recruiting
+          </span>
+          <h1 className="animate-fade-up mt-4 font-display text-5xl font-bold md:text-6xl max-w-3xl">
+            Join the Fund.
+          </h1>
           <p className="animate-fade-up delay-100 mt-6 max-w-2xl text-lg text-background/70">
             Our recruiting calendar, plus a complete guide to preparing for both behavioral and
             technical interviews with SMIF.
@@ -528,16 +540,19 @@ function Recruiting() {
         aria-labelledby="calendar-h"
         className="container-prose py-20 section-anchor"
       >
-        <div className="flex items-end justify-between gap-6 border-b border-border pb-6">
+        <Reveal className="flex items-end justify-between gap-6 border-b border-border pb-6">
           <div>
-            <h2 id="calendar-h" className="font-display">
-              Fall 2026 Recruiting Calendar
+            <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">
+              Fall 2026
+            </span>
+            <h2 id="calendar-h" className="mt-3 font-display text-3xl font-bold md:text-4xl">
+              Recruiting Calendar
             </h2>
           </div>
-          <span className="hidden md:inline font-mono text-xs text-muted-foreground">
+          <span className="hidden md:inline font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
             All times Eastern
           </span>
-        </div>
+        </Reveal>
 
         <p className="mt-4 text-sm text-muted-foreground">
           Select any event to open it prefilled in Google Calendar, or download the full schedule
@@ -548,19 +563,19 @@ function Recruiting() {
           <button
             type="button"
             onClick={downloadICS}
-            className="press group inline-flex items-center gap-2 border border-ink px-4 py-2 text-xs font-semibold hover:bg-ink hover:text-background cursor-pointer"
+            className="press group inline-flex items-center gap-2 border border-ink px-4 py-2 text-xs font-semibold uppercase tracking-wider hover:bg-ink hover:text-background cursor-pointer"
           >
-            <Download className="h-3.5 w-3.5" />
+            <Download className="h-3.5 w-3.5 icon-pop" />
             Download all events (.ics)
             <span className="sr-only">, {CALENDAR.length} events as a calendar file</span>
           </button>
         </div>
 
-        <div className="mt-8 divide-y divide-border border-b border-border">
+        <RevealGroup className="mt-8 divide-y divide-border border-b border-border">
           {CALENDAR.map((e) => {
             const isPast = nowMs !== null && new Date(e.iso + "T23:59:59-04:00").getTime() < nowMs;
             return (
-              <div key={e.iso + e.name}>
+              <RevealItem key={e.iso + e.name}>
                 <a
                   href={toGoogleCalendarLink(e)}
                   target="_blank"
@@ -570,16 +585,16 @@ function Recruiting() {
                   // (5 axe color-contrast failures on this route). Lifting
                   // muted text to the foreground token inside past rows keeps
                   // the de-emphasised look above 4.5:1.
-                  className={`group row-rail block w-full text-left transition hover:bg-secondary/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 px-2 -mx-2 cursor-pointer ${isPast ? "[&_.text-muted-foreground]:text-foreground" : ""}`}
+                  className={`group row-rail block w-full text-left transition hover:bg-secondary/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 px-2 -mx-2 cursor-pointer ${isPast ? "opacity-70 [&_.text-muted-foreground]:text-foreground" : ""}`}
                 >
                   {/* Mobile: single ≥44px stacked tap block with right-aligned add-to-cal affordance. */}
                   <div className="md:hidden flex items-start gap-3 py-4 min-h-[64px]">
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 text-xs font-mono text-gold-deep">
+                      <div className="flex items-center gap-2 text-[11px] font-mono uppercase tracking-[0.16em] text-gold-deep">
                         <Calendar className="h-3.5 w-3.5 shrink-0" />
                         <span className="truncate">{e.date}</span>
                         {isPast && (
-                          <span className="ml-1 inline-block px-1.5 py-0.5 text-xs font-mono bg-muted text-muted-foreground border border-border">
+                          <span className="ml-1 inline-block px-1.5 py-0.5 text-[10px] font-mono uppercase tracking-wider bg-muted text-muted-foreground border border-border">
                             Past
                           </span>
                         )}
@@ -602,7 +617,7 @@ function Recruiting() {
                       aria-hidden="true"
                       className="mt-0.5 inline-flex h-11 w-11 shrink-0 items-center justify-center border border-border text-gold-deep group-hover:border-gold-deep group-active:bg-secondary/60"
                     >
-                      <CalendarPlus className="h-4 w-4" />
+                      <CalendarPlus className="h-4 w-4 icon-pop" />
                     </span>
                   </div>
 
@@ -617,11 +632,11 @@ function Recruiting() {
                         {e.name}
                         <CalendarPlus
                           aria-hidden="true"
-                          className="h-4 w-4 shrink-0 text-muted-foreground transition-colors duration-200 group-hover:text-gold-deep"
+                          className="h-4 w-4 shrink-0 text-muted-foreground/60 transition-colors duration-200 group-hover:text-gold-deep"
                         />
                       </span>
                       {isPast && (
-                        <span className="ml-2 inline-block px-2 py-0.5 text-xs font-mono bg-muted text-muted-foreground border border-border">
+                        <span className="ml-2 inline-block px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider bg-muted text-muted-foreground border border-border">
                           Past
                         </span>
                       )}
@@ -640,10 +655,10 @@ function Recruiting() {
                       every row. The action is appended for screen readers. */}
                   <span className="sr-only">, add to Google Calendar (opens in new tab)</span>
                 </a>
-              </div>
+              </RevealItem>
             );
           })}
-        </div>
+        </RevealGroup>
 
         <p className="mt-6 text-sm text-muted-foreground">
           Locations and times subject to change. Email{" "}
@@ -682,21 +697,21 @@ function Recruiting() {
       <section
         id="prep"
         aria-labelledby="prep-h"
-        className="border-t border-border bg-background section-anchor"
+        className="border-t border-border bg-secondary/40 section-anchor"
       >
         <div className="container-prose py-20">
-          <div>
-            <h2 id="prep-h" className="font-display">
+          <Reveal>
+            <h2 id="prep-h" className="font-display text-3xl font-bold md:text-4xl">
               Tips &amp; Tricks to Prep
             </h2>
-          </div>
-          <div>
+          </Reveal>
+          <Reveal delay={0.06}>
             <p className="mt-4 max-w-3xl text-muted-foreground">
               We recruit for curiosity, work ethic, and intellectual honesty, not pedigree. A
               finance background helps, but we've taken students from every major. Use the guide
               below to walk in confident and prepared.
             </p>
-          </div>
+          </Reveal>
 
           {/* The behavioral and technical guides each have their own page now. The
               ids stay on these summaries so older #behavioral and #technical links,
@@ -735,8 +750,8 @@ function Recruiting() {
           </div>
 
           {/* Day-of */}
-          <div className="mt-14 border border-gold/30 bg-background p-6 md:p-8">
-            <h3 id="day-of" className="section-anchor font-display">
+          <Reveal className="mt-14 border border-gold/30 bg-background p-6 md:p-8 hover-lift-sm">
+            <h3 id="day-of" className="section-anchor font-display text-xl font-bold">
               Day-Of Checklist
             </h3>
             <ul className="mt-4 grid gap-2 text-sm text-muted-foreground md:grid-cols-2 list-disc pl-5 marker:text-gold-deep">
@@ -744,11 +759,11 @@ function Recruiting() {
                 <li key={item}>{item}</li>
               ))}
             </ul>
-          </div>
+          </Reveal>
 
           {/* Reading list */}
-          <div className="mt-10 border border-border bg-background p-6 md:p-8">
-            <h3 id="reading" className="section-anchor font-display">
+          <Reveal className="mt-10 border border-border bg-background p-6 md:p-8 hover-lift-sm">
+            <h3 id="reading" className="section-anchor font-display text-xl font-bold">
               Recommended Reading
             </h3>
             <ul className="mt-4 space-y-2 text-sm text-muted-foreground list-disc pl-5 marker:text-gold-deep">
@@ -773,7 +788,7 @@ function Recruiting() {
                 daily Bloomberg newsletter.
               </li>
             </ul>
-          </div>
+          </Reveal>
 
           <p className="mt-10 text-sm text-muted-foreground">
             Questions? Reach out at{" "}

@@ -9,6 +9,7 @@ import {
   PAGE_META,
 } from "@/lib/seo";
 import { applyUrl } from "@/lib/apply-url";
+import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import { OnThisPage, type PageSection } from "@/components/OnThisPage";
 
 /** Anchors for the in-page nav. Each id must match a <section id> below. */
@@ -90,7 +91,7 @@ const ORGS: Org[] = [
     name: "Student Managed Investment Fund",
     short: "SMIF",
     focus: "Fundamental equity and fixed income research, portfolio management",
-    realMoney: "Yes, real university capital",
+    realMoney: "Yes — real university capital",
     bestFor: "Asset management, equity research, and investing roles",
   },
   {
@@ -194,11 +195,16 @@ function FinanceClubs() {
     <>
       {/* ── Page header ───────────────────────────────────────────── */}
       <section className="relative bg-ink text-background overflow-hidden">
-        <div className="container-prose section-y">
-          <div>
+        <div className="container-prose py-28">
+          <Reveal>
             <span className="rule-gold mb-8 animate-expand-x" />
-            <h1 className="font-display text-background max-w-4xl">
-              Finance and investment clubs at Purdue.
+            <h1
+              className="font-display font-bold text-background max-w-4xl"
+              style={{ fontSize: "clamp(2.6rem, 5.5vw, 4.8rem)", lineHeight: "1.04" }}
+            >
+              Finance and investment
+              <br />
+              clubs at <span className="text-gold/80">Purdue.</span>
             </h1>
             {/* Direct-answer zone: the first thing a crawler or a model reads
                 should answer the query outright, not tease it. */}
@@ -206,13 +212,13 @@ function FinanceClubs() {
               Purdue University has a deep bench of finance and investment organizations, and most
               students interested in markets end up joining more than one. This guide covers the
               main ones, what each is actually for, and how to choose. It is written by the Student
-              Managed Investment Fund, the club that manages real university capital, so we have
+              Managed Investment Fund — the club that manages real university capital — so we have
               said plainly where we fit and where another organization is the better first stop.
             </p>
             <p className="mt-4 text-sm text-on-dark-muted">
               <time dateTime={DATE_MODIFIED}>Updated {UPDATED_LABEL}</time>
             </p>
-          </div>
+          </Reveal>
         </div>
       </section>
 
@@ -222,17 +228,20 @@ function FinanceClubs() {
       <section
         id="short-answer"
         aria-labelledby="short-answer-h"
-        className="border-b border-border bg-background section-anchor"
+        className="border-b border-border bg-secondary/40 section-anchor"
       >
-        <div className="container-prose section-y">
-          <div className="max-w-3xl">
-            <h2 id="short-answer-h" className="mt-4 font-display">
+        <div className="container-prose py-24">
+          <Reveal className="max-w-3xl">
+            <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">
+              The short answer
+            </span>
+            <h2 id="short-answer-h" className="mt-4 font-display text-3xl font-bold md:text-4xl">
               Pick by the work, not the name.
             </h2>
             <div className="mt-8 space-y-5 text-muted-foreground leading-relaxed">
               <p>
                 Finance clubs at Purdue split roughly three ways. Some exist to teach you the craft
-                , valuation, financial statements, how a market actually clears. Some exist to get
+                — valuation, financial statements, how a market actually clears. Some exist to get
                 you a specific job, and organize around the recruiting calendar for banking,
                 consulting, or wealth management. And one manages a real portfolio with real money
                 and real consequences.
@@ -248,12 +257,12 @@ function FinanceClubs() {
                 The one distinction worth understanding before you apply anywhere: whether the
                 portfolio is real. Most student organizations run simulated or educational books,
                 which is a perfectly good way to learn. The Student Managed Investment Fund invests
-                actual university capital, which changes the character of the work, positions are
+                actual university capital, which changes the character of the work — positions are
                 voted on, performance is benchmarked against the S&amp;P 500 and reported quarterly,
                 and a bad thesis costs the university money rather than points in a game.
               </p>
             </div>
-          </div>
+          </Reveal>
         </div>
       </section>
 
@@ -263,9 +272,12 @@ function FinanceClubs() {
         aria-labelledby="organizations-h"
         className="border-b border-border section-anchor"
       >
-        <div className="container-prose section-y">
-          <div className="max-w-3xl mb-12">
-            <h2 id="organizations-h" className="mt-4 font-display">
+        <div className="container-prose py-24">
+          <Reveal className="max-w-3xl mb-12">
+            <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">
+              At a glance
+            </span>
+            <h2 id="organizations-h" className="mt-4 font-display text-3xl font-bold md:text-4xl">
               The main organizations.
             </h2>
             <p className="mt-6 text-muted-foreground leading-relaxed">
@@ -273,23 +285,18 @@ function FinanceClubs() {
               than a schedule. BoilerLink, Purdue&apos;s official student organization directory,
               carries the current details for every group listed here.
             </p>
-          </div>
+          </Reveal>
 
           {/* Wide table scrolls inside its own container so the page body never
               scrolls horizontally on mobile. */}
-          <div>
-            <div
-              role="region"
-              aria-label="Club comparison table, scrollable horizontally"
-              tabIndex={0}
-              className="overflow-x-auto border border-border"
-            >
+          <Reveal>
+            <div className="overflow-x-auto border border-border">
               <table className="w-full min-w-[46rem] border-collapse text-left text-sm">
                 <caption className="sr-only">
                   Finance and investment organizations at Purdue University compared by focus,
                   whether they manage real money, and who they best suit.
                 </caption>
-                <thead className="bg-background">
+                <thead className="bg-secondary/60">
                   <tr>
                     <th scope="col" className="px-5 py-4 font-semibold">
                       Organization
@@ -310,7 +317,7 @@ function FinanceClubs() {
                     <tr key={o.short} className="border-t border-border align-top">
                       <th scope="row" className="px-5 py-4 font-semibold">
                         {o.name}
-                        <span className="mt-1 block font-mono text-xs font-normal text-muted-foreground">
+                        <span className="mt-1 block font-mono text-[11px] font-normal uppercase tracking-[0.18em] text-muted-foreground">
                           {o.short}
                         </span>
                       </th>
@@ -322,7 +329,7 @@ function FinanceClubs() {
                 </tbody>
               </table>
             </div>
-          </div>
+          </Reveal>
         </div>
       </section>
 
@@ -330,11 +337,14 @@ function FinanceClubs() {
       <section
         id="where-we-fit"
         aria-labelledby="where-we-fit-h"
-        className="border-b border-border bg-background section-anchor"
+        className="border-b border-border bg-secondary/40 section-anchor"
       >
-        <div className="container-prose section-y">
-          <div className="max-w-3xl">
-            <h2 id="where-we-fit-h" className="mt-4 font-display">
+        <div className="container-prose py-24">
+          <Reveal className="max-w-3xl">
+            <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">
+              Where we fit
+            </span>
+            <h2 id="where-we-fit-h" className="mt-4 font-display text-3xl font-bold md:text-4xl">
               What the Student Managed Investment Fund is.
             </h2>
             <div className="mt-8 space-y-5 text-muted-foreground leading-relaxed">
@@ -378,7 +388,7 @@ function FinanceClubs() {
                 <ArrowRight className="h-4 w-4 arrow-slide" />
               </Link>
             </div>
-          </div>
+          </Reveal>
         </div>
       </section>
 
@@ -388,13 +398,16 @@ function FinanceClubs() {
         aria-labelledby="how-to-choose-h"
         className="border-b border-border section-anchor"
       >
-        <div className="container-prose section-y">
-          <div className="max-w-3xl mb-12">
-            <h2 id="how-to-choose-h" className="mt-4 font-display">
+        <div className="container-prose py-24">
+          <Reveal className="max-w-3xl mb-12">
+            <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">
+              How to choose
+            </span>
+            <h2 id="how-to-choose-h" className="mt-4 font-display text-3xl font-bold md:text-4xl">
               Three questions worth answering first.
             </h2>
-          </div>
-          <div className="grid gap-10 md:grid-cols-3">
+          </Reveal>
+          <RevealGroup className="grid gap-10 md:grid-cols-3">
             {[
               {
                 t: "What do you want to be doing?",
@@ -409,12 +422,12 @@ function FinanceClubs() {
                 d: "There is no shame in not knowing what EBITDA is yet. Education-first clubs exist precisely for that, and they feed the more selective organizations. Nearly every senior analyst in SMIF was a beginner two years earlier.",
               },
             ].map((c) => (
-              <div key={c.t}>
-                <h3 className="font-display">{c.t}</h3>
+              <RevealItem key={c.t}>
+                <h3 className="font-display text-xl font-bold">{c.t}</h3>
                 <p className="mt-4 text-sm text-muted-foreground leading-relaxed">{c.d}</p>
-              </div>
+              </RevealItem>
             ))}
-          </div>
+          </RevealGroup>
         </div>
       </section>
 
@@ -422,39 +435,47 @@ function FinanceClubs() {
       <section
         id="faq"
         aria-labelledby="faq-h"
-        className="border-b border-border bg-background section-anchor"
+        className="border-b border-border bg-secondary/40 section-anchor"
       >
-        <div className="container-prose section-y">
-          <div className="max-w-3xl mb-12">
-            <h2 id="faq-h" className="mt-4 font-display">
+        <div className="container-prose py-24">
+          <Reveal className="max-w-3xl mb-12">
+            <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">
+              Common questions
+            </span>
+            <h2 id="faq-h" className="mt-4 font-display text-3xl font-bold md:text-4xl">
               Questions, answered.
             </h2>
-          </div>
+          </Reveal>
           {/* Answers render as visible prose rather than inside a collapsed
               accordion. The schema above carries the same text, but plain-text
               extractors only see what is actually rendered. */}
-          <div className="grid gap-x-14 gap-y-10 md:grid-cols-2">
+          <RevealGroup className="grid gap-x-14 gap-y-10 md:grid-cols-2">
             {FAQ.map(({ q, a }) => (
-              <div key={q}>
-                <h3 className="font-display">{q}</h3>
+              <RevealItem key={q}>
+                <h3 className="font-display text-lg font-bold">{q}</h3>
                 <p className="mt-3 text-sm text-muted-foreground leading-relaxed">{a}</p>
-              </div>
+              </RevealItem>
             ))}
-          </div>
+          </RevealGroup>
         </div>
       </section>
 
       {/* ── Closing CTA ───────────────────────────────────────────── */}
       <section className="bg-ink text-background">
-        <div className="container-prose section-y">
-          <div className="max-w-2xl">
+        <div className="container-prose py-24">
+          <Reveal className="max-w-2xl">
             <span className="rule-gold mb-6 block" />
-            <h2 className="font-display text-background">
-              Think the real portfolio is the one you want?
+            <h2
+              className="font-display font-bold text-background"
+              style={{ fontSize: "clamp(2rem, 4vw, 3.4rem)", lineHeight: "1.06" }}
+            >
+              Think the real portfolio
+              <br />
+              is the one you want?
             </h2>
             <p className="mt-6 text-on-dark-secondary leading-relaxed">
               Applications open each fall and spring. We recruit for curiosity, work ethic, and
-              intellectual honesty, not pedigree, and we have taken students from every major at
+              intellectual honesty, not pedigree — and we have taken students from every major at
               Purdue.
             </p>
             <div className="mt-10 flex flex-wrap gap-4">
@@ -475,7 +496,7 @@ function FinanceClubs() {
                 Recruiting calendar
               </Link>
             </div>
-          </div>
+          </Reveal>
         </div>
       </section>
     </>
