@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { GraduationCap, Instagram, Linkedin, Newspaper } from "lucide-react";
-import smifLogo from "@/assets/smif-logo-mark.png";
+import smifLogo from "@/assets/smif-logo-mark-128.webp";
 import { FOOTER_NAV } from "@/lib/nav";
 
 export function SiteFooter() {
@@ -33,9 +33,7 @@ export function SiteFooter() {
           </p>
         </div>
         <nav aria-label="Footer">
-          <h2 className="text-sm font-medium text-gold mb-4 uppercase tracking-[0.14em]">
-            Explore
-          </h2>
+          <p className="text-sm font-medium text-gold mb-4 uppercase tracking-[0.14em]">Explore</p>
           {/* min-h-6 on each link: 24px targets (WCAG 2.5.8); space-y-1 keeps the
               list the same height it had with 20px links and space-y-2. */}
           <ul className="space-y-1 text-sm text-on-dark-secondary">
@@ -53,9 +51,7 @@ export function SiteFooter() {
         </nav>
 
         <div>
-          <h2 className="text-sm font-medium text-gold mb-4 uppercase tracking-[0.14em]">
-            Contact
-          </h2>
+          <p className="text-sm font-medium text-gold mb-4 uppercase tracking-[0.14em]">Contact</p>
           <ul className="space-y-1 text-sm text-on-dark-secondary">
             <li>Daniels School of Business</li>
             <li>403 Mitch Daniels Blvd</li>
@@ -74,9 +70,7 @@ export function SiteFooter() {
           </ul>
         </div>
         <div>
-          <h2 className="text-sm font-medium text-gold mb-4 uppercase tracking-[0.14em]">
-            Find Us
-          </h2>
+          <p className="text-sm font-medium text-gold mb-4 uppercase tracking-[0.14em]">Find Us</p>
           <ul className="space-y-1 text-sm text-on-dark-secondary">
             <li>
               <a

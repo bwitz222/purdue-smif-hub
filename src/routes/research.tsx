@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { ArrowUpRight, Download, ExternalLink, Rss, Search } from "lucide-react";
-import { socialMeta, canonical, breadcrumbLd, OG_RESEARCH } from "@/lib/seo";
+import { socialMeta, canonical, breadcrumbLd, OG_RESEARCH, PAGE_META } from "@/lib/seo";
 import { getPublications, type PublicationRow } from "@/lib/publications.functions";
 import { findMemberBySlug, memberSlug } from "@/data/team";
 import { SERIES_LABEL } from "@/lib/publication-series";
@@ -143,11 +143,10 @@ export const Route = createFileRoute("/research")({
 
     return {
       meta: [
-        { title: "Research: The Macro Brief, Pitch Decks & Reports | Purdue SMIF" },
+        { title: PAGE_META.research.title },
         {
           name: "description",
-          content:
-            "The Macro Brief, stock pitch decks, equity research, semester letters, and annual reports written by Purdue SMIF analysts and curated by fund leadership.",
+          content: PAGE_META.research.description,
         },
         ...socialMeta({
           title: "Research | Purdue SMIF",
@@ -650,6 +649,16 @@ function EmptyState({ series, query }: { series: (typeof SERIES)[number] | null;
       <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-muted-foreground">
         {c.support}
       </p>
+      {series?.value === "pitch" && (
+        <p className="mx-auto mt-4 max-w-md text-sm">
+          <Link
+            to="/stock-pitches"
+            className="link-underline font-bold text-gold-deep hover:text-ink"
+          >
+            How SMIF stock pitches work
+          </Link>
+        </p>
+      )}
     </div>
   );
 }

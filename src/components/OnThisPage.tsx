@@ -1,4 +1,4 @@
-import { useReducedMotion } from "framer-motion";
+import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { jumpToSection } from "@/lib/jump-to";
 
 export type PageSection = {

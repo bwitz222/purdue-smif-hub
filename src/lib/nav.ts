@@ -16,5 +16,8 @@ export const NAV = [
 export const FOOTER_NAV = [
   ...NAV,
   { to: "/finance-clubs-at-purdue", label: "Finance Clubs at Purdue" },
+  { to: "/student-managed-investment-funds", label: "Student Managed Investment Funds" },
+  { to: "/stock-pitches", label: "Stock Pitches" },
+  { to: "/learn/glossary", label: "Investing Glossary" },
   { to: "/apply", label: "Apply" },
 ] as const;

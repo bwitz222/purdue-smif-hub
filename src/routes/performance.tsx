@@ -23,7 +23,13 @@ import {
   ReferenceLine,
 } from "recharts";
 import { formatMonth } from "@/lib/format-month";
-import { socialMeta, canonical, breadcrumbLd, OG_PERFORMANCE } from "@/lib/seo";
+import {
+  socialMeta,
+  canonical,
+  breadcrumbLd,
+  performanceDatasetLd,
+  OG_PERFORMANCE,
+} from "@/lib/seo";
 import { Reveal } from "@/components/Reveal";
 import {
   getFundPerformance,
@@ -43,7 +49,7 @@ export const Route = createFileRoute("/performance")({
     const [perf, monthly] = await Promise.all([getFundPerformance(), getFundMonthlyHistory()]);
     return { perf, monthly };
   },
-  head: () => ({
+  head: ({ loaderData }) => ({
     meta: [
       { title: "Performance & Track Record vs. the S&P 500 | Purdue SMIF" },
       {
@@ -60,7 +66,20 @@ export const Route = createFileRoute("/performance")({
       }),
     ],
     links: [{ rel: "canonical", href: canonical("/performance") }],
-    scripts: [breadcrumbLd("Performance", "/performance")],
+    scripts: [
+      breadcrumbLd("Performance", "/performance"),
+      // Only when the real monthly series loaded. Without it the page shows
+      // illustrative placeholder figures (and says so), and describing those as a
+      // dataset of the fund's returns would be false.
+      ...(loaderData?.monthly
+        ? [
+            {
+              type: "application/ld+json",
+              children: JSON.stringify(performanceDatasetLd()),
+            },
+          ]
+        : []),
+    ],
   }),
 });
 

@@ -13,8 +13,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import appCss from "../styles.css?url";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { Toaster } from "@/components/ui/sonner";
-import smifLogo from "@/assets/smif-logo-mark.png";
+import smifLogo from "@/assets/smif-logo-mark-128.webp";
 
 function NotFoundComponent() {
   return (
@@ -118,153 +117,172 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  head: () => ({
-    meta: [
-      { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Purdue Student Managed Investment Fund" },
-      {
-        name: "description",
-        content:
-          "Purdue SMIF — the student-managed investment fund at Purdue's Daniels School of Business, managing real capital since 1995.",
-      },
-      // Opt into the largest available rich-result treatment. Without this,
-      // Google caps image previews and truncates snippets by default.
-      {
-        name: "robots",
-        content: "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
-      },
-      { name: "author", content: "Purdue SMIF" },
-      { name: "theme-color", content: "#0A0A0A" },
-      { property: "og:site_name", content: "Purdue SMIF" },
-      { property: "og:locale", content: "en_US" },
-      { name: "twitter:site", content: "@PurdueSMIF" },
-    ],
-    links: [
-      { rel: "stylesheet", href: appCss },
-      { rel: "icon", href: "/favicon.ico" },
-      { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "dns-prefetch", href: "https://mxjrtmratusuxhpxtwmg.supabase.co" },
-      // Body font — must render fast
-      {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&display=swap",
-      },
-      // Display + mono — decorative, can wait for the real face
-      {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=IBM+Plex+Mono:wght@400&display=optional",
-      },
-    ],
-    scripts: [
-      // Vercel Web Analytics + Speed Insights.
-      //
-      // Framework-agnostic script tags rather than the @vercel/analytics and
-      // @vercel/speed-insights React packages: identical endpoints, but no new
-      // dependency and therefore nothing to keep in step in bun.lock, which
-      // this environment cannot regenerate (its registry mirror is blocked).
-      //
-      // Both paths are served by Vercel's edge only once the matching toggle
-      // is switched on for the project — Analytics and Speed Insights in the
-      // project dashboard. Until then they 404 harmlessly and collect nothing,
-      // so turning them on is a dashboard action, not another deploy.
-      //
-      // Production only: these paths don't exist on a local dev server.
-      ...(import.meta.env.PROD
-        ? [
-            { src: "/_vercel/insights/script.js", defer: true },
-            { src: "/_vercel/speed-insights/script.js", defer: true },
-          ]
-        : []),
-      {
-        type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@graph": [
-            {
-              "@type": "Organization",
-              "@id": "https://www.purduesmif.org/#organization",
-              name: "Purdue Student Managed Investment Fund",
-              alternateName: [
-                "Purdue SMIF",
-                "Purdue Investment Fund",
-                "Purdue Investment Club",
-                "Purdue Finance Club",
-              ],
-              url: "https://www.purduesmif.org",
-              logo: {
-                "@type": "ImageObject",
-                url: "https://www.purduesmif.org/smif-logo.png",
-                width: "512",
-                height: "512",
+  head: ({ matches }) => {
+    // On a 404 or an error page the NotFound/Error component renders its own
+    // <title> and a noindex robots tag (React hoists them into <head>). The
+    // defaults below must stand down in that case, or the HTML carries two
+    // titles and two contradictory robots tags (index and noindex).
+    // `_notFound` is the router's own marker for an unmatched URL, set before
+    // head() runs; a child route that throws notFound() leaves an `error` on the
+    // root match instead.
+    const broken = matches.some(
+      (m) =>
+        m.status === "notFound" ||
+        m.status === "error" ||
+        Boolean(m.error) ||
+        (m as { _notFound?: boolean })._notFound === true,
+    );
+    return {
+      meta: [
+        { charSet: "utf-8" },
+        { name: "viewport", content: "width=device-width, initial-scale=1" },
+        ...(broken
+          ? []
+          : [
+              { title: "Purdue Student Managed Investment Fund" },
+              {
+                name: "description",
+                content:
+                  "Purdue SMIF, the student-managed investment fund at Purdue's Daniels School of Business, managing real capital since 1995.",
               },
-              email: "smif26@purdue.edu",
-              foundingDate: "1995",
-              slogan: "Real capital. Real research. Real outcomes.",
-              description:
-                "Purdue's premier student investment club and finance club — a student-run investment fund at the Mitch Daniels School of Business, Purdue University, managing real capital across global markets since 1995.",
-              parentOrganization: {
-                "@type": "CollegeOrUniversity",
-                name: "Daniels School of Business, Purdue University",
+              // Opt into the largest available rich-result treatment. Without this,
+              // Google caps image previews and truncates snippets by default.
+              {
+                name: "robots",
+                content:
+                  "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
               },
-              // Topical grounding: tells a knowledge graph what this entity is
-              // *about*, not just what it's called. Without it the org resolves
-              // as a generic student club rather than an investing entity.
-              knowsAbout: [
-                "Equity research",
-                "Fundamental analysis",
-                "Discounted cash flow valuation",
-                "Portfolio management",
-                "Risk management",
-                "Fixed income and macroeconomics",
-                "Student managed investment funds",
-              ],
-              foundingLocation: {
-                "@type": "Place",
-                name: "West Lafayette, Indiana, United States",
-              },
-              areaServed: { "@type": "Place", name: "Purdue University" },
-              address: {
-                "@type": "PostalAddress",
-                streetAddress: "403 Mitch Daniels Blvd",
-                addressLocality: "West Lafayette",
-                addressRegion: "IN",
-                postalCode: "47907",
-                addressCountry: "US",
-              },
-              sameAs: [
-                // BoilerLink is Purdue's official student-organization directory.
-                // Listing it first ties this site to the university's own record of
-                // the org — the strongest available signal that the "Purdue
-                // investment club" entity and purduesmif.org are the same thing.
-                "https://boilerlink.purdue.edu/organization/smif",
-                "https://www.linkedin.com/company/purdue-smif/",
-                "https://www.instagram.com/smif_purdue/",
-                "https://purduesmif.substack.com/",
-              ],
-            },
-            {
-              "@type": "WebSite",
-              "@id": "https://www.purduesmif.org/#website",
-              url: "https://www.purduesmif.org",
-              name: "Purdue SMIF",
-              publisher: { "@id": "https://www.purduesmif.org/#organization" },
-              potentialAction: {
-                "@type": "SearchAction",
-                target: {
-                  "@type": "EntryPoint",
-                  urlTemplate: "https://www.purduesmif.org/team?q={search_term_string}",
+            ]),
+        { name: "author", content: "Purdue SMIF" },
+        { name: "theme-color", content: "#0A0A0A" },
+        { property: "og:site_name", content: "Purdue SMIF" },
+        { property: "og:locale", content: "en_US" },
+        { name: "twitter:site", content: "@PurdueSMIF" },
+      ],
+      links: [
+        { rel: "stylesheet", href: appCss },
+        { rel: "icon", href: "/favicon.ico" },
+        { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
+        { rel: "manifest", href: "/site.webmanifest" },
+        { rel: "preconnect", href: "https://fonts.googleapis.com" },
+        { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+        { rel: "dns-prefetch", href: "https://mxjrtmratusuxhpxtwmg.supabase.co" },
+        // Body font: must render fast
+        {
+          rel: "stylesheet",
+          href: "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&display=swap",
+        },
+        // Display + mono: decorative, can wait for the real face
+        {
+          rel: "stylesheet",
+          href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=IBM+Plex+Mono:wght@400&display=optional",
+        },
+      ],
+      scripts: [
+        // Vercel Web Analytics + Speed Insights.
+        //
+        // Framework-agnostic script tags rather than the @vercel/analytics and
+        // @vercel/speed-insights React packages: identical endpoints, but no new
+        // dependency and therefore nothing to keep in step in bun.lock, which
+        // this environment cannot regenerate (its registry mirror is blocked).
+        //
+        // Both paths are served by Vercel's edge only once the matching toggle
+        // is switched on for the project — Analytics and Speed Insights in the
+        // project dashboard. Until then they 404 harmlessly and collect nothing,
+        // so turning them on is a dashboard action, not another deploy.
+        //
+        // Production only: these paths don't exist on a local dev server.
+        ...(import.meta.env.PROD
+          ? [
+              { src: "/_vercel/insights/script.js", defer: true },
+              { src: "/_vercel/speed-insights/script.js", defer: true },
+            ]
+          : []),
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "Organization",
+                "@id": "https://www.purduesmif.org/#organization",
+                name: "Purdue Student Managed Investment Fund",
+                legalName: "Purdue Student Managed Investment Fund",
+                // Only the names the fund actually goes by. "Purdue Investment Club" and
+                // "Purdue Finance Club" are other organizations people search for, so
+                // listing them as aliases muddies which entity this is.
+                alternateName: ["Purdue SMIF", "Purdue Investment Fund"],
+                url: "https://www.purduesmif.org",
+                logo: {
+                  "@type": "ImageObject",
+                  url: "https://www.purduesmif.org/smif-logo.png",
+                  width: 512,
+                  height: 512,
                 },
-                "query-input": "required name=search_term_string",
+                email: "smif26@purdue.edu",
+                contactPoint: {
+                  "@type": "ContactPoint",
+                  contactType: "membership and general inquiries",
+                  email: "smif26@purdue.edu",
+                  url: "https://www.purduesmif.org/contact",
+                  availableLanguage: "English",
+                },
+                foundingDate: "1995",
+                description:
+                  "Purdue's student investment club and finance club: a student-run investment fund at the Mitch Daniels School of Business, Purdue University, managing real capital since 1995.",
+                parentOrganization: {
+                  "@type": "CollegeOrUniversity",
+                  name: "Daniels School of Business, Purdue University",
+                },
+                // Topical grounding: tells a knowledge graph what this entity is
+                // *about*, not just what it's called. Without it the org resolves
+                // as a generic student club rather than an investing entity.
+                knowsAbout: [
+                  "Equity research",
+                  "Fundamental analysis",
+                  "Discounted cash flow valuation",
+                  "Portfolio management",
+                  "Risk management",
+                  "Fixed income and macroeconomics",
+                  "Student managed investment funds",
+                ],
+                foundingLocation: {
+                  "@type": "Place",
+                  name: "West Lafayette, Indiana, United States",
+                },
+                areaServed: { "@type": "Place", name: "Purdue University" },
+                address: {
+                  "@type": "PostalAddress",
+                  streetAddress: "403 Mitch Daniels Blvd",
+                  addressLocality: "West Lafayette",
+                  addressRegion: "IN",
+                  postalCode: "47907",
+                  addressCountry: "US",
+                },
+                sameAs: [
+                  // BoilerLink is Purdue's official student-organization directory.
+                  // Listing it first ties this site to the university's own record of
+                  // the org — the strongest available signal that the "Purdue
+                  // investment club" entity and purduesmif.org are the same thing.
+                  "https://boilerlink.purdue.edu/organization/smif",
+                  "https://www.linkedin.com/company/purdue-smif/",
+                  "https://www.instagram.com/smif_purdue/",
+                  "https://purduesmif.substack.com/",
+                ],
               },
-            },
-          ],
-        }),
-      },
-    ],
-  }),
+              {
+                "@type": "WebSite",
+                "@id": "https://www.purduesmif.org/#website",
+                url: "https://www.purduesmif.org",
+                name: "Purdue SMIF",
+                publisher: { "@id": "https://www.purduesmif.org/#organization" },
+              },
+            ],
+          }),
+        },
+      ],
+    };
+  },
 
   shellComponent: RootShell,
   component: RootComponent,
@@ -335,7 +353,6 @@ function RootComponent() {
           <SiteFooter />
         </div>
       </div>
-      <Toaster />
     </QueryClientProvider>
   );
 }

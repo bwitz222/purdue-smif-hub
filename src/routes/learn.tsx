@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ExternalLink, Download } from "lucide-react";
-import { socialMeta, canonical, breadcrumbLd, OG_LEARN } from "@/lib/seo";
+import { socialMeta, canonical, breadcrumbLd, OG_LEARN, PAGE_META } from "@/lib/seo";
+import { GLOSSARY, termSlug } from "@/data/glossary";
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import { OnThisPage, type PageSection } from "@/components/OnThisPage";
 import { applyUrl } from "@/lib/apply-url";
@@ -56,11 +57,10 @@ export const Route = createFileRoute("/learn")({
   component: Learn,
   head: () => ({
     meta: [
-      { title: "Learn Investing: Equity Research & Valuation | Purdue SMIF" },
+      { title: PAGE_META.learn.title },
       {
         name: "description",
-        content:
-          "The Purdue SMIF education hub: analyst training curriculum, reading list, research tools, and a glossary of investing terms.",
+        content: PAGE_META.learn.description,
       },
       ...socialMeta({
         title: "Learn Investing: Equity Research & Valuation | Purdue SMIF",
@@ -72,30 +72,8 @@ export const Route = createFileRoute("/learn")({
     ],
     links: [{ rel: "canonical", href: canonical("/learn") }],
     scripts: [
-      // The glossary is the most quotable thing on the site — twelve terms,
-      // each with a one-sentence plain-English definition. DefinedTermSet is
-      // what lets an answer engine lift a single definition and attribute it,
-      // rather than treating the page as an undifferentiated wall of text.
-      // Generated from GLOSSARY so the schema can never drift from the copy.
-      {
-        type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "DefinedTermSet",
-          "@id": `${canonical("/learn")}#glossary`,
-          name: "Purdue SMIF Investing Glossary",
-          description:
-            "Plain-English definitions of the valuation and portfolio terms Purdue SMIF analysts train on.",
-          publisher: { "@id": "https://www.purduesmif.org/#organization" },
-          hasDefinedTerm: GLOSSARY.map(({ term, def }) => ({
-            "@type": "DefinedTerm",
-            "@id": `${canonical("/learn")}#${termSlug(term)}`,
-            name: term,
-            description: def,
-            inDefinedTermSet: `${canonical("/learn")}#glossary`,
-          })),
-        }),
-      },
+      // The DefinedTermSet for the glossary lives on /learn/glossary, where the
+      // definitions are the page. This page links there.
       {
         type: "application/ld+json",
         children: JSON.stringify({
@@ -121,13 +99,6 @@ export const Route = createFileRoute("/learn")({
     ],
   }),
 });
-
-/** Stable fragment id for a glossary term, e.g. "EV / EBITDA" -> "ev-ebitda". */
-const termSlug = (term: string) =>
-  term
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
 
 const TRACKS = [
   {
@@ -254,45 +225,6 @@ const TOOLS = [
   },
 ];
 
-const GLOSSARY = [
-  {
-    term: "Intrinsic Value",
-    def: "What a business is actually worth based on the cash it will generate, independent of its market price.",
-  },
-  {
-    term: "DCF",
-    def: "Discounted cash flow. Project future free cash flows and discount them to today at the cost of capital.",
-  },
-  {
-    term: "WACC",
-    def: "Weighted average cost of capital. The blended required return on a firm's debt and equity; the discount rate in a DCF.",
-  },
-  {
-    term: "Free Cash Flow",
-    def: "Cash left after operating costs and capital expenditures; what's actually available to investors.",
-  },
-  {
-    term: "Terminal Value",
-    def: "The value of a business beyond the explicit forecast, often the largest piece of a DCF.",
-  },
-  {
-    term: "EV / EBITDA",
-    def: "Enterprise value over EBITDA. A capital-structure-neutral valuation multiple.",
-  },
-  {
-    term: "Margin of Safety",
-    def: "Buying well below intrinsic value so analytical errors don't become permanent losses.",
-  },
-  {
-    term: "Economic Moat",
-    def: "A durable competitive advantage that protects a company's returns from competitors.",
-  },
-  { term: "Catalyst", def: "A specific event expected to close the gap between price and value." },
-  { term: "Alpha", def: "Return earned above what the benchmark would predict." },
-  { term: "Beta", def: "A stock's volatility relative to the broader market." },
-  { term: "Sharpe Ratio", def: "Excess return per unit of risk; risk-adjusted performance." },
-];
-
 function Learn() {
   return (
     <>
@@ -311,6 +243,9 @@ function Learn() {
               <br />
               <span className="text-gold">then prove it.</span>
             </h1>
+            <p className="mt-4 text-xl text-gold">
+              Learn investing: equity research, valuation, and portfolio management.
+            </p>
             <p className="mt-6 text-lg text-on-dark-secondary">
               The same material our analysts train on, and a companion to the courses we teach.
               Build the foundation, then defend a real pitch with real capital on the line.
@@ -541,24 +476,30 @@ function Learn() {
               Key terms.
             </h2>
           </Reveal>
-          <RevealGroup
-            className="grid md:grid-cols-2 gap-px bg-border border border-border"
-            stagger={0.04}
-          >
+          <p className="max-w-2xl">
+            {GLOSSARY.length} terms behind the curriculum and the stock pitches analysts defend,
+            each defined in a sentence on the{" "}
+            <Link
+              to="/learn/glossary"
+              className="link-underline font-bold text-gold-deep hover:text-ink"
+            >
+              investing glossary
+            </Link>
+            .
+          </p>
+          <ul className="mt-8 flex flex-wrap gap-2">
             {GLOSSARY.map((g) => (
-              <RevealItem key={g.term} className="bg-background p-7 lg:p-8">
-                {/* id matches the DefinedTerm @id minted above, which pointed
-                    at twelve fragments that did not exist in the document. */}
-                <h3
-                  id={termSlug(g.term)}
-                  className="scroll-mt-24 font-display text-lg font-semibold text-ink mb-2"
+              <li key={g.term}>
+                <Link
+                  to="/learn/glossary"
+                  hash={termSlug(g.term)}
+                  className="press inline-flex min-h-11 items-center rounded-sm border border-border px-3.5 text-sm font-bold text-ink hover:border-ink"
                 >
                   {g.term}
-                </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{g.def}</p>
-              </RevealItem>
+                </Link>
+              </li>
             ))}
-          </RevealGroup>
+          </ul>
         </div>
       </section>
 
@@ -576,7 +517,28 @@ function Learn() {
           </h2>
           <p className="mt-6 text-on-dark-secondary max-w-xl mx-auto">
             Members get the full training and a senior mentor. Applications open each fall and
-            spring.
+            spring. Preparing to apply? Start with the{" "}
+            <Link
+              to="/recruiting/technical-interview-prep"
+              className="link-underline font-bold text-gold hover:text-background"
+            >
+              technical interview guide
+            </Link>{" "}
+            and the{" "}
+            <Link
+              to="/stock-pitches"
+              className="link-underline font-bold text-gold hover:text-background"
+            >
+              stock pitch format
+            </Link>
+            , or compare{" "}
+            <Link
+              to="/finance-clubs-at-purdue"
+              className="link-underline font-bold text-gold hover:text-background"
+            >
+              finance clubs at Purdue
+            </Link>
+            .
           </p>
           <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
             <a

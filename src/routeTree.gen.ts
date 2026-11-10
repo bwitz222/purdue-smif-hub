@@ -23,6 +23,11 @@ import { Route as RecruitingRouteImport } from './routes/recruiting'
 import { Route as ResearchRouteImport } from './routes/research'
 import { Route as SectorsRouteImport } from './routes/sectors'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as StockPitchesRouteImport } from './routes/stock-pitches'
+import { Route as StudentManagedInvestmentFundsRouteImport } from './routes/student-managed-investment-funds'
+import { Route as LearnGlossaryRouteImport } from './routes/learn_.glossary'
+import { Route as RecruitingBehavioralInterviewPrepRouteImport } from './routes/recruiting_.behavioral-interview-prep'
+import { Route as RecruitingTechnicalInterviewPrepRouteImport } from './routes/recruiting_.technical-interview-prep'
 import { Route as TeamIndexRouteImport } from './routes/team.index'
 import { Route as TeamSlugRouteImport } from './routes/team.$slug'
 import { Route as ApiPublicHooksComputeRiskRouteImport } from './routes/api/public/hooks/compute-risk'
@@ -99,6 +104,34 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StockPitchesRoute = StockPitchesRouteImport.update({
+  id: '/stock-pitches',
+  path: '/stock-pitches',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StudentManagedInvestmentFundsRoute =
+  StudentManagedInvestmentFundsRouteImport.update({
+    id: '/student-managed-investment-funds',
+    path: '/student-managed-investment-funds',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const LearnGlossaryRoute = LearnGlossaryRouteImport.update({
+  id: '/learn_/glossary',
+  path: '/learn/glossary',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RecruitingBehavioralInterviewPrepRoute =
+  RecruitingBehavioralInterviewPrepRouteImport.update({
+    id: '/recruiting_/behavioral-interview-prep',
+    path: '/recruiting/behavioral-interview-prep',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const RecruitingTechnicalInterviewPrepRoute =
+  RecruitingTechnicalInterviewPrepRouteImport.update({
+    id: '/recruiting_/technical-interview-prep',
+    path: '/recruiting/technical-interview-prep',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const TeamIndexRoute = TeamIndexRouteImport.update({
   id: '/team/',
   path: '/team/',
@@ -143,6 +176,11 @@ export interface FileRoutesByFullPath {
   '/research': typeof ResearchRoute
   '/sectors': typeof SectorsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/stock-pitches': typeof StockPitchesRoute
+  '/student-managed-investment-funds': typeof StudentManagedInvestmentFundsRoute
+  '/learn/glossary': typeof LearnGlossaryRoute
+  '/recruiting/behavioral-interview-prep': typeof RecruitingBehavioralInterviewPrepRoute
+  '/recruiting/technical-interview-prep': typeof RecruitingTechnicalInterviewPrepRoute
   '/team/$slug': typeof TeamSlugRoute
   '/team/': typeof TeamIndexRoute
   '/api/public/hooks/compute-risk': typeof ApiPublicHooksComputeRiskRoute
@@ -164,6 +202,11 @@ export interface FileRoutesByTo {
   '/research': typeof ResearchRoute
   '/sectors': typeof SectorsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/stock-pitches': typeof StockPitchesRoute
+  '/student-managed-investment-funds': typeof StudentManagedInvestmentFundsRoute
+  '/learn/glossary': typeof LearnGlossaryRoute
+  '/recruiting/behavioral-interview-prep': typeof RecruitingBehavioralInterviewPrepRoute
+  '/recruiting/technical-interview-prep': typeof RecruitingTechnicalInterviewPrepRoute
   '/team/$slug': typeof TeamSlugRoute
   '/team': typeof TeamIndexRoute
   '/api/public/hooks/compute-risk': typeof ApiPublicHooksComputeRiskRoute
@@ -186,6 +229,11 @@ export interface FileRoutesById {
   '/research': typeof ResearchRoute
   '/sectors': typeof SectorsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/stock-pitches': typeof StockPitchesRoute
+  '/student-managed-investment-funds': typeof StudentManagedInvestmentFundsRoute
+  '/learn_/glossary': typeof LearnGlossaryRoute
+  '/recruiting_/behavioral-interview-prep': typeof RecruitingBehavioralInterviewPrepRoute
+  '/recruiting_/technical-interview-prep': typeof RecruitingTechnicalInterviewPrepRoute
   '/team/$slug': typeof TeamSlugRoute
   '/team/': typeof TeamIndexRoute
   '/api/public/hooks/compute-risk': typeof ApiPublicHooksComputeRiskRoute
@@ -209,6 +257,11 @@ export interface FileRouteTypes {
     | '/research'
     | '/sectors'
     | '/sitemap.xml'
+    | '/stock-pitches'
+    | '/student-managed-investment-funds'
+    | '/learn/glossary'
+    | '/recruiting/behavioral-interview-prep'
+    | '/recruiting/technical-interview-prep'
     | '/team/$slug'
     | '/team/'
     | '/api/public/hooks/compute-risk'
@@ -230,6 +283,11 @@ export interface FileRouteTypes {
     | '/research'
     | '/sectors'
     | '/sitemap.xml'
+    | '/stock-pitches'
+    | '/student-managed-investment-funds'
+    | '/learn/glossary'
+    | '/recruiting/behavioral-interview-prep'
+    | '/recruiting/technical-interview-prep'
     | '/team/$slug'
     | '/team'
     | '/api/public/hooks/compute-risk'
@@ -251,6 +309,11 @@ export interface FileRouteTypes {
     | '/research'
     | '/sectors'
     | '/sitemap.xml'
+    | '/stock-pitches'
+    | '/student-managed-investment-funds'
+    | '/learn_/glossary'
+    | '/recruiting_/behavioral-interview-prep'
+    | '/recruiting_/technical-interview-prep'
     | '/team/$slug'
     | '/team/'
     | '/api/public/hooks/compute-risk'
@@ -273,6 +336,11 @@ export interface RootRouteChildren {
   ResearchRoute: typeof ResearchRoute
   SectorsRoute: typeof SectorsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  StockPitchesRoute: typeof StockPitchesRoute
+  StudentManagedInvestmentFundsRoute: typeof StudentManagedInvestmentFundsRoute
+  LearnGlossaryRoute: typeof LearnGlossaryRoute
+  RecruitingBehavioralInterviewPrepRoute: typeof RecruitingBehavioralInterviewPrepRoute
+  RecruitingTechnicalInterviewPrepRoute: typeof RecruitingTechnicalInterviewPrepRoute
   TeamSlugRoute: typeof TeamSlugRoute
   TeamIndexRoute: typeof TeamIndexRoute
   ApiPublicHooksComputeRiskRoute: typeof ApiPublicHooksComputeRiskRoute
@@ -380,6 +448,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/stock-pitches': {
+      id: '/stock-pitches'
+      path: '/stock-pitches'
+      fullPath: '/stock-pitches'
+      preLoaderRoute: typeof StockPitchesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/student-managed-investment-funds': {
+      id: '/student-managed-investment-funds'
+      path: '/student-managed-investment-funds'
+      fullPath: '/student-managed-investment-funds'
+      preLoaderRoute: typeof StudentManagedInvestmentFundsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/learn_/glossary': {
+      id: '/learn_/glossary'
+      path: '/learn/glossary'
+      fullPath: '/learn/glossary'
+      preLoaderRoute: typeof LearnGlossaryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/recruiting_/behavioral-interview-prep': {
+      id: '/recruiting_/behavioral-interview-prep'
+      path: '/recruiting/behavioral-interview-prep'
+      fullPath: '/recruiting/behavioral-interview-prep'
+      preLoaderRoute: typeof RecruitingBehavioralInterviewPrepRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/recruiting_/technical-interview-prep': {
+      id: '/recruiting_/technical-interview-prep'
+      path: '/recruiting/technical-interview-prep'
+      fullPath: '/recruiting/technical-interview-prep'
+      preLoaderRoute: typeof RecruitingTechnicalInterviewPrepRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/team/': {
       id: '/team/'
       path: '/team'
@@ -433,6 +536,12 @@ const rootRouteChildren: RootRouteChildren = {
   ResearchRoute: ResearchRoute,
   SectorsRoute: SectorsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  StockPitchesRoute: StockPitchesRoute,
+  StudentManagedInvestmentFundsRoute: StudentManagedInvestmentFundsRoute,
+  LearnGlossaryRoute: LearnGlossaryRoute,
+  RecruitingBehavioralInterviewPrepRoute:
+    RecruitingBehavioralInterviewPrepRoute,
+  RecruitingTechnicalInterviewPrepRoute: RecruitingTechnicalInterviewPrepRoute,
   TeamSlugRoute: TeamSlugRoute,
   TeamIndexRoute: TeamIndexRoute,
   ApiPublicHooksComputeRiskRoute: ApiPublicHooksComputeRiskRoute,

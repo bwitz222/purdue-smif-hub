@@ -1,73 +1,93 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 import { hasIndexableProfile, memberDirectory } from "@/data/team";
-import { SITE_URL } from "@/lib/seo";
+import { CONTENT_ROUTES } from "@/lib/content-routes";
+import { LAST_CONTENT_UPDATE, buildSitemapXml, type SitemapEntry } from "@/lib/seo";
 
-// Single host constant, shared with every canonical/og:url the site emits.
-// A second hardcoded copy here would silently drift the day the domain moves.
-const BASE_URL = SITE_URL;
+const isoDay = (v: string | null | undefined): string | null => {
+  if (!v) return null;
+  const day = v.slice(0, 10);
+  return /^\d{4}-\d{2}-\d{2}$/.test(day) && !Number.isNaN(Date.parse(day)) ? day : null;
+};
 
-interface SitemapEntry {
-  path: string;
-  lastmod?: string;
-  changefreq?: "always" | "hourly" | "daily" | "weekly" | "monthly" | "yearly" | "never";
-  priority?: string;
+/**
+ * Dates of the two data-driven pages, read from the tables that feed them. Each
+ * read is independent and falls back to LAST_CONTENT_UPDATE, so a Supabase
+ * outage (or a local run with no credentials) still yields a valid sitemap.
+ *   /holdings     the trading session the prices belong to (quote_meta), else the
+ *                 latest risk-metrics as_of
+ *   /performance  the newest write to the monthly history table
+ */
+async function dataDates(): Promise<{ holdings: string; performance: string }> {
+  const fallback = LAST_CONTENT_UPDATE;
+  let holdings: string | null = null;
+  let performance: string | null = null;
+  try {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const [session, risk, history] = await Promise.all([
+      supabaseAdmin.from("quote_meta").select("value_ts").eq("key", "quotes_session").maybeSingle(),
+      supabaseAdmin
+        .from("portfolio_risk_metrics")
+        .select("as_of")
+        .order("as_of", { ascending: false })
+        .limit(1)
+        .maybeSingle(),
+      supabaseAdmin
+        .from("fund_monthly_history")
+        .select("updated_at")
+        .order("updated_at", { ascending: false })
+        .limit(1)
+        .maybeSingle(),
+    ]);
+    holdings = isoDay(session.data?.value_ts) ?? isoDay(risk.data?.as_of);
+    performance = isoDay(history.data?.updated_at);
+  } catch (e) {
+    console.error("[sitemap] data dates unavailable, using content date:", e);
+  }
+  return { holdings: holdings ?? fallback, performance: performance ?? fallback };
 }
 
 export const Route = createFileRoute("/sitemap.xml")({
   server: {
     handlers: {
       GET: async () => {
-        // No lastmod: stamping every URL with the request date trains crawlers
-        // to distrust it. changefreq/priority carry the freshness hints instead.
+        // lastmod is a real date for every URL, never the request time: stamping
+        // each URL with "now" teaches crawlers to distrust the field. Static
+        // pages share LAST_CONTENT_UPDATE (bumped by hand when copy changes); the
+        // two data pages use the date of their data. changefreq and priority are
+        // omitted because Google ignores both.
+        const { holdings, performance } = await dataDates();
+        const staticPaths = [
+          "/",
+          "/about",
+          "/team",
+          "/sectors",
+          "/research",
+          "/recruiting",
+          "/learn",
+          "/apply",
+          "/contact",
+          "/finance-clubs-at-purdue",
+        ];
         const entries: SitemapEntry[] = [
-          { path: "/", changefreq: "weekly", priority: "1.0" },
-          { path: "/about", changefreq: "monthly", priority: "0.8" },
-          { path: "/team", changefreq: "monthly", priority: "0.8" },
-          { path: "/sectors", changefreq: "monthly", priority: "0.6" },
-          { path: "/holdings", changefreq: "daily", priority: "0.8" },
-          { path: "/performance", changefreq: "monthly", priority: "0.6" },
-          { path: "/research", changefreq: "weekly", priority: "0.7" },
-          { path: "/recruiting", changefreq: "monthly", priority: "0.7" },
-          { path: "/learn", changefreq: "monthly", priority: "0.6" },
-          { path: "/apply", changefreq: "monthly", priority: "0.7" },
-          { path: "/contact", changefreq: "yearly", priority: "0.5" },
-          { path: "/finance-clubs-at-purdue", changefreq: "monthly", priority: "0.9" },
+          ...staticPaths.map((path) => ({ path, lastmod: LAST_CONTENT_UPDATE })),
+          { path: "/holdings", lastmod: holdings },
+          { path: "/performance", lastmod: performance },
+          // The content pages carry their own last-changed date.
+          ...CONTENT_ROUTES.map(({ path, lastmod }) => ({ path, lastmod })),
         ];
 
-        // One entry per member profile. These are the pages a recruiter
-        // searching an analyst's name can actually land on, so they belong in
-        // the sitemap rather than relying on discovery through /team alone.
-        // Bio-less profiles are excluded rather than submitted and then
-        // ignored: they carry a noindex, so listing them here would ask
-        // crawlers to fetch pages we have already told them not to index.
+        // One entry per member profile: the pages a recruiter searching an
+        // analyst's name can land on. Bio-less profiles are excluded rather
+        // than submitted and then ignored: they carry a noindex, so listing
+        // them would ask crawlers to fetch pages already marked do-not-index.
         // The predicate is shared with the route so the two cannot disagree.
         for (const { slug, member } of memberDirectory) {
           if (!hasIndexableProfile(member)) continue;
-          entries.push({ path: `/team/${slug}`, changefreq: "monthly", priority: "0.5" });
+          entries.push({ path: `/team/${slug}`, lastmod: LAST_CONTENT_UPDATE });
         }
 
-        const urls = entries.map((e) =>
-          [
-            `  <url>`,
-            `    <loc>${BASE_URL}${e.path}</loc>`,
-            e.lastmod ? `    <lastmod>${e.lastmod}</lastmod>` : null,
-            e.changefreq ? `    <changefreq>${e.changefreq}</changefreq>` : null,
-            e.priority ? `    <priority>${e.priority}</priority>` : null,
-            `  </url>`,
-          ]
-            .filter(Boolean)
-            .join("\n"),
-        );
-
-        const xml = [
-          `<?xml version="1.0" encoding="UTF-8"?>`,
-          `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`,
-          ...urls,
-          `</urlset>`,
-        ].join("\n");
-
-        return new Response(xml, {
+        return new Response(buildSitemapXml(entries), {
           headers: {
             "Content-Type": "application/xml",
             "Cache-Control": "public, max-age=3600",
