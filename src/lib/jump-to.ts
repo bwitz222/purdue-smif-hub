@@ -17,7 +17,7 @@
  */
 
 type JumpOptions = {
-  /** From framer-motion's useReducedMotion(). Honors prefers-reduced-motion. */
+  /** From useReducedMotion() in use-reduced-motion.ts. Honors prefers-reduced-motion. */
   reduce?: boolean | null;
   /** Keep the URL fragment in sync so the position stays shareable. */
   updateHash?: boolean;
