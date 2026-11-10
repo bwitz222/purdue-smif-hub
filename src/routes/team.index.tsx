@@ -28,10 +28,7 @@ type TeamSearch = { sector?: string; q?: string };
 
 export const Route = createFileRoute("/team/")({
   component: Team,
-  // `q` backs the sitelinks SearchAction declared in __root's WebSite JSON-LD
-  // (urlTemplate: /team?q={search_term_string}). That declaration shipped
-  // before the param existed, so a search engine honoring it sent visitors to
-  // /team?q=… and they landed on the unfiltered roster.
+  // `q` pre-fills the roster search, so /team?q=name is a shareable link.
   validateSearch: (search: Record<string, unknown>): TeamSearch => ({
     sector: typeof search.sector === "string" ? search.sector : undefined,
     q: typeof search.q === "string" && search.q.trim() ? search.q : undefined,

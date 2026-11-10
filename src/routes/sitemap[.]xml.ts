@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 import { hasIndexableProfile, memberDirectory } from "@/data/team";
+import { CONTENT_ROUTES } from "@/lib/content-routes";
 import { LAST_CONTENT_UPDATE, buildSitemapXml, type SitemapEntry } from "@/lib/seo";
 
 const isoDay = (v: string | null | undefined): string | null => {
@@ -72,6 +73,8 @@ export const Route = createFileRoute("/sitemap.xml")({
           ...staticPaths.map((path) => ({ path, lastmod: LAST_CONTENT_UPDATE })),
           { path: "/holdings", lastmod: holdings },
           { path: "/performance", lastmod: performance },
+          // The content pages carry their own last-changed date.
+          ...CONTENT_ROUTES.map(({ path, lastmod }) => ({ path, lastmod })),
         ];
 
         // One entry per member profile: the pages a recruiter searching an

@@ -1,12 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Calendar, CalendarPlus, MapPin, Clock, Download } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useReducedMotion } from "framer-motion";
+import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { jumpToSection } from "@/lib/jump-to";
-import { socialMeta, canonical, breadcrumbLd, OG_RECRUITING } from "@/lib/seo";
+import { socialMeta, canonical, breadcrumbLd, OG_RECRUITING, isEmittableEvent } from "@/lib/seo";
 import { OnThisPage, type PageSection } from "@/components/OnThisPage";
 import { BEHAVIORAL_CARDS, DAY_OF, TECHNICAL_CARDS, type PrepCardData } from "@/data/prep-guide";
-import { isConfirmedEvent } from "@/lib/event-confirmed";
 
 import { applyUrl } from "@/lib/apply-url";
 
@@ -402,12 +401,12 @@ export const Route = createFileRoute("/recruiting")({
       // Only events with a confirmed time and venue are published as structured
       // data; a "TBD" start or location is invalid for event rich results. The
       // unconfirmed ones stay in the visible calendar below.
-      ...(CALENDAR.some(isConfirmedEvent)
+      ...(CALENDAR.some(isEmittableEvent)
         ? [
             {
               type: "application/ld+json",
               children: JSON.stringify(
-                CALENDAR.filter(isConfirmedEvent).map((e) => {
+                CALENDAR.filter(isEmittableEvent).map((e) => {
                   const times = parseEventTimes(e.time);
                   return {
                     "@context": "https://schema.org",

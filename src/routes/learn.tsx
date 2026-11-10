@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ExternalLink, Download } from "lucide-react";
-import { socialMeta, canonical, breadcrumbLd, OG_LEARN } from "@/lib/seo";
+import { socialMeta, canonical, breadcrumbLd, OG_LEARN, PAGE_META } from "@/lib/seo";
 import { GLOSSARY, termSlug } from "@/data/glossary";
 import { OnThisPage, type PageSection } from "@/components/OnThisPage";
 import { applyUrl } from "@/lib/apply-url";
@@ -56,11 +56,10 @@ export const Route = createFileRoute("/learn")({
   component: Learn,
   head: () => ({
     meta: [
-      { title: "Learn Investing: Equity Research & Valuation | Purdue SMIF" },
+      { title: PAGE_META.learn.title },
       {
         name: "description",
-        content:
-          "The Purdue SMIF education hub: analyst training curriculum, reading list, research tools, and a glossary of investing terms.",
+        content: PAGE_META.learn.description,
       },
       ...socialMeta({
         title: "Learn Investing: Equity Research & Valuation | Purdue SMIF",

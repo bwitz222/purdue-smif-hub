@@ -116,9 +116,10 @@ function Contact() {
         <div className="container-prose section-y">
           <div>
             <span className="rule-gold mb-6" />
-            <h1 className="font-display max-w-3xl">Get in touch.</h1>
+            <h1 className="font-display max-w-3xl">Contact Purdue SMIF</h1>
             <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
-              Prospective members, alumni, sponsors, and recruiters: we'd love to hear from you.
+              Get in touch. Prospective members, alumni, sponsors, and recruiters: we'd love to hear
+              from you.
             </p>
           </div>
         </div>

@@ -1,5 +1,6 @@
 import { createFileRoute, notFound, Link } from "@tanstack/react-router";
 import { ArrowLeft, Mail, Linkedin } from "lucide-react";
+import { TEAM_INDUSTRIES, teamSlug } from "@/lib/portfolio";
 import { useState } from "react";
 import {
   findMemberBySlug,
@@ -217,6 +218,17 @@ function MemberProfile() {
         <section className="border-t border-border bg-background">
           <div className="container-prose py-16">
             <h2 className="font-display">Also on {team}</h2>
+            {team in TEAM_INDUSTRIES && (
+              <p className="mt-3">
+                <Link
+                  to="/sectors"
+                  hash={teamSlug(team)}
+                  className="link-underline font-bold text-gold-deep hover:text-ink"
+                >
+                  See what the {team} team holds
+                </Link>
+              </p>
+            )}
             {/* Per-cell borders rather than a gap-px bg-border grid, so a short
                 last row leaves blank page instead of a gray filler cell. */}
             <ul className="mt-8 grid border-l border-t border-border sm:grid-cols-2 lg:grid-cols-3">

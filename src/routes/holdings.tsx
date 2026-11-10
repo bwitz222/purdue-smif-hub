@@ -3,7 +3,14 @@ import { useState, useMemo, useEffect } from "react";
 import { ArrowUpDown, ArrowUp, ArrowDown, AlertCircle, Filter, Search } from "lucide-react";
 import { holdings as baseHoldings, type Holding } from "@/data/holdings";
 import { getCachedQuotes } from "@/lib/quotes.functions";
-import { socialMeta, canonical, breadcrumbLd, OG_HOLDINGS } from "@/lib/seo";
+import {
+  socialMeta,
+  canonical,
+  breadcrumbLd,
+  OG_HOLDINGS,
+  PAGE_META,
+  holdingsDatasetLd,
+} from "@/lib/seo";
 import { teamForIndustry, teamSlug, TEAM_INDUSTRIES } from "@/lib/portfolio";
 import { useLiveBook } from "@/lib/use-live-book";
 import { DataStatus } from "@/components/DataStatus";
@@ -30,11 +37,10 @@ export const Route = createFileRoute("/holdings")({
   loader: async () => ({ cachedQuotes: await getCachedQuotes() }),
   head: () => ({
     meta: [
-      { title: "Portfolio Holdings: Purdue Student Managed Investment Fund" },
+      { title: PAGE_META.holdings.title },
       {
         name: "description",
-        content:
-          "Current portfolio holdings of the Purdue Student Managed Investment Fund, including positions, allocations, and returns.",
+        content: PAGE_META.holdings.description,
       },
       ...socialMeta({
         title: "Portfolio Holdings | Purdue SMIF",
@@ -46,6 +52,11 @@ export const Route = createFileRoute("/holdings")({
     ],
     links: [{ rel: "canonical", href: canonical("/holdings") }],
     scripts: [
+      // Dataset markup describes the holdings table as data (what Google Dataset
+      // Search indexes). dateModified is omitted here: the trading session the
+      // prices belong to is only known client-side, and a guessed date is worse
+      // than none.
+      { type: "application/ld+json", children: JSON.stringify(holdingsDatasetLd()) },
       {
         type: "application/ld+json",
         children: JSON.stringify({
