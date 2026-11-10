@@ -19,7 +19,7 @@ Positions below are from Firecrawl's index on 2026-11-10, directional rather tha
 
 Reading: the site owns its brand queries. The open ground is the generic head terms ("investment club", "student managed investment fund") and the pitch intent, and the three weak spots below.
 
-1. **Facts disagree across the web.** The site says founded 1995. LinkedIn and Instagram say 2009, and the site's own social-card images say "EST. 2009". Fund size ranges from $270,000 to $600,000 across the Daniels page, a Facebook group, RocketReach and the course catalog. Search engines and AI answers read all of these.
+1. **Facts disagree across the web.** The site says founded 1995, and that is confirmed (2026-11-10). LinkedIn and Instagram say 2009, and until this branch the site's own social-card images said "EST. 2009". Fund size ranges from $270,000 to $600,000 across the Daniels page, a Facebook group, RocketReach and the course catalog. Search engines and AI answers read all of these.
 2. **The best page for the strongest target query had one internal link** (the footer).
 3. **No page targeted** "student managed investment fund" as a concept, the pitch process, or the interview-prep long tail.
 
@@ -69,15 +69,15 @@ New indexable pages, each with its own title, description, one keyword-bearing h
 - `/learn/glossary`: the glossary as its own page.
   Also: a plain "what is SMIF" section on the home page with employers as real text, descriptive internal links to the finance-clubs guide from the home, about, apply, recruiting and learn pages, member pages linking to their sector team, and keyword-bearing headings (`/apply` is now "How to join Purdue SMIF", `/contact` is "Contact Purdue SMIF").
 
-### D. Entity consistency: Owner
+### D. Entity consistency: Partly done, rest is Owner
 
 This is the highest-value item and no code can do it.
 
-1. **Decide the founding year, 1995 or 2009, and the other facts.** The site, structured data and `llms.txt` say 1995; LinkedIn, Instagram and the site's own social-card images say 2009. Until one is true everywhere, AI answers and search snippets will be wrong in one direction or the other.
+1. **Founding year: decided, 1995. Done on the site.** The site, structured data, `llms.txt`, the production `fund_stats` row and now the social cards all say 1995. LinkedIn and Instagram still say 2009 (owner action, item 2). Until they change, AI answers and search snippets can still pick the wrong year.
 2. Fix every profile to match: LinkedIn and Instagram bios, the Daniels MS Finance page (states about $400,000), the Purdue course catalog (states $300,000 as of 2017), the Facebook group, RocketReach.
 3. Decide whether to state the origin gift (LinkedIn and RocketReach mention a $100,000 donation) and the course-credit option (BoilerLink lists 1 or 2 credit hours); both are on other sites but not on this one.
-4. Regenerate the social-card images. Several carry baked-in text that contradicts the site: "EST. 2009", "Premier", "50+ analysts across 10 sector teams", "Eleven coverage teams". They are the cards shown when a page is shared.
-   Once decided, tell me the facts and I will update the site, structured data, `llms.txt` and the cards in one pass.
+4. **Social cards: Done.** Four cards carried text that contradicted the site and were corrected in place (only the text line changed): `og-about` and `og-share` ("EST. 2009" to "EST. 1995"; "Premier" dropped), `og-team` ("50+ analysts across 10 sector teams" to "50+ members across 10 teams"), `og-sectors` ("Eleven coverage teams" to "Eight equity sector teams"). Sizes are unchanged, so the declared dimensions still match. Facts still undecided: fund size as-of date, the origin gift, and the course-credit option (item 3).
+   Social platforms cache cards by URL. After deploy, re-scrape the key pages in the LinkedIn Post Inspector and the Facebook Sharing Debugger so the old images stop showing.
 
 ### E. Authority and off-site: Owner
 
@@ -110,8 +110,8 @@ This is the highest-value item and no code can do it.
 
 | Window        | Work                                                                                                                                                             |
 | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Week 1        | Ship this branch. Decide the founding year and facts (D). Submit the sitemap in Search Console. Add Semrush API units and rerun research (F).                    |
-| Weeks 2 to 4  | Correct third-party profiles (D2). Send the Purdue link requests (E). Regenerate social cards (D4). Check the live contact form once after deploy.               |
+| Week 1        | Ship this branch. Decide the remaining facts (D3). Submit the sitemap in Search Console. Add Semrush API units and rerun research (F).                    |
+| Weeks 2 to 4  | Correct third-party profiles (D2). Send the Purdue link requests (E). Check the live contact form once after deploy.               |
 | Weeks 4 to 8  | Review Search Console for the new pages' impressions and queries; tune titles on pages with high impressions and low clicks. Publish on-site research pages (G). |
 | Weeks 8 to 12 | Refresh dated pages, reassess head-term positions, add the next missing page indicated by Search Console queries.                                                |
 
