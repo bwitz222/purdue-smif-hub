@@ -89,4 +89,9 @@ Apply and see the current calendar: https://www.purduesmif.org/apply and https:/
 - Recruiting (calendar and interview preparation): https://www.purduesmif.org/recruiting
 - Apply: https://www.purduesmif.org/apply
 - Contact: https://www.purduesmif.org/contact
+- Student Managed Investment Funds (what one is, how it is structured, how SMIF invests real capital): https://www.purduesmif.org/student-managed-investment-funds
+- Stock Pitches (how a pitch is built, defended and voted on): https://www.purduesmif.org/stock-pitches
+- Technical Interview Prep: https://www.purduesmif.org/recruiting/technical-interview-prep
+- Behavioral Interview Prep: https://www.purduesmif.org/recruiting/behavioral-interview-prep
+- Investing Glossary: https://www.purduesmif.org/learn/glossary
 - Sitemap: https://www.purduesmif.org/sitemap.xml

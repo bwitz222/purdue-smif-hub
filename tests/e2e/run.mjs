@@ -15,6 +15,7 @@ import { spawn } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import net from "node:net";
+import { performanceFixtures, serverFnName } from "./perf-fixtures.mjs";
 
 const require = createRequire(import.meta.url);
 const { chromium } = require("playwright");
@@ -160,8 +161,9 @@ try {
   }
 
   // ── Interactions ─────────────────────────────────────────────────────────
-  const open = async (path, width = 1440) => {
+  const open = async (path, width = 1440, prepare) => {
     const ctx = await browser.newContext({ viewport: { width, height: 900 } });
+    await prepare?.(ctx);
     const page = await ctx.newPage();
     const errors = [];
     page.on("pageerror", (e) => errors.push(String(e).slice(0, 120)));
@@ -239,12 +241,48 @@ try {
   }
 
   {
+    // No Supabase: the page must say its data is unavailable. It used to fill in
+    // invented returns, which is the one thing a finance page must never do.
     const { page, ctx, errors } = await open("/performance");
+    const notice = await page.getByText("Performance data is temporarily unavailable").count();
+    const charts = await page.locator("svg.recharts-surface").count();
+    const rows = await page.locator("tbody tr").count();
+    record(
+      "/performance without data says so and shows no figures",
+      notice === 1 && charts === 0 && rows === 0,
+      `notice ${notice}, charts ${charts}, table rows ${rows}`,
+    );
+    record("/performance (no data) no uncaught page errors", errors.length === 0, errors[0] ?? "");
+    await ctx.close();
+  }
+
+  {
+    // With data (served to the browser from fixtures): the lazily loaded charts
+    // draw and the toggles work.
+    const fixtures = await performanceFixtures();
+    const { page, ctx, errors } = await open("/performance", 1440, (c) =>
+      c.route("**/_serverFn/**", (route) => {
+        const body = fixtures[serverFnName(route.request().url())];
+        if (!body) return route.continue();
+        return route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          headers: { "x-tss-serialized": "true" },
+          body,
+        });
+      }),
+    );
+    await page.waitForSelector("svg.recharts-surface", { timeout: 15_000 }).catch(() => {});
     const toggles = page.locator('[role="group"] button');
     record("/performance chart toggles render", (await toggles.count()) >= 4);
     await toggles.nth(1).click();
     await page.waitForTimeout(1200);
     record("/performance charts draw", (await page.locator("svg.recharts-surface").count()) > 0);
+    record(
+      "/performance shows the data, not the unavailable notice",
+      (await page.getByText("Performance data is temporarily unavailable").count()) === 0 &&
+        (await page.locator("tbody tr").count()) === 7,
+    );
     record("/performance no uncaught page errors", errors.length === 0, errors[0] ?? "");
     await ctx.close();
   }

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
@@ -9,10 +10,11 @@ import {
   Scripts,
   type ErrorComponentProps,
 } from "@tanstack/react-router";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import appCss from "../styles.css?url";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { BreadcrumbBar } from "@/components/BreadcrumbBar";
+import { siteGraphLd } from "@/lib/seo";
 import smifLogo from "@/assets/smif-logo-mark-128.webp";
 
 function NotFoundComponent() {
@@ -161,8 +163,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       ],
       links: [
         { rel: "stylesheet", href: appCss },
-        { rel: "icon", href: "/favicon.ico" },
-        { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
+        // Favicon set: the multi-size .ico is the fallback every browser and crawler
+        // requests by default; the PNGs let modern browsers pick the exact size, and
+        // Google's favicon crawler asks for a multiple of 48 px.
+        { rel: "icon", href: "/favicon.ico", sizes: "16x16 32x32 48x48" },
+        { rel: "icon", type: "image/png", sizes: "16x16", href: "/favicon-16x16.png" },
+        { rel: "icon", type: "image/png", sizes: "32x32", href: "/favicon-32x32.png" },
+        { rel: "icon", type: "image/png", sizes: "48x48", href: "/favicon-48x48.png" },
+        { rel: "apple-touch-icon", sizes: "180x180", href: "/apple-touch-icon.png" },
         { rel: "manifest", href: "/site.webmanifest" },
         { rel: "preconnect", href: "https://fonts.googleapis.com" },
         { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
@@ -200,85 +208,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           : []),
         {
           type: "application/ld+json",
-          children: JSON.stringify({
-            "@context": "https://schema.org",
-            "@graph": [
-              {
-                "@type": "Organization",
-                "@id": "https://www.purduesmif.org/#organization",
-                name: "Purdue Student Managed Investment Fund",
-                legalName: "Purdue Student Managed Investment Fund",
-                // Only the names the fund actually goes by. "Purdue Investment Club" and
-                // "Purdue Finance Club" are other organizations people search for, so
-                // listing them as aliases muddies which entity this is.
-                alternateName: ["Purdue SMIF", "Purdue Investment Fund"],
-                url: "https://www.purduesmif.org",
-                logo: {
-                  "@type": "ImageObject",
-                  url: "https://www.purduesmif.org/smif-logo.png",
-                  width: 512,
-                  height: 512,
-                },
-                email: "smif26@purdue.edu",
-                contactPoint: {
-                  "@type": "ContactPoint",
-                  contactType: "membership and general inquiries",
-                  email: "smif26@purdue.edu",
-                  url: "https://www.purduesmif.org/contact",
-                  availableLanguage: "English",
-                },
-                foundingDate: "1995",
-                description:
-                  "Purdue's student investment club and finance club: a student-run investment fund at the Mitch Daniels School of Business, Purdue University, managing real capital since 1995.",
-                parentOrganization: {
-                  "@type": "CollegeOrUniversity",
-                  name: "Daniels School of Business, Purdue University",
-                },
-                // Topical grounding: tells a knowledge graph what this entity is
-                // *about*, not just what it's called. Without it the org resolves
-                // as a generic student club rather than an investing entity.
-                knowsAbout: [
-                  "Equity research",
-                  "Fundamental analysis",
-                  "Discounted cash flow valuation",
-                  "Portfolio management",
-                  "Risk management",
-                  "Fixed income and macroeconomics",
-                  "Student managed investment funds",
-                ],
-                foundingLocation: {
-                  "@type": "Place",
-                  name: "West Lafayette, Indiana, United States",
-                },
-                areaServed: { "@type": "Place", name: "Purdue University" },
-                address: {
-                  "@type": "PostalAddress",
-                  streetAddress: "403 Mitch Daniels Blvd",
-                  addressLocality: "West Lafayette",
-                  addressRegion: "IN",
-                  postalCode: "47907",
-                  addressCountry: "US",
-                },
-                sameAs: [
-                  // BoilerLink is Purdue's official student-organization directory.
-                  // Listing it first ties this site to the university's own record of
-                  // the org — the strongest available signal that the "Purdue
-                  // investment club" entity and purduesmif.org are the same thing.
-                  "https://boilerlink.purdue.edu/organization/smif",
-                  "https://www.linkedin.com/company/purdue-smif/",
-                  "https://www.instagram.com/smif_purdue/",
-                  "https://purduesmif.substack.com/",
-                ],
-              },
-              {
-                "@type": "WebSite",
-                "@id": "https://www.purduesmif.org/#website",
-                url: "https://www.purduesmif.org",
-                name: "Purdue SMIF",
-                publisher: { "@id": "https://www.purduesmif.org/#organization" },
-              },
-            ],
-          }),
+          children: JSON.stringify(siteGraphLd()),
         },
       ],
     };
@@ -304,23 +234,23 @@ function RootShell({ children }: { children: React.ReactNode }) {
   );
 }
 
-/** Short crossfade between routes — keeps transitions feeling deliberate, not jumpy. */
+/**
+ * Short crossfade into each new route, so transitions feel deliberate, not jumpy.
+ * The class is added only after the first client-side navigation: the initial
+ * server-rendered page must never start hidden. Reduced motion is handled in CSS.
+ */
 function RouteTransition({ children }: { children: React.ReactNode }) {
-  const reduce = useReducedMotion();
-  const location = useLocation();
-  if (reduce) return <>{children}</>;
+  const { pathname } = useLocation();
+  const [lastPath, setLastPath] = useState(pathname);
+  const [navigated, setNavigated] = useState(false);
+  if (pathname !== lastPath) {
+    setLastPath(pathname);
+    setNavigated(true);
+  }
   return (
-    <AnimatePresence mode="wait" initial={false}>
-      <motion.div
-        key={location.pathname}
-        initial={{ opacity: 0, y: 6 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -4 }}
-        transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
-      >
-        {children}
-      </motion.div>
-    </AnimatePresence>
+    <div key={pathname} className={navigated ? "route-enter" : undefined}>
+      {children}
+    </div>
   );
 }
 
@@ -336,6 +266,7 @@ function RootComponent() {
       </a>
       <div className="flex min-h-screen flex-col">
         <SiteHeader />
+        <BreadcrumbBar />
         {/* tabIndex={-1} is what makes the skip link above actually work.
             Browsers only move focus to a fragment target when that target is
             focusable, and <main> is not by default — so activating "Skip to

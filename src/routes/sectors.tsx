@@ -127,7 +127,7 @@ export const Route = createFileRoute("/sectors")({
           })),
         }),
       },
-      breadcrumbLd("Coverage Teams", "/sectors"),
+      breadcrumbLd("Sectors", "/sectors"),
     ],
   }),
 });

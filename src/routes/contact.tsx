@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { Mail, MapPin, Linkedin, Send } from "lucide-react";
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
@@ -123,6 +123,32 @@ function Contact() {
             <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
               Get in touch. Prospective members, alumni, sponsors, and recruiters: we'd love to hear
               from you.
+            </p>
+            <p className="mt-4 max-w-2xl text-muted-foreground">
+              Thinking about joining? Start with{" "}
+              <Link to="/apply" className="link-underline font-bold text-gold-deep hover:text-ink">
+                how to join Purdue SMIF
+              </Link>{" "}
+              and the{" "}
+              <Link
+                to="/recruiting"
+                className="link-underline font-bold text-gold-deep hover:text-ink"
+              >
+                recruiting calendar
+              </Link>
+              , which cover the timeline, events and interview preparation. Recruiters and sponsors
+              can read{" "}
+              <Link to="/about" className="link-underline font-bold text-gold-deep hover:text-ink">
+                what the fund is
+              </Link>{" "}
+              and see its{" "}
+              <Link
+                to="/performance"
+                className="link-underline font-bold text-gold-deep hover:text-ink"
+              >
+                track record
+              </Link>
+              .
             </p>
           </Reveal>
         </div>

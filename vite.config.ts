@@ -56,9 +56,18 @@ const routeRules: Record<string, Record<string, unknown>> = {
   ...Object.fromEntries(STATIC_PAGES.map((p) => [p, { headers: cache(600, 86400) }])),
   "/team/**": { headers: cache(600, 86400) },
   ...Object.fromEntries(OG_IMAGES.map((f) => [`/${f}`, { headers: PUBLIC_FILE_CACHE }])),
-  "/favicon.ico": { headers: PUBLIC_FILE_CACHE },
-  "/apple-touch-icon.png": { headers: PUBLIC_FILE_CACHE },
-  "/smif-logo.png": { headers: PUBLIC_FILE_CACHE },
+  ...Object.fromEntries(
+    [
+      "/favicon.ico",
+      "/favicon-16x16.png",
+      "/favicon-32x32.png",
+      "/favicon-48x48.png",
+      "/apple-touch-icon.png",
+      "/icon-192.png",
+      "/icon-512.png",
+      "/smif-logo.png",
+    ].map((f) => [f, { headers: PUBLIC_FILE_CACHE }]),
+  ),
   // No trailing-slash redirect rules here. Vercel matches route sources without
   // regard to a trailing slash, so a rule for "/about/" also matched "/about" and
   // redirected it to itself (an endless 308 loop on the preview). The router's own
@@ -100,6 +109,11 @@ export default defineConfig(({ command, mode }) => {
       ],
       ignoreOutdatedRequests: true,
     },
+    // Production ships no source maps, client or server: they expose the original
+    // source and nearly double what a deploy uploads. Stated here so a plugin or a
+    // future default cannot turn them on unnoticed; `npm run check:build` fails the
+    // build if any slip into the output.
+    build: { sourcemap: false },
     server: { host: "::", port: 8080 },
     plugins: [
       tailwindcss(),
@@ -113,7 +127,7 @@ export default defineConfig(({ command, mode }) => {
         },
       }),
       // Build for Vercel (Nitro Vercel preset → .vercel/output, Build Output API v3).
-      command === "build" && nitro({ preset: "vercel", routeRules }),
+      command === "build" && nitro({ preset: "vercel", routeRules, sourcemap: false }),
       viteReact(),
     ],
   };

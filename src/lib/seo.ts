@@ -27,9 +27,9 @@ const OG_ALT_BY_URL: Record<string, string> = {
   [OG_IMAGE]: OG_IMAGE_ALT,
   [OG_HOME]:
     "Members of the Purdue Student Managed Investment Fund on the staircase at the Daniels School of Business",
-  [OG_ABOUT]: "About Purdue SMIF, over a gold line drawing of a city skyline",
+  [OG_ABOUT]: "About Purdue SMIF: student-managed, real capital",
   [OG_HOLDINGS]: "Portfolio Holdings, over a rising line chart",
-  [OG_TEAM]: "Meet the Team: the analysts of the Purdue Student Managed Investment Fund",
+  [OG_TEAM]: "Meet the Team: analysts, portfolio managers and the executive board of Purdue SMIF",
   [OG_SECTORS]: "Sectors: coverage teams, one portfolio",
   [OG_PERFORMANCE]: "Performance: track record, transparent, benchmarked",
   [OG_RESEARCH]: "Research: thesis-driven, rigorous, student-led",
@@ -341,4 +341,106 @@ export function buildSitemapXml(entries: SitemapEntry[]): string {
     ...urls,
     `</urlset>`,
   ].join("\n");
+}
+
+/**
+ * Site-wide structured data, emitted once from the root route: the Organization
+ * (also typed LocalBusiness, with its address, coordinates and map link) and the
+ * WebSite, tied together by stable @ids that every page's markup points back to.
+ *
+ * LocalBusiness is deliberately minimal. The fund has no public phone line, no
+ * opening hours and no price range, so none are stated; inventing them to fill
+ * the type would be false. A business listing may therefore not earn a rich
+ * result, but nothing here is untrue.
+ */
+export function siteGraphLd() {
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": ["Organization", "LocalBusiness"],
+        "@id": "https://www.purduesmif.org/#organization",
+        name: "Purdue Student Managed Investment Fund",
+        legalName: "Purdue Student Managed Investment Fund",
+        // Only the names the fund actually goes by. "Purdue Investment Club" and
+        // "Purdue Finance Club" are other organizations people search for, so
+        // listing them as aliases muddies which entity this is.
+        alternateName: ["Purdue SMIF", "Purdue Investment Fund"],
+        url: "https://www.purduesmif.org",
+        logo: {
+          "@type": "ImageObject",
+          url: "https://www.purduesmif.org/smif-logo.png",
+          width: 512,
+          height: 512,
+        },
+        // Photo of the members, for the local-business listing.
+        image: [
+          "https://www.purduesmif.org/og-home.jpg",
+          "https://www.purduesmif.org/smif-logo.png",
+        ],
+        email: "smif26@purdue.edu",
+        contactPoint: {
+          "@type": "ContactPoint",
+          contactType: "membership and general inquiries",
+          email: "smif26@purdue.edu",
+          url: "https://www.purduesmif.org/contact",
+          availableLanguage: "English",
+        },
+        foundingDate: "1995",
+        description:
+          "Purdue's student investment club and finance club: a student-run investment fund at the Mitch Daniels School of Business, Purdue University, managing real capital since 1995.",
+        parentOrganization: {
+          "@type": "CollegeOrUniversity",
+          name: "Daniels School of Business, Purdue University",
+        },
+        // Topical grounding: tells a knowledge graph what this entity is
+        // *about*, not just what it's called. Without it the org resolves
+        // as a generic student club rather than an investing entity.
+        knowsAbout: [
+          "Equity research",
+          "Fundamental analysis",
+          "Discounted cash flow valuation",
+          "Portfolio management",
+          "Risk management",
+          "Fixed income and macroeconomics",
+          "Student managed investment funds",
+        ],
+        foundingLocation: {
+          "@type": "Place",
+          name: "West Lafayette, Indiana, United States",
+        },
+        areaServed: { "@type": "Place", name: "Purdue University" },
+        address: {
+          "@type": "PostalAddress",
+          streetAddress: "403 Mitch Daniels Blvd",
+          addressLocality: "West Lafayette",
+          addressRegion: "IN",
+          postalCode: "47907",
+          addressCountry: "US",
+        },
+        // The Daniels School of Business address above, geocoded with OpenStreetMap
+        // (Nominatim, 2026-11-16): 403 Mitch Daniels Blvd, West Lafayette, IN.
+        geo: { "@type": "GeoCoordinates", latitude: 40.4237, longitude: -86.9109 },
+        hasMap:
+          "https://www.google.com/maps/search/?api=1&query=403+Mitch+Daniels+Blvd%2C+West+Lafayette%2C+IN+47907",
+        sameAs: [
+          // BoilerLink is Purdue's official student-organization directory.
+          // Listing it first ties this site to the university's own record of
+          // the org — the strongest available signal that the "Purdue
+          // investment club" entity and purduesmif.org are the same thing.
+          "https://boilerlink.purdue.edu/organization/smif",
+          "https://www.linkedin.com/company/purdue-smif/",
+          "https://www.instagram.com/smif_purdue/",
+          "https://purduesmif.substack.com/",
+        ],
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://www.purduesmif.org/#website",
+        url: "https://www.purduesmif.org",
+        name: "Purdue SMIF",
+        publisher: { "@id": "https://www.purduesmif.org/#organization" },
+      },
+    ],
+  };
 }

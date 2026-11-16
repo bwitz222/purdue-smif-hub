@@ -525,12 +525,13 @@ function Index() {
           aria-hidden="true"
           className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden"
         >
+          {/* Drawn with ::before so the ghost word is decoration only: there is no
+              text node for axe's contrast rule (or anything else) to evaluate. */}
           <span
-            className="font-display font-bold text-white/[0.03] leading-none whitespace-nowrap"
+            data-word="SMIF"
+            className="font-display font-bold text-white/[0.03] leading-none whitespace-nowrap before:content-[attr(data-word)]"
             style={{ fontSize: "clamp(5rem, 20vw, 16rem)" }}
-          >
-            SMIF
-          </span>
+          />
         </div>
         <Reveal className="relative container-prose text-center max-w-3xl mx-auto">
           <TrendingUp className="mx-auto h-7 w-7 text-gold mb-8 opacity-75" />

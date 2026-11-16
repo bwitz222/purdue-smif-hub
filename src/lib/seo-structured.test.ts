@@ -9,6 +9,7 @@ import {
   memberDescription,
   memberTitle,
   performanceDatasetLd,
+  siteGraphLd,
 } from "./seo";
 
 describe("isEmittableEvent", () => {
@@ -154,5 +155,48 @@ describe("buildSitemapXml", () => {
   it("LAST_CONTENT_UPDATE is a real date", () => {
     expect(LAST_CONTENT_UPDATE).toMatch(/^\d{4}-\d{2}-\d{2}$/);
     expect(Number.isNaN(Date.parse(LAST_CONTENT_UPDATE))).toBe(false);
+  });
+});
+
+describe("siteGraphLd", () => {
+  const graph = siteGraphLd()["@graph"];
+  const org = graph.find((n) => n["@id"] === ORG_ID) as unknown as {
+    "@type": string[];
+    address: Record<string, string>;
+    geo: { latitude: number; longitude: number };
+    hasMap: string;
+    image: string[];
+  };
+
+  it("types the organization as a LocalBusiness and keeps the stable @id", () => {
+    expect(org["@type"]).toEqual(["Organization", "LocalBusiness"]);
+    expect(graph.map((n) => n["@type"])).toContain("WebSite");
+  });
+
+  it("states the address shown in the footer and on /contact, with matching coordinates", () => {
+    expect(org.address).toMatchObject({
+      streetAddress: "403 Mitch Daniels Blvd",
+      addressLocality: "West Lafayette",
+      addressRegion: "IN",
+      postalCode: "47907",
+      addressCountry: "US",
+    });
+    // West Lafayette, Indiana: a typo in either coordinate would put the pin elsewhere.
+    expect(org.geo.latitude).toBeGreaterThan(40.4);
+    expect(org.geo.latitude).toBeLessThan(40.45);
+    expect(org.geo.longitude).toBeGreaterThan(-86.95);
+    expect(org.geo.longitude).toBeLessThan(-86.88);
+    expect(org.hasMap).toMatch(/^https:\/\/www\.google\.com\/maps\//);
+  });
+
+  it("does not invent a phone number, opening hours or price range", () => {
+    for (const key of ["telephone", "openingHours", "openingHoursSpecification", "priceRange"]) {
+      expect(org).not.toHaveProperty(key);
+    }
+  });
+
+  it("uses absolute https URLs for every image", () => {
+    for (const img of org.image as string[])
+      expect(img).toMatch(/^https:\/\/www\.purduesmif\.org\//);
   });
 });
