@@ -12,9 +12,8 @@ import {
   holdingsDatasetLd,
 } from "@/lib/seo";
 import { CountUp } from "@/components/CountUp";
-import { Reveal } from "@/components/Reveal";
+import { GrowBar, Reveal } from "@/components/Reveal";
 import { teamForIndustry, teamSlug, TEAM_INDUSTRIES } from "@/lib/portfolio";
-import { motion } from "framer-motion";
 import { useLiveBook } from "@/lib/use-live-book";
 import { DataStatus } from "@/components/DataStatus";
 import { asOfText } from "@/lib/market-calendar";
@@ -81,7 +80,7 @@ export const Route = createFileRoute("/holdings")({
           })),
         }),
       },
-      breadcrumbLd("Portfolio Holdings", "/holdings"),
+      breadcrumbLd("Holdings", "/holdings"),
     ],
   }),
 });
@@ -509,13 +508,10 @@ function HoldingsPage() {
                   )}
                   <div className="flex-1 h-1.5 bg-muted relative">
                     {/* True 0–100 scale: bar width = pct so visual length matches the actual weight. */}
-                    <motion.div
-                      className="h-full bg-gradient-gold origin-left"
-                      initial={{ scaleX: 0 }}
-                      whileInView={{ scaleX: 1 }}
-                      viewport={{ once: true, amount: 0.4 }}
-                      transition={{ duration: 0.9, delay: 0.04 * i, ease: [0.22, 1, 0.36, 1] }}
-                      style={{ width: `${Math.min(100, pct)}%` }}
+                    <GrowBar
+                      className="h-full bg-gradient-gold"
+                      width={`${Math.min(100, pct)}%`}
+                      delay={0.04 * i}
                     />
                   </div>
                   <span className="w-12 text-right font-mono text-xs text-muted-foreground tabular-nums">

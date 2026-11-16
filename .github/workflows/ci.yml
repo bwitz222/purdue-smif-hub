@@ -33,6 +33,10 @@ jobs:
           POLYGON_API_KEY: ${{ secrets.POLYGON_API_KEY }}
       - name: Production build
         run: npm run build
+      # No source maps in the deploy output, and the removed animation library
+      # has not crept back into the client bundle.
+      - name: Build output check
+        run: npm run check:build
 
   browser:
     name: Browser + accessibility

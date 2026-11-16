@@ -32,6 +32,11 @@
 - [Recruiting](https://www.purduesmif.org/recruiting): Recruiting calendar plus technical and behavioral interview prep guide.
 - [Apply](https://www.purduesmif.org/apply): Application timeline, how to join, and FAQ (including whether SMIF is a finance club or an investment club).
 - [Contact](https://www.purduesmif.org/contact): Email, address, and LinkedIn.
+- [Student Managed Investment Funds](https://www.purduesmif.org/student-managed-investment-funds): What a student managed investment fund is, how one is structured and governed, and how Purdue SMIF invests real university capital under faculty oversight.
+- [Stock Pitches](https://www.purduesmif.org/stock-pitches): How analysts build and defend a stock pitch before the investment committee, how a vote decides it, and where to read the pitch decks.
+- [Technical Interview Prep](https://www.purduesmif.org/recruiting/technical-interview-prep): Accounting foundations, valuation basics, market awareness, and how to structure a stock pitch.
+- [Behavioral Interview Prep](https://www.purduesmif.org/recruiting/behavioral-interview-prep): Know your why, build STAR stories, learn the fund, and ask sharp questions of your interviewers.
+- [Investing Glossary](https://www.purduesmif.org/learn/glossary): Plain-English definitions of intrinsic value, DCF, WACC, free cash flow, EV/EBITDA, margin of safety, alpha, beta, and the Sharpe ratio.
 
 ## Optional
 

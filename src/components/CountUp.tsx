@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { useInView, useMotionValue, animate } from "framer-motion";
 
 interface CountUpProps {
   to: number;
@@ -12,6 +11,9 @@ interface CountUpProps {
   format?: (n: number) => string;
   className?: string;
 }
+
+/** Ease-out that settles gently, close to the site's cubic-bezier(0.22, 1, 0.36, 1). */
+const easeOut = (t: number) => 1 - Math.pow(1 - t, 4);
 
 /**
  * Animates a number from `from` to `to`.
@@ -37,50 +39,62 @@ export function CountUp({
   className,
 }: CountUpProps) {
   const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-10% 0px" });
-  const mv = useMotionValue(to);
+  const [inView, setInView] = useState(false);
   // First render (server + client hydration) always shows the final value.
   const [display, setDisplay] = useState(to);
+  const current = useRef(to);
   const startedRef = useRef(false);
 
+  // Once: the first time the number is 10% inside the viewport edges.
   useEffect(() => {
-    const reduce =
-      typeof window !== "undefined" &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const el = ref.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setInView(true);
+          io.disconnect();
+        }
+      },
+      { rootMargin: "-10% 0px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     // Before the count-up runs (not in view yet) or when reduced-motion is on,
     // always show the current final value. This keeps late/updated `to` values
     // (e.g. a live-quote refresh changing a KPI) in sync instead of leaving the
     // first-paint number frozen on screen.
     if (!inView || reduce) {
+      current.current = to;
       setDisplay(to);
       return;
     }
 
-    // Defer to the next animation frame so the first paint keeps the
-    // final value; only then do we jump back to the start and animate up.
-    // First time in view we count up from `from`; on subsequent `to` changes
-    // we animate from the current value so the headline tracks the new data.
-    const start = startedRef.current ? mv.get() : from;
+    // First time in view we count up from `from`; on later `to` changes we
+    // animate from the number on screen so the headline tracks the new data.
+    const start = startedRef.current ? current.current : from;
     startedRef.current = true;
 
-    let stop: (() => void) | undefined;
-    const raf = requestAnimationFrame(() => {
-      mv.set(start);
-      setDisplay(start);
-      const controls = animate(mv, to, {
-        duration,
-        ease: [0.22, 1, 0.36, 1],
-        onUpdate: (v) => setDisplay(v),
-      });
-      stop = () => controls.stop();
-    });
-
-    return () => {
-      cancelAnimationFrame(raf);
-      stop?.();
+    let raf = 0;
+    let t0: number | null = null;
+    // The first frame keeps the final value painted; the animation starts on the
+    // next one by jumping back to the start.
+    const step = (now: number) => {
+      if (t0 === null) t0 = now;
+      const p = Math.min(1, (now - t0) / (duration * 1000));
+      const value = p >= 1 ? to : start + (to - start) * easeOut(p);
+      current.current = value;
+      setDisplay(value);
+      if (p < 1) raf = requestAnimationFrame(step);
     };
-  }, [inView, to, from, duration, mv]);
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [inView, to, from, duration]);
 
   const formatted = format
     ? format(display)

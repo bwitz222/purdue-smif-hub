@@ -391,6 +391,50 @@
       transform-origin: left;
     }
   }
+  @keyframes menu-in-x {
+    from {
+      opacity: 0;
+      transform: translateX(-24px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes menu-in-y {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes route-in {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  /* Mobile menu entrance: each row slides in, staggered by --menu-delay. */
+  .menu-in-x {
+    animation: menu-in-x 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: var(--menu-delay, 0s);
+  }
+  .menu-in-y {
+    animation: menu-in-y 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: var(--menu-delay, 0s);
+  }
+  /* Short crossfade into a new route. Only applied after a client navigation, so
+     the first server-rendered paint is never hidden. */
+  .route-enter {
+    animation: route-in 0.18s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
   .animate-fade-up {
     animation: fade-up 0.72s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
@@ -440,6 +484,9 @@
     .animate-fade-up,
     .animate-fade-in,
     .animate-expand-x,
+    .menu-in-x,
+    .menu-in-y,
+    .route-enter,
     .ticker-inner {
       animation: none !important;
       opacity: 1 !important;

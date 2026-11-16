@@ -55,7 +55,7 @@ Already strong, and not touched: one h1 per page and no skipped levels, canonica
 - Organization schema: removed the unsupported slogan, two ambiguous aliases and the retired SearchAction; added `legalName` and `contactPoint`.
 - Member pages: templated titles and descriptions, headshot in the Person schema, no email address in structured data.
 - Sitemap: 60 URLs, each with a real `lastmod` (data pages use their data date); `changefreq` and `priority` removed because Google ignores them.
-- Dataset markup for `/holdings` and for `/performance` (the latter only when real data loaded, because the page labels fallback figures as illustrative). Article dates, image and a visible "Updated" line on the finance-clubs guide.
+- Dataset markup for `/holdings` and for `/performance` (the latter only when real data loaded; the page no longer has any fallback figures). Article dates, image and a visible "Updated" line on the finance-clubs guide.
 - Recruiting events are published as structured data only when the time and venue are confirmed (7 of 10 today).
 - `llms.txt` refreshed, `llms-full.txt` added, web app manifest added.
 
@@ -69,6 +69,18 @@ New indexable pages, each with its own title, description, one keyword-bearing h
 - `/learn/glossary`: the glossary as its own page.
   Also: a plain "what is SMIF" section on the home page with employers as real text, descriptive internal links to the finance-clubs guide from the home, about, apply, recruiting and learn pages, member pages linking to their sector team, and keyword-bearing headings (`/apply` is now "How to join Purdue SMIF", `/contact` is "Contact Purdue SMIF").
 
+### B2. Audit pass of 2026-11-16: Done
+
+Re-checked every URL in a real browser against a production build and fixed what it found.
+
+- **JavaScript:** `framer-motion` had crept back in (about 125 KB raw on every page); replaced with CSS and IntersectionObserver. Entry chunk 641,325 to 503,000 bytes raw (205 KB to 164 KB gzip). Recharts (about 400 KB) now loads after `/performance` is interactive instead of before it. `npm run check:build` guards both, and source maps are pinned off in `vite.config.ts`.
+- **Placeholder content removed:** `/performance` held invented annual returns it showed when the database call failed (with no disclaimer at all if only the annual table failed). It now says the data is unavailable.
+- **Breadcrumbs:** visible on every inner page (previously only the five content pages), from one source shared with the structured data.
+- **Structured data:** the organization is also typed `LocalBusiness`, with address, coordinates and a map link. No phone, hours or price range are stated because none exist.
+- **Favicons:** a multi-size `.ico` plus 16, 32, 48 and 192 px PNGs and a 180 px touch icon; the manifest lists real 192 and 512 icons.
+- **Social cards:** `og-share`, `og-about`, `og-team` and `og-sectors` no longer say "EST. 2009", "Premier", "50+ analysts" or "Eleven coverage teams". This did not settle the founding year (section D); the cards simply stopped stating one.
+- **Other:** `llms.txt` and `llms-full.txt` list the five content pages; `/contact` and `/performance` gained internal links; a decorative watermark on the home page no longer fails axe contrast.
+
 ### D. Entity consistency: Owner
 
 This is the highest-value item and no code can do it.
@@ -76,7 +88,7 @@ This is the highest-value item and no code can do it.
 1. **Decide the founding year, 1995 or 2009, and the other facts.** The site, structured data and `llms.txt` say 1995; LinkedIn, Instagram and the site's own social-card images say 2009. Until one is true everywhere, AI answers and search snippets will be wrong in one direction or the other.
 2. Fix every profile to match: LinkedIn and Instagram bios, the Daniels MS Finance page (states about $400,000), the Purdue course catalog (states $300,000 as of 2017), the Facebook group, RocketReach.
 3. Decide whether to state the origin gift (LinkedIn and RocketReach mention a $100,000 donation) and the course-credit option (BoilerLink lists 1 or 2 credit hours); both are on other sites but not on this one.
-4. Regenerate the social-card images. Several carry baked-in text that contradicts the site: "EST. 2009", "Premier", "50+ analysts across 10 sector teams", "Eleven coverage teams". They are the cards shown when a page is shared.
+4. The four social cards that contradicted the site were regenerated without a year or counts (`scripts/generate-og-cards.mjs`). If the owner wants the founding year on a card, add it there once the year is decided.
    Once decided, tell me the facts and I will update the site, structured data, `llms.txt` and the cards in one pass.
 
 ### E. Authority and off-site: Owner
@@ -111,7 +123,7 @@ This is the highest-value item and no code can do it.
 | Window        | Work                                                                                                                                                             |
 | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Week 1        | Ship this branch. Decide the founding year and facts (D). Submit the sitemap in Search Console. Add Semrush API units and rerun research (F).                    |
-| Weeks 2 to 4  | Correct third-party profiles (D2). Send the Purdue link requests (E). Regenerate social cards (D4). Check the live contact form once after deploy.               |
+| Weeks 2 to 4  | Correct third-party profiles (D2). Send the Purdue link requests (E). Check the live contact form once after deploy.                                             |
 | Weeks 4 to 8  | Review Search Console for the new pages' impressions and queries; tune titles on pages with high impressions and low clicks. Publish on-site research pages (G). |
 | Weeks 8 to 12 | Refresh dated pages, reassess head-term positions, add the next missing page indicated by Search Console queries.                                                |
 
