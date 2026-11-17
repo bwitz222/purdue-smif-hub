@@ -30,9 +30,10 @@ export const Route = createFileRoute("/api/public/hooks/refresh-etf-weights")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const expectedSecret = process.env.REFRESH_HOOK_SECRET?.trim();
-        const provided = request.headers.get("x-refresh-secret")?.trim();
-        if (!expectedSecret || !provided || provided !== expectedSecret) {
+        // Loaded inside the handler: it uses node:crypto, which must not reach
+        // the browser bundle this route file is also compiled into.
+        const { isAuthorizedHook } = await import("@/lib/hook-auth.server");
+        if (!isAuthorizedHook(request)) {
           return json({ ok: false, error: "Unauthorized" }, 401);
         }
 

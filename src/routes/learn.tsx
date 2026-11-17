@@ -1,16 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { ApplyLink } from "@/components/ApplyLink";
 import { ExternalLink, Download } from "lucide-react";
 import { socialMeta, canonical, breadcrumbLd, OG_LEARN, PAGE_META } from "@/lib/seo";
 import { GLOSSARY, termSlug } from "@/data/glossary";
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import { OnThisPage, type PageSection } from "@/components/OnThisPage";
-import { applyUrl } from "@/lib/apply-url";
 import dcfAmzn from "@/assets/dcf-model-amzn.xlsx?url";
 import amznThesis from "@/assets/amzn-investment-thesis.docx?url";
 import amznCca from "@/assets/amzn-cca.xlsx?url";
 import amznCcaCommentary from "@/assets/amzn-cca-commentary.docx?url";
-
-const APPLICATION_URL = applyUrl("learn-cta");
 
 /** Anchors for the in-page nav. Each id must match a <section id> below. */
 const SECTIONS: readonly PageSection[] = [
@@ -541,16 +539,12 @@ function Learn() {
             .
           </p>
           <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href={APPLICATION_URL}
-              target="_blank"
-              rel="noopener noreferrer"
+            <ApplyLink
+              placement="learn-cta"
               className="press inline-flex items-center justify-center gap-2.5 bg-gold px-9 py-4 text-sm font-semibold text-ink hover:bg-gold-mid"
             >
               Apply to Join
-              <ExternalLink className="h-4 w-4" aria-hidden="true" />
-              <span className="sr-only">(opens application form in new tab)</span>
-            </a>
+            </ApplyLink>
             <Link
               to="/recruiting"
               className="press inline-flex items-center justify-center gap-2 border border-background/30 px-9 py-4 text-sm font-semibold text-background hover:border-gold hover:text-gold"

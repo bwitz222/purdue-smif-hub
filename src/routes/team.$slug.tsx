@@ -3,12 +3,8 @@ import { ArrowLeft, Mail, Linkedin } from "lucide-react";
 import { TEAM_INDUSTRIES, teamSlug } from "@/lib/portfolio";
 import { useState } from "react";
 import { Reveal } from "@/components/Reveal";
-import {
-  findMemberBySlug,
-  hasIndexableProfile,
-  memberDirectory,
-  type DirectoryEntry,
-} from "@/data/team";
+import { findMemberBySlug, memberDirectory, TEAM_BLURB, type DirectoryEntry } from "@/data/team";
+import { holdings } from "@/data/holdings";
 import {
   socialMeta,
   canonical,
@@ -17,6 +13,7 @@ import {
   ORG_ID,
   SITE_URL,
   OG_TEAM,
+  LAST_CONTENT_UPDATE,
 } from "@/lib/seo";
 
 /**
@@ -26,7 +23,18 @@ import {
  * analyst's name could never surface this domain. Each member now has a
  * canonical, indexable page carrying Person structured data, so the roster
  * works as a recruiting asset rather than a staff list.
+ *
+ * Every profile is indexable and listed in the sitemap. The page is rendered on
+ * the server, so a crawler that runs no JavaScript still gets the name, every
+ * seat the person holds, what each team covers and the positions it holds.
  */
+
+/** Positions a coverage team is responsible for, from the static book. */
+function teamHoldings(team: string) {
+  const industries = TEAM_INDUSTRIES[team];
+  if (!industries) return [];
+  return holdings.filter((h) => industries.includes(h.industry));
+}
 export const Route = createFileRoute("/team/$slug")({
   loader: ({ params }) => {
     const entry = findMemberBySlug(params.slug);
@@ -54,11 +62,6 @@ export const Route = createFileRoute("/team/$slug")({
         { title },
         { name: "description", content: description },
         ...socialMeta({ title, description, url, type: "profile", image: OG_TEAM }),
-        // A profile with no bio is ~40 words. Keep it live and followed so it
-        // still passes link equity through to teammates, but keep it out of
-        // the index until it has something to say. Writing the bio reverses
-        // this automatically — see hasIndexableProfile in src/data/team.ts.
-        ...(hasIndexableProfile(m) ? [] : [{ name: "robots", content: "noindex, follow" }]),
       ],
       links: [{ rel: "canonical", href: url }],
       scripts: [
@@ -69,12 +72,27 @@ export const Route = createFileRoute("/team/$slug")({
             "@type": "ProfilePage",
             "@id": `${url}#profile`,
             url,
+            name: title,
+            description,
+            inLanguage: "en",
+            dateModified: LAST_CONTENT_UPDATE,
+            isPartOf: { "@id": `${SITE_URL}/#website` },
             mainEntity: {
               "@type": "Person",
               "@id": `${url}#person`,
               name: m.name,
-              jobTitle: m.role,
-              description: m.bio || undefined,
+              url,
+              // Every seat, so "Co-President" and "Portfolio Manager, Industrials"
+              // are both attached to the same person.
+              jobTitle:
+                entry.roles.length > 1
+                  ? entry.roles.map((r) =>
+                      r.team === "Executive Board" ? r.role : `${r.role}, ${r.team}`,
+                    )
+                  : m.role,
+              // The bio when there is one; otherwise the same factual sentence
+              // the meta description uses, so the field is never empty.
+              description: m.bio || description,
               image,
               affiliation: { "@id": ORG_ID },
               // The fund itself, by @id. The sector team is named in jobTitle and the
@@ -127,6 +145,7 @@ function ProfilePhoto({ entry }: { entry: DirectoryEntry }) {
       width={640}
       height={640}
       decoding="async"
+      fetchPriority="high"
       className="aspect-square w-full object-cover"
       style={{
         objectPosition: m.photoPosition ?? "center",
@@ -141,6 +160,8 @@ function ProfilePhoto({ entry }: { entry: DirectoryEntry }) {
 function MemberProfile() {
   const { entry } = Route.useLoaderData();
   const { member: m, team, slug } = entry;
+  const isFaculty = team === "Faculty Advisors";
+  const firstName = m.name.split(" ")[0];
 
   // Teammates from the same group, for lateral navigation and internal linking.
   const teammates = memberDirectory.filter((e) => e.team === team && e.slug !== slug).slice(0, 6);
@@ -151,7 +172,7 @@ function MemberProfile() {
         <div className="container-prose py-10">
           <Link
             to="/team"
-            className="group link-underline inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-gold-deep hover:text-ink"
+            className="group link-underline inline-flex min-h-6 items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-gold-deep hover:text-ink"
           >
             <ArrowLeft className="h-3.5 w-3.5 arrow-slide" />
             All of the team
@@ -189,12 +210,65 @@ function MemberProfile() {
               </p>
             )}
 
+            <h2 className="mt-10 font-display text-xl font-bold">
+              {isFaculty ? "Role at the fund" : `What ${firstName} does at the fund`}
+            </h2>
+            <ul className="mt-4 max-w-2xl divide-y divide-border border-y border-border">
+              {entry.roles.map((r) => {
+                const covered = teamHoldings(r.team);
+                return (
+                  <li key={r.team} className="py-5">
+                    <p className="font-bold text-foreground">
+                      {r.role}
+                      <span className="font-normal text-muted-foreground"> · {r.team}</span>
+                    </p>
+                    {TEAM_BLURB[r.team] && (
+                      <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                        {TEAM_BLURB[r.team]}
+                      </p>
+                    )}
+                    {covered.length > 0 && (
+                      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                        Positions the team covers:{" "}
+                        {covered.map((h) => `${h.company} (${h.symbol})`).join(", ")}.{" "}
+                        <Link
+                          to="/sectors"
+                          hash={teamSlug(r.team)}
+                          className="link-underline inline-flex min-h-6 items-center font-bold text-gold-deep hover:text-ink"
+                        >
+                          {r.team} team
+                        </Link>
+                      </p>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+            <p className="mt-5 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+              The Purdue Student Managed Investment Fund is a student-run fund at the Daniels School
+              of Business that has managed real university capital since 1995. See{" "}
+              <Link
+                to="/holdings"
+                className="link-underline inline-flex min-h-6 items-center font-bold text-gold-deep hover:text-ink"
+              >
+                what the fund holds
+              </Link>{" "}
+              or{" "}
+              <Link
+                to="/about"
+                className="link-underline inline-flex min-h-6 items-center font-bold text-gold-deep hover:text-ink"
+              >
+                how it is run
+              </Link>
+              .
+            </p>
+
             {(m.email || m.linkedin) && (
               <div className="mt-10 flex flex-wrap items-center gap-6 border-t border-border pt-6 text-sm">
                 {m.email && (
                   <a
                     href={`mailto:${m.email}`}
-                    className="group link-underline inline-flex items-center gap-2 text-foreground hover:text-gold-deep"
+                    className="group link-underline inline-flex min-h-6 items-center gap-2 text-foreground hover:text-gold-deep"
                   >
                     <Mail className="h-4 w-4 icon-pop" />
                     <span className="font-mono">{m.email}</span>
@@ -205,7 +279,7 @@ function MemberProfile() {
                     href={m.linkedin}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group link-underline inline-flex items-center gap-2 text-foreground hover:text-gold-deep"
+                    className="group link-underline inline-flex min-h-6 items-center gap-2 text-foreground hover:text-gold-deep"
                   >
                     <Linkedin className="h-4 w-4 icon-pop" />
                     <span className="font-mono">LinkedIn</span>
@@ -226,7 +300,7 @@ function MemberProfile() {
                 <Link
                   to="/sectors"
                   hash={teamSlug(team)}
-                  className="link-underline font-bold text-gold-deep hover:text-ink"
+                  className="link-underline inline-flex min-h-6 items-center font-bold text-gold-deep hover:text-ink"
                 >
                   See what the {team} team holds
                 </Link>

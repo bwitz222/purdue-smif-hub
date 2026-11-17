@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ExternalLink, BookOpen, Users, TrendingUp } from "lucide-react";
+import { BookOpen, Users, TrendingUp } from "lucide-react";
 import { socialMeta, canonical, breadcrumbLd, OG_APPLY } from "@/lib/seo";
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import {
@@ -9,9 +9,8 @@ import {
   AccordionContent,
 } from "@/components/ui/accordion";
 
-import { applyUrl } from "@/lib/apply-url";
-
-const APPLICATION_URL = applyUrl("apply-page-primary");
+import { APPLICATIONS_OPEN, APPLICATION_CYCLE } from "@/lib/apply-url";
+import { ApplyLink } from "@/components/ApplyLink";
 
 export const Route = createFileRoute("/apply")({
   component: Apply,
@@ -129,12 +128,13 @@ function Apply() {
               How to join Purdue SMIF
             </h1>
             <p className="mt-4 text-xl text-gold">We can't wait to meet you.</p>
-            {/* Status-neutral on purpose: "Applications are open" was hardcoded
-                here while /recruiting (which derives open/closed from the
-                event calendar) said the cycle had closed. The calendar owns
-                the dates; this page links to it. */}
+            {/* Open or closed comes from APPLICATIONS_OPEN in src/lib/apply-url.ts,
+                the same switch every Apply button reads, so this sentence and
+                the buttons cannot disagree. The calendar still owns the dates. */}
             <p className="mt-6 max-w-2xl text-lg text-on-dark-secondary">
-              Applications go through the official portal during each recruiting window; the{" "}
+              {APPLICATIONS_OPEN
+                ? "Applications are open through the official portal; the "
+                : `The ${APPLICATION_CYCLE} application has closed. Applications reopen each fall and spring through the official portal; the `}
               <Link to="/recruiting" className="link-underline text-background hover:text-gold">
                 recruiting calendar
               </Link>{" "}
@@ -296,20 +296,22 @@ function Apply() {
             Ready when you are.
           </h2>
           <p className="mt-6 text-on-dark-secondary max-w-xl mx-auto">
-            Submit the official application, or head to recruiting for the full event calendar and
-            interview prep guide.
+            {APPLICATIONS_OPEN
+              ? "Submit the official application, or head to recruiting for the full event calendar and interview prep guide."
+              : `The ${APPLICATION_CYCLE} application has closed. Applications open each fall and spring semester, and the next window is posted on the recruiting calendar.`}
           </p>
           <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href={APPLICATION_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="press inline-flex items-center justify-center gap-2.5 bg-gold px-9 py-4 text-sm font-semibold text-ink hover:bg-gold-mid"
-            >
-              Open Application Portal
-              <ExternalLink className="h-4 w-4" aria-hidden="true" />
-              <span className="sr-only">(opens application form in new tab)</span>
-            </a>
+            {/* The portal button only exists while the form takes responses.
+                Closed, the calendar link beside it is the next step, so it is
+                not replaced with a button that would loop back to this page. */}
+            {APPLICATIONS_OPEN && (
+              <ApplyLink
+                placement="apply-page-primary"
+                className="press inline-flex items-center justify-center gap-2.5 bg-gold px-9 py-4 text-sm font-semibold text-ink hover:bg-gold-mid"
+              >
+                Open Application Portal
+              </ApplyLink>
+            )}
             <Link
               to="/recruiting"
               className="press inline-flex items-center justify-center gap-2 border border-background/30 px-9 py-4 text-sm font-semibold text-background hover:border-gold hover:text-gold"

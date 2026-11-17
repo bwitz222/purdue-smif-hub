@@ -34,7 +34,7 @@ function NotFoundComponent() {
             className="h-full w-full object-contain"
           />
         </span>
-        <div className="font-display text-[8rem] font-bold text-gold/20 leading-none select-none">
+        <div className="font-display text-[8rem] font-bold text-gold/50 leading-none select-none">
           404
         </div>
         <h1 className="font-display text-3xl font-bold text-background mt-4">Page not found</h1>
@@ -347,11 +347,11 @@ function RootComponent() {
             <Outlet />
           </RouteTransition>
         </main>
-        {/* Footer spacing lives on the layout, not on SiteFooter — keeps short pages
-            from carrying an enormous gap when they don't need one. */}
-        <div className="mt-24">
-          <SiteFooter />
-        </div>
+        {/* No margin above the footer. Every page ends in a section with its own
+            padding, and most end in a dark or tinted band: a 96px margin here
+            showed as a stripe of page background between that band and the
+            dark footer. */}
+        <SiteFooter />
       </div>
     </QueryClientProvider>
   );

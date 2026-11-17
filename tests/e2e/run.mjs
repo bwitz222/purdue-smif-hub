@@ -126,38 +126,55 @@ try {
   }
 
   // ── Accessibility ────────────────────────────────────────────────────────
-  for (const path of PAGES) {
-    const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
-    const page = await ctx.newPage();
-    await page.goto(BASE + path, { waitUntil: "networkidle", timeout: 60_000 });
-    await page.waitForTimeout(500);
-    // These pages are server-rendered and then hydrated, so the client router
-    // performs a second main-frame navigation to the same URL shortly after
-    // load. If it lands between addScriptTag and evaluate, the execution
-    // context is destroyed mid-run and the whole suite dies with an uncaught
-    // "Execution context was destroyed" — taking every later test with it.
-    // Re-inject and retry once rather than losing the run.
-    const runAxe = async () => {
-      await page.addScriptTag({ content: axeSource });
-      return page.evaluate(
-        async () =>
-          await window.axe.run(document, {
-            runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"] },
-          }),
+  // Both widths. The phone layout renders different markup (stacked calendar
+  // rows, horizontally scrolling tables), and a desktop-only run passed while
+  // the live site failed colour contrast on /recruiting and had two scrollable
+  // regions a keyboard could not reach. Member profiles are scanned too: one
+  // with a bio and one without.
+  const AXE_PAGES = [...PAGES, "/team/sid-voona", "/team/cian-murray"];
+  for (const [label, viewport] of [
+    ["desktop", { width: 1440, height: 900 }],
+    ["mobile", { width: 390, height: 844 }],
+  ])
+    for (const path of AXE_PAGES) {
+      const ctx = await browser.newContext({ viewport });
+      const page = await ctx.newPage();
+      await page.goto(BASE + path, { waitUntil: "networkidle", timeout: 60_000 });
+      await page.waitForTimeout(500);
+      // These pages are server-rendered and then hydrated, so the client router
+      // performs a second main-frame navigation to the same URL shortly after
+      // load. If it lands between addScriptTag and evaluate, the execution
+      // context is destroyed mid-run and the whole suite dies with an uncaught
+      // "Execution context was destroyed" — taking every later test with it.
+      // Re-inject and retry once rather than losing the run.
+      const runAxe = async () => {
+        await page.addScriptTag({ content: axeSource });
+        return page.evaluate(
+          async () =>
+            await window.axe.run(document, {
+              runOnly: {
+                type: "tag",
+                values: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"],
+              },
+            }),
+        );
+      };
+      let out;
+      try {
+        out = await runAxe();
+      } catch (err) {
+        if (!/Execution context was destroyed|Target closed/.test(String(err))) throw err;
+        await page.waitForLoadState("networkidle").catch(() => {});
+        out = await runAxe();
+      }
+      const ids = out.violations.map((v) => `${v.id}(${v.nodes.length})`);
+      record(
+        `${path} axe WCAG 2.1 A/AA (${label})`,
+        out.violations.length === 0,
+        ids.join(" ") || "clean",
       );
-    };
-    let out;
-    try {
-      out = await runAxe();
-    } catch (err) {
-      if (!/Execution context was destroyed|Target closed/.test(String(err))) throw err;
-      await page.waitForLoadState("networkidle").catch(() => {});
-      out = await runAxe();
+      await ctx.close();
     }
-    const ids = out.violations.map((v) => `${v.id}(${v.nodes.length})`);
-    record(`${path} axe WCAG 2.1 A/AA`, out.violations.length === 0, ids.join(" ") || "clean");
-    await ctx.close();
-  }
 
   // ── Interactions ─────────────────────────────────────────────────────────
   const open = async (path, width = 1440) => {
@@ -234,6 +251,46 @@ try {
       "/team/<slug> has a canonical URL",
       info.canonical === "https://www.purduesmif.org/team/sid-voona",
       info.canonical ?? "",
+    );
+    await ctx.close();
+  }
+
+  // Every profile is open to search, including the ones with no personal bio.
+  // Those used to carry "noindex" and were left out of the sitemap, which hid
+  // eight members from any search for their name.
+  {
+    const { page, ctx } = await open("/team/cian-murray");
+    const info = await page.evaluate(() => ({
+      robots: Array.from(document.querySelectorAll('meta[name="robots"]')).map((m) => m.content),
+      text: document.querySelector("main")?.innerText ?? "",
+    }));
+    record(
+      "/team/<slug> without a bio is indexable",
+      info.robots.length === 1 && !/noindex/i.test(info.robots[0]),
+      info.robots.join(" | "),
+    );
+    record(
+      "/team/<slug> without a bio states role and coverage",
+      /Positions the team covers/.test(info.text) && /Financials/.test(info.text),
+    );
+    await ctx.close();
+  }
+  {
+    const res = await fetch(BASE + "/sitemap.xml");
+    const xml = await res.text();
+    const profiles = (xml.match(/<loc>[^<]*\/team\/[a-z0-9-]+<\/loc>/g) ?? []).length;
+    record("sitemap lists every member profile", profiles >= 50, `${profiles} profiles`);
+  }
+  // With the form closed, no Apply button may lead to the expired survey.
+  {
+    const { page, ctx } = await open("/");
+    const external = await page.locator('a[href*="qualtrics.com"]').count();
+    const src = readFileSync("src/lib/apply-url.ts", "utf8");
+    const open_ = /APPLICATIONS_OPEN = true/.test(src);
+    record(
+      "Apply buttons match the application state",
+      open_ ? external > 0 : external === 0,
+      `${external} Qualtrics links, open=${open_}`,
     );
     await ctx.close();
   }

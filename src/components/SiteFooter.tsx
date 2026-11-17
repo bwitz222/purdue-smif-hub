@@ -12,7 +12,7 @@ export function SiteFooter() {
             <span className="grid h-11 w-11 place-items-center bg-background p-1.5">
               <img
                 src={smifLogo}
-                alt="Purdue SMIF"
+                alt=""
                 width={44}
                 height={44}
                 loading="lazy"

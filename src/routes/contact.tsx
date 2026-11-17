@@ -105,7 +105,10 @@ function Contact() {
       resetForm();
     } catch (err) {
       console.error("[contact] send error:", err);
-      setNotice({ kind: "error", text: "Couldn't send your message. Please try again." });
+      setNotice({
+        kind: "error",
+        text: "Couldn't send your message. Try again in a few minutes, or email smif26@purdue.edu.",
+      });
     } finally {
       setSubmitting(false);
     }

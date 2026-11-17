@@ -1,7 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight } from "lucide-react";
+import { ApplyLink } from "@/components/ApplyLink";
 import { socialMeta, canonical, breadcrumbLd, OG_ABOUT } from "@/lib/seo";
-import { applyUrl } from "@/lib/apply-url";
 import { PLACEMENT_FIRMS, PROCESS, IPS } from "@/data/fund-facts";
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import { OnThisPage, type PageSection } from "@/components/OnThisPage";
@@ -497,15 +496,12 @@ function About() {
             </p>
           </div>
           <div className="flex gap-4 shrink-0">
-            <a
-              href={applyUrl("about-cta")}
-              target="_blank"
-              rel="noopener noreferrer"
+            <ApplyLink
+              placement="about-cta"
               className="press group inline-flex items-center gap-2 bg-gold px-7 py-3.5 text-sm font-semibold text-ink hover:bg-gold-mid"
             >
               Apply to Join
-              <ArrowRight className="h-4 w-4 arrow-slide" />
-            </a>
+            </ApplyLink>
             <Link
               to="/team"
               className="press inline-flex items-center gap-2 border border-background/20 px-7 py-3.5 text-sm font-semibold text-background hover:border-gold hover:text-gold"

@@ -18,12 +18,6 @@ import {
 import { socialMeta, canonical, breadcrumbLd, OG_TEAM } from "@/lib/seo";
 import { jumpToSection } from "@/lib/jump-to";
 
-// Built from memberDirectory, not by concatenating the groups: seven people
-// sit on the executive board AND a sector/FIM/PM team, so a plain concat
-// emitted each of them as two Person entries with different jobTitles.
-// memberDirectory already dedupes by slug, first appearance winning.
-const allMembers = memberDirectory.map((e) => e.member);
-
 type TeamSearch = { sector?: string; q?: string };
 
 export const Route = createFileRoute("/team/")({
@@ -55,13 +49,18 @@ export const Route = createFileRoute("/team/")({
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "ItemList",
-          itemListElement: allMembers.map((m, i) => ({
+          // Each entry points at the member's own page and reuses its Person
+          // @id, so a crawler reading the roster can follow every profile and
+          // merges the two descriptions of a person into one entity.
+          itemListElement: memberDirectory.map(({ member: m, slug }, i) => ({
             "@type": "ListItem",
             position: i + 1,
             item: {
               "@type": "Person",
+              "@id": `${canonical(`/team/${slug}`)}#person`,
               name: m.name,
               jobTitle: m.role,
+              url: canonical(`/team/${slug}`),
               affiliation: { "@id": "https://www.purduesmif.org/#organization" },
             },
           })),
@@ -394,9 +393,12 @@ function Team() {
               count={hasFilter ? filteredBoard.length : undefined}
             />
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {filteredBoard.map((m) => (
+              {filteredBoard.map((m, i) => (
                 <div key={m.name} className="h-full [&>div]:h-full">
-                  <MemberCard m={m} onSelect={setSelected} />
+                  {/* The first row is above the fold on every breakpoint and one
+                      of these headshots is the largest paint. Lazy-loading them
+                      delayed LCP to 4.5 to 5.8 seconds on the live page. */}
+                  <MemberCard m={m} onSelect={setSelected} priority={i < 3} />
                 </div>
               ))}
             </div>

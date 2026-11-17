@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, ExternalLink } from "lucide-react";
+import { ApplyLink } from "@/components/ApplyLink";
+import { ArrowRight } from "lucide-react";
 import {
   socialMeta,
   canonical,
@@ -8,7 +9,6 @@ import {
   OG_FINANCE_CLUBS,
   PAGE_META,
 } from "@/lib/seo";
-import { applyUrl } from "@/lib/apply-url";
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import { OnThisPage, type PageSection } from "@/components/OnThisPage";
 
@@ -290,7 +290,12 @@ function FinanceClubs() {
           {/* Wide table scrolls inside its own container so the page body never
               scrolls horizontally on mobile. */}
           <Reveal>
-            <div className="overflow-x-auto border border-border">
+            <div
+              role="region"
+              aria-label="Comparison of finance clubs at Purdue, scrollable horizontally"
+              tabIndex={0}
+              className="overflow-x-auto border border-border focus-visible:outline-2 focus-visible:outline-gold-deep"
+            >
               <table className="w-full min-w-[46rem] border-collapse text-left text-sm">
                 <caption className="sr-only">
                   Finance and investment organizations at Purdue University compared by focus,
@@ -479,16 +484,12 @@ function FinanceClubs() {
               Purdue.
             </p>
             <div className="mt-10 flex flex-wrap gap-4">
-              <a
-                href={applyUrl("finance-clubs-guide")}
-                target="_blank"
-                rel="noopener noreferrer"
+              <ApplyLink
+                placement="finance-clubs-guide"
                 className="press group inline-flex items-center gap-2.5 bg-gold px-8 py-3.5 text-sm font-semibold text-ink hover:bg-gold-mid"
               >
                 Apply to Join
-                <ExternalLink className="h-4 w-4" aria-hidden="true" />
-                <span className="sr-only">(opens application form in new tab)</span>
-              </a>
+              </ApplyLink>
               <Link
                 to="/recruiting"
                 className="press inline-flex items-center gap-2.5 border border-background/25 px-8 py-3.5 text-sm font-semibold text-background hover:border-gold hover:text-gold"

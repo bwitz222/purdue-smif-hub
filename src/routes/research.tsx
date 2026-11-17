@@ -589,7 +589,9 @@ function PublicationRowItem({ pub, showSeries }: { pub: PublicationRow; showSeri
           href={pub.url}
           target="_blank"
           rel="noreferrer"
-          aria-label={`Download ${pub.title}`}
+          // Starts with the visible word so voice-control users can say what they
+          // see ("Open ..."); the old "Download ..." name did not contain it.
+          aria-label={`Open ${pub.title}`}
           className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-foreground hover:text-gold-deep"
         >
           <Download className="h-3.5 w-3.5" aria-hidden="true" /> Open

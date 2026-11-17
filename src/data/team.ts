@@ -2,7 +2,6 @@ import type { Member } from "@/components/MemberCard";
 import andrewLacambraPhoto from "@/assets/team/andrew-lacambra.webp";
 import ianTehPhoto from "@/assets/team/ian-teh.webp";
 import landonHaffnerPhoto from "@/assets/team/landon-haffner.webp";
-import yashitaPujariPhoto from "@/assets/team/yashita-pujari.webp";
 import chrisAndreouPhoto from "@/assets/team/chris-andreou.webp";
 import parthDamaPhoto from "@/assets/team/parth-dama.webp";
 import mikhailBilokinPhoto from "@/assets/team/mikhail-bilokin.webp";
@@ -45,8 +44,6 @@ import aaravMehtaPhoto from "@/assets/team/aarav-mehta.webp";
 const BIO_BY_NAME: Record<string, string> = {
   "Landon Haffner":
     "Landon Haffner is a sophomore in the Daniels School of Business, majoring in Finance with a minor in Real Estate Finance, Management Consulting and Entrepreneurship. He is interning at Lennar this summer in sales and land acquisition. In his free time, he enjoys going to the gym, golfing and playing rocket league with friends.",
-  "Yashita Pujari":
-    "Yashita Pujari is a junior in the Daniels School of Business, majoring in Business Analytics and Information Management. Outside of SMIF, she serves on the executive board of UR Global and will be a team lead for the Doster Leadership Conference. In her free time, she enjoys baking, reading and trying new restaurants.",
   "Chris Andreou":
     "Chris Andreou is a junior in the Daniels School of Business, majoring in Finance and Accounting. He has previously interned at Zurich Insurance as a Finance Intern. In his free time, he enjoys visiting new countries, weightlifting, playing basketball, and golfing.",
   "Parth Dama":
@@ -206,7 +203,6 @@ const PHOTO_BY_NAME: Record<string, string> = {
   "Andrew Lacambra": andrewLacambraPhoto,
   "Ian Teh": ianTehPhoto,
   "Landon Haffner": landonHaffnerPhoto,
-  "Yashita Pujari": yashitaPujariPhoto,
   "Chris Andreou": chrisAndreouPhoto,
   "Parth Dama": parthDamaPhoto,
   "Mikhail Bilokin": mikhailBilokinPhoto,
@@ -247,7 +243,6 @@ const PHOTO_BY_NAME: Record<string, string> = {
 
 const PHOTO_POSITION_BY_NAME: Record<string, string> = {
   "Landon Haffner": "62% 37%",
-  "Yashita Pujari": "center 22%",
   // Tall portrait crops — bias the square toward the face near the top.
   "Ayden Wong": "center 20%",
   "Gautham Santhanam": "center 20%",
@@ -461,9 +456,7 @@ const LINKEDIN_BY_NAME: Record<string, string> = {
   "Hunter Specht": "https://www.linkedin.com/in/hunterspecht",
   "Sandhya Gopinath": "https://www.linkedin.com/in/sandhya--gopinath",
   "Anushka Patel": "https://www.linkedin.com/in/anushka-patel-01a252277",
-  "Yashita Pujari": "https://www.linkedin.com/in/yashitarpujari",
   "Jacob George": "https://www.linkedin.com/in/jacobmigeorge",
-  "Alejandro Cabrales": "https://www.linkedin.com/in/alejandro-cabrales",
   "Veer Sanyal": "https://www.linkedin.com/in/veersanyal",
   "Evan Lee": "https://www.linkedin.com/in/evand7lee",
   "John Battaglino": "https://www.linkedin.com/in/johnbutlerbattaglino",
@@ -519,11 +512,19 @@ export const memberSlug = (name: string) =>
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
 
+export type MemberRole = { team: string; role: string };
+
 export type DirectoryEntry = {
   slug: string;
-  /** Which group this person appears under, for breadcrumbs and context. */
+  /** Which group this person appears under first, for breadcrumbs and context. */
   team: string;
   member: Member;
+  /**
+   * Every seat the person holds, in roster order. Seven board members also run
+   * or sit on a sector, FIM or PM team; the profile page lists all of them so a
+   * search for "Industrials portfolio manager" can land on the right person.
+   */
+  roles: MemberRole[];
 };
 
 function buildDirectory(): DirectoryEntry[] {
@@ -534,23 +535,48 @@ function buildDirectory(): DirectoryEntry[] {
     ["Portfolio + Risk Management", portfolioManagers],
     ["Faculty Advisors", facultyAdvisors],
   ];
-  const seen = new Set<string>();
+  const bySlug = new Map<string, DirectoryEntry>();
   const out: DirectoryEntry[] = [];
   for (const [team, members] of groups) {
     for (const member of members) {
       if (!member.name) continue;
       const slug = memberSlug(member.name);
-      // A person can sit on the board AND a sector team. First appearance wins,
-      // so each member resolves to exactly one canonical URL.
-      if (seen.has(slug)) continue;
-      seen.add(slug);
-      out.push({ slug, team, member });
+      // A person can sit on the board AND a sector team. First appearance wins
+      // the canonical URL and the card; later seats are recorded as roles.
+      const existing = bySlug.get(slug);
+      if (existing) {
+        if (!existing.roles.some((r) => r.team === team)) {
+          existing.roles.push({ team, role: member.role });
+        }
+        continue;
+      }
+      const entry: DirectoryEntry = { slug, team, member, roles: [{ team, role: member.role }] };
+      bySlug.set(slug, entry);
+      out.push(entry);
     }
   }
   return out;
 }
 
 export const memberDirectory: DirectoryEntry[] = buildDirectory();
+
+/**
+ * One line on what each group does, shown on member profiles. The sector lines
+ * are the same descriptions /team prints above each team; the rest mirror the
+ * copy on /sectors and /team, so a profile never says something those pages
+ * do not.
+ */
+export const TEAM_BLURB: Record<string, string> = {
+  "Executive Board":
+    "Students elected each spring to lead the fund's strategy, research, risk, recruiting, education, and operations.",
+  ...Object.fromEntries(sectorTeams.map((t) => [t.name, t.description])),
+  "Fixed Income & Macro":
+    "Rates, credit, FX, and global macro themes that frame equity positioning.",
+  "Portfolio + Risk Management":
+    "Allocation, risk oversight, trading, and performance attribution.",
+  "Faculty Advisors":
+    "Daniels School of Business faculty who advise SMIF on curriculum, risk, and investment process.",
+};
 
 /**
  * Single source of truth for headcount, derived from the deduped directory.
@@ -561,24 +587,6 @@ export const memberDirectory: DirectoryEntry[] = buildDirectory();
  * is exactly the kind of inconsistency that makes an answer engine trust a
  * third-party listing over the fund's own page.
  */
-/**
- * Whether a member's profile page carries enough content to be worth indexing.
- *
- * Without a bio the page is a name, a role, a class year, and two links — 40-ish
- * words. Submitting a handful of those dilutes the roster in search rather than
- * extending its reach, and they are the kind of page that gets classified as
- * thin. Five of the current 36 members are in that state.
- *
- * The pages stay live, stay linked from /team, and are marked `follow`, so link
- * equity still flows to the teammates and sections they point at. They are
- * simply not submitted or indexed until there is something to read. Writing a
- * bio flips them back on at the next deploy with no code change — which is the
- * right fix, and the only one that doesn't involve inventing biographical
- * claims about real students.
- */
-export const hasIndexableProfile = (m: Member): boolean =>
-  Boolean(m.bio && m.bio.trim().length > 0);
-
 export const facultyCount: number = facultyAdvisors.length;
 export const totalMemberCount: number = memberDirectory.length;
 export const studentCount: number = totalMemberCount - facultyCount;

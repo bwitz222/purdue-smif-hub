@@ -75,7 +75,7 @@ export const ORG_ID = `${SITE_URL}/#organization`;
  * pages and the Article `dateModified` read it. It is never stamped from the
  * clock: a lastmod that changes on every request teaches crawlers to ignore it.
  */
-export const LAST_CONTENT_UPDATE = "2026-11-10";
+export const LAST_CONTENT_UPDATE = "2026-11-16";
 
 /**
  * BreadcrumbList JSON-LD for a top-level subpage (Home > name).

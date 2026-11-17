@@ -24,6 +24,14 @@ const SECURITY_HEADERS = {
   "referrer-policy": "strict-origin-when-cross-origin",
   "permissions-policy": "camera=(), microphone=(), geolocation=()",
   "x-frame-options": "SAMEORIGIN",
+  // The directives that cannot break rendering: no plugins, no <base> hijack,
+  // forms post only to this origin, and no other site may frame these pages.
+  // A full script-src/style-src policy is deliberately not here yet: the SSR
+  // stream ships inline hydration scripts and Cloudflare injects its own, so
+  // it needs nonces and a report-only trial first (see docs audit, S-3).
+  "content-security-policy":
+    "object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'",
+  "cross-origin-opener-policy": "same-origin",
 };
 const cache = (sMaxAge: number, swr: number) => ({
   "cache-control": `public, s-maxage=${sMaxAge}, stale-while-revalidate=${swr}`,
