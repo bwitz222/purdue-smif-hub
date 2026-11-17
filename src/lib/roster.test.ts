@@ -12,6 +12,7 @@ import {
   studentCount,
   facultyCount,
   LEAD_ROLE,
+  TEAM_BLURB,
   type DirectoryEntry,
 } from "@/data/team";
 import type { Member } from "@/components/MemberCard";
@@ -127,5 +128,65 @@ describe("roster data", () => {
     for (const t of vacant) {
       expect(t.members[0]?.role, `${t.name} first member must not be the lead`).not.toBe(LEAD_ROLE);
     }
+  });
+});
+
+describe("member profiles are open to search", () => {
+  // Eight profiles with no personal bio used to be marked noindex and left out
+  // of the sitemap, so a search for those members' names could not reach the
+  // site. Nothing may gate a profile again.
+  it("the profile route never emits noindex", () => {
+    expect(src("src/routes/team.$slug.tsx")).not.toMatch(/noindex/);
+  });
+
+  it("the sitemap lists members without filtering", () => {
+    const sitemap = src("src/routes/sitemap[.]xml.ts");
+    expect(sitemap).toMatch(/for \(const \{ slug \} of memberDirectory\)/);
+    expect(sitemap).not.toMatch(/hasIndexableProfile|continue;/);
+  });
+
+  it("records every seat a member holds", () => {
+    const ian = memberDirectory.find((e) => e.slug === "ian-teh")!;
+    expect(ian.roles).toEqual([
+      { team: "Executive Board", role: "Co-President" },
+      { team: "Industrials", role: "Portfolio Manager" },
+    ]);
+    for (const e of memberDirectory) {
+      expect(e.roles.length, e.slug).toBeGreaterThanOrEqual(1);
+      expect(e.roles[0].team).toBe(e.team);
+    }
+  });
+
+  // The blurb is what gives a bio-less profile something to say.
+  it("has a description for every team a member can sit on", () => {
+    const teams = new Set(memberDirectory.flatMap((e) => e.roles.map((r) => r.team)));
+    for (const t of teams) expect(TEAM_BLURB[t], t).toBeTruthy();
+  });
+
+  // Hidden members must not ship in the bundle: a headshot and bio for someone
+  // taken off the roster were still being served from a public URL.
+  it("ships no bio, photo or link for anyone off the roster", () => {
+    const names = new Set(everyone.map((m) => m.name));
+    const data = src("src/data/team.ts");
+    const keyed = [...data.matchAll(/^ {2}"([A-Z][^"]+)":/gm)].map((m) => m[1]);
+    // TEAM_BLURB is keyed by team name, not by person.
+    expect(keyed.filter((n) => !names.has(n) && !(n in TEAM_BLURB))).toEqual([]);
+  });
+});
+
+describe("Apply buttons", () => {
+  // Every Apply CTA once built its own Qualtrics link, so when the survey
+  // expired all of them pointed at a dead form. Only ApplyLink may build it.
+  it("only ApplyLink builds the application URL", () => {
+    const files = [
+      "src/components/SiteHeader.tsx",
+      "src/routes/index.tsx",
+      "src/routes/about.tsx",
+      "src/routes/apply.tsx",
+      "src/routes/learn.tsx",
+      "src/routes/recruiting.tsx",
+      "src/routes/finance-clubs-at-purdue.tsx",
+    ];
+    for (const f of files) expect(src(f), f).not.toMatch(/applyUrl\(|qualtrics/);
   });
 });

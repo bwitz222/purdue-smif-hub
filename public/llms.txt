@@ -23,7 +23,7 @@
 - [Home](https://www.purduesmif.org/): Overview of the fund, AUM, and pillars.
 - [Finance Clubs at Purdue](https://www.purduesmif.org/finance-clubs-at-purdue): Guide to the finance and investment organizations at Purdue, what each is for, and which manages real money.
 - [About](https://www.purduesmif.org/about): History, philosophy, investment process, IPS, and how SMIF compares to other investment and finance clubs at Purdue.
-- [Team](https://www.purduesmif.org/team): Executive board, sector teams, fixed income & macro, and portfolio managers. Individual profiles live at /team/<slug>.
+- [Team](https://www.purduesmif.org/team): Executive board, sector teams, fixed income & macro, and portfolio managers. Every member has an indexable profile at /team/<first-last> (for example /team/sid-voona) with their roles, team coverage, and the positions that team holds.
 - [Sectors](https://www.purduesmif.org/sectors): Coverage teams across equities, fixed income & macro, and portfolio + risk management.
 - [Holdings](https://www.purduesmif.org/holdings): Current portfolio positions, allocations, and returns.
 - [Performance](https://www.purduesmif.org/performance): Annual and cumulative returns vs. the S&P 500.

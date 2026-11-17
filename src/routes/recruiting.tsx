@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Calendar, CalendarPlus, MapPin, Clock, Download } from "lucide-react";
+import { ApplyLink } from "@/components/ApplyLink";
+import { Calendar, CalendarPlus, MapPin, Clock, Download } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { jumpToSection } from "@/lib/jump-to";
@@ -8,7 +9,7 @@ import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import { OnThisPage, type PageSection } from "@/components/OnThisPage";
 import { BEHAVIORAL_CARDS, DAY_OF, TECHNICAL_CARDS, type PrepCardData } from "@/data/prep-guide";
 
-import { applyUrl } from "@/lib/apply-url";
+import { APPLICATIONS_OPEN } from "@/lib/apply-url";
 
 /**
  * Anchors for the in-page nav.
@@ -510,14 +511,12 @@ function Recruiting() {
             technical interviews with SMIF.
           </p>
           <div className="animate-fade-up delay-200 mt-8 flex flex-wrap gap-3">
-            <a
-              href={applyUrl("recruiting-hero")}
-              target="_blank"
-              rel="noopener noreferrer"
+            <ApplyLink
+              placement="recruiting-hero"
               className="press group inline-flex items-center gap-2 bg-gold px-6 py-3 text-sm font-semibold text-ink hover:bg-gold-mid"
             >
-              Apply Now <ArrowRight className="h-4 w-4 arrow-slide" />
-            </a>
+              {APPLICATIONS_OPEN ? "Apply Now" : "How to Apply"}
+            </ApplyLink>
             <a
               href="#prep"
               onClick={(e) => {
@@ -585,7 +584,7 @@ function Recruiting() {
                   // (5 axe color-contrast failures on this route). Lifting
                   // muted text to the foreground token inside past rows keeps
                   // the de-emphasised look above 4.5:1.
-                  className={`group row-rail block w-full text-left transition hover:bg-secondary/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 px-2 -mx-2 cursor-pointer ${isPast ? "opacity-70 [&_.text-muted-foreground]:text-foreground" : ""}`}
+                  className={`group row-rail block w-full text-left transition hover:bg-secondary/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 px-2 -mx-2 cursor-pointer ${isPast ? "opacity-70 [&_.text-muted-foreground]:text-foreground [&_.text-gold-deep]:text-foreground" : ""}`}
                 >
                   {/* Mobile: single ≥44px stacked tap block with right-aligned add-to-cal affordance. */}
                   <div className="md:hidden flex items-start gap-3 py-4 min-h-[64px]">

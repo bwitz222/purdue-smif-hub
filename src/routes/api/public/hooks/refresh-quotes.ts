@@ -4,13 +4,21 @@ import { holdings as baseHoldings } from "@/data/holdings";
 export const Route = createFileRoute("/api/public/hooks/refresh-quotes")({
   server: {
     handlers: {
+      // POST-only. Without this a GET fell through to the page router and
+      // came back as an HTML page with status 200.
+      GET: () =>
+        new Response(JSON.stringify({ ok: false, error: "Method Not Allowed" }), {
+          status: 405,
+          headers: { "Content-Type": "application/json", Allow: "POST" },
+        }),
       POST: async ({ request }) => {
         // Auth gate: a dedicated server-only secret (NOT the Supabase publishable
         // key, which is shipped to the browser and therefore public). The caller
         // (pg_cron) must send this exact value in the `x-refresh-secret` header.
-        const expectedSecret = process.env.REFRESH_HOOK_SECRET?.trim();
-        const provided = request.headers.get("x-refresh-secret")?.trim();
-        if (!expectedSecret || !provided || provided !== expectedSecret) {
+        // Loaded inside the handler: it uses node:crypto, which must not reach
+        // the browser bundle this route file is also compiled into.
+        const { isAuthorizedHook } = await import("@/lib/hook-auth.server");
+        if (!isAuthorizedHook(request)) {
           return new Response(JSON.stringify({ ok: false, error: "Unauthorized" }), {
             status: 401,
             headers: { "Content-Type": "application/json" },

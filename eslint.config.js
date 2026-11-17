@@ -6,7 +6,9 @@ import reactRefresh from "eslint-plugin-react-refresh";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
-  { ignores: ["dist", ".output", ".vinxi"] },
+  // .vercel is the build output (multi-megabyte server bundles). Without it here,
+  // `npm run lint` after any build spends ten minutes parsing generated code.
+  { ignores: ["dist", ".output", ".vinxi", ".vercel", "src/routeTree.gen.ts"] },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     files: ["**/*.{ts,tsx}"],

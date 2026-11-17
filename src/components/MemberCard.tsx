@@ -17,7 +17,16 @@ export interface Member {
 
 export const memberEmail = (m: Member) => m.email;
 
-export function MemberCard({ m, onSelect }: { m: Member; onSelect?: (m: Member) => void }) {
+export function MemberCard({
+  m,
+  onSelect,
+  priority = false,
+}: {
+  m: Member;
+  onSelect?: (m: Member) => void;
+  /** Above-the-fold card: load the headshot eagerly instead of lazily. */
+  priority?: boolean;
+}) {
   const initials = m.name
     .split(" ")
     .map((p) => p[0])
@@ -60,7 +69,8 @@ export function MemberCard({ m, onSelect }: { m: Member; onSelect?: (m: Member) 
               transform: m.photoScale ? `scale(${m.photoScale})` : undefined,
               transformOrigin: m.photoPosition ?? "center",
             }}
-            loading="lazy"
+            loading={priority ? "eager" : "lazy"}
+            fetchPriority={priority ? "high" : "auto"}
             onError={() => setSrc(null)}
           />
         ) : (

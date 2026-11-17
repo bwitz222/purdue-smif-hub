@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
-import { hasIndexableProfile, memberDirectory } from "@/data/team";
+import { memberDirectory } from "@/data/team";
 import { CONTENT_ROUTES } from "@/lib/content-routes";
 import { LAST_CONTENT_UPDATE, buildSitemapXml, type SitemapEntry } from "@/lib/seo";
 
@@ -78,12 +78,10 @@ export const Route = createFileRoute("/sitemap.xml")({
         ];
 
         // One entry per member profile: the pages a recruiter searching an
-        // analyst's name can land on. Bio-less profiles are excluded rather
-        // than submitted and then ignored: they carry a noindex, so listing
-        // them would ask crawlers to fetch pages already marked do-not-index.
-        // The predicate is shared with the route so the two cannot disagree.
-        for (const { slug, member } of memberDirectory) {
-          if (!hasIndexableProfile(member)) continue;
+        // analyst's name can land on. Every member is listed. A profile without
+        // a personal bio still states the person's seats, what the team covers
+        // and which positions it holds, so none of them is a thin page.
+        for (const { slug } of memberDirectory) {
           entries.push({ path: `/team/${slug}`, lastmod: LAST_CONTENT_UPDATE });
         }
 

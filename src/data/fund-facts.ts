@@ -3,7 +3,7 @@
 // They live here so the home page, /about, and the explainer pages quote one
 // source instead of retyping it.
 
-/** Mirrors the logos in `placements-2026.png`. Kept as text because the logo
+/** Mirrors the logos in `placements-2026.webp`. Kept as text because the logo
     wall is a single image — screen readers and crawlers cannot read it. */
 export const PLACEMENT_FIRMS = [
   "Morgan Stanley",

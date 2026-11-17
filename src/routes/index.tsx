@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { ApplyLink } from "@/components/ApplyLink";
 import skyline640 from "@/assets/nyc-skyline-640.webp";
 import skyline1024 from "@/assets/nyc-skyline-1024.webp";
 import skylineImg from "@/assets/nyc-skyline.webp";
@@ -7,23 +8,14 @@ import teamPhoto800 from "@/assets/team-photo-800.webp";
 import teamPhoto from "@/assets/team-photo.webp";
 import campusImg from "@/assets/hero-campus.webp";
 import { PLACEMENT_FIRMS } from "@/data/fund-facts";
-import { applyUrl } from "@/lib/apply-url";
-import {
-  ArrowRight,
-  TrendingUp,
-  Users,
-  Award,
-  BarChart3,
-  ChevronRight,
-  ExternalLink,
-} from "lucide-react";
+import { ArrowRight, TrendingUp, Users, Award, BarChart3, ChevronRight } from "lucide-react";
 import { CountUp } from "@/components/CountUp";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getFundStats } from "@/lib/fund-stats.functions";
 import { getPublications } from "@/lib/publications.functions";
 import { SERIES_LABEL } from "@/lib/publication-series";
-import { sectorTeams, totalMemberCount } from "@/data/team";
+import { sectorTeams, studentCount } from "@/data/team";
 import { liveQueryOptions } from "@/lib/live-query";
 
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
@@ -72,10 +64,12 @@ export const Route = createFileRoute("/")({
 // of truth and these can never drift again.
 const FALLBACK_STATS = {
   aum_display: "$600K",
-  active_members: String(totalMemberCount),
   founded_year: 1995,
-  sector_teams: sectorTeams.length,
 };
+
+// The equity sector teams plus Fixed Income & Macro and Portfolio + Risk
+// Management: the same ten groups /sectors and /team list.
+const COVERAGE_TEAMS = sectorTeams.length + 2;
 
 // Parse a display string like "$600K" or "50+" into { prefix, value, suffix }
 // so CountUp can animate the numeric portion while preserving formatting.
@@ -115,12 +109,21 @@ function Index() {
   const currentYear = new Date().getFullYear();
   const trackRecordYears = Math.max(0, currentYear - s.founded_year);
   const aum = parseStatDisplay(s.aum_display);
-  const members = parseStatDisplay(s.active_members);
+  // Headcount and team count always come from the roster in src/data/team.ts.
+  // The fund_stats row also carries active_members ("50+") and sector_teams,
+  // typed in by hand, and the live page showed "50+ active members" beside a
+  // /team page counting 49 students. Only AUM, cash and the founding year are
+  // read from the database now.
+  const members = parseStatDisplay(String(studentCount));
   const STATS = [
     { kind: "aum" as const, label: "Assets Under Management", sub: "actively deployed" },
     { kind: "members" as const, label: "Active Members", sub: "across all years" },
     { kind: "track" as const, label: "Years Investing", sub: `since est. ${s.founded_year}` },
-    { kind: "sectors" as const, label: "Sector Coverage Teams", sub: "bottom-up research" },
+    {
+      kind: "sectors" as const,
+      label: "Coverage Teams",
+      sub: `${sectorTeams.length} equity sectors, macro, risk`,
+    },
   ];
   return (
     <>
@@ -179,16 +182,12 @@ function Index() {
                 income, benchmarked against the S&amp;P 500 and reported quarterly.
               </p>
               <div className="animate-fade-up delay-500 mt-10 flex flex-wrap gap-4">
-                <a
-                  href={applyUrl("home-hero")}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <ApplyLink
+                  placement="home-hero"
                   className="press group inline-flex items-center gap-2.5 bg-gold px-8 py-3.5 text-sm font-semibold text-ink hover:bg-gold-mid"
                 >
                   Apply to Join
-                  <ExternalLink className="h-4 w-4" aria-hidden="true" />
-                  <span className="sr-only">(opens application form in new tab)</span>
-                </a>
+                </ApplyLink>
                 <Link
                   to="/holdings"
                   className="press inline-flex items-center gap-2.5 border border-background/25 px-8 py-3.5 text-sm font-semibold text-background hover:border-gold hover:text-gold"
@@ -244,7 +243,7 @@ function Index() {
                       <span>Y+</span>
                     </>
                   ) : (
-                    <CountUp to={s.sector_teams} duration={1.0} />
+                    <CountUp to={COVERAGE_TEAMS} duration={1.0} />
                   )}
                 </div>
                 <div className="mt-4 text-[10px] uppercase tracking-[0.24em] text-on-dark-secondary font-medium">
@@ -547,16 +546,12 @@ function Index() {
             students from every college at Purdue.
           </p>
           <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href={applyUrl("home-cta")}
-              target="_blank"
-              rel="noopener noreferrer"
+            <ApplyLink
+              placement="home-cta"
               className="press group inline-flex items-center justify-center gap-2.5 bg-gold px-9 py-4 text-sm font-semibold text-ink hover:bg-gold-mid cursor-pointer"
             >
               Apply to Join
-              <ExternalLink className="h-4 w-4" aria-hidden="true" />
-              <span className="sr-only">(opens application form in new tab)</span>
-            </a>
+            </ApplyLink>
             <Link
               to="/team"
               className="press inline-flex items-center justify-center gap-2 border border-background/20 px-9 py-4 text-sm font-semibold text-background hover:border-gold hover:text-gold cursor-pointer"

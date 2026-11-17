@@ -18,7 +18,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: npm install --no-audit --no-fund
+      # bun.lock is the only lockfile in the repo and what Vercel installs
+      # from. `npm install` ignored it and resolved every caret range fresh, so
+      # CI tested different dependency versions than production shipped.
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.x
+      - run: bun install --frozen-lockfile
       - name: Typecheck
         run: npx tsc --noEmit -p tsconfig.json
       - name: Unit tests
@@ -42,7 +48,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: npm install --no-audit --no-fund
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.x
+      - run: bun install --frozen-lockfile
       - run: npx playwright install --with-deps chromium
       # The suite boots its own dev server. Supabase creds are absent here on
       # purpose: every page must still render, which is exactly the regression

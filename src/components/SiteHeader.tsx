@@ -1,11 +1,11 @@
 import { Link } from "@tanstack/react-router";
+import { ApplyLink } from "@/components/ApplyLink";
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import smifLogo from "@/assets/smif-logo-mark-128.webp";
-import { applyUrl } from "@/lib/apply-url";
 import { NAV } from "@/lib/nav";
 
 export function SiteHeader() {
@@ -41,7 +41,7 @@ export function SiteHeader() {
           <Link to="/" className="group flex items-center gap-2.5 shrink-0">
             <img
               src={smifLogo}
-              alt="Purdue SMIF"
+              alt=""
               width={28}
               height={28}
               decoding="async"
@@ -64,14 +64,13 @@ export function SiteHeader() {
             ))}
           </nav>
           <div className="flex items-center gap-4">
-            <a
-              href={applyUrl("header-apply")}
-              target="_blank"
-              rel="noopener noreferrer"
+            <ApplyLink
+              placement="header-apply"
               className="hidden lg:inline-flex items-center px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] bg-gold text-ink transition-[background-color,transform] duration-150 hover:bg-gold-mid active:scale-95"
+              icon={false}
             >
               Apply
-            </a>
+            </ApplyLink>
             <button
               className="press lg:hidden inline-flex items-center justify-center min-h-11 min-w-11 -mr-2 text-background/70 hover:text-background"
               onClick={() => setOpen(true)}
@@ -136,34 +135,27 @@ export function SiteHeader() {
                 </motion.div>
               ),
             )}
-            {reduce ? (
-              <a
-                href={applyUrl("mobile-menu")}
-                target="_blank"
-                rel="noopener noreferrer"
+            {/* A wrapper carries the entrance so the button itself stays the
+                shared ApplyLink (open: Qualtrics, closed: /apply). */}
+            <motion.div
+              className="mt-10 flex"
+              initial={reduce ? false : { opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                duration: 0.35,
+                delay: 0.05 + NAV.length * 0.05,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+            >
+              <ApplyLink
+                placement="mobile-menu"
+                icon={false}
                 onClick={() => setOpen(false)}
-                className="mt-10 inline-flex items-center justify-center py-4 text-sm font-semibold uppercase tracking-[0.16em] bg-gold text-ink hover:bg-gold-mid transition-colors duration-150"
+                className="flex-1 inline-flex items-center justify-center py-4 text-sm font-semibold uppercase tracking-[0.16em] bg-gold text-ink hover:bg-gold-mid transition-colors duration-150"
               >
                 Apply to Join
-              </a>
-            ) : (
-              <motion.a
-                href={applyUrl("mobile-menu")}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => setOpen(false)}
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{
-                  duration: 0.35,
-                  delay: 0.05 + NAV.length * 0.05,
-                  ease: [0.22, 1, 0.36, 1],
-                }}
-                className="mt-10 inline-flex items-center justify-center py-4 text-sm font-semibold uppercase tracking-[0.16em] bg-gold text-ink hover:bg-gold-mid transition-colors duration-150"
-              >
-                Apply to Join
-              </motion.a>
-            )}
+              </ApplyLink>
+            </motion.div>
           </nav>
           <div className="container-prose pb-6 shrink-0">
             <span className="text-xs uppercase tracking-[0.18em] text-on-dark-dim font-mono">

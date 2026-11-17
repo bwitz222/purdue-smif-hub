@@ -55,7 +55,7 @@ export const Route = createFileRoute("/performance")({
       {
         name: "description",
         content:
-          "Annual and cumulative returns of Purdue SMIF benchmarked against the S&P 500 Total Return Index, with Sharpe, alpha, beta, and drawdown analytics since 2013.",
+          "Annual and cumulative returns of Purdue SMIF benchmarked against the S&P 500 Total Return Index, with Sharpe, alpha, beta and drawdown analytics since 2013.",
       },
       ...socialMeta({
         title: "Performance & Track Record | Purdue SMIF",
@@ -881,60 +881,67 @@ function Performance() {
         </Reveal>
 
         {/* ── Annual returns table ───────────────────────────────── */}
-        <Reveal className="overflow-x-auto border border-border">
-          <table className="w-full min-w-[520px] text-left">
-            <thead className="bg-ink text-background">
-              <tr>
-                <th className="px-3 py-3 md:px-6 md:py-4 text-xs font-semibold uppercase tracking-wider">
-                  Year
-                </th>
-                <th className="px-3 py-3 md:px-6 md:py-4 text-xs font-semibold uppercase tracking-wider text-right">
-                  SMIF
-                </th>
-                <th className="px-3 py-3 md:px-6 md:py-4 text-xs font-semibold uppercase tracking-wider text-right">
-                  S&P 500 TR
-                </th>
-                <th className="px-3 py-3 md:px-6 md:py-4 text-xs font-semibold uppercase tracking-wider text-right">
-                  Spread
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {tableRows.map((r, idx) => {
-                const spread = r.smif_return - r.bench_return;
-                return (
-                  <tr
-                    key={r.year}
-                    className={`border-t border-border hover:bg-secondary/50 transition-colors duration-150 ${idx % 2 !== 0 ? "bg-secondary/20" : ""}`}
-                  >
-                    <td className="px-3 py-4 md:px-6 md:py-5 font-display font-bold text-ink">
-                      {r.year}
-                    </td>
-                    <td
-                      className={`px-3 py-4 md:px-6 md:py-5 font-mono text-right font-medium ${r.smif_return >= 0 ? "text-gain" : "text-loss"}`}
+        <Reveal>
+          <div
+            role="region"
+            aria-label="Annual returns table, scrollable horizontally"
+            tabIndex={0}
+            className="overflow-x-auto border border-border focus-visible:outline-2 focus-visible:outline-gold-deep"
+          >
+            <table className="w-full min-w-[520px] text-left">
+              <thead className="bg-ink text-background">
+                <tr>
+                  <th className="px-3 py-3 md:px-6 md:py-4 text-xs font-semibold uppercase tracking-wider">
+                    Year
+                  </th>
+                  <th className="px-3 py-3 md:px-6 md:py-4 text-xs font-semibold uppercase tracking-wider text-right">
+                    SMIF
+                  </th>
+                  <th className="px-3 py-3 md:px-6 md:py-4 text-xs font-semibold uppercase tracking-wider text-right">
+                    S&P 500 TR
+                  </th>
+                  <th className="px-3 py-3 md:px-6 md:py-4 text-xs font-semibold uppercase tracking-wider text-right">
+                    Spread
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {tableRows.map((r, idx) => {
+                  const spread = r.smif_return - r.bench_return;
+                  return (
+                    <tr
+                      key={r.year}
+                      className={`border-t border-border hover:bg-secondary/50 transition-colors duration-150 ${idx % 2 !== 0 ? "bg-secondary/20" : ""}`}
                     >
-                      <span className="inline-flex items-center justify-end gap-1">
-                        {r.smif_return >= 0 ? (
-                          <ArrowUp className="h-3.5 w-3.5" aria-hidden="true" />
-                        ) : (
-                          <ArrowDown className="h-3.5 w-3.5" aria-hidden="true" />
-                        )}
-                        {fmtPct(r.smif_return)}
-                      </span>
-                    </td>
-                    <td className="px-3 py-4 md:px-6 md:py-5 font-mono text-right text-muted-foreground">
-                      {fmtPct(r.bench_return)}
-                    </td>
-                    <td
-                      className={`px-3 py-4 md:px-6 md:py-5 font-mono text-right font-semibold ${spread >= 0 ? "text-gain" : "text-loss"}`}
-                    >
-                      {fmtPct(spread)}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                      <td className="px-3 py-4 md:px-6 md:py-5 font-display font-bold text-ink">
+                        {r.year}
+                      </td>
+                      <td
+                        className={`px-3 py-4 md:px-6 md:py-5 font-mono text-right font-medium ${r.smif_return >= 0 ? "text-gain" : "text-loss"}`}
+                      >
+                        <span className="inline-flex items-center justify-end gap-1">
+                          {r.smif_return >= 0 ? (
+                            <ArrowUp className="h-3.5 w-3.5" aria-hidden="true" />
+                          ) : (
+                            <ArrowDown className="h-3.5 w-3.5" aria-hidden="true" />
+                          )}
+                          {fmtPct(r.smif_return)}
+                        </span>
+                      </td>
+                      <td className="px-3 py-4 md:px-6 md:py-5 font-mono text-right text-muted-foreground">
+                        {fmtPct(r.bench_return)}
+                      </td>
+                      <td
+                        className={`px-3 py-4 md:px-6 md:py-5 font-mono text-right font-semibold ${spread >= 0 ? "text-gain" : "text-loss"}`}
+                      >
+                        {fmtPct(spread)}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </Reveal>
 
         <div className="border-t border-border pt-6 pb-8 mt-4 space-y-2 text-xs text-muted-foreground max-w-3xl">

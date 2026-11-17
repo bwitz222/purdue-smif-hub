@@ -800,7 +800,12 @@ function HoldingsPage() {
             </div>
 
             {/* Desktop: full table */}
-            <div className="hidden md:block overflow-x-auto border border-border">
+            <div
+              role="region"
+              aria-label="Holdings table, scrollable horizontally"
+              tabIndex={0}
+              className="hidden md:block overflow-x-auto border border-border focus-visible:outline-2 focus-visible:outline-gold-deep"
+            >
               <table className="w-full text-left text-sm">
                 <caption className="sr-only">Portfolio holdings, sortable by column</caption>
                 <thead className="bg-ink text-background">
