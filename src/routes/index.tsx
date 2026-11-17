@@ -201,20 +201,26 @@ function Index() {
             {/* The photo is the point of this section, so it renders at full
                 opacity rather than as a darkened backdrop, and it is content —
                 not decoration — so it carries real alt text and sits outside
-                the aria-hidden backdrop above. The asset is pre-cropped to 3:4,
-                which makes object-cover a no-op here: nobody gets cropped a
-                second time at render, at any viewport width. */}
+                the aria-hidden backdrop above. The asset is pre-cropped to its
+                12:13 box, which makes object-cover a no-op here. The slanted
+                edges are a CSS clip-path (39% matches the shear of the
+                parallelogram mock-up), so the shape can be tuned without
+                re-exporting the photo. clip-path also clips box-shadow, so the
+                shadow lives on the wrapper as a drop-shadow filter. */}
             <div className="lg:col-span-5">
-              <img
-                src={teamPhoto800}
-                srcSet={`${teamPhoto480} 480w, ${teamPhoto800} 800w, ${teamPhoto} 1000w`}
-                sizes="(min-width: 1024px) 456px, 100vw"
-                alt="Members of the Purdue Student Managed Investment Fund on the staircase at the Daniels School of Business."
-                width={1000}
-                height={1333}
-                decoding="async"
-                className="animate-fade-up delay-300 w-full aspect-[3/4] object-cover shadow-elegant"
-              />
+              <div className="animate-fade-up delay-300 mx-auto max-w-[520px] lg:max-w-none drop-shadow-[0_24px_40px_rgba(0,0,0,0.45)]">
+                <img
+                  src={teamPhoto800}
+                  srcSet={`${teamPhoto480} 480w, ${teamPhoto800} 800w, ${teamPhoto} 1200w`}
+                  sizes="(min-width: 1024px) 456px, 100vw"
+                  alt="Members of the Purdue Student Managed Investment Fund on the staircase at the Daniels School of Business."
+                  width={1200}
+                  height={1299}
+                  decoding="async"
+                  className="w-full aspect-[1200/1299] object-cover"
+                  style={{ clipPath: "polygon(39% 0, 100% 0, 61% 100%, 0 100%)" }}
+                />
+              </div>
             </div>
           </div>
 
