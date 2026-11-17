@@ -203,8 +203,8 @@ function Index() {
                 not decoration — so it carries real alt text and sits outside
                 the aria-hidden backdrop above. The asset is pre-cropped to its
                 1200x1233 box, which makes object-cover a no-op here. The slanted
-                edges are a CSS clip-path (32% is a touch shallower than the
-                parallelogram mock-up, which is about 39%), so the shape can be tuned without
+                edges are a CSS clip-path (left edge 32% over the full height,
+                right edge only 16%, so the right side is gentler than the left), so the shape can be tuned without
                 re-exporting the photo. On lg the wrapper bleeds 5rem left (8rem from xl) over
                 the empty slanted corner (pointer-events-none so it never
                 shadows the text column). clip-path also clips box-shadow, so the
@@ -220,7 +220,7 @@ function Index() {
                   height={1233}
                   decoding="async"
                   className="w-full aspect-[1200/1233] object-cover"
-                  style={{ clipPath: "polygon(32% 0, 100% 0, 68% 100%, 0 100%)" }}
+                  style={{ clipPath: "polygon(32% 0, 100% 0, 84% 100%, 0 100%)" }}
                 />
               </div>
             </div>
