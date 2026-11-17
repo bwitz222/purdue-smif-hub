@@ -203,24 +203,24 @@ function Index() {
                 not decoration — so it carries real alt text and sits outside
                 the aria-hidden backdrop above. The asset is pre-cropped to its
                 1200x1233 box, which makes object-cover a no-op here. The slanted
-                edges are a CSS clip-path (37% keeps the slant angle of the
-                parallelogram mock-up), so the shape can be tuned without
-                re-exporting the photo. On lg the wrapper bleeds 6rem left over
+                edges are a CSS clip-path (32% is a touch shallower than the
+                parallelogram mock-up, which is about 39%), so the shape can be tuned without
+                re-exporting the photo. On lg the wrapper bleeds 5rem left (8rem from xl) over
                 the empty slanted corner (pointer-events-none so it never
                 shadows the text column). clip-path also clips box-shadow, so the
                 shadow lives on the wrapper as a drop-shadow filter. */}
             <div className="lg:col-span-5">
-              <div className="animate-fade-up delay-300 mx-auto max-w-[560px] lg:mx-0 lg:-ml-24 lg:w-[calc(100%+6rem)] lg:max-w-none pointer-events-none drop-shadow-[0_24px_40px_rgba(0,0,0,0.45)]">
+              <div className="animate-fade-up delay-300 mx-auto max-w-[560px] lg:mx-0 lg:-ml-20 lg:w-[calc(100%+5rem)] xl:-ml-32 xl:w-[calc(100%+8rem)] lg:max-w-none pointer-events-none drop-shadow-[0_24px_40px_rgba(0,0,0,0.45)]">
                 <img
                   src={teamPhoto800}
                   srcSet={`${teamPhoto480} 480w, ${teamPhoto800} 800w, ${teamPhoto} 1200w`}
-                  sizes="(min-width: 1024px) 552px, 100vw"
+                  sizes="(min-width: 1024px) 584px, 100vw"
                   alt="Members of the Purdue Student Managed Investment Fund on the staircase at the Daniels School of Business."
                   width={1200}
                   height={1233}
                   decoding="async"
                   className="w-full aspect-[1200/1233] object-cover"
-                  style={{ clipPath: "polygon(37% 0, 100% 0, 63% 100%, 0 100%)" }}
+                  style={{ clipPath: "polygon(32% 0, 100% 0, 68% 100%, 0 100%)" }}
                 />
               </div>
             </div>
