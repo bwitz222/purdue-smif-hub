@@ -207,11 +207,11 @@ function Index() {
             <div className="lg:col-span-5">
               <img
                 src={teamPhoto800}
-                srcSet={`${teamPhoto480} 480w, ${teamPhoto800} 800w, ${teamPhoto} 1200w`}
+                srcSet={`${teamPhoto480} 480w, ${teamPhoto800} 800w, ${teamPhoto} 1000w`}
                 sizes="(min-width: 1024px) 456px, 100vw"
                 alt="Members of the Purdue Student Managed Investment Fund on the staircase at the Daniels School of Business."
-                width={1200}
-                height={1600}
+                width={1000}
+                height={1333}
                 decoding="async"
                 className="animate-fade-up delay-300 w-full aspect-[3/4] object-cover shadow-elegant"
               />
