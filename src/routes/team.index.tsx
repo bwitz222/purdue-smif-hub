@@ -4,6 +4,7 @@ import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { Search, X } from "lucide-react";
 import { MemberCard, type Member } from "@/components/MemberCard";
 import { MemberDetailSheet } from "@/components/MemberDetailSheet";
+import { GroupPhoto } from "@/components/GroupPhoto";
 import {
   board,
   sectorTeams,
@@ -393,6 +394,13 @@ function Team() {
               blurb="Seven students elected each spring to lead the fund's strategy, research, risk, recruiting, education, and operations."
               count={hasFilter ? filteredBoard.length : undefined}
             />
+            {!query && (
+              <GroupPhoto
+                slug="board"
+                alt="The seven members of the SMIF executive board in the Daniels School of Business atrium."
+                className="mb-10"
+              />
+            )}
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {filteredBoard.map((m) => (
                 <div key={m.name} className="h-full [&>div]:h-full">
@@ -432,6 +440,13 @@ function Team() {
                         {team.members.length} {team.members.length === 1 ? "member" : "members"}
                       </span>
                     </div>
+                    {!query && (
+                      <GroupPhoto
+                        slug={sectorSlug(team.name)}
+                        alt={`The ${team.name} sector team in the Daniels School of Business atrium.`}
+                        className="mb-8 max-w-3xl"
+                      />
+                    )}
                     <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                       {team.members.map((m) => (
                         <div key={m.name} className="h-full [&>div]:h-full">
@@ -454,6 +469,13 @@ function Team() {
               blurb="Covers rates, credit, FX, and global macro themes, informing both the fixed income sleeve and the equity portfolio's macro overlay."
               count={hasFilter ? filteredFim.length : undefined}
             />
+            {!query && (
+              <GroupPhoto
+                slug="fixed-income-macro"
+                alt="The Fixed Income & Macro team in the Daniels School of Business atrium."
+                className="mb-10 max-w-3xl"
+              />
+            )}
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {filteredFim.map((m) => (
                 <div key={m.name} className="h-full [&>div]:h-full">
@@ -473,6 +495,13 @@ function Team() {
                 blurb="Implement allocation decisions, monitor portfolio risk, manage trading and rebalancing, and own performance attribution."
                 count={hasFilter ? filteredPm.length : undefined}
               />
+              {!query && (
+                <GroupPhoto
+                  slug="portfolio-risk-management"
+                  alt="The Portfolio + Risk Management team in the Daniels School of Business atrium."
+                  className="mb-10 max-w-3xl"
+                />
+              )}
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {filteredPm.map((m) => (
                   <div key={m.name} className="h-full [&>div]:h-full">
