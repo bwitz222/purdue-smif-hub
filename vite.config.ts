@@ -32,6 +32,23 @@ const SECURITY_HEADERS = {
   "content-security-policy":
     "object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'",
   "cross-origin-opener-policy": "same-origin",
+  // The full policy, in report-only mode: browsers log what it WOULD block to
+  // the console and block nothing. Inline scripts are allowed because the SSR
+  // stream ships inline hydration scripts and no nonce plumbing exists yet.
+  // Once a deploy shows a clean console on every page, move these directives
+  // into content-security-policy above.
+  "content-security-policy-report-only": [
+    "default-src 'self'",
+    "script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com",
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+    "font-src 'self' https://fonts.gstatic.com",
+    "img-src 'self' data: https://mxjrtmratusuxhpxtwmg.supabase.co",
+    "connect-src 'self' https://mxjrtmratusuxhpxtwmg.supabase.co https://cloudflareinsights.com",
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "frame-ancestors 'self'",
+  ].join("; "),
 };
 const cache = (sMaxAge: number, swr: number) => ({
   "cache-control": `public, s-maxage=${sMaxAge}, stale-while-revalidate=${swr}`,

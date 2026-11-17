@@ -5,7 +5,7 @@ import { PLACEMENT_FIRMS, PROCESS, IPS } from "@/data/fund-facts";
 import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 import { OnThisPage, type PageSection } from "@/components/OnThisPage";
 import { facultyAdvisors } from "@/data/team";
-import placementsImg from "@/assets/placements-2026.png";
+import placementsImg from "@/assets/placements-2026.webp";
 
 /** Anchors for the in-page nav. Each id must match a <section id> below. */
 const SECTIONS: readonly PageSection[] = [

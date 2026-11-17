@@ -344,6 +344,13 @@ function json(body: unknown, status = 200): Response {
 export const Route = createFileRoute("/api/public/hooks/compute-risk")({
   server: {
     handlers: {
+      // POST-only. Without this a GET fell through to the page router and
+      // came back as an HTML page with status 200.
+      GET: () =>
+        new Response(JSON.stringify({ ok: false, error: "Method Not Allowed" }), {
+          status: 405,
+          headers: { "Content-Type": "application/json", Allow: "POST" },
+        }),
       POST: async ({ request }) => {
         // Loaded inside the handler: it uses node:crypto, which must not reach
         // the browser bundle this route file is also compiled into.

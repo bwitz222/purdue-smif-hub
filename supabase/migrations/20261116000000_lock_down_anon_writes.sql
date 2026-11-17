@@ -1,4 +1,5 @@
--- Audit 2026-11-16 (S-1, S-5). NOT YET APPLIED: review, then run.
+-- Audit 2026-11-16. Applied to production on 2026-11-17 (migration name
+-- lock_down_anon_writes); kept here so the repo matches the database.
 --
 -- 1. The contact form posts to a server function that inserts with the service
 --    role (src/lib/contact.functions.ts). The old browser-side insert policy is

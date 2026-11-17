@@ -157,7 +157,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         { name: "theme-color", content: "#0A0A0A" },
         { property: "og:site_name", content: "Purdue SMIF" },
         { property: "og:locale", content: "en_US" },
-        { name: "twitter:site", content: "@PurdueSMIF" },
       ],
       links: [
         { rel: "stylesheet", href: appCss },

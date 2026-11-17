@@ -55,7 +55,7 @@ export const Route = createFileRoute("/performance")({
       {
         name: "description",
         content:
-          "Annual and cumulative returns of Purdue SMIF benchmarked against the S&P 500 Total Return Index, with Sharpe, alpha, beta, and drawdown analytics since 2013.",
+          "Annual and cumulative returns of Purdue SMIF benchmarked against the S&P 500 Total Return Index, with Sharpe, alpha, beta and drawdown analytics since 2013.",
       },
       ...socialMeta({
         title: "Performance & Track Record | Purdue SMIF",

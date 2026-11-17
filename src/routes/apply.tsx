@@ -20,7 +20,7 @@ export const Route = createFileRoute("/apply")({
       {
         name: "description",
         content:
-          "Apply to join Purdue's student investment club: the application portal, what we look for, the timeline, and how SMIF differs from other finance clubs at Purdue.",
+          "Apply to join Purdue's student investment club: the application portal, what we look for, the timeline, and how SMIF differs from other finance clubs.",
       },
       ...socialMeta({
         title: "Apply to Join Purdue SMIF",
