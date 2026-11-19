@@ -41,6 +41,10 @@ import cooperMcBridePhoto from "@/assets/team/cooper-mcbride.webp";
 import sohamRoyPhoto from "@/assets/team/soham-roy.webp";
 import ryanPhamPhoto from "@/assets/team/ryan-pham.webp";
 import aaravMehtaPhoto from "@/assets/team/aarav-mehta.webp";
+import aanyaVermaPhoto from "@/assets/team/aanya-verma.webp";
+import felipeRestrepoPhoto from "@/assets/team/felipe-restrepo.webp";
+import giorginaNinassiPhoto from "@/assets/team/giorgina-ninassi.webp";
+import cianMurrayPhoto from "@/assets/team/cian-murray.webp";
 
 const BIO_BY_NAME: Record<string, string> = {
   "Landon Haffner":
@@ -48,7 +52,7 @@ const BIO_BY_NAME: Record<string, string> = {
   "Yashita Pujari":
     "Yashita Pujari is a junior in the Daniels School of Business, majoring in Business Analytics and Information Management. Outside of SMIF, she serves on the executive board of UR Global and will be a team lead for the Doster Leadership Conference. In her free time, she enjoys baking, reading and trying new restaurants.",
   "Chris Andreou":
-    "Chris Andreou is a junior in the Daniels School of Business, majoring in Finance and Accounting. He has previously interned at Zurich Insurance as a Finance Intern. In his free time, he enjoys visiting new countries, weightlifting, playing basketball, and golfing.",
+    "Chris Andreou is a junior in the Daniels School of Business, majoring in Finance and Accounting. This upcoming summer, he will be with EY as a FSO Risk Consulting Track Intern. In his free time, he enjoys visiting new countries, weightlifting, playing basketball, and golfing.",
   "Parth Dama":
     "Parth Dama is a sophomore in the Purdue Integrated Business and Engineering (IBE) program. He is currently working as an Associate Consultant Intern at IBM in Data & AI, and is an incoming Markets Quantitative Analyst at Barclays for Summer 2027. In his free time, he enjoys lifting, playing poker, and watching basketball.",
   "Andrew Lacambra":
@@ -60,13 +64,13 @@ const BIO_BY_NAME: Record<string, string> = {
   "Balthazar Schmitt":
     "Balthazar Schmitt is a junior majoring in Mathematics and Economics. He has previously interned at CBRE and Turner and Townsend, working within project management. Outside of classes and work, he enjoys taking long drives in the countryside, hiking mountains, skiing, and making music.",
   "Augustus Matushek":
-    "Augustus Matushek is a sophomore in the Daniels School of Business, majoring in Finance and Accounting. Augie previously interned at Centier Bank, where he worked as a Business Planning & Analysis Intern. In his free time, he enjoys reading, going to the gym, and working on his golf game.",
+    "Augustus Matushek is a sophomore in the Daniels School of Business, double-majoring in Finance and Accounting. Augie previously interned at Centier Bank as a Business Planning & Analysis Intern, and is an incoming summer financial analyst at Cummins Inc. In his free time, he enjoys going to the gym, going to concerts, and working on his below-average golf game.",
   "Jacob George":
-    "Jacob George is a sophomore in the Daniels School of Business, majoring in Finance and Business Analytics Information Management. Outside of SMIF, he is a Capital Markets Intern with Simon Property Group. In his free time, he enjoys going to the gym, DJing diverse styles of music, and all things Purdue sports.",
+    "Jacob George is a sophomore in the Daniels School of Business, majoring in Finance, Accounting, and Real Estate Finance. Outside of SMIF, he previously interned with Vista Investment Partners and Simon Property Group, and will be returning to Simon Property Group as a Capital Markets Intern next summer. In his free time, he enjoys music production, weightlifting, and cooking.",
   "Dallas White":
     "Dallas White is a sophomore in the Daniels School of Business, majoring in Finance and Accounting with a minor in Business Economics. He is running KNA Autocare this summer, honing his entrepreneurial and sales skills. In his free time, he enjoys traveling, exercise, and listening to music.",
   "Keren Wadhwani":
-    "Keren Wadhwani is a junior in the Daniels School of Business, majoring in Quantitative Economics and Finance with a minor in Art History. She previously interned at energyRe as an M&A and Investments Intern and is a Girls Who Invest Scholar. Outside of SMIF, she is a competitive triathlete with a passion for fine art. In her free time, she enjoys running, swimming, visiting museums, and painting.",
+    "Keren Wadhwani is a junior in the Daniels School of Business, majoring in Quantitative Economics and Finance with a minor in Art History. She has previously interned at energyRe in M&A and Investments and at Julius Baer in Wealth Management. Outside of school, she enjoys swimming, training for triathlons, visiting art museums, and painting.",
   "Logan Friedman":
     "Logan Friedman is a junior in the College of Engineering, majoring in Mechanical Engineering with a minor in Finance. He is currently working as a Mechanical Engineering Intern at Northrop Grumman. In his free time, he enjoys hiking, surfing, and pickleball.",
   "Sid Voona":
@@ -108,9 +112,9 @@ const BIO_BY_NAME: Record<string, string> = {
   "Hayden Krueger":
     "Hayden Krueger is a junior in the Daniels School of Business, majoring in Finance. Before pursuing his education, Hayden competed as a professional gamer on 100 Thieves, one of North America's largest esports organizations. He then started his own consumer goods business, which currently sells products in 20+ countries around the world. In his free time, he enjoys snowboarding, calisthenics, and golf.",
   "Brody Salz":
-    "Brody Salz is a sophomore in the Daniels School of Business, majoring in Finance and Accounting. He has previously interned at an insurance startup, A2 Insurance Partners, as a Business Development and Operations Intern. Outside of SMIF, he enjoys spending time outdoors, watching sports, and playing guitar.",
+    "Brody Salz is a sophomore in the Daniels School of Business, majoring in Finance and Accounting. He previously interned at A2 Investment Partners, a specialty insurance MGA, as a Business Development & Operations Analyst, and publishes independent equity research reports. In his free time, he enjoys wakeboarding, guitar, going to the gym, and watching the Dodgers.",
   "Aanya Verma":
-    "Aanya Verma is a freshman in the Daniels School of Business, majoring in Quantitative Business Economics with minors in Political Science and Financial Engineering. Outside of SMIF, she is involved in consulting and leadership organizations at Purdue. In her free time, she enjoys making music, going to the gym, and trying fun coffees.",
+    "Aanya Verma is a freshman in the Daniels School of Business, majoring in Quantitative Business Economics with minors in Political Science and Financial Engineering. In her free time she enjoys making music, being outdoors, and going to the gym.",
   "Sarath Shayam":
     "Sarath Shayam is a sophomore in the College of Engineering, majoring in Industrial Engineering with a minor in Finance. He has previously interned at Buist Inc. as part of the Engineering and Operations team. In his free time, he enjoys playing pickleball, going to the gym, and listening to music.",
   "Evan Lee":
@@ -125,6 +129,12 @@ const BIO_BY_NAME: Record<string, string> = {
     "Ryan Pham is a freshman in the Daniels School of Business, majoring in Quantitative Business Economics with a minor in Mathematics. He has previously interned at Manhattan Gold & Silver as a Precious Metals Analyst. In his free time, he enjoys working out, hiking, and watching American football and basketball.",
   "Aarav Mehta":
     "Aarav Mehta is a freshman in the Daniels School of Business, majoring in Finance and Data Analytics. Outside of SMIF, he is a member of Purdue Think, where he is helping open a new Purdue Pharmacy location. In his free time, he enjoys Bollywood dance, cooking, and singing karaoke.",
+  "Felipe Restrepo":
+    "Felipe Restrepo is a freshman in the Daniels School of Business, majoring in Finance. He previously interned at a bank in Colombia and has continued to work on completing the Financial Modeling and Valuation Analyst Certification. In his free time he likes to go out with friends and travel.",
+  "Giorgina Ninassi":
+    "Giorgina Ninassi is a sophomore studying Industrial Engineering with minors in Mathematical Economics and Statistics. In her free time she enjoys watching the NYC Knicks and going to the gym.",
+  "Cian Murray":
+    "Cian Murray is a sophomore in the Daniels School of Business, majoring in Finance. He has previously interned at Pharmaco NZ as a Finance Intern. In his free time, he enjoys playing basketball, travelling, and watching movies.",
 };
 
 // Secondary bios — a short role line for a board member's second appearance
@@ -243,6 +253,10 @@ const PHOTO_BY_NAME: Record<string, string> = {
   "Soham Roy": sohamRoyPhoto,
   "Ryan Pham": ryanPhamPhoto,
   "Aarav Mehta": aaravMehtaPhoto,
+  "Aanya Verma": aanyaVermaPhoto,
+  "Felipe Restrepo": felipeRestrepoPhoto,
+  "Giorgina Ninassi": giorginaNinassiPhoto,
+  "Cian Murray": cianMurrayPhoto,
 };
 
 const PHOTO_POSITION_BY_NAME: Record<string, string> = {
