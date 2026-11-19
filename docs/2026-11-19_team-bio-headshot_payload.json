@@ -1,0 +1,185 @@
+{
+  "meta": {
+    "source_sheet": "Website Bio & Headshot (Responses)",
+    "sheet_id": "1MWuc4Mf5ntSB4VCA1rUfq4FZObQOTXq-7S01ELRge3A",
+    "sheet_read": "2026-11-19, 44 rows -> 42 people, latest submission per person wins",
+    "target_file": "src/data/team.ts"
+  },
+  "photo_spec": {
+    "format": "webp",
+    "aspect": "1:1 square",
+    "size": "800x800 to 900x900",
+    "target_kb": "under ~40",
+    "note": "Existing team headshots are 800-900px square; crop to square, convert to webp, save at the listed path."
+  },
+  "bio_updates": {
+    "target": "BIO_BY_NAME (existing keys; replace value)",
+    "items": [
+      {
+        "name": "Chris Andreou",
+        "submitted": "11/18/2026 12:49:14",
+        "bio": "Chris Andreou is a junior in the Daniels School of Business, majoring in Finance and Accounting. This upcoming summer, he will be with EY as a FSO Risk Consulting Track Intern. In his free time, he enjoys visiting new countries, weightlifting, playing basketball, and golfing."
+      },
+      {
+        "name": "Augustus Matushek",
+        "submitted": "11/19/2026 8:38:44",
+        "bio": "Augustus Matushek is a sophomore in the Daniels School of Business, double-majoring in Finance and Accounting. Augie previously interned at Centier Bank as a Business Planning & Analysis Intern, and is an incoming summer financial analyst at Cummins Inc. In his free time, he enjoys going to the gym, going to concerts, and working on his below-average golf game.",
+        "notes": [
+          "Duplicate \"previously\" in submission removed."
+        ]
+      },
+      {
+        "name": "Jacob George",
+        "submitted": "11/18/2026 12:31:12",
+        "bio": "Jacob George is a second year sophomore in the Daniels School of Business, majoring in Finance, Accounting, and Real Estate Finance. Outside of SMIF, he previously interned with Vista Investment Partners and Simon Property Group, and will be returning to Simon Property Group as a Capital Markets Intern next summer. In his free time, he enjoys music production, weightlifting, and cooking.",
+        "notes": [
+          "\"second year sophomore\" kept verbatim; redundant, consider \"sophomore\"."
+        ]
+      },
+      {
+        "name": "Keren Wadhwani",
+        "submitted": "11/18/2026 10:53:25",
+        "bio": "Keren Wadhwani is a junior in the Daniels School of Business, majoring in Quantitative Economics and Finance with a minor in Art History. She has previously interned at energyRe in M&A and Investments and at Julius Baer in Wealth Management. Outside of school, she enjoys swimming, training for triathlons, visiting art museums, and painting."
+      },
+      {
+        "name": "Brody Salz",
+        "submitted": "11/17/2026 20:40:09",
+        "bio": "Brody Salz is a sophomore in the Daniels School of Business, majoring in Finance and Accounting. He previously interned at A2 Investment Partners, a specialty insurance MGA, as a Business Development & Operations Analyst, and publishes independent equity research reports. In his free time, he enjoys wakeboarding, guitar, going to the gym, and watching the Dodgers."
+      },
+      {
+        "name": "Aanya Verma",
+        "submitted": "11/17/2026 19:52:58",
+        "bio": "Aanya Verma is a freshman in the Daniels School of Business, majoring in Quantitative Business Economics with minors in Political Science and Financial Engineering. In her free time she enjoys making music, being outdoors, and going to the gym."
+      }
+    ]
+  },
+  "bio_additions": {
+    "target": "BIO_BY_NAME (new keys)",
+    "items": [
+      {
+        "name": "Felipe Restrepo",
+        "submitted": "10/20/2026 22:06:43",
+        "bio": "Felipe Restrepo is a freshman in the Daniels School of Business, majoring in Finance. He previously interned at a bank in Colombia and has continued to work on completing the Financial Modeling and Valuation Analyst Certification. In his free time he likes to go out with friends and travel."
+      },
+      {
+        "name": "Giorgina Ninassi",
+        "submitted": "11/18/2026 14:38:01",
+        "bio": "Giorgina Ninassi is a sophomore studying Industrial Engineering with minors in Mathematical Economics and Statistics. In her free time she enjoys watching the NYC Knicks and going to the gym.",
+        "notes": [
+          "Bio names no school; kept as submitted."
+        ]
+      },
+      {
+        "name": "Cian Murray",
+        "submitted": "11/19/2026 11:22:29",
+        "bio": "Cian Murray is a sophomore in the Daniels School of Business, majoring in Finance. He has previously interned at Pharmaco NZ as a Finance Intern. In his free time, he enjoys playing basketball, travelling, and watching movies.",
+        "notes": [
+          "Typo in submission fixed."
+        ]
+      }
+    ]
+  },
+  "photo_changes": [
+    {
+      "name": "Chris Andreou",
+      "action": "replace",
+      "file": "src/assets/team/chris-andreou.webp",
+      "drive_file_id": "1-T1O2oIH-chPhkLCC85RsJMpcMxNZ4hH",
+      "source_url": "https://drive.google.com/open?id=1-T1O2oIH-chPhkLCC85RsJMpcMxNZ4hH",
+      "submitted": "11/18/2026 12:49:14",
+      "prior_drive_file_id": "1GSWu4DnFKhMsIf_Zo7GU8qwKj0Euwi_S"
+    },
+    {
+      "name": "Augustus Matushek",
+      "action": "replace",
+      "file": "src/assets/team/augustus-matushek.webp",
+      "drive_file_id": "1KL6I9KVKMW44h9ISvqq5vgbMiOC4jLml",
+      "source_url": "https://drive.google.com/open?id=1KL6I9KVKMW44h9ISvqq5vgbMiOC4jLml",
+      "submitted": "11/19/2026 8:38:44",
+      "prior_drive_file_id": "1lXD4IILaQgcfwC0kzl4HyIucyOmJ_-mo"
+    },
+    {
+      "name": "Jacob George",
+      "action": "replace",
+      "file": "src/assets/team/jacob-george.webp",
+      "drive_file_id": "1ZrnVcoEyi39Gb52lVtZ5QrJ2cwxmAA52",
+      "source_url": "https://drive.google.com/open?id=1ZrnVcoEyi39Gb52lVtZ5QrJ2cwxmAA52",
+      "submitted": "11/18/2026 12:31:12",
+      "prior_drive_file_id": "1L8QZFxHnjimVAKHMuQwU3iRrFQo-nsI9"
+    },
+    {
+      "name": "Keren Wadhwani",
+      "action": "replace",
+      "file": "src/assets/team/keren-wadhwani.webp",
+      "drive_file_id": "1TUogVT_sDfGt6SAOyoxzOU8WQzLYF2Z-",
+      "source_url": "https://drive.google.com/open?id=1TUogVT_sDfGt6SAOyoxzOU8WQzLYF2Z-",
+      "submitted": "11/18/2026 10:53:25",
+      "prior_drive_file_id": "1heRTKO0Z7AJP0JosHUXqPZttUghpe2NW"
+    },
+    {
+      "name": "Brody Salz",
+      "action": "replace",
+      "file": "src/assets/team/brody-salz.webp",
+      "drive_file_id": "1og8p6vNym5dKcxFTbMnzqNMQ3ArbT7c3",
+      "source_url": "https://drive.google.com/open?id=1og8p6vNym5dKcxFTbMnzqNMQ3ArbT7c3",
+      "submitted": "11/17/2026 20:40:09",
+      "prior_drive_file_id": "1ZnZkQ5-UKSPCXASW1hsUtmOgKCgz3a5H"
+    },
+    {
+      "name": "Aanya Verma",
+      "action": "add",
+      "file": "src/assets/team/aanya-verma.webp",
+      "import_const": "aanyaVermaPhoto",
+      "drive_file_id": "1bQjwxJVT8M_XYnTK64gw4bBzo0gS40f8",
+      "source_url": "https://drive.google.com/open?id=1bQjwxJVT8M_XYnTK64gw4bBzo0gS40f8",
+      "submitted": "11/17/2026 19:52:58"
+    },
+    {
+      "name": "Felipe Restrepo",
+      "action": "add",
+      "file": "src/assets/team/felipe-restrepo.webp",
+      "import_const": "felipeRestrepoPhoto",
+      "drive_file_id": "1t48OFCNeWbb3FBxR-F5jcmlfSt6_5UUc",
+      "source_url": "https://drive.google.com/open?id=1t48OFCNeWbb3FBxR-F5jcmlfSt6_5UUc",
+      "submitted": "10/20/2026 22:06:43"
+    },
+    {
+      "name": "Giorgina Ninassi",
+      "action": "add",
+      "file": "src/assets/team/giorgina-ninassi.webp",
+      "import_const": "giorginaNinassiPhoto",
+      "drive_file_id": "1NVEGqtpefeN6R3-T5LWcz8U0HL8nLqXp",
+      "source_url": "https://drive.google.com/open?id=1NVEGqtpefeN6R3-T5LWcz8U0HL8nLqXp",
+      "submitted": "11/18/2026 14:38:01"
+    },
+    {
+      "name": "Cian Murray",
+      "action": "add",
+      "file": "src/assets/team/cian-murray.webp",
+      "import_const": "cianMurrayPhoto",
+      "drive_file_id": "1NzXdDa-gnXuUE4pqLh82gf6vR4mXGT6E",
+      "source_url": "https://drive.google.com/open?id=1NzXdDa-gnXuUE4pqLh82gf6vR4mXGT6E",
+      "submitted": "11/19/2026 11:22:29"
+    }
+  ],
+  "photo_wiring": {
+    "for_each_action_add": [
+      "add `import <import_const> from \"@/assets/team/<slug>.webp\";` with the other team imports",
+      "add `\"<Name>\": <import_const>,` to PHOTO_BY_NAME"
+    ],
+    "replacements": "overwrite the .webp in place; no code change"
+  },
+  "no_change": {
+    "photo_only_request": {
+      "Balthazar Schmitt": "9/28 row asks only for a photo update, no bio. Site photo file was last committed 2026-10-18, after the request, so likely already done. Confirm against Drive ID 10FXwcuDjJLfIyNa9rKK5J_kAac_08MB6; do not touch his bio."
+    },
+    "duplicates_superseded": {
+      "Gautham Santhanam": "Two rows 7/20 and 7/21; site already carries the 7/21 text.",
+      "Felipe Restrepo": "9/30 row superseded by 10/20 row (used above)."
+    },
+    "matches_site_or_cosmetic_only": "Landon Haffner, Yashita Pujari, Parth Dama, Evan Wright, Logan Friedman, Sid Voona, Mikhail Bilokin, Dallas White, Sandhya Gopinath, Shaheera Ali, Brock Heller, Alex Belanger, Daniel Friedman, Cooper Weiss, Ayden Wong, Karanvir Singh, Veer Sanyal, Abhipsa Prajapati, Fabian Segura Vargas, Hunter Specht, Riley Collins, Gabriel Fridman, Hayden Krueger, Sarath Shayam, Evan Lee, Vincent Broersma, Cooper McBride, Soham Roy, Ryan Pham, Aarav Mehta. Site copy is the cleaner edited version in the cosmetic cases (typos, his/her, capitalization). Do not overwrite.",
+    "needs_decision": {
+      "Anushka Patel": "Her submitted bio says 'Risk Management Analyst' and 'Senior Consultant'; site bio says 'Portfolio Management Associate'. Roster role in team.ts is also 'Portfolio Management Associate'. Left alone: confirm her title before changing either."
+    }
+  }
+}
